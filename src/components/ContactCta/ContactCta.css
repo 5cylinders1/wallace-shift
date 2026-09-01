@@ -1,0 +1,133 @@
+.contact-cta {
+  position: relative;
+  isolation: isolate;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  padding-block: clamp(90px, 12vw, 150px) var(--section-pad-y);
+  overflow: hidden;
+}
+
+/* Generated ember-horizon loop behind the closing CTA — the dawn-side
+   bookend to the hero's night water. Anchored to the bottom so the
+   horizon line stays in frame at any section height. */
+.contact-cta__media .ambient-loop__frame {
+  object-position: center bottom;
+}
+
+.contact-cta__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(6, 7, 8, 0.92) 0%,
+      rgba(6, 7, 8, 0.55) 45%,
+      rgba(6, 7, 8, 0.35) 100%
+    ),
+    linear-gradient(to right, rgba(6, 7, 8, 0.55), rgba(6, 7, 8, 0) 60%);
+}
+
+.contact-cta__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: clamp(36px, 6vw, 64px);
+}
+
+.contact-cta__headline {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 6.2vw, 3.9rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  max-width: 16ch;
+}
+
+.contact-cta__supporting {
+  margin-top: 18px;
+  color: var(--color-muted);
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  max-width: 42ch;
+}
+
+.contact-cta__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-cta__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-cta__field label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-silver);
+}
+
+.contact-cta__field input,
+.contact-cta__field textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(214, 218, 223, 0.32);
+  padding-block: 10px;
+  color: var(--color-soft-white);
+  font-size: 1rem;
+  resize: vertical;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.contact-cta__field input:focus,
+.contact-cta__field textarea:focus {
+  border-color: var(--color-ember);
+}
+
+.contact-cta__field input::placeholder,
+.contact-cta__field textarea::placeholder {
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+
+.contact-cta__submit {
+  align-self: flex-start;
+  margin-top: 8px;
+  background: var(--color-ember);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.95em 1.9em;
+  border-radius: 999px;
+  transition:
+    transform var(--duration-hover) var(--ease-out-soft),
+    box-shadow var(--duration-hover) var(--ease-out-soft),
+    opacity var(--duration-hover) var(--ease-out-soft);
+}
+
+.contact-cta__submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 34px rgba(232, 84, 39, 0.3);
+}
+
+.contact-cta__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contact-cta__status {
+  min-height: 1.2em;
+  font-size: 0.875rem;
+  color: var(--color-silver);
+}
+
+@media (min-width: 900px) {
+  .contact-cta__inner {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

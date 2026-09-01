@@ -1,0 +1,147 @@
+.services {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  padding-block: var(--section-pad-y);
+}
+
+.services__heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 5.4vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.1;
+  max-width: 16ch;
+  letter-spacing: -0.01em;
+}
+
+.services__rows {
+  margin-top: clamp(40px, 6vw, 72px);
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+/* Service row (semantic button) */
+
+.service-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+  min-height: 250px;
+  padding-block: clamp(28px, 4vw, 40px);
+  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
+  background: none;
+  overflow: hidden;
+  opacity: 0.6;
+  transition:
+    opacity var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.service-row--active {
+  opacity: 1;
+  border-bottom-color: rgba(6, 7, 8, 0.32);
+}
+
+.service-row:focus-visible {
+  outline-color: var(--color-ink);
+  outline-offset: -3px;
+}
+
+.service-row__index {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 56px;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--color-muted);
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.service-row--active .service-row__index {
+  color: var(--color-ember-deep);
+}
+
+.service-row__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 50%;
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.service-row--active .service-row__body {
+  transform: translateX(8px);
+}
+
+.service-row__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.service-row--active .service-row__label {
+  color: #4b4f52;
+}
+
+.service-row__title {
+  font-size: clamp(1.2rem, 2.4vw, 1.625rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.service-row__description {
+  color: #4b4f52;
+  font-size: 0.9375rem;
+  max-width: 46ch;
+  line-height: 1.55;
+}
+
+@media (max-width: 767px) {
+  .service-row {
+    flex-wrap: wrap;
+    min-height: 0;
+    align-items: flex-start;
+  }
+
+  .service-row__body {
+    max-width: 100%;
+  }
+}
+
+/* Single, quiet route from the service list to the pricing page — the
+   next question a reader has after "what can I hire you to build?" */
+.services__pricing-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(28px, 3.5vw, 44px);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(6, 7, 8, 0.3);
+  transition:
+    color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.services__pricing-link:hover {
+  color: var(--color-ember-deep);
+  border-bottom-color: var(--color-ember-deep);
+}
+
+.services__pricing-arrow {
+  display: inline-block;
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.services__pricing-link:hover .services__pricing-arrow {
+  transform: translate(2px, -2px);
+}

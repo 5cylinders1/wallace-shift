@@ -1,0 +1,52 @@
+.pricing-deck {
+  position: relative;
+}
+
+/* Native scroll snapping — no carousel dependency, no pinned section, no
+   scroll hijack. The page still scrolls vertically through whichever panel
+   is open; the track only owns its horizontal axis. */
+.pricing-deck__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  /* Panels sit at the top of the track rather than stretching, so a
+     shorter one does not drag its background down to match the tallest. */
+  align-items: start;
+  overflow-x: auto;
+  /* PricingDeck sets an explicit height to match the open panel, so the
+     vertical axis is closed off rather than becoming a second scrollbar. */
+  overflow-y: hidden;
+  /* Follows the panel change rather than snapping to the new height. The
+     global reduced-motion rule flattens this to nothing. */
+  transition: height 0.45s var(--ease-premium);
+  scroll-snap-type: x mandatory;
+  /* Stops a sideways trackpad swipe from triggering browser back. */
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.pricing-deck__track::-webkit-scrollbar {
+  display: none;
+}
+
+.pricing-deck__panel {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+@media (max-width: 1023px) {
+  .pricing-deck__track {
+    display: block;
+    overflow-x: visible;
+    overflow-y: visible;
+    scroll-snap-type: none;
+    transition: none;
+    /* Beats the inline height PricingDeck writes for the deck. The media
+       query owns the layout; JavaScript only supplies a number for the
+       width that asked for one. Without this, a viewport that crosses the
+       breakpoint before the media-query listener runs leaves the stacked
+       panels clipped inside a deck-sized box. */
+    height: auto !important;
+  }
+}

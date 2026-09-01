@@ -1,0 +1,84 @@
+.pit-stop-scene {
+  position: relative;
+  /* Spans the full browser window edge to edge — `.approach__scene-wrap`
+     carries no `.container` padding/max-width for this reason. Height
+     follows from `aspect-ratio` alone (never a separate `max-height`
+     alongside `width:100%`): capping height independently of width would
+     leave the box's actual rendered shape wider than 1000:220, and the SVG
+     markings (which use `preserveAspectRatio="xMidYMid meet"`) would
+     letterbox themselves to compensate while `.pit-stop-scene__car-track`'s
+     percentage `left`/`width` would not, desyncing the car from the
+     pit-box SVG. The 1000:220 ratio itself (rather than something closer
+     to square) is what keeps this comfortably inside one viewport next to
+     the heading and steps even at full window width — `.approach` uses
+     `min-height: 100svh` rather than a hard `height` as a safety margin,
+     not as the thing doing the real work here. */
+  width: 100%;
+  aspect-ratio: 1000 / 220;
+  /* A single `overflow: hidden` — not separate `overflow-x`/`overflow-y`
+     values. Mixing `hidden` on one axis with `visible` on the other makes
+     the browser compute the "visible" axis as `auto` instead (per spec:
+     one non-visible axis forces the other out of `visible`), which turns
+     this into a real scroll container. It never actually had anything to
+     scroll, but its mere presence as a scrollable ancestor was enough for
+     the browser to route wheel events to it instead of the page in places
+     — the reported "scroll only works with the mouse above the car" bug.
+     Nothing here needs to overflow vertically any more (no crew rows
+     extending above/below the car), so plain `hidden` is safe. */
+  overflow: hidden;
+}
+
+.pit-stop-scene__markings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.pit-stop-scene__release circle {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Rubber laid down under each rear wheel as the car launches away.
+   Multiply blends it into the ivory pit-box floor like residue rather than
+   a flat painted shape, and it sits below the car in DOM order so the
+   chassis and tires always paint over it while the car is still on top of
+   it. */
+.pit-stop-scene__peel-marks rect {
+  fill: var(--color-ink);
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+/* Spans the entire stage — this, not `.pit-stop-scene__car-track` below,
+   is what the timeline translates horizontally. Because it's exactly the
+   stage's own width, `xPercent` on it is one full stage-width per 100%,
+   so a modest swing (see CAR_ENTER_X_PERCENT/CAR_EXIT_X_PERCENT) clears
+   the much smaller car completely off-frame on either side regardless of
+   viewport size. */
+.pit-stop-scene__car-travel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The car's own box, positioned by percentage *within* the travel
+   wrapper above (so these percentages are relative to the same stage
+   dimensions PitStopScene.tsx's CAR_TRACK_* constants use) — deliberately
+   a small slice of the stage, not a box the car nearly fills, so it reads
+   as a car crossing a wide strip rather than one parked to fit a frame.
+   The inline left/top/width/height on this element come from those same
+   constants; nothing here needs to duplicate the numbers. */
+.pit-stop-scene__car-track {
+  position: absolute;
+}
+
+.pit-stop-scene__car {
+  width: 100%;
+  height: 100%;
+}

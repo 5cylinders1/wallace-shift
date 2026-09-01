@@ -1,0 +1,375 @@
+.tier-table {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  padding-block: clamp(20px, 2.6vw, 36px) clamp(48px, 7vw, 96px);
+}
+
+.tier-table__intro {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.4vw, 18px);
+  max-width: 62ch;
+}
+
+.tier-table__eyebrow {
+  color: rgba(6, 7, 8, 0.62);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.tier-table__heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2.125rem, 4.6vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+}
+
+.tier-table__supporting {
+  font-size: clamp(0.9375rem, 0.25vw + 0.9rem, 1.0625rem);
+  line-height: 1.6;
+  color: #4b4f52;
+  max-width: 62ch;
+}
+
+.tier-table__grid {
+  margin-top: clamp(26px, 3vw, 40px);
+}
+
+/* ---------------------------------------------------------------------
+   Card — stacked layout is the base. The wrappers collapse with
+   `display: contents` so the original single-column order is untouched.
+   --------------------------------------------------------------------- */
+
+.tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(22px, 2.4vw, 32px) 0 clamp(26px, 3vw, 36px);
+  border-top: 1px solid rgba(6, 7, 8, 0.16);
+}
+
+/* Marked by a rule down the inside edge; the other two are never dimmed. */
+.tier--recommended {
+  padding-left: clamp(16px, 2.5vw, 24px);
+  --color-ember-deep: #b33918;
+}
+
+.tier--recommended::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: clamp(26px, 3vw, 36px);
+  left: 0;
+  width: 1px;
+  background: rgba(179, 57, 24, 0.4);
+}
+
+.tier__bar {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(6, 7, 8, 0.38);
+  will-change: transform;
+}
+
+.tier--recommended .tier__bar {
+  height: 3px;
+  background: var(--color-ember-deep);
+}
+
+.tier__badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ember-deep);
+}
+
+.tier__badge:empty {
+  display: none;
+}
+
+.tier__head {
+  margin-top: clamp(14px, 1.6vw, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tier__index {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1;
+  color: var(--color-ember-deep);
+  margin-bottom: 2px;
+}
+
+.tier__name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 2.4vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.tier__category {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #3d4143;
+}
+
+.tier__tagline {
+  font-size: 0.875rem;
+  color: var(--color-muted-on-bone);
+}
+
+.tier__proof {
+  margin-top: 14px;
+}
+
+.tier__proof:empty {
+  display: none;
+}
+
+.tier__proof p {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--color-ink);
+  border-left: 2px solid var(--color-ember-deep);
+  padding-left: 10px;
+}
+
+.tier__price {
+  margin-top: clamp(18px, 2.2vw, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tier__price-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.tier__price-value {
+  font-size: clamp(2.375rem, 3.4vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Same colour and a shallow rise, so the sign reads as part of the number
+   rather than a detached superscript. */
+.tier__price-currency {
+  font-size: 0.52em;
+  font-weight: 500;
+  letter-spacing: 0;
+  vertical-align: 0.62em;
+  margin-right: 0.02em;
+}
+
+.tier__delivery {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #3d4143;
+}
+
+.tier__cta {
+  margin-top: clamp(18px, 2.2vw, 26px);
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 5px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  border-bottom: 1px solid rgba(6, 7, 8, 0.3);
+  transition:
+    color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.tier--recommended .tier__cta {
+  color: var(--color-ember-deep);
+  border-bottom-color: var(--color-ember-deep);
+}
+
+.tier__cta-arrow {
+  display: inline-block;
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.tier__cta:hover {
+  color: var(--color-ember-deep);
+  border-bottom-color: var(--color-ember-deep);
+}
+
+.tier__cta:hover .tier__cta-arrow,
+.tier__cta:focus-visible .tier__cta-arrow {
+  transform: translate(2px, -2px);
+}
+
+.tier__description {
+  margin-top: clamp(24px, 3vw, 34px);
+  padding-top: clamp(18px, 2.2vw, 26px);
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #3d4143;
+}
+
+.tier__best-for {
+  margin-top: clamp(16px, 2vw, 22px);
+}
+
+.tier__best-for-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+  margin-bottom: 4px;
+}
+
+.tier__best-for p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #3d4143;
+}
+
+.tier__scope {
+  margin-top: clamp(18px, 2.2vw, 26px);
+  columns: 2;
+  column-gap: clamp(24px, 4vw, 48px);
+}
+
+
+.tier__scope-item {
+  border-top: 1px solid rgba(6, 7, 8, 0.11);
+  padding-block: 10px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #3d4143;
+  break-inside: avoid;
+}
+
+.tier__scope-item--inherited {
+  color: var(--color-ember-deep);
+  font-weight: 600;
+}
+
+.tier__scope-note {
+  margin-top: 16px;
+}
+
+.tier__scope-note:empty {
+  display: none;
+}
+
+.tier__scope-note p {
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+}
+
+@media (max-width: 599px) {
+  .tier__scope {
+    columns: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Comparison grid. One panel of the deck holds all three levels side by
+   side, which is the point — the price changes with complexity, and that
+   only reads when the three are legible against each other.
+   --------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .tier-table__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgba(6, 7, 8, 0.16);
+  }
+
+  .tier {
+    padding: clamp(22px, 2.4vw, 32px) clamp(20px, 2.2vw, 30px)
+      clamp(26px, 3vw, 36px);
+    border-top: none;
+  }
+
+  .tier + .tier {
+    border-left: 1px solid rgba(6, 7, 8, 0.14);
+  }
+
+  /* The wash returns at grid width, where a whole column can carry it
+     without turning into a rounded card. */
+  .tier--recommended {
+    background: rgba(6, 7, 8, 0.035);
+    padding-left: clamp(20px, 2.2vw, 30px);
+  }
+
+  .tier--recommended::before {
+    display: none;
+  }
+
+  /* A 437px column is too narrow to split the scope list. */
+  .tier__scope {
+    columns: 1;
+  }
+
+  /* Stacked, an empty slot should collapse. In the comparison grid it must
+     hold its row: subgrid assigns tracks by source order, so a column that
+     drops a child pulls everything below it up one track and the three
+     stop lining up. */
+  .tier__badge:empty,
+  .tier__proof:empty,
+  .tier__scope-note:empty {
+    display: block;
+  }
+
+  /* Comparison only works if the things being compared sit on the same
+     lines. Column content wraps to different heights (a two-line delivery
+     promise, a longer "best for", the recommended column's label), which
+     walks every row below it out of step. Subgrid hands all three columns
+     the same row track list, so each block starts level regardless of what
+     wrapped above it. Without subgrid the columns fall back to their own
+     auto rows — the layout still reads, it just loses the shared
+     baselines. */
+  @supports (grid-template-rows: subgrid) {
+    .tier-table__grid {
+      /* badge · head · proof · price · delivery · cta · description ·
+         best-for · scope · scope-note. The scope track takes the slack so
+         the closing notes sit on one line across the table. */
+      grid-template-rows: repeat(8, auto) 1fr auto;
+    }
+
+    .tier {
+      display: grid;
+      grid-template-rows: subgrid;
+      grid-row: span 10;
+    }
+
+    .tier > * {
+      align-self: start;
+    }
+
+    .tier__cta {
+      justify-self: start;
+    }
+  }
+}

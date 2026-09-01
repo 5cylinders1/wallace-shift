@@ -1,0 +1,59 @@
+.website-standard {
+  margin-top: clamp(28px, 3.5vw, 44px);
+  padding-top: clamp(20px, 2.4vw, 28px);
+  border-top: 1px solid rgba(6, 7, 8, 0.16);
+  display: flex;
+  align-items: baseline;
+  gap: clamp(20px, 3vw, 48px);
+}
+
+.website-standard__eyebrow {
+  flex-shrink: 0;
+  color: rgba(6, 7, 8, 0.62);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.website-standard__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px clamp(18px, 2.4vw, 34px);
+  font-size: 0.875rem;
+  color: #3d4143;
+}
+
+/* A hairline slash between items rather than bullets or icons — the same
+   diagonal the rest of the site uses to separate things. */
+.website-standard__list li {
+  position: relative;
+}
+
+.website-standard__list li + li::before {
+  content: '';
+  position: absolute;
+  left: calc(clamp(18px, 2.4vw, 34px) / -2 - 1px);
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 1px;
+  background: rgba(6, 7, 8, 0.22);
+  transform: rotate(12deg);
+}
+
+@media (max-width: 899px) {
+  .website-standard {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 599px) {
+  .website-standard__list {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .website-standard__list li + li::before {
+    display: none;
+  }
+}

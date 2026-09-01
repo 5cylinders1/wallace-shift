@@ -1,0 +1,217 @@
+.standards {
+  position: relative;
+  background: var(--color-bone);
+  color: var(--color-ink);
+  padding-top: clamp(120px, 12vw, 160px);
+  /* No bottom padding here — `.standards__diagonal` is the section's last
+     child and must touch its true bottom edge directly so the wedge's
+     black connects straight into the following section with nothing
+     bone-colored after it. The breathing room after the last principle
+     comes from the wedge's own `margin-top` instead. */
+  overflow: hidden;
+}
+
+.standards__grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 38%) 1fr;
+  gap: clamp(48px, 6vw, 96px);
+  align-items: start;
+}
+
+.standards__intro {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 28px);
+}
+
+/* Overrides the shared `.eyebrow` utility's size/tracking/color — this
+   sits directly on the section's own bone background, so it needs a
+   charcoal tone rather than the pale gray used on dark sections. */
+.standards__eyebrow {
+  color: rgba(6, 7, 8, 0.62);
+  font-size: clamp(0.6875rem, 0.75vw + 0.5rem, 0.8125rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.standards__headline {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(3.5rem, 5.5vw, 6.25rem);
+  line-height: 0.97;
+  letter-spacing: -0.01em;
+  max-width: 540px;
+  color: var(--color-ink);
+}
+
+.standards__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.standard-principle {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(44px, 5vw, 60px) 1fr;
+  column-gap: clamp(16px, 2.4vw, 28px);
+  padding-block: clamp(28px, 3vw, 36px);
+}
+
+.standard-principle__rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(6, 7, 8, 0.18);
+}
+
+.standard-principle__number {
+  font-family: var(--font-serif);
+  font-size: clamp(1.375rem, 1.8vw, 1.625rem);
+  color: var(--color-ember-deep);
+  line-height: 1;
+  padding-top: 0.2em;
+}
+
+.standard-principle__title {
+  font-size: clamp(1.5rem, 1.7vw + 0.9rem, 1.875rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.standard-principle__description {
+  color: #4b4f52;
+  font-size: clamp(1rem, 0.3vw + 0.95rem, 1.1875rem);
+  line-height: 1.55;
+  max-width: 560px;
+}
+
+/* Diagonal transition into the following (black) section — a plane and a
+   thin metallic edge that share one geometry source (`--diag-left`,
+   `--diag-right`, `--diag-edge`) so they can never drift apart at any
+   viewport width: the edge's clip-path is the plane's, offset by that same
+   half-thickness on both sides. Both live inside `.standards__diagonal`,
+   which is the single element the entrance/exit animation ever moves —
+   translating it moves the plane and edge together, by construction. */
+.standards__diagonal {
+  --diag-left: 95%;
+  --diag-right: 8%;
+  --diag-edge: 1.5px;
+  /* Matches the JS exit-rise translate distance exactly (read via
+     getComputedStyle in StandardsSection.tsx, not duplicated as a second
+     literal) — see the height/margin-bottom pairing below for why. */
+  --diag-rise: 28px;
+  position: relative;
+  /* The band is taller than its visible resting height by exactly
+     `--diag-rise`, then pulled back up by the same amount via a negative
+     bottom margin, so the extra height sits clipped (by `.standards`'s own
+     `overflow: hidden`) below the section's real boundary at rest. As the
+     exit animation translates this element up by `--diag-rise`, that
+     clipped reserve slides into view and keeps solid black covering all
+     the way down to the following section — instead of uncovering the
+     section's own bone background, which is what a plain translate on a
+     box sized to end exactly at the boundary would do.
+
+     The extra `+ 2px` on both the height and the (more negative)
+     margin-bottom is a deliberate 2px overlap into the following section,
+     not part of the rise math — `clamp()`/`calc()`-derived heights can
+     round to fractional pixels differently than the adjacent section's own
+     box, leaving a hairline gap at the seam. Since both sides are solid
+     black here, a couple of overlapping pixels is invisible and removes
+     that rounding gap entirely. */
+  height: calc(clamp(96px, 11vw, 160px) + var(--diag-rise) + 2px);
+  margin-top: clamp(32px, 5vw, 64px);
+  margin-bottom: calc(-1 * var(--diag-rise) - 2px);
+}
+
+.standards__diagonal-plane,
+.standards__diagonal-edge {
+  position: absolute;
+  inset: 0;
+}
+
+.standards__diagonal-plane {
+  background: var(--color-ink);
+  clip-path: polygon(0% var(--diag-left), 100% var(--diag-right), 100% 100%, 0% 100%);
+}
+
+.standards__diagonal-edge {
+  background: linear-gradient(
+    120deg,
+    rgba(247, 247, 244, 0) 0%,
+    rgba(255, 255, 255, 0.85) 45%,
+    rgba(232, 84, 39, 0.75) 52%,
+    rgba(214, 218, 223, 0.85) 58%,
+    rgba(247, 247, 244, 0) 100%
+  );
+  clip-path: polygon(
+    0% calc(var(--diag-left) - var(--diag-edge)),
+    100% calc(var(--diag-right) - var(--diag-edge)),
+    100% calc(var(--diag-right) + var(--diag-edge)),
+    0% calc(var(--diag-left) + var(--diag-edge))
+  );
+}
+
+/* Races down the diagonal from right to left as the visitor scrolls past —
+   `left`/`top` are set entirely by StandardsSection.tsx's ScrollTrigger
+   (reading the same `--diag-left`/`--diag-right` values the clip-path
+   above uses), so this only needs to size and center the car on its own
+   anchor point. Scaled to roughly match the small car's footprint in the
+   Approach section above, not the source image's own large canvas. */
+.standards__car {
+  position: absolute;
+  width: clamp(90px, 12vw, 200px);
+  /* Matches the ember car cutout's tight content bounds (1600x340). */
+  aspect-ratio: 1600 / 340;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 1023px) {
+  .standards__grid {
+    grid-template-columns: minmax(240px, 42%) 1fr;
+    gap: clamp(32px, 4vw, 56px);
+  }
+
+  .standards__headline {
+    font-size: clamp(2.75rem, 6vw, 4.25rem);
+    max-width: 440px;
+  }
+}
+
+@media (max-width: 767px) {
+  .standards {
+    padding-top: clamp(88px, 16vw, 120px);
+  }
+
+  .standards__grid {
+    grid-template-columns: 1fr;
+    gap: clamp(40px, 10vw, 56px);
+  }
+
+  .standards__headline {
+    font-size: clamp(3rem, 14vw, 4.5rem);
+    max-width: none;
+  }
+
+  .standard-principle {
+    grid-template-columns: 40px 1fr;
+    column-gap: 14px;
+  }
+
+  .standards__diagonal {
+    height: clamp(72px, 20vw, 110px);
+    margin-top: clamp(24px, 8vw, 40px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .standards__diagonal {
+    transform: none !important;
+  }
+}

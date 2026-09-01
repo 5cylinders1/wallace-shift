@@ -1,0 +1,111 @@
+.quiz-question {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.quiz-question__progress-row {
+  display: flex;
+  align-items: center;
+}
+
+.quiz-question__step-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-silver);
+}
+
+.quiz-question__progress-rule {
+  position: relative;
+  height: 1px;
+  background: rgba(247, 247, 244, 0.16);
+  margin-top: -6px;
+}
+
+.quiz-question__progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--color-ember);
+  transition: width 0.4s var(--ease-out-soft);
+}
+
+.quiz-question__heading {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--color-soft-white);
+  outline: none;
+}
+
+.quiz-question__answers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-question__answer {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 20px 28px;
+  border: 1px solid rgba(247, 247, 244, 0.18);
+  border-radius: 0;
+  background: rgba(247, 247, 244, 0.02);
+  color: var(--color-silver);
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  transition:
+    background var(--duration-hover) var(--ease-out-soft),
+    color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.quiz-question__answer {
+  border-left: 2px solid transparent;
+}
+
+.quiz-question__answer:hover,
+.quiz-question__answer:focus-visible {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  border-color: var(--color-bone);
+  border-left-color: var(--color-ember);
+}
+
+.quiz-question__answer:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: -4px;
+}
+
+.quiz-question__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.quiz-question__choose-one {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--color-muted);
+}
+
+.quiz-question__back {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-silver);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.quiz-question__back:hover {
+  color: var(--color-soft-white);
+}

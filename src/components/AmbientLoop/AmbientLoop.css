@@ -1,0 +1,19 @@
+.ambient-loop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-ink);
+}
+
+.ambient-loop__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ambient-loop__video {
+  z-index: 1;
+}

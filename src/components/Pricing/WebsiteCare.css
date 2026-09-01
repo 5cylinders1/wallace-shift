@@ -1,0 +1,155 @@
+.website-care {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  padding-bottom: clamp(56px, 8vw, 104px);
+}
+
+.website-care__inner {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1.6fr) auto;
+  gap: clamp(24px, 3vw, 56px);
+  align-items: start;
+  padding-top: clamp(22px, 2.6vw, 30px);
+  border-top: 1px solid rgba(6, 7, 8, 0.16);
+}
+
+.website-care__eyebrow {
+  color: rgba(6, 7, 8, 0.62);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  margin-bottom: 8px;
+}
+
+.website-care__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2vw, 1.875rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.website-care__description {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #3d4143;
+  max-width: 52ch;
+}
+
+.website-care__notes {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+  max-width: 56ch;
+}
+
+.website-care__action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  text-align: right;
+}
+
+.website-care__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.website-care__price-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.website-care__price-value {
+  font-size: clamp(1.5rem, 1.8vw, 1.875rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.website-care__price-currency {
+  font-size: 0.6em;
+  font-weight: 500;
+  letter-spacing: 0;
+  vertical-align: 0.42em;
+  margin-right: 0.02em;
+}
+
+/* Large enough to stay comfortably readable — the term is part of the
+   price, not fine print. */
+.website-care__price-unit {
+  font-size: 0.62em;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--color-muted-on-bone);
+}
+
+.website-care__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 5px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(6, 7, 8, 0.3);
+  white-space: nowrap;
+  transition:
+    color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.website-care__cta:hover {
+  color: var(--color-ember-deep);
+  border-bottom-color: var(--color-ember-deep);
+}
+
+.website-care__cta-arrow {
+  display: inline-block;
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.website-care__cta:hover .website-care__cta-arrow,
+.website-care__cta:focus-visible .website-care__cta-arrow {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 1023px) {
+  .website-care__inner {
+    grid-template-columns: 1fr;
+    gap: clamp(16px, 3vw, 24px);
+  }
+
+  .website-care__action {
+    align-items: flex-start;
+    text-align: left;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    gap: 20px;
+  }
+
+  .website-care__price {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 479px) {
+  .website-care__action {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

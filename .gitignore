@@ -1,0 +1,57 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local source/reference assets. Optimized deploy copies live under public/.
+/PitStopFinal.mp4
+/PitStopFinalCompressed.mp4
+/car-side-view.png
+/favicon-v2-512.png
+/favicon.ico
+/formula-car-chassis.png
+/formula-car-overhead.png
+/formula-tire-front-lower.png
+/formula-tire-front-upper.png
+/formula-tire-rear-lower.png
+/formula-tire-rear-upper.png
+/launch-ship.png
+/pit-stop-reference.png
+/pit_comp.jpg
+/spot-light.mp4
+/spotlight-final.mp4
+/wallace-shift-favicon.svg
+/wallace-shift-logo-black-transparent.png
+/wallace-shift-logo-black.svg
+/wallace-shift-logo-white-transparent.png
+/wallace-shift-logo-white.svg
+/ws_water_hero.mp4
+
+# Retained local media explorations that are not used by the production site.
+/public/media/car-side-view.png
+/public/media/new-spot-light.mp4
+/public/media/spot-light-2.mp4
+/public/media/spot-light.mp4
+/public/media/spot-light-poster.webp
+/public/media/wallace-shift-hero.mp4
+/public/media/wallace-shift-hero.webm

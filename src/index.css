@@ -1,0 +1,187 @@
+:root {
+  --color-ink: #060708;
+  --color-graphite: #101214;
+  --color-bone: #f1efe9;
+  --color-soft-white: #f7f7f4;
+  --color-muted: #9ea3a6;
+  --color-silver: #d6dadf;
+  /* --color-muted reads as secondary on ink but only reaches 2.2:1 on
+     bone, so warm sections get their own secondary tone. 5.19:1 on bone
+     and 4.92:1 on the tier table's flagged wash — both clear AA at the
+     small label sizes it is used for. */
+  --color-muted-on-bone: #606467;
+
+  /* Single chromatic accent — ember. Warm signal color shared by the
+     generated imagery (rim light, horizon glow, car livery) and the UI.
+     `--color-ember` is tuned for dark grounds; `--color-ember-deep` has
+     the contrast needed for accents sitting on bone. */
+  --color-ember: #e85427;
+  --color-ember-deep: #c2401c;
+  --color-ember-soft: rgba(232, 84, 39, 0.16);
+
+  --font-sans:
+    'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
+  --font-serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-reveal: 0.8s;
+  --duration-hover: 0.35s;
+
+  --container-max: 1720px;
+  --gutter: clamp(20px, 5vw, 64px);
+  --section-pad-y: clamp(64px, 10vw, 140px);
+
+  /* Fallback only — SiteHeader measures and overwrites this via
+     ResizeObserver so any section needing clearance beneath the fixed
+     header can read the real rendered height instead of a guess. */
+  --site-header-height: 84px;
+
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+#root {
+  min-height: 100%;
+}
+
+/* utilities */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-ember);
+  flex-shrink: 0;
+}
+
+.accent-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-silver);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Silver outlines vanish against bone — light sections get the deep ember
+   focus ring instead. */
+.services :focus-visible,
+.approach :focus-visible,
+.standards :focus-visible,
+.tier-table :focus-visible,
+.website-care :focus-visible,
+.engagements :focus-visible,
+.pricing-nav :focus-visible {
+  outline-color: var(--color-ember-deep);
+}

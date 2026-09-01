@@ -1,0 +1,53 @@
+/* One set of custom properties drives both the plane and the thin metallic
+   edge, so they cannot drift apart at any viewport width. */
+.pricing-diagonal {
+  --diag-left: 92%;
+  --diag-right: 10%;
+  --diag-edge: 1.5px;
+  position: relative;
+  background: var(--color-bone);
+  /* The 2px is a deliberate overlap into the section below: both sides are
+     solid ink there, so a couple of overlapping pixels is invisible and
+     removes any hairline gap from fractional-pixel rounding at the seam. */
+  height: calc(clamp(96px, 11vw, 160px) + 2px);
+  margin-bottom: -2px;
+}
+
+.pricing-diagonal__plane,
+.pricing-diagonal__edge {
+  position: absolute;
+  inset: 0;
+}
+
+.pricing-diagonal__plane {
+  background: var(--color-ink);
+  clip-path: polygon(
+    0% var(--diag-left),
+    100% var(--diag-right),
+    100% 100%,
+    0% 100%
+  );
+}
+
+.pricing-diagonal__edge {
+  background: linear-gradient(
+    120deg,
+    rgba(247, 247, 244, 0) 0%,
+    rgba(255, 255, 255, 0.85) 45%,
+    rgba(232, 84, 39, 0.75) 52%,
+    rgba(214, 218, 223, 0.85) 58%,
+    rgba(247, 247, 244, 0) 100%
+  );
+  clip-path: polygon(
+    0% calc(var(--diag-left) - var(--diag-edge)),
+    100% calc(var(--diag-right) - var(--diag-edge)),
+    100% calc(var(--diag-right) + var(--diag-edge)),
+    0% calc(var(--diag-left) + var(--diag-edge))
+  );
+}
+
+@media (max-width: 767px) {
+  .pricing-diagonal {
+    height: clamp(72px, 20vw, 110px);
+  }
+}

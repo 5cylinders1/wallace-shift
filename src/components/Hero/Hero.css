@@ -1,0 +1,244 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: max(100svh, 640px);
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding-inline: var(--gutter);
+  /* Mobile: the copy stack must finish above the centered WS, so it hugs
+     the header rather than drifting down toward the mark. */
+  padding-top: clamp(96px, 15vh, 150px);
+  padding-bottom: 96px;
+}
+
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.2vw, 26px);
+  max-width: 100%;
+  text-align: left;
+}
+
+.hero__eyebrow {
+  color: var(--color-silver);
+}
+
+.hero__headline {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 9vw, 4.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  max-width: 16ch;
+}
+
+/* Masked line reveal: each line clips its inner span so the entrance can
+   slide text up from below its own baseline. Slight bottom padding keeps
+   serif descenders from being clipped at rest. */
+.hero__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.hero__line-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+.hero__headline .accent-serif {
+  color: var(--color-ember);
+  font-size: 1em;
+}
+
+.hero__supporting {
+  font-size: 13px;
+  color: var(--color-muted);
+  max-width: 40ch;
+}
+
+@media (max-width: 899px) {
+  .hero__supporting {
+    font-size: 0.875rem;
+    color: var(--color-silver);
+  }
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin-top: 4px;
+}
+
+.hero__cta-primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-soft-white);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.95em 1.75em;
+  border-radius: 999px;
+  will-change: transform;
+  transition: box-shadow var(--duration-hover) var(--ease-out-soft);
+}
+
+.hero__cta-primary > span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ember fill sweeps in on hover — a diagonal wipe, echoing the site's
+   lower-left-to-upper-right divider language. Ink text stays put. */
+.hero__cta-primary::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: var(--color-ember);
+  clip-path: polygon(-30% 130%, 0% 100%, -20% 130%, -30% 130%);
+  transition: clip-path 0.45s var(--ease-premium);
+}
+
+.hero__cta-primary:hover::before,
+.hero__cta-primary:focus-visible::before {
+  clip-path: polygon(-30% 130%, 130% -30%, 130% 130%, -30% 130%);
+}
+
+.hero__cta-primary:hover {
+  box-shadow: 0 8px 30px rgba(232, 84, 39, 0.28);
+}
+
+.hero__cta-secondary {
+  position: relative;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-silver);
+  padding-bottom: 3px;
+  will-change: transform;
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.hero__cta-secondary::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(214, 218, 223, 0.4);
+}
+
+.hero__cta-secondary::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--color-ember);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease-premium);
+  z-index: 1;
+}
+
+.hero__cta-secondary:hover,
+.hero__cta-secondary:focus-visible {
+  color: var(--color-soft-white);
+}
+
+.hero__cta-secondary:hover::before,
+.hero__cta-secondary:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.hero__scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(20px, 4vh, 36px);
+  transform: translateX(-50%);
+  z-index: 3;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.hero__scroll-cue::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 26px;
+  margin-top: 10px;
+  background: linear-gradient(to bottom, var(--color-muted), transparent);
+  transform-origin: top center;
+  animation: hero-cue-drop 2.6s var(--ease-out-soft) infinite;
+}
+
+@keyframes hero-cue-drop {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  35% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 560px) {
+  .hero__scroll-cue {
+    display: flex;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    align-items: center;
+    min-height: max(100svh, 760px);
+  }
+
+  .hero__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(24px, 4vw, 64px);
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .hero__copy {
+    max-width: min(25vw, 440px);
+    margin-right: 0;
+  }
+
+  .hero__headline {
+    max-width: 100%;
+    font-size: clamp(3rem, 4.6vw, 4.75rem);
+  }
+}

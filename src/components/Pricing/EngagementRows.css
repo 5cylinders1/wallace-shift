@@ -1,0 +1,189 @@
+/* One panel of the pricing deck. Padding matches the websites panel so the
+   three sit on the same top line as the track moves between them. */
+.engagement-group {
+  padding-block: clamp(20px, 2.6vw, 36px) clamp(48px, 7vw, 96px);
+  color: var(--color-ink);
+}
+
+.engagement-group__intro {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.5vw, 18px);
+  max-width: 60ch;
+}
+
+.engagement-group__label {
+  color: rgba(6, 7, 8, 0.62);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.engagement-group__heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2.125rem, 4.6vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  max-width: 20ch;
+}
+
+.engagement-group__supporting {
+  font-size: clamp(0.9375rem, 0.25vw + 0.9rem, 1.0625rem);
+  line-height: 1.6;
+  color: #4b4f52;
+  max-width: 58ch;
+}
+
+.engagement-group__rows {
+  margin-top: clamp(26px, 3vw, 40px);
+  border-top: 1px solid rgba(6, 7, 8, 0.16);
+}
+
+.engagement-row {
+  display: grid;
+  grid-template-columns: clamp(44px, 5vw, 60px) minmax(0, 1fr) minmax(
+      160px,
+      215px
+    );
+  column-gap: clamp(16px, 2.4vw, 36px);
+  align-items: start;
+  padding-block: clamp(24px, 3vw, 36px);
+  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.engagement-row:hover {
+  border-bottom-color: rgba(6, 7, 8, 0.34);
+}
+
+.engagement-row__index {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  line-height: 1.2;
+  color: var(--color-ember-deep);
+}
+
+.engagement-row__title {
+  font-size: clamp(1.125rem, 1.5vw + 0.55rem, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.engagement-row:hover .engagement-row__title {
+  transform: translateX(4px);
+}
+
+.engagement-row__description {
+  margin-top: 10px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #4b4f52;
+  max-width: 62ch;
+}
+
+/* What the figure opposite does not cover. Quieter than the description
+   but never hidden — these are the limits on the price. */
+.engagement-row__note {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+  max-width: 62ch;
+}
+
+.engagement-row__price {
+  text-align: right;
+}
+
+.engagement-row__amount {
+  font-size: clamp(1.125rem, 1.3vw + 0.55rem, 1.4375rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sized down but not shrunk away: the qualifier is part of the price. */
+.engagement-row__starts {
+  font-size: 0.62em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+  white-space: nowrap;
+}
+
+.engagement-row__figure {
+  white-space: nowrap;
+}
+
+.engagement-row__unit {
+  font-size: 0.68em;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--color-muted-on-bone);
+}
+
+.engagement-row__window {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.engagement-group__note {
+  margin-top: clamp(18px, 2.2vw, 26px);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 78ch;
+}
+
+/* These panels carry three stages against the websites panel's three
+   levels, so at deck width the rows take the extra room rather than
+   leaving it blank underneath. */
+@media (min-width: 1024px) {
+  .engagement-row {
+    padding-block: clamp(30px, 3.6vw, 52px);
+  }
+
+  .engagement-row__title {
+    font-size: clamp(1.375rem, 1.7vw, 1.75rem);
+  }
+
+  .engagement-row__description {
+    font-size: 1rem;
+    max-width: 68ch;
+  }
+
+  .engagement-row__amount {
+    font-size: clamp(1.4375rem, 1.9vw, 1.875rem);
+  }
+}
+
+@media (max-width: 767px) {
+  .engagement-row {
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 14px;
+  }
+
+  /* The figure stays with the service it belongs to: same column, directly
+     under its own description, rather than adrift across the row. */
+  .engagement-row__price {
+    grid-column: 2;
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+  }
+
+  .engagement-row__window {
+    margin-top: 0;
+  }
+}

@@ -1,0 +1,20 @@
+.hero-ripples {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-ripple {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 218, 223, 0.55);
+  box-shadow:
+    0 0 12px rgba(247, 247, 244, 0.12),
+    inset 0 0 10px rgba(247, 247, 244, 0.08);
+  mix-blend-mode: screen;
+  opacity: 0;
+  will-change: transform, opacity;
+}

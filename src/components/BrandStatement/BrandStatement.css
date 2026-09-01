@@ -1,0 +1,167 @@
+.shift-wipe {
+  position: relative;
+  height: 145svh;
+}
+
+.shift-wipe__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shift-wipe__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(22px, 3vw, 30px);
+  text-align: center;
+  padding-inline: var(--gutter);
+}
+
+.shift-wipe__headline {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 6.4vw, 3.9rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.shift-wipe__line {
+  display: block;
+}
+
+.shift-wipe__body {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 2vw, 1.1875rem);
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+.shift-wipe__content--base {
+  color: var(--color-soft-white);
+  z-index: 1;
+}
+
+/* Readable by default: if JS/GSAP never runs, the headline and paragraph
+   stay fully visible instead of stuck at the animation's "from" state. */
+.shift-wipe__content--base .shift-wipe__line,
+.shift-wipe__content--base .shift-wipe__body {
+  opacity: 1;
+  transform: none;
+}
+
+.shift-wipe__content--base .shift-wipe__body {
+  color: var(--color-muted);
+}
+
+.shift-wipe__content--base .shift-wipe__word {
+  opacity: 0.55;
+  filter: blur(1.5px);
+}
+
+.shift-wipe__plane {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--color-bone);
+  clip-path: polygon(0% 170%, 100% 115%, 100% 100%, 0% 100%);
+  pointer-events: none;
+}
+
+.shift-wipe__content--duplicate {
+  color: var(--color-ink);
+}
+
+.shift-wipe__content--duplicate .shift-wipe__body {
+  color: var(--color-graphite);
+}
+
+/* The narrative pivot: the bone plane wipes "unforgettable." into ember.
+   The dark base keeps it soft-white, so the color literally arrives with
+   the shift. */
+.shift-wipe__content--duplicate .shift-wipe__line:last-child {
+  color: var(--color-ember-deep);
+}
+
+.shift-wipe__edge {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(247, 247, 244, 0) 0%,
+    rgba(255, 255, 255, 0.9) 45%,
+    rgba(214, 218, 223, 0.9) 55%,
+    rgba(247, 247, 244, 0) 100%
+  );
+  clip-path: polygon(0% 169.6%, 100% 114.6%, 100% 115%, 0% 170%);
+}
+
+@media (max-width: 767px) {
+  .shift-wipe {
+    height: 135svh;
+  }
+
+  .shift-wipe__headline {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+  }
+
+  .shift-wipe__body {
+    max-width: 46ch;
+  }
+}
+
+/* Reduced-motion static fallback */
+.brand-statement--static {
+  position: relative;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  padding-block: clamp(88px, 14vw, 160px) clamp(120px, 16vw, 200px);
+  overflow: hidden;
+}
+
+.brand-statement--static::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: clamp(64px, 11vw, 150px);
+  background: var(--color-bone);
+  clip-path: polygon(0 100%, 100% 38%, 100% 100%);
+}
+
+.brand-statement__inner {
+  max-width: 780px;
+  text-align: center;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 3vw, 30px);
+}
+
+.brand-statement__headline {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 6.4vw, 3.9rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.brand-statement__body {
+  font-size: clamp(1rem, 2vw, 1.1875rem);
+  color: var(--color-muted);
+  line-height: 1.6;
+  max-width: 52ch;
+  margin-inline: auto;
+}

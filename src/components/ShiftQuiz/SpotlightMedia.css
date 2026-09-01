@@ -1,0 +1,28 @@
+.spotlight-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.spotlight-media__frame {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  display: block;
+  pointer-events: none;
+}
+
+.spotlight-media__poster,
+.spotlight-media__video {
+  position: absolute;
+  inset: 0;
+}
+
+.spotlight-media__poster {
+  transition: opacity 0.25s ease;
+}
+
+.spotlight-media__poster--hidden {
+  opacity: 0;
+}

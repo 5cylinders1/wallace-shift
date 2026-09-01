@@ -1,0 +1,22 @@
+.pit-stop-car {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1672 / 941;
+}
+
+.pit-stop-car__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Hidden until GSAP stages it beside its crew member — prevents a flash of
+   a duplicate tire sitting on the hub before the timeline initializes. */
+.pit-stop-car__tire--replacement {
+  opacity: 0;
+}

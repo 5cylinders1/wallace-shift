@@ -1,0 +1,165 @@
+.outcome-field {
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  pointer-events: none;
+}
+
+.outcome-field__field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-ink);
+  clip-path: polygon(100% 0%, 100% 100%, 100% 100%, 100% 0%);
+}
+
+/* Generated scene behind the outcome word — a diagonal window into the
+   dark brand world, cut into the bone section. GSAP drives a slight
+   settle-in scale on reveal, so transforms live on this wrapper. */
+.outcome-field__media {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+/* Keeps the giant serif word readable over the scene without flattening
+   it — heavier at the lower right where the word sits. */
+.outcome-field__media-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(
+      100deg,
+      rgba(6, 7, 8, 0.5) 0%,
+      rgba(6, 7, 8, 0.08) 40%,
+      rgba(6, 7, 8, 0.02) 60%,
+      rgba(6, 7, 8, 0.35) 100%
+    ),
+    linear-gradient(to top, rgba(6, 7, 8, 0.45) 0%, rgba(6, 7, 8, 0) 45%);
+}
+
+.outcome-field__word {
+  position: absolute;
+  right: -0.01em;
+  bottom: -0.09em;
+  z-index: 3;
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(9rem, 15vw, 19rem);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: var(--color-bone);
+  white-space: nowrap;
+  opacity: 0;
+  text-shadow: 0 2px 28px rgba(6, 7, 8, 0.55);
+  /* No transform here: GSAP owns yPercent entirely via gsap.set() in
+     OutcomeField.tsx. A static CSS transform on this axis, combined with
+     GSAP's first yPercent write reading the CSS-resolved matrix as a
+     pre-existing pixel offset, compounds instead of replacing it — worse
+     under React StrictMode's double-invoked mount effect. */
+}
+
+.outcome-field__edge {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(
+    100deg,
+    rgba(232, 84, 39, 0.9),
+    rgba(214, 218, 223, 0.85) 55%,
+    rgba(247, 247, 244, 0.55)
+  );
+  opacity: 0;
+  clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+}
+
+.outcome-field__rule {
+  position: absolute;
+  z-index: 3;
+  background: var(--color-silver);
+  opacity: 0;
+}
+
+/* TRUST: a small crosshair-like register mark */
+.outcome-field--trust .outcome-field__rule--0 {
+  top: 40%;
+  left: 8%;
+  width: 64px;
+  height: 1px;
+  transform-origin: left center;
+}
+.outcome-field--trust .outcome-field__rule--1 {
+  top: 18%;
+  left: 8%;
+  width: 1px;
+  height: 64px;
+  transform-origin: top center;
+}
+
+/* FLOW: three horizontal lines that glide into place */
+.outcome-field--flow .outcome-field__rule--0 {
+  top: 26%;
+  left: 8%;
+  width: 96px;
+  height: 1px;
+}
+.outcome-field--flow .outcome-field__rule--1 {
+  top: 38%;
+  left: 12%;
+  width: 64px;
+  height: 1px;
+}
+.outcome-field--flow .outcome-field__rule--2 {
+  top: 50%;
+  left: 6%;
+  width: 116px;
+  height: 1px;
+}
+
+/* TIME: short ticks consolidate into one line */
+.outcome-field--time .outcome-field__rule--0 {
+  top: 42%;
+  left: 8%;
+  width: 1px;
+  height: 14px;
+}
+.outcome-field--time .outcome-field__rule--1 {
+  top: 42%;
+  left: 14%;
+  width: 1px;
+  height: 14px;
+}
+.outcome-field--time .outcome-field__rule--2 {
+  top: 42%;
+  left: 20%;
+  width: 1px;
+  height: 14px;
+}
+.outcome-field--time .outcome-field__rule--3 {
+  top: 48%;
+  left: 8%;
+  width: 72px;
+  height: 1px;
+  transform-origin: left center;
+  /* No static transform: scaleX(0) here — GSAP's fromTo establishes the
+     starting scale itself; see the yPercent note on .outcome-field__word
+     for why a pre-existing CSS transform on a GSAP-animated axis compounds
+     instead of being replaced. */
+}
+
+@media (max-width: 767px) {
+  .outcome-field {
+    position: relative;
+    inset: auto;
+    left: auto;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .outcome-field__word {
+    font-size: clamp(5rem, 22vw, 8rem);
+  }
+}

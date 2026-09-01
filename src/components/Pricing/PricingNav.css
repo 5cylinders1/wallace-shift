@@ -1,0 +1,83 @@
+/* A rule with three words on it, not a second header. Sticks directly
+   beneath the site header for the length of the deck and leaves with it. */
+.pricing-nav {
+  position: sticky;
+  top: var(--site-header-height);
+  z-index: 20;
+  background: var(--color-bone);
+  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.pricing-nav__inner {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+.pricing-nav__list {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(20px, 3vw, 44px);
+  /* The gutter lives on the list, not a wrapper, so the first and last
+     labels can never be clipped against the viewport edge mid-scroll. */
+  padding-inline: var(--gutter);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.pricing-nav__list::-webkit-scrollbar {
+  display: none;
+}
+
+.pricing-nav__link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+  padding-block: clamp(13px, 1.4vw, 17px);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.pricing-nav__index {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-muted-on-bone);
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.pricing-nav__link:hover {
+  color: var(--color-ink);
+}
+
+/* Weight, an index colour and an underline all carry the active state, so
+   it is never signalled by hue alone. */
+.pricing-nav__link--active {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-ember-deep);
+}
+
+.pricing-nav__link--active .pricing-nav__index {
+  color: var(--color-ember-deep);
+}
+
+.pricing-nav__link:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Anchored panels clear the fixed header and this bar. */
+#websites,
+#web-apps,
+#automation {
+  scroll-margin-top: calc(var(--site-header-height) + 60px);
+}

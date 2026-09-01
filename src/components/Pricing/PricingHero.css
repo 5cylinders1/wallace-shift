@@ -1,0 +1,182 @@
+.pricing-hero {
+  position: relative;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* Kept under the fold on purpose: the price table is the reason for the
+     page, so the opening statement earns roughly two-thirds of the first
+     screen rather than all of it. */
+  min-height: clamp(420px, 62svh, 620px);
+  /* Clears the fixed header at its real measured height, then adds the
+     section's own breathing room on top of it. The lower figure is larger
+     because the diagonal wedge eats into the bottom of this section. */
+  padding-block: calc(var(--site-header-height) + clamp(24px, 3.5vw, 48px))
+    clamp(92px, 9.5vw, 136px);
+}
+
+/* Ember is the site's only chromatic accent, so the hero's single glow is
+   the same warmth used by the homepage media rather than a new color. */
+.pricing-hero::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: min(900px, 90vw);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    circle,
+    rgba(232, 84, 39, 0.13) 0%,
+    rgba(232, 84, 39, 0.05) 38%,
+    rgba(232, 84, 39, 0) 70%
+  );
+  pointer-events: none;
+}
+
+/* Bone wedge carrying the same lower-left-to-upper-right slope the
+   homepage uses between its dark and warm halves. */
+.pricing-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: clamp(56px, 8vw, 115px);
+  background: var(--color-bone);
+  clip-path: polygon(0 100%, 100% 38%, 100% 100%);
+}
+
+.pricing-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(40px, 6vw, 96px);
+}
+
+.pricing-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(18px, 2.4vw, 26px);
+}
+
+/* Escalating rule lengths carry the same idea as the tier table's bars —
+   the comparison is legible before a single word is read. */
+.pricing-hero__index {
+  display: none;
+  flex-shrink: 0;
+  width: min(30vw, 380px);
+  padding-bottom: clamp(4px, 1vw, 12px);
+}
+
+.pricing-hero__index-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+.pricing-hero__index-row {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: clamp(14px, 1.6vw, 20px);
+}
+
+.pricing-hero__index-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1px;
+  background: rgba(214, 218, 223, 0.34);
+  transform-origin: left center;
+}
+
+.pricing-hero__index-row:last-child .pricing-hero__index-rule {
+  background: rgba(232, 84, 39, 0.55);
+}
+
+.pricing-hero__index-name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 1.5vw, 1.5rem);
+  color: var(--color-soft-white);
+}
+
+.pricing-hero__index-price {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-silver);
+}
+
+@media (min-width: 1120px) {
+  .pricing-hero__index {
+    display: block;
+  }
+}
+
+.pricing-hero__eyebrow {
+  color: var(--color-silver);
+}
+
+.pricing-hero__headline {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(3rem, 9.5vw, 6.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  max-width: 14ch;
+}
+
+/* Each line clips its inner span so the entrance slides text up from
+   below its own baseline; the padding/margin pair keeps serif descenders
+   from being clipped at rest. */
+.pricing-hero__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.pricing-hero__line-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+.pricing-hero__headline .accent-serif {
+  color: var(--color-ember);
+}
+
+.pricing-hero__supporting {
+  font-size: clamp(1rem, 0.5vw + 0.9rem, 1.1875rem);
+  line-height: 1.6;
+  color: var(--color-silver);
+  max-width: 56ch;
+}
+
+.pricing-hero__note {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-muted);
+  max-width: 52ch;
+}
+
+@media (max-width: 767px) {
+  .pricing-hero {
+    min-height: 0;
+    padding-block: calc(var(--site-header-height) + clamp(32px, 9vw, 56px))
+      clamp(88px, 22vw, 140px);
+  }
+
+  .pricing-hero__headline {
+    font-size: clamp(2.75rem, 13vw, 4rem);
+  }
+}

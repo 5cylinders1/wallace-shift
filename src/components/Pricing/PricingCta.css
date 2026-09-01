@@ -1,0 +1,88 @@
+.pricing-cta {
+  position: relative;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  padding-block: clamp(56px, 8vw, 104px) clamp(96px, 12vw, 160px);
+  overflow: hidden;
+}
+
+.pricing-cta::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -55%;
+  width: min(1000px, 120vw);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle,
+    rgba(232, 84, 39, 0.12) 0%,
+    rgba(232, 84, 39, 0.04) 40%,
+    rgba(232, 84, 39, 0) 70%
+  );
+  pointer-events: none;
+}
+
+.pricing-cta__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(18px, 2.4vw, 26px);
+}
+
+.pricing-cta__headline {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 6.4vw, 3.9rem);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+}
+
+.pricing-cta__supporting {
+  font-size: clamp(1rem, 0.4vw + 0.9rem, 1.1875rem);
+  line-height: 1.6;
+  color: var(--color-muted);
+  max-width: 54ch;
+}
+
+/* Matches the homepage hero's primary action, including the diagonal
+   ember wipe on hover — one button treatment across the site. */
+.pricing-cta__button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  margin-top: clamp(6px, 1vw, 12px);
+  background: var(--color-soft-white);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.95em 1.9em;
+  border-radius: 999px;
+  transition: box-shadow var(--duration-hover) var(--ease-out-soft);
+}
+
+.pricing-cta__button > span {
+  position: relative;
+  z-index: 1;
+}
+
+.pricing-cta__button::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: var(--color-ember);
+  clip-path: polygon(-30% 130%, 0% 100%, -20% 130%, -30% 130%);
+  transition: clip-path 0.45s var(--ease-premium);
+}
+
+.pricing-cta__button:hover::before,
+.pricing-cta__button:focus-visible::before {
+  clip-path: polygon(-30% 130%, 130% -30%, 130% 130%, -30% 130%);
+}
+
+.pricing-cta__button:hover {
+  box-shadow: 0 8px 30px rgba(232, 84, 39, 0.28);
+}

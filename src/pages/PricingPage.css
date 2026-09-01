@@ -1,0 +1,6 @@
+/* Sticky positioning breaks under a clipping ancestor, so this wrapper
+   deliberately sets no overflow of its own. */
+.pricing-sections {
+  position: relative;
+  background: var(--color-bone);
+}

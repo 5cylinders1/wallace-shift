@@ -1,0 +1,177 @@
+.approach {
+  position: relative;
+  min-height: max(640px, 100svh);
+  background: var(--color-soft-white);
+  color: var(--color-ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(24px, 4vw, 40px);
+  overflow: hidden;
+  /* Guaranteed floor of clearance beneath the fixed header, regardless of
+     viewport height — read from the header's own measured height (set by
+     SiteHeader via ResizeObserver) rather than a value tuned to one size. */
+  padding-top: calc(var(--site-header-height, 84px) + 32px);
+}
+
+.approach__heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 5.4vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.1;
+  max-width: 18ch;
+  letter-spacing: -0.01em;
+}
+
+.approach__scene-wrap {
+  width: 100%;
+}
+
+.approach__static-car {
+  width: min(100%, 720px);
+  margin-inline: auto;
+}
+
+.approach__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+}
+
+.approach-step {
+  text-align: left;
+}
+
+.approach-step__index {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--color-ember-deep);
+  margin-bottom: 8px;
+}
+
+/* Titles and descriptions carry their own independent contrast levels —
+   deliberately not a shared block opacity — and no static `transform` is
+   declared on either: GSAP owns `scale`/`y` entirely via gsap.set()/to(),
+   the same safe pattern established for the Services section's
+   OutcomeField (a pre-existing CSS transform would compound against
+   GSAP's first write instead of being replaced by it).
+
+   Three-tier hierarchy: active (1, set inline by GSAP or first-child
+   below), completed (0.55 / 0.45, set by GSAP once a step is passed), and
+   upcoming — this resting default, for any step not yet reached. */
+
+.approach-step__title {
+  font-size: clamp(1.1rem, 2vw, 1.375rem);
+  font-weight: 600;
+  margin-bottom: 8px;
+  opacity: 0.3;
+}
+
+.approach-step:first-child .approach-step__title {
+  opacity: 1;
+}
+
+.approach-step__description {
+  color: #4b4f52;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  max-width: 34ch;
+  opacity: 0.22;
+}
+
+.approach-step:first-child .approach-step__description {
+  opacity: 1;
+}
+
+@media (max-width: 1023px) {
+  .approach__steps {
+    gap: clamp(16px, 3vw, 24px);
+  }
+
+  .approach-step__description {
+    max-width: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .approach {
+    height: auto;
+    min-height: 0;
+    padding-block: clamp(64px, 12vw, 96px);
+  }
+
+  .approach__scene-wrap {
+    display: none;
+  }
+
+  .approach__steps {
+    grid-template-columns: 1fr;
+    position: relative;
+    gap: clamp(40px, 10vw, 56px);
+    padding-inline-start: 20px;
+  }
+
+  .approach__steps::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: rgba(6, 7, 8, 0.16);
+  }
+
+  .approach-step {
+    position: relative;
+  }
+
+  /* On mobile every step is fully readable in reading order — there is no
+     scroll-driven "active step" concept, so titles/descriptions always
+     render at full opacity regardless of position in the list. */
+  .approach-step .approach-step__title,
+  .approach-step .approach-step__description {
+    opacity: 1;
+  }
+
+  .approach-step::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    background: var(--color-ember);
+    border-radius: 50%;
+  }
+
+  /* The last step's dot marker is redundant once the MobilePitScene
+     illustration sits above its title. */
+  .approach-step:last-child::before {
+    display: none;
+  }
+}
+
+/* Reduced-motion static fallback */
+
+.approach--static {
+  height: auto;
+  min-height: 0;
+  padding-block: var(--section-pad-y);
+}
+
+.approach--static .approach__static-car {
+  margin-block: clamp(32px, 6vw, 64px);
+}
+
+.approach-step--static .approach-step__title,
+.approach-step--static .approach-step__description {
+  opacity: 1;
+}
+
+@media (max-width: 767px) {
+  .approach--static .approach__steps {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 8vw, 40px);
+  }
+}
