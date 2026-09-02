@@ -18,6 +18,24 @@
   border-top: 1px solid rgba(6, 7, 8, 0.14);
 }
 
+/* Full-bleed from 768px up.
+   The rules and the outcome media are section-scale devices — stopping
+   them at the container gutter made them read as a boxed widget. The
+   stack breaks out to the screen edge and each row re-applies the gutter
+   to its own content, so the type stays on the same measure as the
+   heading while the lines and the media run edge to edge. */
+@media (min-width: 768px) {
+  .services__rows,
+  .services__exits {
+    margin-inline: calc(var(--gutter) * -1);
+  }
+
+  .service-row,
+  .services__exit {
+    padding-inline: var(--gutter);
+  }
+}
+
 /* Service row (semantic button) */
 
 .service-row {
@@ -128,12 +146,16 @@
    The two questions that follow the rows, built with the same vocabulary
    as the rows themselves — a rule, a small label, a line of copy — so they
    read as part of the section rather than links appended to it. */
+/* Not a footer to the section — two more entries in the same list. Same
+   full-bleed, same rules top and bottom, same inline padding as the rows
+   above, so they close the stack instead of floating under it. */
 .services__exits {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 0;
-  margin-top: clamp(36px, 4.5vw, 64px);
-  border-top: 1px solid rgba(6, 7, 8, 0.14);
+  margin-top: 0;
+  /* No top border: the final row's own border-bottom is that line. */
+  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
 }
 
 .services__exit {
@@ -145,7 +167,9 @@
     'label   arrow';
   align-items: end;
   gap: 6px 16px;
-  padding: clamp(22px, 2.6vw, 30px) 0;
+  /* Block axis only — the inline padding is owned by the full-bleed rule
+     above, and a shorthand here would silently zero it. */
+  padding-block: clamp(22px, 2.6vw, 30px);
   color: var(--color-ink);
   text-decoration: none;
 }
@@ -191,6 +215,9 @@
 .services__exit-arrow {
   grid-area: arrow;
   align-self: center;
+  /* Kept off the screen edge now that the exits are full-bleed, and off
+     the divider between the two. */
+  padding-inline-end: clamp(4px, 1.5vw, 20px);
   font-size: 1.125rem;
   color: var(--color-ember-deep);
   transition: transform var(--duration-hover) var(--ease-out-soft);
@@ -205,8 +232,21 @@
    top rule instead. */
 @media (min-width: 700px) {
   .services__exit + .services__exit {
-    padding-left: clamp(24px, 3vw, 48px);
     border-left: 1px solid rgba(6, 7, 8, 0.14);
+  }
+}
+
+@media (min-width: 700px) and (max-width: 767px) {
+  .services__exit + .services__exit {
+    padding-left: clamp(24px, 3vw, 48px);
+  }
+}
+
+/* Full-bleed widths: the second exit's own gutter already separates it
+   from the divider, so it only needs the extra breathing room. */
+@media (min-width: 768px) {
+  .services__exit + .services__exit {
+    padding-left: clamp(28px, 3.2vw, 56px);
   }
 }
 

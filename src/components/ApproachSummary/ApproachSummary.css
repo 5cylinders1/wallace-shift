@@ -174,7 +174,8 @@
   position: relative;
   flex: 1;
   display: grid;
-  align-content: center;
+  align-content: start;
+  padding-top: clamp(18px, 3vh, 34px);
   min-height: 0;
 }
 
@@ -183,8 +184,8 @@
 .approach-summary__ghost {
   position: absolute;
   right: -0.06em;
-  top: 50%;
-  transform: translateY(-52%);
+  top: 0;
+  transform: translateY(-14%);
   font-family: var(--font-serif);
   font-size: clamp(9rem, 42vw, 16rem);
   line-height: 0.72;
@@ -204,7 +205,11 @@
   grid-area: 1 / 1;
   opacity: 0;
   transform: translateY(14px);
-  border-top-width: 2px;
+  /* No top rule here: the progress rail above already marks which beat is
+     showing, and a second full-width bar saying the same thing was the
+     louder of the two. */
+  border-top: none;
+  padding-top: 0;
   transition:
     opacity 0.45s var(--ease-out-soft),
     transform 0.45s var(--ease-out-soft);
@@ -219,7 +224,25 @@
    bottom edge so it reads as a lane, not a page border. */
 .approach-summary__stage .approach-track {
   flex: none;
-  margin-bottom: clamp(16px, 4vh, 44px);
+  margin-top: auto;
+  margin-bottom: clamp(14px, 2.6vh, 26px);
+}
+
+/* Sits under the lane, closing the stage on the launch beat. */
+.approach-summary__cta {
+  flex: none;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.85em 1.5em;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
 }
 
 @media (max-width: 767px) {
@@ -229,5 +252,51 @@
 
   .approach-summary__stage .approach-track__lane {
     height: clamp(104px, 17svh, 158px);
+  }
+}
+
+/* ---- Pinned desktop stage --------------------------------------------
+   The full pit-stop scene, at the scale it was designed for, pinned while
+   the four beats play out. Only this wrapper is pinned — the hill below it
+   stays in normal flow so the car can run off down the slope once the pin
+   releases, rather than being frozen mid-descent behind the scene. */
+@media (min-width: 768px) {
+  .approach-summary {
+    padding-block: 0;
+  }
+
+  .approach-summary__desktop {
+    min-height: max(640px, 100svh);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(20px, 3vw, 36px);
+    overflow: hidden;
+    padding-top: calc(var(--site-header-height, 84px) + clamp(16px, 3vh, 32px));
+    padding-bottom: clamp(24px, 4vh, 48px);
+  }
+
+  .approach-summary__scene-wrap {
+    width: 100%;
+  }
+
+  /* Three-tier hierarchy, matching /approach: active (GSAP writes 1),
+     completed (GSAP writes 0.55 / 0.45), and this resting state for a beat
+     the car has not reached yet. GSAP owns opacity from here on. */
+  .approach-summary__desktop .approach-summary__title {
+    opacity: 0.3;
+  }
+
+  .approach-summary__desktop .approach-summary__body {
+    opacity: 0.22;
+  }
+
+  .approach-summary__desktop
+    .approach-summary__step:first-child
+    .approach-summary__title,
+  .approach-summary__desktop
+    .approach-summary__step:first-child
+    .approach-summary__body {
+    opacity: 1;
   }
 }

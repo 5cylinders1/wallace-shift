@@ -10,6 +10,8 @@ import { PageLink } from '../PageLink/PageLink'
 import { Reveal } from '../Reveal/Reveal'
 import { DiagonalRun } from '../DiagonalRun/DiagonalRun'
 import { ApproachTrack } from './ApproachTrack'
+import { PitStopScene } from '../Approach/PitStopScene'
+import { usePitStopSceneTimeline } from '../Approach/usePitStopSceneTimeline'
 import {
   HUB,
   TIMELINE,
@@ -52,6 +54,16 @@ export function ApproachSummary() {
   const markUpperRef = useRef<HTMLSpanElement>(null)
   const markLowerRef = useRef<HTMLSpanElement>(null)
   const cardRefs = useRef<(HTMLLIElement | null)[]>([])
+  const titleRefs = useRef<(HTMLElement | null)[]>([])
+  const descRefs = useRef<(HTMLElement | null)[]>([])
+
+  // Desktop runs the full scene, which needs the stage's own travel
+  // wrapper, release light and peel marks on top of the car layers.
+  const desktopStageRef = useRef<HTMLDivElement>(null)
+  const carTravelRef = useRef<HTMLDivElement>(null)
+  const releaseIndicatorRef = useRef<SVGCircleElement>(null)
+  const rearUpperPeelRef = useRef<SVGRectElement>(null)
+  const rearLowerPeelRef = useRef<SVGRectElement>(null)
 
   const chassisRef = useRef<HTMLImageElement>(null)
   const frontUpperMountedRef = useRef<HTMLImageElement>(null)
@@ -78,15 +90,37 @@ export function ApproachSummary() {
     rearLower: rearLowerReplacementRef,
   }
 
+  // Matches PitStopScene's PEEL_MARK_POSITIONS order: rearUpper, rearLower.
+  const peelMarkRefs = [rearUpperPeelRef, rearLowerPeelRef]
+
   const reducedMotion = useReducedMotion()
   const isMobile = useMediaQuery('(max-width: 767px)')
   // Which step the car has reached. Written at most twice across the whole
   // sequence — the car itself is animated by GSAP, never by React state.
   const [activeStep, setActiveStep] = useState(0)
 
+  // Desktop: the full pit-stop scene, pinned, sharing its timeline with
+  // /approach. Only the stage is pinned — the hill below it must stay free
+  // to scroll so the car can run off down the slope afterwards.
+  usePitStopSceneTimeline(
+    {
+      sectionRef,
+      carTravelRef,
+      releaseIndicatorRef,
+      mountedRefs,
+      replacementRefs,
+      peelMarkRefs,
+      titleRefs,
+      descRefs,
+      pinTargetRef: desktopStageRef,
+    },
+    { enabled: !reducedMotion && !isMobile },
+  )
+
+  // Mobile: the compact lane on a pinned, viewport-tall stage.
   useGSAP(
     () => {
-      if (reducedMotion) return
+      if (reducedMotion || !isMobile) return
 
       const section = sectionRef.current
       const lane = trackRef.current
@@ -168,8 +202,7 @@ export function ApproachSummary() {
       const stage = stageRef.current
 
       const tl = gsap.timeline({
-        scrollTrigger: isMobile
-          ? {
+        scrollTrigger: {
               trigger: section,
               // Pinned: the lane holds at the bottom of the screen while
               // the cards change over, so every beat is actually seen.
@@ -185,17 +218,6 @@ export function ApproachSummary() {
               // finishes off-screen before the visitor ever reaches it.
               // Higher priority refreshes earlier.
               refreshPriority: 1,
-              onUpdate: (self) => {
-                const p = self.progress
-                setActiveStep(p < enterEnd ? 0 : p < releaseAt ? 1 : 2)
-              },
-            }
-          : {
-              trigger: section,
-              start: 'top 78%',
-              end: 'bottom 32%',
-              scrub: 0.4,
-              invalidateOnRefresh: true,
               onUpdate: (self) => {
                 const p = self.progress
                 setActiveStep(p < enterEnd ? 0 : p < releaseAt ? 1 : 2)
@@ -276,8 +298,22 @@ export function ApproachSummary() {
       }}
     >
       <span className="approach-summary__index">{step.index}</span>
-      <h3 className="approach-summary__title">{step.title}</h3>
-      <p className="approach-summary__body">{step.description}</p>
+      <h3
+        className="approach-summary__title"
+        ref={(el) => {
+          titleRefs.current[index] = el
+        }}
+      >
+        {step.title}
+      </h3>
+      <p
+        className="approach-summary__body"
+        ref={(el) => {
+          descRefs.current[index] = el
+        }}
+      >
+        {step.description}
+      </p>
     </li>
   ))
 
@@ -334,12 +370,40 @@ export function ApproachSummary() {
           </div>
 
           {track}
+
+          {/* The sequence ends on "launch with momentum" — so the exit sits
+              directly under the car it just watched leave. */}
+          <PageLink href="/contact" className="approach-summary__cta">
+            Start a project
+            <span aria-hidden="true">&#8599;</span>
+          </PageLink>
         </div>
       ) : (
-        <div className="container">
-          {head}
-          {!reducedMotion && track}
-          <ol className="approach-summary__steps">{cards}</ol>
+        <div className="approach-summary__desktop" ref={desktopStageRef}>
+          <div className="container">{head}</div>
+
+          {!reducedMotion && (
+            <div className="approach-summary__scene-wrap">
+              <PitStopScene
+                carTravelRef={carTravelRef}
+                chassisRef={chassisRef}
+                frontUpperMountedRef={frontUpperMountedRef}
+                frontLowerMountedRef={frontLowerMountedRef}
+                rearUpperMountedRef={rearUpperMountedRef}
+                rearLowerMountedRef={rearLowerMountedRef}
+                frontUpperReplacementRef={frontUpperReplacementRef}
+                frontLowerReplacementRef={frontLowerReplacementRef}
+                rearUpperReplacementRef={rearUpperReplacementRef}
+                rearLowerReplacementRef={rearLowerReplacementRef}
+                releaseIndicatorRef={releaseIndicatorRef}
+                peelMarkRefs={peelMarkRefs}
+              />
+            </div>
+          )}
+
+          <div className="container">
+            <ol className="approach-summary__steps">{cards}</ol>
+          </div>
         </div>
       )}
 
