@@ -2,14 +2,18 @@ import { Hero } from '../components/Hero/Hero'
 import { BrandStatement } from '../components/BrandStatement/BrandStatement'
 import { Services } from '../components/Services/Services'
 import { ShiftQuiz } from '../components/ShiftQuiz/ShiftQuiz'
-import { Approach } from '../components/Approach/Approach'
-import { StandardsSection } from '../components/Standards/StandardsSection'
+import { ApproachSummary } from '../components/ApproachSummary/ApproachSummary'
 import { ContactCta } from '../components/ContactCta/ContactCta'
-import { siteMeta } from '../content/siteConfig'
-import { useDocumentMeta } from '../hooks/useDocumentMeta'
+import { useRouteMeta } from '../hooks/useDocumentMeta'
 
+/**
+ * The homepage now introduces and routes rather than containing
+ * everything. The full process sequence and the standards section moved
+ * to `/approach`; each remaining section leads somewhere it can be read
+ * about properly.
+ */
 export function HomePage() {
-  useDocumentMeta(siteMeta.title, siteMeta.description)
+  useRouteMeta('/')
 
   return (
     <>
@@ -17,8 +21,7 @@ export function HomePage() {
       <BrandStatement />
       <Services />
       <ShiftQuiz />
-      <Approach />
-      <StandardsSection />
+      <ApproachSummary />
       <ContactCta />
     </>
   )

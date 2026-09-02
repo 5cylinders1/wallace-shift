@@ -107,7 +107,7 @@ export function TierTable() {
                 ))}
               </ul>
 
-              <PageLink href="/#contact" className="tier__cta">
+              <PageLink href="/contact" className="tier__cta">
                 {tier.ctaLabel}
                 <span className="tier__cta-arrow" aria-hidden="true">
                   &#8599;

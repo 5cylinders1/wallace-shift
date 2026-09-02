@@ -1,0 +1,103 @@
+.page-hero {
+  position: relative;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* Two-thirds of the first screen at most: the page's content is the
+     reason for the visit, so the opening statement never fills a viewport
+     the way the homepage hero does. */
+  min-height: clamp(380px, 56svh, 560px);
+  padding-block: calc(var(--site-header-height) + clamp(24px, 3.5vw, 48px))
+    clamp(92px, 9.5vw, 136px);
+}
+
+/* The same single ember glow the pricing hero uses, in the same corner,
+   so interior pages share one light source. */
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: min(900px, 90vw);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    circle,
+    rgba(232, 84, 39, 0.13) 0%,
+    rgba(232, 84, 39, 0.05) 38%,
+    rgba(232, 84, 39, 0) 70%
+  );
+  pointer-events: none;
+}
+
+/* Bone wedge on the site's shared lower-left-to-upper-right slope. */
+.page-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: clamp(56px, 8vw, 115px);
+  background: var(--color-bone);
+  clip-path: polygon(0 100%, 100% 38%, 100% 100%);
+}
+
+.page-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(16px, 2.2vw, 24px);
+}
+
+.page-hero__eyebrow {
+  color: var(--color-silver);
+}
+
+.page-hero__headline {
+  margin: 0;
+  font-size: clamp(2.4rem, 6.4vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  max-width: 18ch;
+}
+
+/* Each line is a mask; the inner span is what slides up through it. */
+.page-hero__line {
+  display: block;
+  overflow: hidden;
+}
+
+.page-hero__line-inner {
+  display: block;
+  will-change: transform;
+}
+
+.page-hero__supporting {
+  margin: 0;
+  max-width: 54ch;
+  font-size: clamp(1rem, 1.35vw, 1.1875rem);
+  line-height: 1.55;
+  color: var(--color-silver);
+}
+
+.page-hero__note {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+@media (max-width: 640px) {
+  .page-hero {
+    min-height: clamp(320px, 48svh, 460px);
+  }
+
+  .page-hero__headline {
+    max-width: none;
+  }
+}

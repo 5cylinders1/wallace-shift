@@ -150,11 +150,27 @@
 }
 
 @media (max-width: 767px) {
+  /* Full-bleed: the scene is a window into the dark brand world cut into
+     the bone section, so it runs edge to edge rather than sitting inside
+     the container's gutter. `flex-basis` forces it onto its own line in
+     the row; the negative inline margins cancel the container padding, and
+     the row's own `overflow: hidden` is lifted so it is not clipped back
+     off (the field still clips its own contents). */
   .outcome-field {
     position: relative;
     inset: auto;
     left: auto;
-    width: 100%;
+    /* `flex-basis: auto` matters: a non-auto basis overrides `width` for a
+       flex item's main size, which is what pinned this to the container
+       instead of the viewport. With basis auto and shrink off, the item is
+       a full viewport wide, cannot fit beside the index and body, and so
+       wraps to its own line — then the negative gutter margins pull it out
+       to the screen edges. */
+    flex-basis: auto;
+    flex-shrink: 0;
+    width: 100vw;
+    max-width: none;
+    margin-inline: calc(var(--gutter) * -1);
     height: 0;
     overflow: hidden;
   }

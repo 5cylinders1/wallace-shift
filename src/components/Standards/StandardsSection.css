@@ -3,9 +3,9 @@
   background: var(--color-bone);
   color: var(--color-ink);
   padding-top: clamp(120px, 12vw, 160px);
-  /* No bottom padding here — `.standards__diagonal` is the section's last
-     child and must touch its true bottom edge directly so the wedge's
-     black connects straight into the following section with nothing
+  /* No bottom padding here — `.diagonal-run` is the section's last child
+     and must touch its true bottom edge directly so the wedge's black
+     connects straight into the following section with nothing
      bone-colored after it. The breathing room after the last principle
      comes from the wedge's own `margin-top` instead. */
   overflow: hidden;
@@ -89,89 +89,6 @@
   max-width: 560px;
 }
 
-/* Diagonal transition into the following (black) section — a plane and a
-   thin metallic edge that share one geometry source (`--diag-left`,
-   `--diag-right`, `--diag-edge`) so they can never drift apart at any
-   viewport width: the edge's clip-path is the plane's, offset by that same
-   half-thickness on both sides. Both live inside `.standards__diagonal`,
-   which is the single element the entrance/exit animation ever moves —
-   translating it moves the plane and edge together, by construction. */
-.standards__diagonal {
-  --diag-left: 95%;
-  --diag-right: 8%;
-  --diag-edge: 1.5px;
-  /* Matches the JS exit-rise translate distance exactly (read via
-     getComputedStyle in StandardsSection.tsx, not duplicated as a second
-     literal) — see the height/margin-bottom pairing below for why. */
-  --diag-rise: 28px;
-  position: relative;
-  /* The band is taller than its visible resting height by exactly
-     `--diag-rise`, then pulled back up by the same amount via a negative
-     bottom margin, so the extra height sits clipped (by `.standards`'s own
-     `overflow: hidden`) below the section's real boundary at rest. As the
-     exit animation translates this element up by `--diag-rise`, that
-     clipped reserve slides into view and keeps solid black covering all
-     the way down to the following section — instead of uncovering the
-     section's own bone background, which is what a plain translate on a
-     box sized to end exactly at the boundary would do.
-
-     The extra `+ 2px` on both the height and the (more negative)
-     margin-bottom is a deliberate 2px overlap into the following section,
-     not part of the rise math — `clamp()`/`calc()`-derived heights can
-     round to fractional pixels differently than the adjacent section's own
-     box, leaving a hairline gap at the seam. Since both sides are solid
-     black here, a couple of overlapping pixels is invisible and removes
-     that rounding gap entirely. */
-  height: calc(clamp(96px, 11vw, 160px) + var(--diag-rise) + 2px);
-  margin-top: clamp(32px, 5vw, 64px);
-  margin-bottom: calc(-1 * var(--diag-rise) - 2px);
-}
-
-.standards__diagonal-plane,
-.standards__diagonal-edge {
-  position: absolute;
-  inset: 0;
-}
-
-.standards__diagonal-plane {
-  background: var(--color-ink);
-  clip-path: polygon(0% var(--diag-left), 100% var(--diag-right), 100% 100%, 0% 100%);
-}
-
-.standards__diagonal-edge {
-  background: linear-gradient(
-    120deg,
-    rgba(247, 247, 244, 0) 0%,
-    rgba(255, 255, 255, 0.85) 45%,
-    rgba(232, 84, 39, 0.75) 52%,
-    rgba(214, 218, 223, 0.85) 58%,
-    rgba(247, 247, 244, 0) 100%
-  );
-  clip-path: polygon(
-    0% calc(var(--diag-left) - var(--diag-edge)),
-    100% calc(var(--diag-right) - var(--diag-edge)),
-    100% calc(var(--diag-right) + var(--diag-edge)),
-    0% calc(var(--diag-left) + var(--diag-edge))
-  );
-}
-
-/* Races down the diagonal from right to left as the visitor scrolls past —
-   `left`/`top` are set entirely by StandardsSection.tsx's ScrollTrigger
-   (reading the same `--diag-left`/`--diag-right` values the clip-path
-   above uses), so this only needs to size and center the car on its own
-   anchor point. Scaled to roughly match the small car's footprint in the
-   Approach section above, not the source image's own large canvas. */
-.standards__car {
-  position: absolute;
-  width: clamp(90px, 12vw, 200px);
-  /* Matches the ember car cutout's tight content bounds (1600x340). */
-  aspect-ratio: 1600 / 340;
-  object-fit: contain;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  user-select: none;
-}
-
 @media (max-width: 1023px) {
   .standards__grid {
     grid-template-columns: minmax(240px, 42%) 1fr;
@@ -203,15 +120,5 @@
     grid-template-columns: 40px 1fr;
     column-gap: 14px;
   }
-
-  .standards__diagonal {
-    height: clamp(72px, 20vw, 110px);
-    margin-top: clamp(24px, 8vw, 40px);
-  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .standards__diagonal {
-    transform: none !important;
-  }
-}

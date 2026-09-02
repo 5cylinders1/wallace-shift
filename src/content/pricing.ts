@@ -11,12 +11,6 @@
  *    in the scope list. The lists are promises; the notes are the limits.
  */
 
-export const pricingMeta = {
-  title: 'Pricing | Wallace Shift',
-  description:
-    'Wallace Shift pricing for websites, web apps, and automation. Three website levels starting at $1,000, plus product definition and workflow engagements.',
-}
-
 export const pricingHero = {
   eyebrow: 'Pricing',
   headlineLines: ['What a shift'],
@@ -335,5 +329,5 @@ export const pricingCta = {
   supporting:
     'Tell us what is not working and what you are working with. We will tell you which level makes sense — or that you do not need us yet.',
   ctaLabel: 'Start a project',
-  ctaHref: '/#contact',
+  ctaHref: '/contact',
 }

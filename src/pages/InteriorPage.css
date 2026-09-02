@@ -1,0 +1,416 @@
+/**
+ * Shared layout for the interior content pages (services, about, privacy,
+ * contact, 404). The homepage, pricing page, and approach page keep their
+ * own section-level CSS because they carry media and pinned motion; these
+ * pages are read, so they share one editorial system instead.
+ */
+
+.interior {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  padding-block: var(--section-pad-y);
+}
+
+.interior--tight {
+  padding-block: clamp(48px, 7vw, 96px);
+}
+
+/* Dark closing band, matching the contact section's weight on the home
+   page so every page ends on the same note. */
+.interior--ink {
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+}
+
+.interior__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(12px, 1.6vw, 18px);
+  max-width: 62ch;
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+
+.interior__eyebrow {
+  color: var(--color-muted-on-bone);
+}
+
+.interior--ink .interior__eyebrow {
+  color: var(--color-silver);
+}
+
+.interior__heading {
+  margin: 0;
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.interior__supporting {
+  margin: 0;
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 58ch;
+}
+
+.interior--ink .interior__supporting {
+  color: var(--color-silver);
+}
+
+/* ---------- service rows ---------- */
+
+.service-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(28px, 4vw, 72px);
+  padding-block: clamp(44px, 5.5vw, 80px);
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.service-detail:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.service-detail__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  /* Sticks alongside the longer right-hand column on wide screens so the
+     service being described stays visible while its detail is read. */
+  position: sticky;
+  top: calc(var(--site-header-height) + 32px);
+  align-self: start;
+}
+
+.service-detail__index {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--color-ember-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+.service-detail__title {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.service-detail__summary {
+  margin: 0;
+  font-size: clamp(1rem, 1.2vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 40ch;
+}
+
+.service-detail__pricing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-ember-deep);
+  padding-bottom: 3px;
+  transition: gap var(--duration-hover) var(--ease-out-soft);
+}
+
+.service-detail__pricing:hover {
+  gap: 0.85em;
+}
+
+.service-detail__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 3vw, 36px);
+  min-width: 0;
+}
+
+.service-detail__problem {
+  margin: 0;
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  line-height: 1.55;
+  letter-spacing: -0.012em;
+  max-width: 52ch;
+  padding-left: clamp(16px, 2vw, 24px);
+  border-left: 2px solid var(--color-ember-deep);
+}
+
+.service-block__label {
+  margin: 0 0 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.service-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-list li {
+  position: relative;
+  padding: 11px 0 11px 26px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  border-bottom: 1px solid rgba(6, 7, 8, 0.1);
+}
+
+.service-list li:last-child {
+  border-bottom: none;
+}
+
+/* Offset rule rather than a bullet, echoing the mark's diagonal cuts. */
+.service-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 21px;
+  width: 12px;
+  height: 1px;
+  background: var(--color-ember-deep);
+}
+
+.service-detail__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(24px, 3vw, 40px);
+}
+
+.service-detail__note {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 56ch;
+}
+
+/* ---------- people ---------- */
+
+.people {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 2px solid var(--color-ink);
+}
+
+.person__name {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.9vw, 1.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+.person__role {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ember-deep);
+}
+
+.person__bio {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+}
+
+/* ---------- prose (story, privacy) ---------- */
+
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15em;
+  max-width: 64ch;
+}
+
+.prose p {
+  margin: 0;
+  font-size: clamp(1rem, 1.2vw, 1.0625rem);
+  line-height: 1.68;
+  color: var(--color-muted-on-bone);
+}
+
+.prose strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+/* ---------- q&a rows (about facts, privacy sections) ---------- */
+
+.qa {
+  display: flex;
+  flex-direction: column;
+  max-width: 78ch;
+}
+
+.qa__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: clamp(12px, 3vw, 48px);
+  padding-block: clamp(22px, 2.6vw, 32px);
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.qa__item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.qa__q {
+  margin: 0;
+  font-size: clamp(1.0625rem, 1.45vw, 1.1875rem);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.qa__a {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--color-muted-on-bone);
+}
+
+.qa__a + .qa__a {
+  margin-top: 0.9em;
+}
+
+.qa__list {
+  margin: 0.9em 0 0;
+  padding-left: 1.1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+}
+
+/* ---------- closing band ---------- */
+
+.closing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(18px, 2.4vw, 26px);
+}
+
+.closing__headline {
+  margin: 0;
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+.closing__supporting {
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--color-silver);
+}
+
+.closing__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.button-primary,
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 15px 28px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft),
+    color var(--duration-hover) var(--ease-out-soft);
+}
+
+.button-primary {
+  background: var(--color-ember);
+  color: var(--color-ink);
+}
+
+.button-primary:hover {
+  background: var(--color-soft-white);
+}
+
+.button-secondary {
+  border-color: rgba(214, 218, 223, 0.4);
+  color: var(--color-soft-white);
+}
+
+.button-secondary:hover {
+  border-color: var(--color-soft-white);
+  background: rgba(247, 247, 244, 0.06);
+}
+
+/* On bone, the secondary button needs the inverse treatment. */
+.interior:not(.interior--ink) .button-secondary {
+  border-color: rgba(6, 7, 8, 0.3);
+  color: var(--color-ink);
+}
+
+.interior:not(.interior--ink) .button-secondary:hover {
+  border-color: var(--color-ink);
+  background: rgba(6, 7, 8, 0.05);
+}
+
+.interior :focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 3px;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .service-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .service-detail__intro {
+    position: static;
+  }
+
+  .qa__item {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

@@ -112,7 +112,10 @@
     padding-inline-start: 20px;
   }
 
-  .approach__steps::before {
+  /* Rail and dots belong to the stacked reading list (the reduced-motion
+     layout). The cycling variant shows one step at a time, so a rail
+     spanning a single item would be measuring nothing. */
+  .approach__steps:not(.approach__steps--cycle)::before {
     content: '';
     position: absolute;
     left: 3px;
@@ -122,19 +125,7 @@
     background: rgba(6, 7, 8, 0.16);
   }
 
-  .approach-step {
-    position: relative;
-  }
-
-  /* On mobile every step is fully readable in reading order — there is no
-     scroll-driven "active step" concept, so titles/descriptions always
-     render at full opacity regardless of position in the list. */
-  .approach-step .approach-step__title,
-  .approach-step .approach-step__description {
-    opacity: 1;
-  }
-
-  .approach-step::before {
+  .approach__steps:not(.approach__steps--cycle) .approach-step::before {
     content: '';
     position: absolute;
     left: -20px;
@@ -145,10 +136,36 @@
     border-radius: 50%;
   }
 
-  /* The last step's dot marker is redundant once the MobilePitScene
-     illustration sits above its title. */
-  .approach-step:last-child::before {
-    display: none;
+  .approach-step {
+    position: relative;
+  }
+
+  /* Within a step, title and description always read at full contrast —
+     the cycle fades the step as a whole, not its parts. */
+  .approach-step .approach-step__title,
+  .approach-step .approach-step__description {
+    opacity: 1;
+  }
+
+  /* All three occupy one grid cell, so the block holds the height of the
+     tallest and the copy below it never jumps between stages. */
+  .approach__steps--cycle {
+    gap: 0;
+    padding-inline-start: 0;
+  }
+
+  .approach__steps--cycle > .approach-step {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.55s var(--ease-out-soft),
+      transform 0.55s var(--ease-out-soft);
+  }
+
+  .approach__steps--cycle > .approach-step--active {
+    opacity: 1;
+    transform: none;
   }
 }
 

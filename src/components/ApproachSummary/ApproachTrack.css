@@ -1,0 +1,68 @@
+.approach-track {
+  margin-bottom: clamp(24px, 3vw, 40px);
+}
+
+/* A wide, short band — the car crosses it rather than filling it, so the
+   lane stays a rule with a car on it instead of a hero image. */
+.approach-track__lane {
+  position: relative;
+  width: 100%;
+  height: clamp(84px, 11vw, 148px);
+  overflow: hidden;
+}
+
+.approach-track__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(6, 7, 8, 0.18);
+}
+
+/* Release light at the far end — ink until the launch beat, then ember. */
+.approach-track__light {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--color-ink);
+}
+
+.approach-track__car {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: clamp(150px, 20vw, 280px);
+  transform: translateY(-50%);
+  will-change: transform;
+}
+
+/* The car layers carry their own aspect ratio; this only needs to stop the
+   wrapper collapsing before the images decode. */
+.approach-track__car .pit-stop-car {
+  width: 100%;
+}
+
+/* Tire marks. Anchored at the pit box and grown rightward by the timeline
+   as the car launches, so a mark can only ever trail the wheel that laid
+   it down — never run ahead of the car. */
+.approach-track__mark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  /* Height is set from the car's own tread depth by the timeline. */
+  height: 0;
+  border-radius: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(6, 7, 8, 0.42),
+    rgba(6, 7, 8, 0.14) 70%,
+    rgba(6, 7, 8, 0)
+  );
+  pointer-events: none;
+}

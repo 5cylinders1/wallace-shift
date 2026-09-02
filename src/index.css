@@ -185,3 +185,25 @@ textarea {
 .pricing-nav :focus-visible {
   outline-color: var(--color-ember-deep);
 }
+
+/* Visible only while focused, then pinned over the header. */
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: 0;
+  z-index: 10;
+  transform: translateY(-120%);
+  padding: 12px 20px;
+  background: var(--color-ember);
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out-soft);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--color-soft-white);
+  outline-offset: 2px;
+}

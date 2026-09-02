@@ -2,9 +2,9 @@ import { useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { services } from '../../content/siteConfig'
-import { renderLines } from '../../lib/textLines'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
+import { LineReveal } from '../LineReveal/LineReveal'
 import { Reveal } from '../Reveal/Reveal'
 import { PageLink } from '../PageLink/PageLink'
 import { ServiceRow } from './ServiceRow'
@@ -60,11 +60,10 @@ export function Services() {
   return (
     <section id="services" className="services" ref={sectionRef}>
       <div className="container">
-        <Reveal>
-          <h2 className="services__heading">
-            {renderLines(services.headingLines)}
-          </h2>
-        </Reveal>
+        <LineReveal
+          lines={services.headingLines}
+          className="services__heading"
+        />
 
         <div className="services__rows">
           {services.items.map((item, index) => (
@@ -87,13 +86,26 @@ export function Services() {
           ))}
         </div>
 
+        {/* Two exits, given the same weight as the rows above them: a
+            rule, a label, and the question each answers. Previously a pair
+            of trailing text links, which read as an afterthought next to
+            the rest of the section. */}
         <Reveal delay={0.08}>
-          <PageLink href={services.pricingLink.href} className="services__pricing-link">
-            {services.pricingLink.label}
-            <span className="services__pricing-arrow" aria-hidden="true">
-              &#8599;
-            </span>
-          </PageLink>
+          <div className="services__exits">
+            {[services.detailLink, services.pricingLink].map((exit) => (
+              <PageLink
+                key={exit.href}
+                href={exit.href}
+                className="services__exit"
+              >
+                <span className="services__exit-eyebrow">{exit.eyebrow}</span>
+                <span className="services__exit-label">{exit.label}</span>
+                <span className="services__exit-arrow" aria-hidden="true">
+                  &#8599;
+                </span>
+              </PageLink>
+            ))}
+          </div>
         </Reveal>
       </div>
     </section>

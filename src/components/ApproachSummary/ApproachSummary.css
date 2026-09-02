@@ -1,0 +1,233 @@
+.approach-summary {
+  background: var(--color-bone);
+  color: var(--color-ink);
+  /* No bottom padding: `.diagonal-run` is the last child and has to reach
+     the section's true bottom edge. `overflow: hidden` clips the wedge's
+     rise reserve — see DiagonalRun.css. */
+  padding-top: var(--section-pad-y);
+  overflow: hidden;
+}
+
+.approach-summary__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(16px, 3vw, 40px);
+  padding-bottom: clamp(28px, 3.5vw, 44px);
+  border-bottom: 1px solid rgba(6, 7, 8, 0.16);
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+
+.approach-summary__heading {
+  margin: 0;
+  font-size: clamp(1.9rem, 4vw, 3.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+.approach-summary__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-ember-deep);
+  padding-bottom: 4px;
+  white-space: nowrap;
+  transition: gap var(--duration-hover) var(--ease-out-soft);
+}
+
+.approach-summary__link:hover {
+  gap: 0.85em;
+}
+
+.approach-summary__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(24px, 3.5vw, 56px);
+}
+
+.approach-summary__step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 20px;
+  /* Diagonal-cut top rule, echoing the mark rather than a plain border. */
+  border-top: 2px solid var(--color-ink);
+}
+
+.approach-summary__index {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--color-ember-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+.approach-summary__title {
+  margin: 0;
+  font-size: clamp(1.125rem, 1.7vw, 1.375rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+.approach-summary__body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+}
+
+.approach-summary :focus-visible {
+  outline: 2px solid var(--color-ember-deep);
+  outline-offset: 3px;
+}
+
+/* The step the car has reached. Everything stays legible — this raises the
+   active one rather than dimming the rest into unreadability, so the
+   sequence is never information the visitor can only get by scrolling. */
+.approach-summary__step {
+  border-top-color: rgba(6, 7, 8, 0.22);
+  transition:
+    border-top-color var(--duration-hover) var(--ease-out-soft),
+    transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.approach-summary__step--active {
+  border-top-color: var(--color-ember-deep);
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .approach-summary__step--active {
+    transform: none;
+  }
+}
+
+/* ---- Pinned mobile stage ---------------------------------------------
+   One viewport tall, measured in svh so a phone's collapsing browser
+   chrome cannot change the composition mid-scroll. Four bands: head,
+   progress rail, the card currently showing, and the lane near the foot. */
+.approach-summary__stage {
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  padding-top: calc(var(--site-header-height, 84px) + clamp(10px, 2vh, 22px));
+  padding-bottom: clamp(28px, 5vh, 56px);
+}
+
+.approach-summary__stage .approach-summary__head {
+  padding-bottom: clamp(14px, 2vh, 22px);
+  margin-bottom: 0;
+}
+
+/* Progress rail */
+.approach-summary__rail {
+  list-style: none;
+  margin: 0;
+  padding: clamp(14px, 2.4vh, 22px) 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  flex: none;
+}
+
+.approach-summary__rail-seg {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: rgba(6, 7, 8, 0.32);
+  transition: color 0.45s var(--ease-out-soft);
+}
+
+.approach-summary__rail-seg::before {
+  content: '';
+  height: 2px;
+  background: rgba(6, 7, 8, 0.14);
+  transform: scaleX(0.999);
+  transform-origin: left center;
+  transition:
+    background 0.45s var(--ease-out-soft);
+}
+
+.approach-summary__rail-seg--done {
+  color: var(--color-ember-deep);
+}
+
+.approach-summary__rail-seg--done::before {
+  background: var(--color-ember-deep);
+}
+
+/* Card band */
+.approach-summary__cards {
+  position: relative;
+  flex: 1;
+  display: grid;
+  align-content: center;
+  min-height: 0;
+}
+
+/* The stage numeral, sized to the space rather than the type scale. Sits
+   behind the card and never competes with it for contrast. */
+.approach-summary__ghost {
+  position: absolute;
+  right: -0.06em;
+  top: 50%;
+  transform: translateY(-52%);
+  font-family: var(--font-serif);
+  font-size: clamp(9rem, 42vw, 16rem);
+  line-height: 0.72;
+  color: rgba(6, 7, 8, 0.055);
+  pointer-events: none;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.approach-summary__steps--stacked {
+  position: relative;
+  display: grid;
+  gap: 0;
+}
+
+.approach-summary__steps--stacked > .approach-summary__step {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(14px);
+  border-top-width: 2px;
+  transition:
+    opacity 0.45s var(--ease-out-soft),
+    transform 0.45s var(--ease-out-soft);
+}
+
+.approach-summary__steps--stacked > .approach-summary__step--active {
+  opacity: 1;
+  transform: none;
+}
+
+/* The lane sits near the foot of the stage — lifted clear of the very
+   bottom edge so it reads as a lane, not a page border. */
+.approach-summary__stage .approach-track {
+  flex: none;
+  margin-bottom: clamp(16px, 4vh, 44px);
+}
+
+@media (max-width: 767px) {
+  .approach-summary__stage .approach-summary__heading {
+    font-size: clamp(1.6rem, 7vw, 2.1rem);
+  }
+
+  .approach-summary__stage .approach-track__lane {
+    height: clamp(104px, 17svh, 158px);
+  }
+}

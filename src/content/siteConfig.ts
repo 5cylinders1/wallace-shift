@@ -6,15 +6,33 @@ export const siteMeta = {
     'Wallace Shift creates distinctive websites, web apps, and automations that help growing businesses earn trust and move forward.',
 }
 
-// Root-relative hrefs (rather than bare hashes) so the same list works
-// from any route: PageLink routes to the homepage first when needed, then
-// scrolls to the anchor.
-export const navLinks = [
-  { label: 'Services', href: '/#services' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Approach', href: '/#approach' },
-  { label: 'About', href: '/#about' },
-] as const
+/**
+ * Business identity.
+ *
+ * Wallace Shift is run from a home address, so no street address appears
+ * anywhere on the site and none is emitted in structured data. The studio
+ * is presented as a service-area business: `serviceArea` names the region
+ * served, nothing narrower.
+ *
+ * `email` stays `null` until that mailbox actually receives mail —
+ * everywhere it renders omits the surrounding markup while it is null, so
+ * the site is correct rather than advertising an address that bounces.
+ */
+export const business = {
+  /** The published address. Live and receiving as of 2026-09-02. */
+  email: 'matthew@wallaceshift.com' as string | null,
+
+  /**
+   * Where the studio works from — region only, never a street address.
+   * Phrased to read correctly mid-sentence and at the start of one, and
+   * every place it renders pairs it with remote work: the studio is not
+   * restricted to this area, it is simply where it is run from.
+   */
+  serviceArea: 'Greater Kansas City' as string | null,
+
+  /** Shown beside the contact form so enquiries carry an expectation. */
+  responseTime: 'within one business day',
+}
 
 export const hero = {
   eyebrow: 'Websites · Web apps · Automation',
@@ -22,8 +40,8 @@ export const hero = {
   headlineAccent: 'seen.',
   supporting:
     'Strategy, design, and motion for businesses shifting to their new era.',
-  primaryCta: { label: 'Start your shift', href: '#contact' },
-  secondaryCta: { label: 'Explore our services', href: '#services' },
+  primaryCta: { label: 'Start your shift', href: '/contact' },
+  secondaryCta: { label: 'Explore our services', href: '/services' },
 }
 
 export const brandStatement = {
@@ -32,7 +50,18 @@ export const brandStatement = {
 
 export const services = {
   headingLines: ['Built to move your', 'business forward.'],
-  pricingLink: { label: 'See what each of these costs', href: '/pricing' },
+  /* The two questions a reader has after "what can I hire you to build?" —
+     each gets its own exit rather than a pair of trailing text links. */
+  detailLink: {
+    eyebrow: 'The detail',
+    label: 'What each of these involves',
+    href: '/services',
+  },
+  pricingLink: {
+    eyebrow: 'The numbers',
+    label: 'See what each of these costs',
+    href: '/pricing',
+  },
   items: [
     {
       index: '01',
@@ -62,6 +91,15 @@ export const services = {
 } as const
 
 export type ServiceItem = (typeof services.items)[number]
+
+/** Opening block for the /approach page, above the process section. */
+export const approachPageHero = {
+  eyebrow: 'Approach',
+  headlineLines: ['How the work', 'actually'],
+  headlineAccent: 'runs.',
+  supporting:
+    'Three stages, in the same order every time. No mystery phase where nothing visible happens, and no invoice that arrives before you have seen anything.',
+}
 
 export const approach = {
   headingLines: ['A clear shift, from', 'first idea to launch.'],

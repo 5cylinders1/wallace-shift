@@ -1,0 +1,96 @@
+/**
+ * The enquiry form's own styles, shared by the homepage closing section
+ * and the contact page. Both grounds are dark, so these values are unchanged
+ * from when they lived in ContactCta.css.
+ */
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-form__field label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-silver);
+}
+
+.contact-form__field input,
+.contact-form__field textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(214, 218, 223, 0.32);
+  padding-block: 10px;
+  color: var(--color-soft-white);
+  font-size: 1rem;
+  resize: vertical;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.contact-form__field input:focus,
+.contact-form__field textarea:focus {
+  border-color: var(--color-ember);
+}
+
+.contact-form__field input::placeholder,
+.contact-form__field textarea::placeholder {
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+
+.contact-form__submit {
+  align-self: flex-start;
+  margin-top: 8px;
+  background: var(--color-ember);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.95em 1.9em;
+  border-radius: 999px;
+  transition:
+    transform var(--duration-hover) var(--ease-out-soft),
+    box-shadow var(--duration-hover) var(--ease-out-soft),
+    opacity var(--duration-hover) var(--ease-out-soft);
+}
+
+.contact-form__submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 34px rgba(232, 84, 39, 0.3);
+}
+
+.contact-form__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contact-form__status {
+  min-height: 1.2em;
+  font-size: 0.875rem;
+  color: var(--color-silver);
+}
+
+@media (min-width: 900px) {
+  .contact-cta__inner {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* Honeypot. Positioned off-screen rather than `display: none` — some bots
+   skip fields that are not rendered, which would defeat the trap. */
+.contact-form__honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

@@ -47,7 +47,7 @@ export function WebsiteCare() {
               </span>
             </p>
 
-            <PageLink href="/#contact" className="website-care__cta">
+            <PageLink href="/contact" className="website-care__cta">
               {websiteCare.ctaLabel}
               <span className="website-care__cta-arrow" aria-hidden="true">
                 &#8599;

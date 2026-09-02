@@ -2,14 +2,32 @@
   background: var(--color-ink);
   color: var(--color-muted);
   border-top: 1px solid rgba(214, 218, 223, 0.14);
-  padding-block: clamp(36px, 5vw, 56px);
+  padding-block: clamp(40px, 5vw, 64px);
 }
 
+/* Two bands: identity and navigation across the top, a thin legal bar
+   beneath a hairline. The bar is its own row rather than a stray item
+   wrapping out of the flex line above it, which is what left the
+   copyright and the privacy link stacked and unbalanced. */
 .site-footer__inner {
   display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 40px);
+}
+
+.site-footer__top {
+  display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 20px 32px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(24px, 4vw, 56px);
+}
+
+.site-footer__identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .site-footer__brand {
@@ -24,15 +42,34 @@
 
 .site-footer__tagline {
   font-size: 0.8125rem;
+  color: var(--color-silver);
 }
 
-.site-footer__nav {
-  margin-inline-start: auto;
+.site-footer__area {
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  max-width: 32ch;
+}
+
+.site-footer__email {
+  font-size: 0.8125rem;
+  color: var(--color-soft-white);
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(214, 218, 223, 0.32);
+  transition:
+    color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.site-footer__email:hover {
+  color: var(--color-ember);
+  border-bottom-color: var(--color-ember);
 }
 
 .site-footer__nav ul {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 12px clamp(20px, 2.5vw, 32px);
 }
 
 .site-footer__nav a {
@@ -44,15 +81,37 @@
   color: var(--color-ember);
 }
 
+/* Legal bar: copyright left, links right, on one line at every width wide
+   enough to hold them. */
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-top: clamp(20px, 2.5vw, 28px);
+  border-top: 1px solid rgba(214, 218, 223, 0.12);
+}
+
 .site-footer__copyright {
-  width: 100%;
   font-size: 0.75rem;
   color: rgba(158, 163, 166, 0.7);
 }
 
-@media (min-width: 720px) {
-  .site-footer__copyright {
-    width: auto;
-    margin-inline-start: auto;
+.site-footer__privacy {
+  font-size: 0.75rem;
+  color: rgba(158, 163, 166, 0.7);
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.site-footer__privacy:hover {
+  color: var(--color-soft-white);
+}
+
+@media (max-width: 599px) {
+  /* The nav sits under the identity rather than squeezing beside it. */
+  .site-footer__top {
+    flex-direction: column;
+    gap: clamp(24px, 6vw, 36px);
   }
 }

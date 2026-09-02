@@ -1,0 +1,155 @@
+/* The contact page is the one interior page on ink rather than bone: the
+   form's inputs are styled for a dark ground, and the page is the end of
+   every path through the site, so it matches the homepage's closing note. */
+.contact-page {
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+}
+
+.contact-page__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+
+.contact-page__form-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 3vw, 36px);
+  min-width: 0;
+}
+
+/* Carries the Shift Finder's recommendation into the page so the visitor
+   can see the context that came with them from the homepage. */
+.contact-page__handoff {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 22px;
+  border-left: 2px solid var(--color-ember);
+  background: rgba(232, 84, 39, 0.07);
+}
+
+.contact-page__handoff-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ember);
+}
+
+.contact-page__handoff-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.contact-page__handoff-body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-silver);
+}
+
+.contact-page__aside {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 3vw, 36px);
+  min-width: 0;
+}
+
+.contact-page__block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(214, 218, 223, 0.22);
+}
+
+/* The shared label utility is written for bone; on ink it needs the
+   lighter secondary tone. */
+.contact-page .service-block__label {
+  margin: 0;
+  color: var(--color-silver);
+}
+
+.contact-page__steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contact-page__steps li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 34px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-silver);
+}
+
+.contact-page__steps li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-ember);
+  font-variant-numeric: tabular-nums;
+}
+
+.contact-page__email {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--color-soft-white);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-ember);
+  padding-bottom: 3px;
+  align-self: flex-start;
+}
+
+.contact-page__area,
+.contact-page__hint {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-silver);
+}
+
+.contact-page__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  align-self: flex-start;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-soft-white);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-ember);
+  padding-bottom: 3px;
+  transition: gap var(--duration-hover) var(--ease-out-soft);
+}
+
+.contact-page__link:hover {
+  gap: 0.85em;
+}
+
+.contact-page :focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .contact-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

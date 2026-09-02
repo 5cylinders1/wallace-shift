@@ -108,6 +108,15 @@
     flex-wrap: wrap;
     min-height: 0;
     align-items: flex-start;
+    /* Lifted so the outcome field can bleed past the container gutter to
+       the screen edges. The field clips its own contents, so nothing
+       escapes. */
+    overflow: visible;
+    /* The row is a <button>, so it carries the UA's default 6px inline
+       padding. Zeroing it lets the field's negative gutter margins reach
+       the screen edge exactly, and aligns the row's text with the section
+       heading above rather than 6px inside it. */
+    padding-inline: 0;
   }
 
   .service-row__body {
@@ -115,33 +124,94 @@
   }
 }
 
-/* Single, quiet route from the service list to the pricing page — the
-   next question a reader has after "what can I hire you to build?" */
-.services__pricing-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: clamp(28px, 3.5vw, 44px);
-  font-size: 0.9375rem;
-  font-weight: 600;
+/* ---- Section exits ---------------------------------------------------
+   The two questions that follow the rows, built with the same vocabulary
+   as the rows themselves — a rule, a small label, a line of copy — so they
+   read as part of the section rather than links appended to it. */
+.services__exits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0;
+  margin-top: clamp(36px, 4.5vw, 64px);
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.services__exit {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'eyebrow arrow'
+    'label   arrow';
+  align-items: end;
+  gap: 6px 16px;
+  padding: clamp(22px, 2.6vw, 30px) 0;
   color: var(--color-ink);
-  padding-bottom: 5px;
-  border-bottom: 1px solid rgba(6, 7, 8, 0.3);
-  transition:
-    color var(--duration-hover) var(--ease-out-soft),
-    border-color var(--duration-hover) var(--ease-out-soft);
+  text-decoration: none;
 }
 
-.services__pricing-link:hover {
+/* The ember rule that wipes in on hover — the section's own diagonal
+   language, not a border colour change. */
+.services__exit::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-ember-deep);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease-premium);
+}
+
+.services__exit:hover::before,
+.services__exit:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.services__exit-eyebrow {
+  grid-area: eyebrow;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.services__exit-label {
+  grid-area: label;
+  font-size: clamp(1.0625rem, 1.9vw, 1.3125rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  max-width: 22ch;
+}
+
+.services__exit-arrow {
+  grid-area: arrow;
+  align-self: center;
+  font-size: 1.125rem;
   color: var(--color-ember-deep);
-  border-bottom-color: var(--color-ember-deep);
-}
-
-.services__pricing-arrow {
-  display: inline-block;
   transition: transform var(--duration-hover) var(--ease-out-soft);
 }
 
-.services__pricing-link:hover .services__pricing-arrow {
-  transform: translate(2px, -2px);
+.services__exit:hover .services__exit-arrow,
+.services__exit:focus-visible .services__exit-arrow {
+  transform: translate(3px, -3px);
+}
+
+/* A hairline between the two on wide screens; stacked, each keeps its own
+   top rule instead. */
+@media (min-width: 700px) {
+  .services__exit + .services__exit {
+    padding-left: clamp(24px, 3vw, 48px);
+    border-left: 1px solid rgba(6, 7, 8, 0.14);
+  }
+}
+
+@media (max-width: 699px) {
+  .services__exit + .services__exit {
+    border-top: 1px solid rgba(6, 7, 8, 0.14);
+  }
 }

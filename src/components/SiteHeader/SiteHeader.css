@@ -16,14 +16,44 @@
   border-bottom: 1px solid transparent;
 }
 
-.site-header--solid {
+/* The scrolled state's frosted panel lives on its own layer, NOT on
+   .site-header.
+   ----------------------------------------------------------------------
+   Never put backdrop-filter, filter, transform, perspective, contain or
+   will-change on .site-header. The mobile menu is a `position: fixed`
+   descendant of it, and every one of those properties turns this element
+   into the containing block for fixed descendants — at which point the
+   menu's `inset: 0` resolves against the header bar instead of the
+   viewport and the full-screen panel collapses to a ~63px strip.
+   That is a silent, scroll-state-only failure: the menu works at the top
+   of the page and breaks the moment the solid state engages.
+   The veil is a sibling of the menu, so it can carry the blur safely. */
+.site-header__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
   background: rgba(6, 7, 8, 0.86);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(214, 218, 223, 0.14);
+  transition: opacity var(--duration-hover) var(--ease-out-soft);
+}
+
+.site-header--solid .site-header__veil {
+  opacity: 1;
+}
+
+.site-header--solid {
+  border-bottom-color: rgba(214, 218, 223, 0.14);
   padding-block: clamp(14px, 2vw, 18px);
 }
 
 .site-header__inner {
+  /* Sits above the mobile menu panel below. Without this the panel — which
+     is opaque, fixed, and z-indexed — paints over the bar and buries the
+     close button, leaving no way out of the menu but the Escape key. */
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: clamp(16px, 3vw, 40px);
@@ -147,7 +177,10 @@
   position: fixed;
   inset: 0;
   top: 0;
-  z-index: 49;
+  /* Below .site-header__inner, above the page. Both are scoped inside the
+     header's own stacking context, so the header's z-index carries the
+     pair above everything else. */
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;

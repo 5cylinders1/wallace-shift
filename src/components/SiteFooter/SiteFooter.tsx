@@ -1,4 +1,5 @@
-import { navLinks, footer, siteMeta } from '../../content/siteConfig'
+import { business, footer, siteMeta } from '../../content/siteConfig'
+import { navRoutes } from '../../content/routeMeta'
 import { PageLink } from '../PageLink/PageLink'
 import './SiteFooter.css'
 
@@ -8,31 +9,61 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="container site-footer__inner">
-        <div className="site-footer__brand">
-          <img
-            src="/brand/wallace-shift-logo-white.svg"
-            alt=""
-            width={20}
-            height={12}
-          />
-          <span>{siteMeta.name.toUpperCase()}</span>
+        <div className="site-footer__top">
+          <div className="site-footer__identity">
+            <div className="site-footer__brand">
+              <img
+                src="/brand/wallace-shift-logo-white.svg"
+                alt=""
+                width={20}
+                height={12}
+              />
+              <span>{siteMeta.name.toUpperCase()}</span>
+            </div>
+
+            <p className="site-footer__tagline">{footer.tagline}</p>
+
+            {/* Region only — Wallace Shift works from a home address, so no
+                street address is published anywhere on the site. Both of
+                these render only once a real value is set. */}
+            {business.serviceArea && (
+              <p className="site-footer__area">
+                Serving {business.serviceArea} — and remote.
+              </p>
+            )}
+
+            {business.email && (
+              <a
+                className="site-footer__email"
+                href={`mailto:${business.email}`}
+              >
+                {business.email}
+              </a>
+            )}
+          </div>
+
+          <nav aria-label="Footer" className="site-footer__nav">
+            <ul>
+              {navRoutes.map((route) => (
+                <li key={route.path}>
+                  <PageLink href={route.path}>{route.navLabel}</PageLink>
+                </li>
+              ))}
+              <li>
+                <PageLink href="/contact">Start a project</PageLink>
+              </li>
+            </ul>
+          </nav>
         </div>
 
-        <p className="site-footer__tagline">{footer.tagline}</p>
-
-        <nav aria-label="Footer" className="site-footer__nav">
-          <ul>
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <PageLink href={link.href}>{link.label}</PageLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <p className="site-footer__copyright">
-          &copy; {year} {siteMeta.name}
-        </p>
+        <div className="site-footer__legal">
+          <p className="site-footer__copyright">
+            &copy; {year} {siteMeta.name}
+          </p>
+          <PageLink href="/privacy" className="site-footer__privacy">
+            Privacy
+          </PageLink>
+        </div>
       </div>
     </footer>
   )

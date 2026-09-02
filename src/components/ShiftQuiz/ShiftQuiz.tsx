@@ -8,7 +8,9 @@ import {
   type QuizAnswer,
 } from '../../content/shiftQuiz'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
-import { dispatchQuizHandoff } from '../../lib/quizHandoff'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
+import { shiftHandoffHref } from '../../lib/quizHandoff'
+import { navigate } from '../../lib/router'
 import { SpotlightMedia, type SpotlightMediaHandle } from './SpotlightMedia'
 import { QuizQuestion } from './QuizQuestion'
 import { QuizResult } from './QuizResult'
@@ -34,6 +36,10 @@ export function ShiftQuiz() {
   const [announcement, setAnnouncement] = useState('')
 
   const reducedMotion = useReducedMotion()
+  // The spotlight is a pointer-driven effect on a wide, dark stage. Small
+  // screens have neither the pointer nor the room, so they get the copy
+  // alone rather than a static lamp doing nothing.
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const isResult = step >= TOTAL_STEPS
 
   // The rect the spotlight's Y position is normalized against — the
@@ -66,7 +72,7 @@ export function ShiftQuiz() {
     () => {
       const section = sectionRef.current
       const quizCol = quizColRef.current
-      if (!section || !quizCol || reducedMotion || isResult) return
+      if (!section || !quizCol || reducedMotion || isMobile || isResult) return
 
       const handleFocusIn = (event: FocusEvent) => {
         const target = event.target as HTMLElement
@@ -96,7 +102,7 @@ export function ShiftQuiz() {
         section.removeEventListener('focusout', handleFocusOut)
       }
     },
-    { scope: sectionRef, dependencies: [reducedMotion, step, isResult] },
+    { scope: sectionRef, dependencies: [reducedMotion, isMobile, step, isResult] },
   )
 
   // Entrance animation + focus + announcement whenever the visible step changes.
@@ -190,20 +196,20 @@ export function ShiftQuiz() {
     mediaRef.current?.resetToNeutral()
   }
 
+  // Carries the result to the contact page in the URL, so the
+  // recommendation survives the navigation and stays linkable.
   const handlePrimaryCta = () => {
-    const recommendation = getRecommendation(answers)
-    dispatchQuizHandoff({ serviceTitle: recommendation.title })
-    document
-      .getElementById('contact')
-      ?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' })
+    navigate(shiftHandoffHref(getRecommendation(answers).key))
   }
 
   return (
     <section id="shift-finder" className="shift-quiz" ref={sectionRef}>
-      <div className="shift-quiz__media">
-        <SpotlightMedia ref={mediaRef} listenRef={sectionRef} getBoundsRect={getAnswerBounds} />
-        <div className="shift-quiz__scrim" />
-      </div>
+      {!isMobile && (
+        <div className="shift-quiz__media">
+          <SpotlightMedia ref={mediaRef} listenRef={sectionRef} getBoundsRect={getAnswerBounds} />
+          <div className="shift-quiz__scrim" />
+        </div>
+      )}
 
       <div className="container shift-quiz__content">
         <div className="shift-quiz__quiz-col" ref={quizColRef}>

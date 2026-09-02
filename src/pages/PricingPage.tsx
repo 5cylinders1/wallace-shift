@@ -5,12 +5,12 @@ import { EngagementPanel } from '../components/Pricing/EngagementRows'
 import { PricingDiagonal } from '../components/Pricing/PricingDiagonal'
 import { PricingFaq } from '../components/Pricing/PricingFaq'
 import { PricingCta } from '../components/Pricing/PricingCta'
-import { engagementGroups, pricingMeta } from '../content/pricing'
-import { useDocumentMeta } from '../hooks/useDocumentMeta'
+import { engagementGroups } from '../content/pricing'
+import { useRouteMeta } from '../hooks/useDocumentMeta'
 import './PricingPage.css'
 
 export function PricingPage() {
-  useDocumentMeta(pricingMeta.title, pricingMeta.description)
+  useRouteMeta('/pricing')
 
   return (
     <>

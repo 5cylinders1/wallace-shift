@@ -8,7 +8,8 @@ import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { Reveal } from '../Reveal/Reveal'
 import { PitStopScene, PEEL_MARK_LENGTH } from './PitStopScene'
-import { MobilePitScene } from './MobilePitScene'
+import { PitStopLoop } from './PitStopLoop'
+import { useStageCycle } from './useStageCycle'
 import { PitStopCarStatic } from './PitStopCar'
 import {
   CAR_ENTER_X_PERCENT,
@@ -32,6 +33,14 @@ export function Approach() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRefs = useRef<(HTMLHeadingElement | null)[]>([])
   const descRefs = useRef<(HTMLParagraphElement | null)[]>([])
+
+  // Mobile shows one step at a time; this is the one on screen, and the
+  // beat the pit scene below it is playing.
+  const { stage: mobileStage, inView } = useStageCycle(
+    sectionRef,
+    approach.steps.length,
+    isMobile && !reducedMotion,
+  )
 
   const carTravelRef = useRef<HTMLDivElement>(null)
   const chassisRef = useRef<HTMLImageElement>(null)
@@ -181,6 +190,9 @@ export function Approach() {
           end: () => `+=${Math.round(window.innerHeight * 1.55)}`,
           scrub: 0.35,
           invalidateOnRefresh: true,
+          // Refreshes before anything below it — the standards section's
+          // diagonal is positioned by this pin's added height.
+          refreshPriority: 1,
           onRefresh: forceSceneReflow,
           onEnter: forceSceneReflow,
           onEnterBack: forceSceneReflow,
@@ -338,12 +350,33 @@ export function Approach() {
         </div>
       )}
 
-      <div className="container approach__steps">
-        {approach.steps.map((step, index) => {
-          const isLast = index === approach.steps.length - 1
-          const content = (
-            <>
-              {isMobile && isLast && <MobilePitScene />}
+      {isMobile ? (
+        <>
+          {/* One step visible at a time, all three stacked in a single grid
+              cell so the block is as tall as the longest and nothing
+              reflows as they cross-fade. Every step stays in the document,
+              so the sequence is never animation-only for assistive tech. */}
+          <div className="container approach__steps approach__steps--cycle">
+            {approach.steps.map((step, index) => (
+              <div
+                className={`approach-step${index === mobileStage ? ' approach-step--active' : ''}`}
+                key={step.index}
+              >
+                <span className="approach-step__index">{step.index}</span>
+                <h3 className="approach-step__title">{step.title}</h3>
+                <p className="approach-step__description">{step.description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="container">
+            <PitStopLoop stage={mobileStage} active={inView} />
+          </div>
+        </>
+      ) : (
+        <div className="container approach__steps">
+          {approach.steps.map((step, index) => (
+            <div className="approach-step" key={step.index}>
               <span className="approach-step__index">{step.index}</span>
               <h3
                 className="approach-step__title"
@@ -361,28 +394,10 @@ export function Approach() {
               >
                 {step.description}
               </p>
-            </>
-          )
-
-          if (isMobile) {
-            return (
-              <Reveal
-                key={step.index}
-                delay={index * 0.1}
-                className="approach-step"
-              >
-                {content}
-              </Reveal>
-            )
-          }
-
-          return (
-            <div className="approach-step" key={step.index}>
-              {content}
             </div>
-          )
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

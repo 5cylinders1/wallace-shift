@@ -1,19 +1,25 @@
 /**
- * No submission destination has been supplied for this project yet.
- * Set CONTACT_ENDPOINT to a real form-handling URL (or wire up an email
- * service) once it exists, and this adapter will start submitting for real.
+ * Client half of the enquiry pipeline.
+ *
+ * The endpoint is `/api/contact` — a serverless function that holds the
+ * Resend key, so nothing secret reaches the browser. See `api/contact.ts`
+ * for the environment variables it needs.
  */
-export const CONTACT_ENDPOINT: string | null = null
+export const CONTACT_ENDPOINT: string | null = '/api/contact'
 
 export type ContactPayload = {
   name: string
   email: string
   message: string
+  /** Honeypot. Always empty for a real person; see ContactForm. */
+  company?: string
 }
 
 export type ContactResult =
   | { ok: true }
-  | { ok: false; reason: 'not_configured' | 'network_error' }
+  | { ok: false; reason: 'not_configured' | 'invalid' | 'network_error' }
+
+type ApiBody = { ok?: unknown; error?: unknown }
 
 export async function submitContactRequest(
   payload: ContactPayload,
@@ -29,7 +35,23 @@ export async function submitContactRequest(
       body: JSON.stringify(payload),
     })
 
-    return response.ok ? { ok: true } : { ok: false, reason: 'network_error' }
+    const body = (await response.json().catch(() => null)) as ApiBody | null
+
+    // Anything that is not this API's own JSON is treated as "no inbox
+    // wired up". The dev server has no serverless functions and answers
+    // with the SPA's HTML and a 200 — reporting that as a delivered
+    // message would be a fake confirmation, which is worse than an honest
+    // failure.
+    if (!body || typeof body.ok !== 'boolean') {
+      return { ok: false, reason: 'not_configured' }
+    }
+
+    if (body.ok) return { ok: true }
+    if (body.error === 'not_configured') {
+      return { ok: false, reason: 'not_configured' }
+    }
+    if (body.error === 'invalid') return { ok: false, reason: 'invalid' }
+    return { ok: false, reason: 'network_error' }
   } catch {
     return { ok: false, reason: 'network_error' }
   }

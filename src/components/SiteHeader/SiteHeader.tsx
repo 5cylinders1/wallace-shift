@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { navLinks, siteMeta } from '../../content/siteConfig'
+import { siteMeta } from '../../content/siteConfig'
+import { navRoutes } from '../../content/routeMeta'
+import { useRoutePath } from '../../lib/router'
 import { PageLink } from '../PageLink/PageLink'
 import './SiteHeader.css'
 
 export function SiteHeader() {
+  const path = useRoutePath()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
@@ -49,9 +52,14 @@ export function SiteHeader() {
     const panel = menuRef.current
     if (!panel) return
 
-    const focusable = panel.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled])',
-    )
+    // The toggle is the close button, and it lives in the header bar
+    // rather than inside the panel — so it has to be part of the cycle
+    // explicitly, or a keyboard user can tab the whole menu without ever
+    // reaching the only control that shuts it.
+    const focusable = [
+      ...panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+    ]
+    if (toggleRef.current) focusable.push(toggleRef.current)
     focusable[0]?.focus()
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -84,6 +92,19 @@ export function SiteHeader() {
     }
   }, [menuOpen])
 
+  // A route change always dismisses the menu. Each link's own onClick
+  // covers the common case, but browser back/forward would otherwise
+  // leave the panel open on top of the incoming page.
+  //
+  // Adjusted during render rather than in an effect: React re-runs this
+  // component before committing, so the menu never paints in the wrong
+  // state, and there is no cascading second render.
+  const [lastPath, setLastPath] = useState(path)
+  if (path !== lastPath) {
+    setLastPath(path)
+    setMenuOpen(false)
+  }
+
   const closeMenu = () => setMenuOpen(false)
 
   return (
@@ -91,6 +112,16 @@ export function SiteHeader() {
       ref={headerRef}
       className={`site-header${scrolled ? ' site-header--solid' : ''}`}
     >
+      {/* First tab stop on every page: the nav is short, but the pages
+          below it are long, so skipping straight to content matters. */}
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
+
+      {/* Carries the scrolled state's blur. It cannot live on the header
+          itself — see the note in SiteHeader.css. */}
+      <div className="site-header__veil" aria-hidden="true" />
+
       <div className="site-header__inner container">
         <PageLink href="/" className="site-header__brand">
           <img
@@ -105,15 +136,20 @@ export function SiteHeader() {
 
         <nav className="site-header__nav" aria-label="Primary">
           <ul>
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <PageLink href={link.href}>{link.label}</PageLink>
+            {navRoutes.map((route) => (
+              <li key={route.path}>
+                <PageLink
+                  href={route.path}
+                  aria-current={path === route.path ? 'page' : undefined}
+                >
+                  {route.navLabel}
+                </PageLink>
               </li>
             ))}
           </ul>
         </nav>
 
-        <PageLink href="/#contact" className="site-header__cta">
+        <PageLink href="/contact" className="site-header__cta">
           Start a project
           <span className="site-header__cta-arrow" aria-hidden="true">
             &#8599;
@@ -142,24 +178,31 @@ export function SiteHeader() {
         id="mobile-menu"
         ref={menuRef}
         role="dialog"
-        aria-modal="true"
+        /* Deliberately not aria-modal: the close control sits outside this
+           element, in the header bar, and aria-modal would hide it from
+           assistive tech entirely — leaving no announced way out. Escape
+           and the focus cycle above both reach it. */
         aria-label="Mobile navigation"
         className={`mobile-menu${menuOpen ? ' mobile-menu--open' : ''}`}
         inert={!menuOpen}
       >
         <nav aria-label="Primary">
           <ul>
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <PageLink href={link.href} onClick={closeMenu}>
-                  {link.label}
+            {navRoutes.map((route) => (
+              <li key={route.path}>
+                <PageLink
+                  href={route.path}
+                  onClick={closeMenu}
+                  aria-current={path === route.path ? 'page' : undefined}
+                >
+                  {route.navLabel}
                 </PageLink>
               </li>
             ))}
           </ul>
         </nav>
         <PageLink
-          href="/#contact"
+          href="/contact"
           className="mobile-menu__cta"
           onClick={closeMenu}
         >

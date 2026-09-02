@@ -13,6 +13,52 @@
   object-position: center center;
 }
 
+/* Mobile framing.
+ *
+ * The source is 1916x1080. Filling a tall portrait viewport with
+ * `object-fit: cover` scales it from the *height*, which crops to a ~26%
+ * slice of the frame and renders the mark at 96% of the screen width —
+ * edge to edge, with no negative space, and visibly lopsided because the
+ * mark sits 22px right of the frame's own centre in the source.
+ *
+ * So mobile scales from the width instead: the frame is sized as a
+ * multiple of the viewport, which keeps the mark at a constant ~62% of the
+ * screen at every width, and the ink background carries the rest of the
+ * hero. Measured from the poster, not estimated — see the mark bbox at
+ * x 741..1219, y 415..650. */
+@media (max-width: 899px) {
+  .hero-media__frame {
+    position: absolute;
+    /* Anchored by the waterline rather than the frame's centre: `top` puts
+       the waterline at 55% of the hero and the Y translate is the
+       waterline's own position in the frame (650/1080). That keeps the
+       mark's silhouette clear of both copy blocks at any viewport shape,
+       instead of only the tall ones. */
+    top: 55%;
+    left: 50%;
+    /* Width-driven, but capped by viewport height — on a short viewport
+       the copy blocks leave a narrow band, and a width-only rule would
+       push the mark up behind the headline. */
+    width: min(250%, 100svh);
+    /* The global `img, video { max-width: 100% }` reset would otherwise
+       clamp that straight back to the container width. */
+    max-width: none;
+    height: auto;
+    aspect-ratio: 1916 / 1080;
+    /* -50% centres the frame; the extra -1.15% corrects the source's own
+       rightward bias so the *mark* is centred, not the frame. */
+    transform: translate(-51.15%, -60.2%);
+    /* No hard seam where the frame meets the ink above and below it. */
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 7%,
+      #000 93%,
+      transparent 100%
+    );
+  }
+}
+
 .hero-media__scrim {
   position: absolute;
   inset: 0;
@@ -30,19 +76,26 @@
     );
 }
 
-/* Small screens stack the copy over the top of the frame, closer to the
-   WS — a deliberately heavier top gradient keeps that copy on dark glass
-   without dimming the mark's lower body or reflection. */
+/* Small screens split the copy around the mark: eyebrow and headline above
+   it, supporting line and actions below. Both ends therefore need dark
+   glass, and the band between them is left clear so the WS body and the
+   head of its reflection stay untouched. */
 @media (max-width: 899px) {
   .hero-media__scrim {
     background:
       linear-gradient(
         to bottom,
         rgba(6, 7, 8, 0.85) 0%,
-        rgba(6, 7, 8, 0.55) 34%,
-        rgba(6, 7, 8, 0.1) 52%,
-        rgba(6, 7, 8, 0) 62%
+        rgba(6, 7, 8, 0.55) 30%,
+        rgba(6, 7, 8, 0.1) 46%,
+        rgba(6, 7, 8, 0) 56%
       ),
-      linear-gradient(to top, rgba(6, 7, 8, 0.45) 0%, rgba(6, 7, 8, 0) 22%);
+      linear-gradient(
+        to top,
+        rgba(6, 7, 8, 0.92) 0%,
+        rgba(6, 7, 8, 0.72) 14%,
+        rgba(6, 7, 8, 0.28) 28%,
+        rgba(6, 7, 8, 0) 40%
+      );
   }
 }

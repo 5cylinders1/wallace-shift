@@ -1,15 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, type ReactElement } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SiteHeader } from './components/SiteHeader/SiteHeader'
 import { SiteFooter } from './components/SiteFooter/SiteFooter'
 import { HomePage } from './pages/HomePage'
+import { ServicesPage } from './pages/ServicesPage'
 import { PricingPage } from './pages/PricingPage'
-import { routes, scrollToRouteTarget, useRoutePath } from './lib/router'
+import { ApproachPage } from './pages/ApproachPage'
+import { AboutPage } from './pages/AboutPage'
+import { ContactPage } from './pages/ContactPage'
+import { PrivacyPage } from './pages/PrivacyPage'
+import { NotFoundPage } from './pages/NotFoundPage'
+import { scrollToRouteTarget, useRoutePath } from './lib/router'
 
-/** How long after a route change anchor alignment keeps correcting itself. */
-const ANCHOR_SETTLE_MS = 1500
-/** Interval between those corrections. */
-const ANCHOR_RETRY_MS = 120
+const pages: Record<string, () => ReactElement> = {
+  '/': HomePage,
+  '/services': ServicesPage,
+  '/pricing': PricingPage,
+  '/approach': ApproachPage,
+  '/about': AboutPage,
+  '/contact': ContactPage,
+  '/privacy': PrivacyPage,
+  '/404': NotFoundPage,
+}
 
 function App() {
   const path = useRoutePath()
@@ -21,52 +33,23 @@ function App() {
     // already exist by the time this refreshes.
     //
     // Order matters: `refresh()` restores the scroll offset it recorded on
-    // entry, so moving to the new route's anchor has to happen after it,
-    // not in the click handler that started the navigation.
+    // entry, so moving to the new route's position has to happen after it.
+    //
+    // This used to be followed by 1.5 seconds of repeated re-aiming, to
+    // compensate for navigation links that pointed at anchors deep inside
+    // a homepage still growing as its media resolved. Those links are now
+    // pages, so there is no moving target and no need to chase one.
     ScrollTrigger.refresh()
     scrollToRouteTarget('instant')
-
-    if (!window.location.hash) return
-
-    // A deep anchor is not done being aimed at. The homepage keeps growing
-    // for a moment after mount as its media resolves, and a single jump
-    // gets clamped to the shorter document it saw — a visitor heading for
-    // #contact lands well above it. Re-aim on a short interval while that
-    // settles, and hand control straight back the moment they scroll.
-    let cancelled = false
-    let timer = 0
-    const cancel = () => {
-      cancelled = true
-      window.clearTimeout(timer)
-    }
-
-    const deadline = performance.now() + ANCHOR_SETTLE_MS
-    const realign = () => {
-      if (cancelled) return
-      scrollToRouteTarget('instant')
-      if (performance.now() < deadline) {
-        timer = window.setTimeout(realign, ANCHOR_RETRY_MS)
-      }
-    }
-    timer = window.setTimeout(realign, ANCHOR_RETRY_MS)
-
-    window.addEventListener('wheel', cancel, { passive: true })
-    window.addEventListener('touchstart', cancel, { passive: true })
-    window.addEventListener('keydown', cancel)
-
-    return () => {
-      cancel()
-      window.removeEventListener('wheel', cancel)
-      window.removeEventListener('touchstart', cancel)
-      window.removeEventListener('keydown', cancel)
-    }
   }, [path])
+
+  const Page = pages[path] ?? NotFoundPage
 
   return (
     <>
       <SiteHeader />
-      <main>
-        {path === routes.pricing ? <PricingPage /> : <HomePage />}
+      <main id="main">
+        <Page />
       </main>
       <SiteFooter />
     </>

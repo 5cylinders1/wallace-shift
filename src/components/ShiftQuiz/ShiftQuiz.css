@@ -10,6 +10,7 @@
   overflow: hidden;
 }
 
+/* Desktop only — the component does not render this layer below 768px. */
 .shift-quiz__media {
   position: absolute;
   inset: 0;
@@ -87,18 +88,5 @@
   .shift-quiz {
     display: block;
     min-height: auto;
-  }
-
-  .shift-quiz__media {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    aspect-ratio: 1916 / 1080;
-    max-height: 320px;
-    margin-bottom: 28px;
-  }
-
-  .shift-quiz__scrim {
-    display: none;
   }
 }

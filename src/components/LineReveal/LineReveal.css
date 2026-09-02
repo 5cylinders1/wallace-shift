@@ -1,0 +1,15 @@
+/* Each line clips its own inner span, so the entrance can slide the text
+   up from below its own baseline rather than fading it in. The paired
+   padding/negative margin keeps serif descenders from being clipped at
+   rest — the same construction the hero headline uses. */
+.line-reveal__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.line-reveal__inner {
+  display: inline-block;
+  will-change: transform;
+}

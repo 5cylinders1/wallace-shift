@@ -3,7 +3,7 @@
   isolation: isolate;
   min-height: max(100svh, 640px);
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   overflow: hidden;
   background: var(--color-ink);
   color: var(--color-soft-white);
@@ -13,19 +13,36 @@
   position: relative;
   z-index: 3;
   width: 100%;
+  display: flex;
+  flex-direction: column;
   padding-inline: var(--gutter);
-  /* Mobile: the copy stack must finish above the centered WS, so it hugs
-     the header rather than drifting down toward the mark. */
+  /* Mobile: the lead hugs the header and the tail is seated at the foot of
+     the frame, leaving the middle band for the WS itself. */
   padding-top: clamp(96px, 15vh, 150px);
-  padding-bottom: 96px;
+  padding-bottom: clamp(40px, 9vh, 72px);
 }
 
 .hero__copy {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: clamp(18px, 2.2vw, 26px);
   max-width: 100%;
   text-align: left;
+}
+
+.hero__copy-lead,
+.hero__copy-tail {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.2vw, 26px);
+}
+
+/* The supporting line and the actions drop clear of the mark, riding the
+   scrim at the bottom of the frame rather than crossing the WS body. */
+.hero__copy-tail {
+  margin-top: auto;
+  padding-top: clamp(24px, 6vh, 48px);
 }
 
 .hero__eyebrow {
@@ -211,7 +228,9 @@
   }
 }
 
-@media (min-width: 560px) {
+/* Only desktop keeps the cue: below 900px the tail occupies the foot of
+   the frame, which is where the cue used to sit. */
+@media (min-width: 900px) {
   .hero__scroll-cue {
     display: flex;
   }
@@ -224,7 +243,7 @@
   }
 
   .hero__content {
-    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: clamp(24px, 4vw, 64px);
@@ -233,8 +252,14 @@
   }
 
   .hero__copy {
+    flex: 0 1 auto;
     max-width: min(25vw, 440px);
     margin-right: 0;
+  }
+
+  .hero__copy-tail {
+    margin-top: 0;
+    padding-top: 0;
   }
 
   .hero__headline {

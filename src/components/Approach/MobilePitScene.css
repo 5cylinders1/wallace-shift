@@ -1,9 +1,0 @@
-.mobile-pit-scene {
-  width: min(92vw, 420px);
-  max-width: 100%;
-  margin-bottom: 24px;
-}
-
-.mobile-pit-scene__car {
-  width: 100%;
-}
