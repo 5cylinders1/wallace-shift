@@ -1,0 +1,140 @@
+/* ---- Stages ----------------------------------------------------------
+   Each stage is a two-column row: the claim on the left, what actually
+   happens on the right. Wide rules and a large serif index echo the
+   services rows rather than introducing a new card pattern. */
+.stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(260px, 5fr) minmax(280px, 6fr);
+  gap: clamp(20px, 4vw, 64px);
+  padding-block: clamp(32px, 4.5vw, 56px);
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.stage:last-child {
+  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.stage__head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stage__index {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1;
+  color: var(--color-ember-deep);
+}
+
+.stage__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.stage__summary {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 34ch;
+}
+
+.stage__points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.8vw, 20px);
+  align-self: center;
+}
+
+.stage__points li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink);
+  max-width: 56ch;
+}
+
+/* A short ember rule rather than a bullet — the site's own mark language. */
+.stage__points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.66em;
+  width: 14px;
+  height: 1px;
+  background: var(--color-ember-deep);
+}
+
+@media (max-width: 767px) {
+  .stage {
+    grid-template-columns: 1fr;
+  }
+
+  .stage__points {
+    align-self: start;
+  }
+}
+
+/* ---- Terms -----------------------------------------------------------*/
+.terms__heading {
+  margin: 12px 0 0;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  max-width: 18ch;
+}
+
+.terms__supporting {
+  margin: 14px 0 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 52ch;
+}
+
+.terms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: clamp(24px, 3vw, 48px);
+  margin-top: clamp(32px, 4vw, 56px);
+}
+
+.terms__item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 2px solid var(--color-ink);
+}
+
+.terms__title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.terms__body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+}

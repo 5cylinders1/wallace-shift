@@ -73,6 +73,7 @@ export const routeMeta: RouteMeta[] = [
     title: 'Start a project | Wallace Shift',
     description:
       'Tell us what is not working. We will show you what can shift. Answer three quick questions or send a message directly.',
+    navLabel: 'Contact',
     priority: 0.8,
   },
   {

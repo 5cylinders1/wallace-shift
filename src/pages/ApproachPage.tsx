@@ -1,18 +1,21 @@
 import { PageHero } from '../components/PageHero/PageHero'
-import { Approach } from '../components/Approach/Approach'
 import { StandardsSection } from '../components/Standards/StandardsSection'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
+import { approachStages, approachTerms } from '../content/approachPage'
 import { approachPageHero } from '../content/siteConfig'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
 import './InteriorPage.css'
+import './ApproachPage.css'
 
 /**
- * The pit-stop sequence and the standards section both moved here off the
- * homepage. They are the site's heaviest motion work, and giving them a
- * page of their own does two things: it shortens a homepage that ran to
- * nearly ten viewports, and it removes the pinned section that the old
- * cross-page anchor links used to overshoot.
+ * The process, in detail.
+ *
+ * The pit-stop sequence is the homepage's signature moment and is not
+ * repeated here — running it on both pages diluted it and made this page
+ * a second copy of the lander rather than somewhere to actually read what
+ * happens. This page carries the substance instead: each stage expanded,
+ * then the commercial terms, then the standards the work is held to.
  */
 export function ApproachPage() {
   useRouteMeta('/approach')
@@ -26,7 +29,50 @@ export function ApproachPage() {
         supporting={approachPageHero.supporting}
       />
 
-      <Approach />
+      <section className="interior">
+        <div className="container">
+          <ol className="stages">
+            {approachStages.map((stage) => (
+              <Reveal className="stage" key={stage.index}>
+                <div className="stage__head">
+                  <span className="stage__index">{stage.index}</span>
+                  <h2 className="stage__title">{stage.title}</h2>
+                  <p className="stage__summary">{stage.summary}</p>
+                </div>
+                <ul className="stage__points">
+                  {stage.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="interior interior--tight">
+        <div className="container">
+          <Reveal>
+            <p className="eyebrow">{approachTerms.eyebrow}</p>
+          </Reveal>
+          <Reveal delay={0.06}>
+            <h2 className="terms__heading">{approachTerms.heading}</h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="terms__supporting">{approachTerms.supporting}</p>
+          </Reveal>
+
+          <div className="terms">
+            {approachTerms.items.map((item, index) => (
+              <Reveal className="terms__item" delay={0.12 + index * 0.06} key={item.title}>
+                <h3 className="terms__title">{item.title}</h3>
+                <p className="terms__body">{item.body}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <StandardsSection />
 
       <section className="interior interior--ink">

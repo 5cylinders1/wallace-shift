@@ -414,3 +414,21 @@
     gap: 10px;
   }
 }
+
+/* Direct address under each person's bio. Quiet by default — it is a
+   fallback route, not a call to action competing with the contact page. */
+.person__email {
+  align-self: flex-start;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-ember-deep);
+  padding-bottom: 3px;
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.person__email:hover,
+.person__email:focus-visible {
+  color: var(--color-ember-deep);
+}

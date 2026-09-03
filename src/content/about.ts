@@ -14,6 +14,9 @@ export interface Person {
   name: string | null
   role: string
   bio: string
+  /** Direct address. Null until that mailbox actually receives mail — the
+   *  page omits the link rather than publishing one that bounces. */
+  email: string | null
 }
 
 export const aboutMeta = {
@@ -29,11 +32,13 @@ export const aboutPeople: Person[] = [
     name: 'Matthew Wallace',
     role: 'Engineering and design',
     bio: 'A software engineer who designs and builds every site, application, and automation the studio ships. No subcontractors, no offshore build teams, and no template resold as custom work.',
+    email: 'matthew@wallaceshift.com',
   },
   {
     name: 'Bella Wallace',
     role: 'Sales and first contact',
     bio: 'The first conversation, and the person who works out what your business actually needs. Technical questions go straight to Matthew rather than back and forth through a middle layer — you talk to whoever can actually answer.',
+    email: 'bella@wallaceshift.com',
   },
 ]
 

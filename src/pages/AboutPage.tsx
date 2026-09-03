@@ -31,6 +31,14 @@ export function AboutPage() {
                   <h2 className="person__name">{person.name}</h2>
                 )}
                 <p className="person__bio">{person.bio}</p>
+                {/* Direct line to the right person, rather than routing
+                    everything through one shared inbox. Rendered only once
+                    that mailbox is live. */}
+                {person.email && (
+                  <a className="person__email" href={`mailto:${person.email}`}>
+                    {person.email}
+                  </a>
+                )}
               </Reveal>
             ))}
           </div>

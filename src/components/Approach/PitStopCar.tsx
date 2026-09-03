@@ -14,21 +14,6 @@ import './PitStopCar.css'
 // read, so each ref here is a bare identifier passed straight through from
 // Approach.tsx's own individual useRef() calls.
 
-/** Static assembled car — chassis plus the four mounted tires only, no
- * replacement duplicates and no refs. Used for the reduced-motion path and
- * the mobile fallback scene. */
-export function PitStopCarStatic({ className }: { className?: string }) {
-  return (
-    <div className={`pit-stop-car ${className ?? ''}`}>
-      <img className="pit-stop-car__layer" src={CHASSIS_SOURCE} alt="" />
-      <img className="pit-stop-car__layer" src={TIRE_SOURCES.frontUpper} alt="" />
-      <img className="pit-stop-car__layer" src={TIRE_SOURCES.frontLower} alt="" />
-      <img className="pit-stop-car__layer" src={TIRE_SOURCES.rearUpper} alt="" />
-      <img className="pit-stop-car__layer" src={TIRE_SOURCES.rearLower} alt="" />
-    </div>
-  )
-}
-
 export interface PitStopCarProps {
   className?: string
   chassisRef: RefObject<HTMLImageElement | null>
