@@ -1,4 +1,5 @@
-/* Live site audit — sits on the bone ground, above the three stages. */
+/* Live site audit — the input half, on the bone ground of stage 01.
+   The result half lives in AuditReport.css, on ink, after stage 03. */
 
 .audit {
   margin-top: clamp(22px, 3vw, 34px);
@@ -72,224 +73,11 @@
   cursor: not-allowed;
 }
 
-.audit__live {
-  margin-top: clamp(20px, 2.6vw, 30px);
-}
-
-/* ---- Running -------------------------------------------------------- */
-.audit__running {
-  border-left: 2px solid var(--color-ember-deep);
-  padding-left: 18px;
-}
-
-.audit__running-title {
-  margin: 0 0 10px;
-  font-size: 1.0625rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.audit__steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.audit__step {
-  font-size: 0.9375rem;
-  color: var(--color-muted-on-bone);
-  opacity: 0.4;
-  transition: opacity 0.5s var(--ease-out-soft);
-}
-
-.audit__step--done {
-  opacity: 1;
-}
-
-.audit__step--done::before {
-  content: '— ';
-  color: var(--color-ember-deep);
-}
-
-.audit__running-note {
-  margin: 14px 0 0;
-  font-size: 0.8125rem;
-  color: var(--color-muted-on-bone);
-}
-
-.audit__error {
-  padding-left: 18px;
-  border-left: 2px solid var(--color-ember-deep);
-  max-width: 56ch;
-}
-
-.audit__error-text {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.55;
-}
-
-.audit__retry {
-  margin-top: 12px;
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 700;
-  padding: 0.6em 1.2em;
-  color: var(--color-ink);
-  background: none;
-  border: 1px solid rgba(6, 7, 8, 0.28);
-  cursor: pointer;
-  transition: border-color var(--duration-hover) var(--ease-out-soft);
-}
-
-.audit__retry:hover,
-.audit__retry:focus-visible {
-  border-color: var(--color-ember-deep);
-}
-
-/* ---- Result --------------------------------------------------------- */
-.audit__result-lead {
-  margin: 0 0 clamp(18px, 2.4vw, 26px);
-  font-size: 1.0625rem;
-  line-height: 1.55;
-  color: var(--color-muted-on-bone);
-  max-width: 56ch;
-}
-
-/* Borders live on the cells, never on the grid.
-   The previous version drew hairlines with `gap: 1px` over a tinted grid
-   background — which works only when every row is full. An odd number of
-   findings left the final cell empty and 25.8% of the grid showing as a
-   bare grey rectangle, which read as a broken screenshot. Per-cell borders
-   cannot do that: an incomplete row simply ends. */
-.audit__findings {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-  border-top: 1px solid rgba(6, 7, 8, 0.14);
-}
-
-.finding {
-  padding: clamp(16px, 2vw, 22px) 0;
-  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.finding__stage {
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-ember-deep);
-}
-
-.finding__label {
-  margin: 0;
-  font-size: 1.0625rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-}
-
-.finding__body {
-  margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.55;
-  color: var(--color-muted-on-bone);
-}
-
-.finding__response {
-  margin: 2px 0 0;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: var(--color-ink);
-}
-
-/* Credit where it is due — this is what stops the tool reading as a
-   sales pitch dressed as a diagnosis. */
-.audit__working {
-  margin-top: clamp(20px, 2.4vw, 28px);
-  padding-top: 16px;
-  border-top: 1px solid rgba(6, 7, 8, 0.14);
-}
-
-.audit__working-label {
-  margin: 0 0 8px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-muted-on-bone);
-}
-
-.audit__working ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.audit__working li {
-  position: relative;
-  padding-left: 22px;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  color: var(--color-muted-on-bone);
-}
-
-.audit__working li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 12px;
-  height: 1px;
-  background: var(--color-ember-deep);
-}
-
-.audit__disclaimer {
-  margin: clamp(20px, 2.4vw, 28px) 0 0;
-  font-size: 0.8125rem;
-  line-height: 1.55;
-  color: var(--color-muted-on-bone);
-  max-width: 62ch;
-}
-
-@media (min-width: 1024px) and (min-height: 650px) {
-  .audit__findings {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: clamp(28px, 3vw, 56px);
-  }
-
-  /* The divider between columns rides on the cell, so it disappears with
-     the cell rather than outlining an empty one. */
-  .audit__findings > .finding:nth-child(even) {
-    padding-left: clamp(28px, 3vw, 56px);
-    border-left: 1px solid rgba(6, 7, 8, 0.14);
-    margin-left: calc(-1 * clamp(28px, 3vw, 56px));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .audit__step {
-    transition: none;
-  }
-}
-
-/* ---- Two-column idle state ------------------------------------------
+/* ---- Two-column layout ----------------------------------------------
    Before anything runs, the form used to sit alone in the upper-left of a
    very large bone section, which read as unfinished rather than minimal.
-   The right column states plainly what the check looks at. */
+   The right column states plainly what the check looks at, then becomes
+   the live status once a run is away. */
 .audit__top {
   display: grid;
   grid-template-columns: 1fr;
@@ -302,15 +90,20 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  /* Wide enough that the padded targets below never overlap. */
+  gap: 14px;
 }
 
+/* These stack as list items rather than sitting inline in a sentence, so
+   the WCAG inline-link exemption does not apply and they need a real
+   target. Padding takes them past the 24px minimum without overlapping. */
 .audit__alts a {
+  display: inline-block;
   font-size: 0.875rem;
   color: var(--color-muted-on-bone);
   text-decoration: none;
   border-bottom: 1px solid rgba(6, 7, 8, 0.22);
-  padding-bottom: 2px;
+  padding-block: 4px;
 }
 
 .audit__alts a:hover,
@@ -325,12 +118,19 @@
 }
 
 .audit__panel-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 0 12px;
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--color-muted-on-bone);
+}
+
+.audit__panel--running .audit__panel-label {
+  color: var(--color-ember-deep);
 }
 
 .audit__panel-list {
@@ -360,53 +160,80 @@
   background: rgba(6, 7, 8, 0.3);
 }
 
-/* ---- Next step ------------------------------------------------------
-   The highest-intent moment on the page. Previously the results simply
-   ended and the page carried on. */
-.audit__next {
-  margin-top: clamp(22px, 2.6vw, 30px);
-  padding-top: 18px;
-  border-top: 2px solid var(--color-ink);
+.audit__running-body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+  max-width: 42ch;
 }
 
-.audit__next-title {
-  margin: 0 0 12px;
-  font-size: 1.0625rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+/* The visible treatment is a text link, so the underline has to stay tight
+   against the text — padding would drop it away from the baseline. The
+   pseudo-element grows the hit area to 44px around it instead, leaving
+   layout and the underline exactly where they are. */
+.audit__scroll-on::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 44px;
 }
 
-.audit__next-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.audit__next-primary,
-.audit__next-secondary {
+.audit__scroll-on {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.45em;
-  font-size: 0.9375rem;
+  gap: 0.5em;
+  margin-top: 14px;
+  padding: 0;
+  font: inherit;
+  font-size: 0.875rem;
   font-weight: 700;
-  padding: 0.75em 1.4em;
-  text-decoration: none;
-}
-
-.audit__next-primary {
-  background: var(--color-ember-deep);
-  color: var(--color-soft-white);
-  border: 1px solid var(--color-ember-deep);
-}
-
-.audit__next-secondary {
   color: var(--color-ink);
-  border: 1px solid rgba(6, 7, 8, 0.28);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-ember-deep);
+  cursor: pointer;
 }
 
-.audit__next-secondary:hover,
-.audit__next-secondary:focus-visible {
-  border-color: var(--color-ink);
+.audit__scroll-on span {
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.audit__scroll-on:hover span,
+.audit__scroll-on:focus-visible span {
+  transform: translateY(3px);
+}
+
+/* ---- Spinner ---------------------------------------------------------
+   Shared with the report and the pill. A ring rather than a bar, because
+   the wait has no meaningful percentage to report — pretending otherwise
+   with a progress bar would be inventing information. */
+.audit__spinner {
+  flex: none;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  opacity: 0.85;
+  animation: audit-spin 0.75s linear infinite;
+}
+
+@keyframes audit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audit__spinner {
+    animation-duration: 2.4s;
+  }
 }
 
 @media (min-width: 1024px) and (min-height: 650px) {
@@ -421,4 +248,8 @@
     padding-left: clamp(28px, 3vw, 48px);
     border-left: 1px solid rgba(6, 7, 8, 0.14);
   }
+}
+
+.audit__panel--error .audit__panel-label {
+  color: var(--color-ink);
 }

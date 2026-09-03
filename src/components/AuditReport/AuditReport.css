@@ -1,0 +1,443 @@
+/* The audit result, on ink, after stage 03.
+   ----------------------------------------------------------------------
+   Stage 03's ground is already ink and the section below is ink, so this
+   needs no diagonal of its own — it is a continuation, not a new band. The
+   thing that breaks up the dark is the screenshot: a large, bright
+   rectangle of the visitor's own site. That contrast is the composition,
+   which is why the surrounding chrome stays deliberately quiet. */
+
+.report {
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+  padding-block: var(--section-pad-y);
+}
+
+.report__eyebrow {
+  color: var(--color-ember);
+}
+
+.report__heading {
+  margin: 0;
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  max-width: 18ch;
+}
+
+/* The subject of the sentence is their domain, so it carries the weight.
+   `overflow-wrap` because some business domains are very long and this is
+   the one string on the page we do not control. */
+.report__domain {
+  overflow-wrap: anywhere;
+}
+
+.report__lead {
+  margin: clamp(14px, 1.8vw, 20px) 0 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-silver);
+  max-width: 64ch;
+}
+
+/* ---- Viewer: the screenshot and its readouts ------------------------- */
+
+.report__viewer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  margin-top: clamp(30px, 4vw, 52px);
+}
+
+.report__shot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* A thin frame, not a phone bezel illustration. The point is the page
+   inside it; a drawn device would be decoration competing with content. */
+.report__device {
+  position: relative;
+  background: var(--color-graphite);
+  border: 1px solid rgba(214, 218, 223, 0.18);
+  padding: 8px;
+  min-width: 0;
+}
+
+.report__shot-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Lighthouse returns the viewport screenshot, which is tall and narrow.
+     Capping the height stops it running past a screen on desktop while
+     `object-fit` keeps the top of the page — the part a visitor sees
+     first — rather than centring on the middle of it. */
+  max-height: 68vh;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.report__shot-label,
+.report__aside-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.report__aside {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(26px, 3vw, 40px);
+  min-width: 0;
+}
+
+/* ---- Filmstrip -------------------------------------------------------
+   The most persuasive artifact here and the cheapest: it is simply what
+   Chrome saw, at real timestamps. Three blank frames in a row makes the
+   case for a rebuild better than any score, and cannot be accused of
+   exaggerating, because it is their own page. */
+
+.filmstrip__frames {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0 0 6px;
+  /* Wide content scrolls inside its own container rather than pushing the
+     page sideways. */
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.filmstrip__frame {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: clamp(58px, 9vw, 84px);
+}
+
+.filmstrip__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  object-position: top center;
+  background: var(--color-graphite);
+  border: 1px solid rgba(214, 218, 223, 0.16);
+}
+
+.filmstrip__time {
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.filmstrip__note {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+  max-width: 46ch;
+}
+
+/* ---- Metrics ---------------------------------------------------------
+   Values in the editorial serif, at size. These are the numbers the old
+   version fetched and then threw away. */
+
+.metrics__list {
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.metric {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'label value'
+    'note  value';
+  align-items: baseline;
+  gap: 2px 20px;
+  padding: clamp(12px, 1.6vw, 16px) 0;
+  border-top: 1px solid rgba(214, 218, 223, 0.14);
+}
+
+.metric:last-child {
+  border-bottom: 1px solid rgba(214, 218, 223, 0.14);
+}
+
+.metric__label {
+  grid-area: label;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.metric__value {
+  grid-area: value;
+  margin: 0;
+  align-self: center;
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-soft-white);
+  white-space: nowrap;
+}
+
+.metric__note {
+  grid-area: note;
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+  max-width: 42ch;
+}
+
+/* ---- Findings --------------------------------------------------------
+   Same vocabulary as the rest of the page: a rule, a small stage label, a
+   line of copy, and what we would do about it. */
+
+.report__findings-block {
+  margin-top: clamp(32px, 4vw, 56px);
+}
+
+.report__findings {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  /* Borders live on the cells, never on the grid gap: a gap-as-divider
+     over a tinted ground renders any empty cell as a visible rectangle,
+     which is exactly the "failed screenshot" artifact this had before. */
+  gap: 0;
+}
+
+.finding {
+  padding: clamp(16px, 2vw, 22px) 0;
+  border-top: 1px solid rgba(214, 218, 223, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.finding__stage {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ember);
+}
+
+.finding__label {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.finding__body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-silver);
+}
+
+.finding__response {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-soft-white);
+}
+
+/* Credit where it is due — this is what stops the tool reading as a
+   sales pitch dressed as a diagnosis. */
+.report__working {
+  margin-top: clamp(28px, 3.2vw, 44px);
+  padding-top: 18px;
+  border-top: 1px solid rgba(214, 218, 223, 0.14);
+}
+
+.report__working ul {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px 40px;
+}
+
+.report__working li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-silver);
+}
+
+.report__working li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 12px;
+  height: 1px;
+  background: var(--color-ember);
+}
+
+/* ---- Waiting and error ----------------------------------------------- */
+
+.report__waiting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: clamp(20px, 3vw, 36px);
+  color: var(--color-silver);
+}
+
+.report__waiting-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+.report__error {
+  padding-block: clamp(16px, 2.4vw, 28px);
+}
+
+.report__error-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-silver);
+  max-width: 56ch;
+}
+
+.report__error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  margin-top: 16px;
+}
+
+.report__retry {
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.7em 1.4em;
+  color: var(--color-soft-white);
+  background: none;
+  border: 1px solid rgba(214, 218, 223, 0.4);
+  cursor: pointer;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.report__retry:hover,
+.report__retry:focus-visible {
+  border-color: var(--color-ember);
+}
+
+.report__error-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.9375rem;
+  color: var(--color-silver);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(214, 218, 223, 0.3);
+  padding-bottom: 2px;
+}
+
+.report__error-link:hover,
+.report__error-link:focus-visible {
+  color: var(--color-soft-white);
+  border-bottom-color: var(--color-ember);
+}
+
+/* ---- Next step -------------------------------------------------------
+   The highest-intent moment on the page. */
+
+.report__next {
+  margin-top: clamp(28px, 3.2vw, 44px);
+  padding-top: 18px;
+  border-top: 2px solid var(--color-soft-white);
+}
+
+.report__next-title {
+  margin: 0 0 14px;
+  font-size: clamp(1.0625rem, 1.8vw, 1.375rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.report__next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.report__next-primary,
+.report__next-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.75em 1.4em;
+  text-decoration: none;
+}
+
+.report__next-primary {
+  background: var(--color-ember-deep);
+  color: var(--color-soft-white);
+  border: 1px solid var(--color-ember-deep);
+}
+
+.report__next-secondary {
+  color: var(--color-soft-white);
+  border: 1px solid rgba(214, 218, 223, 0.32);
+}
+
+.report__next-secondary:hover,
+.report__next-secondary:focus-visible {
+  border-color: var(--color-soft-white);
+}
+
+.report__disclaimer {
+  margin: clamp(20px, 2.4vw, 28px) 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+  max-width: 62ch;
+}
+
+@media (min-width: 860px) {
+  .report__viewer {
+    /* The screenshot is tall and narrow; the readouts beside it need the
+       wider half to keep the metric notes on a comfortable measure. */
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+  }
+
+  .report__findings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(28px, 3.4vw, 56px);
+  }
+
+  .report__working ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

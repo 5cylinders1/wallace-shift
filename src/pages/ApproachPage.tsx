@@ -1,6 +1,8 @@
 import { PageHero } from '../components/PageHero/PageHero'
 import { StandardsSection } from '../components/Standards/StandardsSection'
 import { SiteAudit } from '../components/SiteAudit/SiteAudit'
+import { AuditReport } from '../components/AuditReport/AuditReport'
+import { AuditPill } from '../components/AuditPill/AuditPill'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
 import { auditCopy } from '../content/audit'
@@ -15,6 +17,7 @@ import {
 import { approachPageHero, business } from '../content/siteConfig'
 import { renderLines } from '../lib/textLines'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
+import { useSiteAudit } from '../hooks/useSiteAudit'
 import './InteriorPage.css'
 import './ApproachPage.css'
 
@@ -33,6 +36,10 @@ import './ApproachPage.css'
  */
 export function ApproachPage() {
   useRouteMeta('/approach')
+
+  /* Owned here, not inside the input: the field is in stage 01 and the
+     result renders after stage 03, so both halves read the same state. */
+  const audit = useSiteAudit()
 
   // Real scheduling link when one exists; the contact form until then.
   const bookingHref = business.bookingUrl ?? '/contact'
@@ -73,7 +80,11 @@ export function ApproachPage() {
               <p className="stage__summary">{auditCopy.summary}</p>
               <p className="stage-one__supporting">{auditCopy.supporting}</p>
             </div>
-            <SiteAudit />
+            <SiteAudit
+              state={audit}
+              continueTo="approach-stages"
+              reportId="audit-report"
+            />
           </div>
         </div>
       </section>
@@ -83,7 +94,7 @@ export function ApproachPage() {
           The section carries no vertical padding of its own — each stage
           owns its ground edge to edge, so any padding here would render as
           a stripe of the wrong colour between them. */}
-      <section className="interior interior--stages">
+      <section className="interior interior--stages" id="approach-stages">
         <div className="container">
           <ol className="stages">
             {approachStages.map((stage, index) => (
@@ -118,6 +129,12 @@ export function ApproachPage() {
           </ol>
         </div>
       </section>
+
+      {/* The other half of stage 01. It renders nothing until a check has
+          been started, so the page is unchanged for visitors who never use
+          the tool — and lands exactly where someone arrives after reading
+          the three stages they just waited through. */}
+      <AuditReport state={audit} id="audit-report" />
 
       {/* Where each service becomes paid — pulled out of stage 01, where
           four different engagement types were competing in one block.
@@ -243,6 +260,8 @@ export function ApproachPage() {
           </Reveal>
         </div>
       </section>
+
+      <AuditPill state={audit} targetId="audit-report" />
     </>
   )
 }

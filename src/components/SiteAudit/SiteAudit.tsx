@@ -1,178 +1,97 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { useId, useState, type FormEvent } from 'react'
 import { PageLink } from '../PageLink/PageLink'
-import {
-  auditCopy,
-  findingSpecs,
-  scoreBands,
-  stageResponse,
-  type Band,
-} from '../../content/audit'
+import { auditCopy } from '../../content/audit'
+import type { SiteAuditState } from '../../hooks/useSiteAudit'
 import './SiteAudit.css'
 
-type Scores = {
-  performance: number | null
-  seo: number | null
-  accessibility: number | null
-  bestPractices: number | null
-}
-
-type AuditResult = {
-  url: string
-  scores: Scores
-  metrics: { lcp: string | null; cls: string | null; tbt: string | null }
-  checks: Record<string, boolean | null>
-}
-
-type Status = 'idle' | 'running' | 'done' | 'error'
-
-type ErrorKey = keyof typeof auditCopy.errors
-
-/** How long each running-step message holds before the next. */
-const STEP_MS = 4200
-
-function bandFor(score: number | null, key: keyof typeof scoreBands): Band {
-  if (score === null) return 'mixed'
-  const { goodAt, mixedAt } = scoreBands[key]
-  if (score >= goodAt) return 'good'
-  if (score >= mixedAt) return 'mixed'
-  return 'attention'
+interface SiteAuditProps {
+  state: SiteAuditState
+  /** Element the page scrolls to once a run starts. */
+  continueTo: string
+  /** The report, for the error state to point at. */
+  reportId: string
 }
 
 /**
  * Stage 01 of the process, performed on the visitor's own site.
  *
- * The page claims it finds friction; this finds it, on their actual
- * business, before they have spoken to anyone. Everything it reports comes
- * from a real Lighthouse run on Google's infrastructure — see api/audit.ts
- * for why the audit is never fetched by us directly.
+ * This is the input half only. The result renders after stage 03 — see
+ * AuditReport — because a Lighthouse run takes 10–60 seconds and the honest
+ * options were to make someone watch a spinner for a minute or to give them
+ * something worth reading while it happens. The page already had the
+ * something: its own three stages.
  */
-export function SiteAudit() {
+export function SiteAudit({ state, continueTo, reportId }: SiteAuditProps) {
   const uid = useId()
   const [url, setUrl] = useState('')
-  const [status, setStatus] = useState<Status>('idle')
-  const [error, setError] = useState<ErrorKey>('network')
-  const [result, setResult] = useState<AuditResult | null>(null)
-  /** The URL the failed run used — retry repeats that, not the live field. */
-  const [lastRun, setLastRun] = useState('')
-  const [step, setStep] = useState(0)
-  const resultRef = useRef<HTMLDivElement>(null)
-
-  // Cycles the honest waiting copy while Lighthouse runs. The reset to
-  // step 0 belongs to the submit handler, not here — resetting it in the
-  // effect body is a synchronous setState during render commit, which
-  // cascades an extra render every time the status changes.
-  useEffect(() => {
-    if (status !== 'running') return
-    const timer = window.setInterval(() => {
-      setStep((s) => Math.min(s + 1, auditCopy.runningSteps.length - 1))
-    }, STEP_MS)
-    return () => window.clearInterval(timer)
-  }, [status])
-
-  const runAudit = async (target: string) => {
-    if (!target.trim() || status === 'running') return
-
-    setStatus('running')
-    setResult(null)
-    setStep(0)
-    setLastRun(target)
-
-    try {
-      // GET, so Vercel's edge can cache the result by URL — see api/audit.ts.
-      const response = await fetch(
-        `/api/audit?url=${encodeURIComponent(target)}`,
-      )
-      const body = (await response.json().catch(() => null)) as
-        | ({ ok: boolean; error?: string } & Partial<AuditResult>)
-        | null
-
-      // The dev server has no serverless functions and answers with the
-      // SPA's own HTML — treating that as a result would invent findings.
-      if (!body || typeof body.ok !== 'boolean') {
-        setError('network')
-        setStatus('error')
-        return
-      }
-
-      if (!body.ok) {
-        const key = body.error as ErrorKey
-        setError(key in auditCopy.errors ? key : 'network')
-        setStatus('error')
-        return
-      }
-
-      setResult(body as AuditResult)
-      setStatus('done')
-    } catch {
-      setError('network')
-      setStatus('error')
-    }
-  }
+  const { status, run } = state
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    void runAudit(url)
+    if (!url.trim() || status === 'running') return
+    run(url)
+    scrollOn()
   }
 
-  const findings = result
-    ? findingSpecs
-        .map((spec) => {
-          const passed =
-            spec.id === 'lcp'
-              ? bandFor(result.scores.performance, 'performance') === 'good'
-              : result.checks[spec.id]
-          if (passed === null || passed === undefined) return null
-          return { spec, passed }
-        })
-        .filter((f): f is { spec: (typeof findingSpecs)[number]; passed: boolean } => !!f)
-    : []
+  const scrollTo = (id: string) => {
+    const target = document.getElementById(id)
+    if (!target) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    target.scrollIntoView({
+      behavior: reduced ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }
 
-  const attention = findings.filter((f) => !f.passed)
-  const working = findings.filter((f) => f.passed)
+  /* Starts the visitor moving the moment the request is away, so the wait
+     reads as progress through the page rather than a pause in it. */
+  const scrollOn = () => scrollTo(continueTo)
+  const scrollToReport = () => scrollTo(reportId)
 
-  // Visible until there is a result to replace it. Hiding it on error left
-  // the right column blank at exactly the moment the visitor is already
-  // looking at a failure — the same unfinished look as the idle state had.
-  const showPanel = status !== 'done'
+  // The panel is replaced by live status once a run is away, so the column
+  // never sits empty and never shows stale guidance.
+  const showPanel = status === 'idle'
 
   return (
     <div className="audit">
       <div className="audit__top">
         <form className="audit__form" onSubmit={handleSubmit} noValidate>
-        <label className="audit__label" htmlFor={`${uid}-url`}>
-          {auditCopy.inputLabel}
-        </label>
-        <div className="audit__row">
-          <input
-            id={`${uid}-url`}
-            className="audit__input"
-            type="text"
-            inputMode="url"
-            autoComplete="url"
-            spellCheck={false}
-            placeholder={auditCopy.placeholder}
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            disabled={status === 'running'}
-          />
-          <button
-            type="submit"
-            className="audit__submit"
-            disabled={status === 'running' || !url.trim()}
-          >
-            {status === 'done' ? auditCopy.resubmit : auditCopy.submit}
-          </button>
-        </div>
+          <label className="audit__label" htmlFor={`${uid}-url`}>
+            {auditCopy.inputLabel}
+          </label>
+          <div className="audit__row">
+            <input
+              id={`${uid}-url`}
+              className="audit__input"
+              type="text"
+              inputMode="url"
+              autoComplete="url"
+              spellCheck={false}
+              placeholder={auditCopy.placeholder}
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+              disabled={status === 'running'}
+            />
+            <button
+              type="submit"
+              className="audit__submit"
+              disabled={status === 'running' || !url.trim()}
+            >
+              {status === 'done' || status === 'error'
+                ? auditCopy.resubmit
+                : auditCopy.submit}
+            </button>
+          </div>
 
-        {/* The check only works on an existing public site — these keep
-            app and automation visitors from feeling shut out by it. */}
-        <ul className="audit__alts">
-          {auditCopy.alternatives.map((alt) => (
-            <li key={alt.href + alt.label}>
-              <PageLink href={alt.href}>{alt.label}</PageLink>
-            </li>
-          ))}
-        </ul>
+          {/* The check only works on an existing public site — these keep
+              app and automation visitors from feeling shut out by it. */}
+          <ul className="audit__alts">
+            {auditCopy.alternatives.map((alt) => (
+              <li key={alt.href + alt.label}>
+                <PageLink href={alt.href}>{alt.label}</PageLink>
+              </li>
+            ))}
+          </ul>
         </form>
 
         {/* Fills the right column before anything has run, so the section
@@ -187,86 +106,29 @@ export function SiteAudit() {
             </ul>
           </div>
         )}
-      </div>
-
-      <div aria-live="polite" className="audit__live">
-        {status === 'running' && (
-          <div className="audit__running">
-            <p className="audit__running-title">{auditCopy.runningTitle}</p>
-            <ul className="audit__steps">
-              {auditCopy.runningSteps.map((text, index) => (
-                <li
-                  key={text}
-                  className={`audit__step${index <= step ? ' audit__step--done' : ''}`}
-                >
-                  {text}
-                </li>
-              ))}
-            </ul>
-            <p className="audit__running-note">{auditCopy.runningNote}</p>
-          </div>
-        )}
 
         {status === 'error' && (
-          <div className="audit__error">
-            <p className="audit__error-text">{auditCopy.errors[error]}</p>
-            {/* Retry the URL that failed, not whatever is in the field now. */}
-            {lastRun && (
-              <button
-                type="button"
-                className="audit__retry"
-                onClick={() => void runAudit(lastRun)}
-              >
-                {auditCopy.retry}
-              </button>
-            )}
+          <div className="audit__panel audit__panel--error">
+            <p className="audit__panel-label">{auditCopy.errorPanelTitle}</p>
+            <p className="audit__running-body">{auditCopy.errorPanelBody}</p>
+            <button type="button" className="audit__scroll-on" onClick={scrollToReport}>
+              {auditCopy.errorPanelCta}
+              <span aria-hidden="true">&#8595;</span>
+            </button>
           </div>
         )}
 
-        {status === 'done' && result && (
-          <div className="audit__result" ref={resultRef}>
-            <p className="audit__result-lead">{auditCopy.resultLead}</p>
-
-            {attention.length > 0 && (
-              <ol className="audit__findings">
-                {attention.map(({ spec }) => (
-                  <li className="finding" key={spec.id}>
-                    <span className="finding__stage">Stage {spec.stage}</span>
-                    <h3 className="finding__label">{spec.label}</h3>
-                    <p className="finding__body">{spec.attention}</p>
-                    <p className="finding__response">
-                      {stageResponse[spec.stage]}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            )}
-
-            {working.length > 0 && (
-              <div className="audit__working">
-                <p className="audit__working-label">Already working</p>
-                <ul>
-                  {working.map(({ spec }) => (
-                    <li key={spec.id}>{spec.good}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="audit__next">
-              <p className="audit__next-title">{auditCopy.nextTitle}</p>
-              <div className="audit__next-actions">
-                <PageLink href="/contact" className="audit__next-primary">
-                  {auditCopy.nextPrimary}
-                  <span aria-hidden="true">&#8599;</span>
-                </PageLink>
-                <PageLink href="/pricing" className="audit__next-secondary">
-                  {auditCopy.nextSecondary}
-                </PageLink>
-              </div>
-            </div>
-
-            <p className="audit__disclaimer">{auditCopy.disclaimer}</p>
+        {status === 'running' && (
+          <div className="audit__panel audit__panel--running">
+            <p className="audit__panel-label">
+              <span className="audit__spinner" aria-hidden="true" />
+              {auditCopy.runningTitle}
+            </p>
+            <p className="audit__running-body">{auditCopy.runningBody}</p>
+            <button type="button" className="audit__scroll-on" onClick={scrollOn}>
+              {auditCopy.runningCta}
+              <span aria-hidden="true">&#8595;</span>
+            </button>
           </div>
         )}
       </div>

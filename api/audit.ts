@@ -1,6 +1,28 @@
 /**
  * Live site audit for the /approach page.
  *
+ * RUNTIME — why this is not an edge function.
+ * ----------------------------------------------------------------------
+ * It was, and that was the single biggest defect in the feature. The edge
+ * runtime must return its first byte within 25s. Measured PageSpeed times
+ * for real small-business sites:
+ *
+ *     reply365.ai              11.5s
+ *     brown-roofing.com        21.9s
+ *     centuryroofingkc.com     24.6s
+ *     cathywangdesign.com      28.0s
+ *     troofs.com               28.6s
+ *     twista.com               54.2s
+ *     services.mistersparky.com 73.1s
+ *
+ * Six of seven exceeded the ceiling, so the audit failed for most visitors
+ * and no timeout value could have fixed it. The Node runtime takes a
+ * `maxDuration` instead, which buys the headroom the work actually needs.
+ *
+ * The visitor no longer waits on a spinner for this: the request is fired
+ * from the top of the page and the result is rendered at the bottom, so the
+ * wait is spent reading the three stages. See SiteAudit.tsx.
+ *
  * SECURITY — why this function never fetches the visitor's URL itself.
  * ----------------------------------------------------------------------
  * A public endpoint that fetches an arbitrary user-supplied URL is a
@@ -12,8 +34,13 @@
  * So this function makes exactly one outbound request, and it is to
  * Google: the PageSpeed Insights API, which runs a real Lighthouse audit
  * on Google's own infrastructure and returns the result. Google fetches
- * the visitor's site; we never do. There is no SSRF surface to defend,
- * and the data is better than anything we could scrape.
+ * the visitor's site; we never do. There is no SSRF surface to defend.
+ *
+ * It also gets us past bot protection. Fetching these same sites directly
+ * takes ~0.3s rather than ~30s, but cathywangdesign.com and
+ * services.mistersparky.com both answer a plain server-side request with
+ * HTTP 403 — Cloudflare-class filtering that a browser user-agent does not
+ * satisfy. Lighthouse drives real Chrome and gets through.
  *
  * CACHING — why this is a GET.
  * ----------------------------------------------------------------------
@@ -32,8 +59,7 @@
  *                      routinely exhausted (verified: HTTP 429 on a plain
  *                      request). Treat the key as mandatory; without it
  *                      the audit fails for most visitors, most of the day.
- *                      The free tier is 25,000 requests/day, which is far
- *                      beyond this site's traffic.
+ *                      The free tier is 25,000 requests/day.
  *
  * Optional environment variables (rate limiting):
  *   RATE_LIMIT_REDIS_URL    Upstash Redis REST endpoint.
@@ -43,26 +69,22 @@
  * keeping with the project's lean dependency rule. While either variable
  * is unset the endpoint still works but is UNTHROTTLED: the cache above is
  * then the only thing standing between a bored person with a loop and your
- * daily PageSpeed quota. Set them before advertising the page.
+ * daily PageSpeed quota.
  */
 
-export const config = { runtime: 'edge' }
+/**
+ * 60s is the Hobby plan's ceiling. It does not cover every site — the
+ * 73s outlier above still fails — but it turns "fails for six of seven"
+ * into "fails for roughly one of seven", and that failure is now reported
+ * honestly instead of arriving after a long wait.
+ */
+export const config = { maxDuration: 60 }
 
 const PSI = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed'
 
-/**
- * PSI regularly takes 15–30s for a mobile audit, and Vercel's edge runtime
- * gives the whole request 25s. That gap is the tightest constraint in this
- * feature: there is no timeout value that makes a slow Lighthouse run fit.
- *
- * So this sits as close to the platform ceiling as it can while still
- * leaving room to return a real JSON error instead of a platform error
- * page, and the design absorbs the rest — one fewer Lighthouse category to
- * run, an edge cache so a URL is only ever slow once, and a retry button,
- * because PSI frequently answers a repeat request quickly from its own
- * warm result.
- */
-const TIMEOUT_MS = 23_000
+/** Leaves ~5s under the function ceiling to serialise and return real JSON
+ *  rather than letting the platform emit its own error page. */
+const TIMEOUT_MS = 55_000
 
 const MAX_URL_LENGTH = 2048
 
@@ -74,6 +96,10 @@ const RATE_WINDOW_S = 3600
 /** How long the edge serves a cached audit for the same URL. */
 const CACHE_S = 3600
 const STALE_S = 86_400
+
+/** Filmstrip frames kept. Lighthouse returns ~10 at ~4KB each; this many
+ *  tells the loading story without bloating the cached JSON. */
+const MAX_FRAMES = 6
 
 function json(body: unknown, status: number, cacheable = false): Response {
   return new Response(JSON.stringify(body), {
@@ -173,7 +199,13 @@ function pct(score: unknown): number | null {
   return typeof score === 'number' ? Math.round(score * 100) : null
 }
 
-type Audit = { score?: number | null; displayValue?: string; title?: string }
+type Audit = {
+  score?: number | null
+  displayValue?: string
+  numericValue?: number
+  title?: string
+  details?: { data?: string; items?: Array<{ data?: string; timing?: number }> }
+}
 
 export default async function handler(request: Request): Promise<Response> {
   if (request.method !== 'GET') {
@@ -192,8 +224,7 @@ export default async function handler(request: Request): Promise<Response> {
 
   // Three categories, not four. `best-practices` was requested solely for
   // the is-on-https audit, and the final URL states that outright — so the
-  // whole category was being run for something already known. Every
-  // category Lighthouse skips is time this request does not spend.
+  // whole category was being run for something already known.
   const params = new URLSearchParams({ url: target, strategy: 'mobile' })
   for (const c of ['performance', 'seo', 'accessibility']) {
     params.append('category', c)
@@ -238,7 +269,11 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   const lh = data.lighthouseResult as
-    | { categories?: Record<string, { score?: number }>; audits?: Record<string, Audit>; finalUrl?: string }
+    | {
+        categories?: Record<string, { score?: number }>
+        audits?: Record<string, Audit>
+        finalUrl?: string
+      }
     | undefined
   if (!lh?.categories) {
     return json({ ok: false, error: 'unreachable' }, 422)
@@ -251,19 +286,42 @@ export default async function handler(request: Request): Promise<Response> {
     return a.score >= 0.9
   }
 
+  /* Lighthouse renders the page in real Chrome and hands back what it saw.
+     The previous version discarded all of it and displayed seven booleans,
+     which is why a 30-second wait felt like it returned nothing. The
+     screenshot is the whole point: it is the visitor's own site, and we
+     already paid for it. */
+  const shot = audits['final-screenshot']?.details?.data ?? null
+  const frames = (audits['screenshot-thumbnails']?.details?.items ?? [])
+    .filter((f) => typeof f.data === 'string')
+    .slice(0, MAX_FRAMES)
+    .map((f) => ({ data: f.data as string, timing: f.timing ?? null }))
+
+  /* Real numbers, not bands. `numericValue` is milliseconds (or unitless
+     for CLS); `displayValue` is Lighthouse's own formatted string, which is
+     already localised and correctly rounded — so display that and keep the
+     raw value for anything that needs to compare. */
+  const metric = (id: string) => ({
+    display: audits[id]?.displayValue ?? null,
+    value: typeof audits[id]?.numericValue === 'number' ? audits[id].numericValue : null,
+  })
+
   return json(
     {
       ok: true,
       url: lh.finalUrl ?? target,
+      screenshot: shot,
+      frames,
       scores: {
         performance: pct(lh.categories.performance?.score),
         seo: pct(lh.categories.seo?.score),
         accessibility: pct(lh.categories.accessibility?.score),
       },
       metrics: {
-        lcp: audits['largest-contentful-paint']?.displayValue ?? null,
-        cls: audits['cumulative-layout-shift']?.displayValue ?? null,
-        tbt: audits['total-blocking-time']?.displayValue ?? null,
+        lcp: metric('largest-contentful-paint'),
+        cls: metric('cumulative-layout-shift'),
+        tbt: metric('total-blocking-time'),
+        fcp: metric('first-contentful-paint'),
       },
       checks: {
         metaDescription: has('meta-description'),

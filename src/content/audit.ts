@@ -8,6 +8,11 @@
  * costs the business, not how badly they have done. No score is ever the
  * headline, and nothing implies the site is bad — plenty of slow sites
  * belong to businesses doing very well.
+ *
+ * The filmstrip and screenshot follow the same rule by being literal: they
+ * show the visitor their own page as Chrome rendered it, at real
+ * timestamps, and let them draw the conclusion. That is more persuasive
+ * than any number and it cannot be accused of exaggerating.
  */
 
 export type Band = 'good' | 'mixed' | 'attention'
@@ -18,7 +23,7 @@ export const auditCopy = {
   summary:
     'What customers need, where trust is being lost, and what is slowing the business down. It starts as a conversation — but you can start it yourself, right now.',
   supporting:
-    'Enter your current website and we will run the same automated first check we use to begin a website review. It takes about twenty seconds and needs no contact information.',
+    'Enter your current website and we will load it on a simulated phone, the way a customer would. Keep reading while it runs — the result is waiting at the end of this page. No contact details needed.',
   inputLabel: 'Your website address',
   placeholder: 'yourbusiness.com',
   submit: 'Run the first check',
@@ -28,10 +33,10 @@ export const auditCopy = {
      lone field in an empty column. */
   previewLabel: 'What it checks',
   previewItems: [
-    'How quickly the first content appears on a phone',
+    'How your page looks part-way through loading, frame by frame',
+    'How long a customer waits before anything appears',
     'What a search engine can read about the page',
     'Accessibility basics — contrast, labels, alternatives',
-    'Whether the page is served securely',
   ],
 
   /* The tool only works for an existing public site. These keep the other
@@ -44,20 +49,45 @@ export const auditCopy = {
     },
   ],
 
-  /** Shown while Google runs Lighthouse. Honest about the wait. */
-  runningTitle: 'Running the first check',
-  runningSteps: [
-    'Loading your site the way a phone would',
-    'Measuring how long the first thing takes to appear',
-    'Checking what a search engine can read',
-    'Looking for barriers to getting in touch',
-  ],
-  runningNote: 'This runs on Google’s infrastructure and takes 15–25 seconds.',
+  /** Shown in stage 01 once the request is away. The wait is no longer
+   *  dead time, so this points down the page rather than apologising. */
+  runningTitle: 'Checking your site now',
+  runningBody:
+    'This runs on Google’s infrastructure and takes up to a minute. Read on — your result is being assembled at the end of the page.',
+  runningCta: 'Read while it runs',
 
-  resultEyebrow: 'What we found',
-  /** Never leads with a number. */
-  resultLead:
-    'Here is what an automated first check surfaced, and what each finding would mean for the work. A person still reads it properly before anything is quoted.',
+  /* Failure has to be stated where the visitor is, not only where the
+     result would have been. Leaving this column empty on error was the
+     original "looks broken" defect, and reverting to the generic "what it
+     checks" list would read as though nothing had happened. */
+  errorPanelTitle: 'That check did not finish',
+  errorPanelBody:
+    'Nothing is wrong with your site because of this — the detail is with your result further down.',
+  errorPanelCta: 'See what happened',
+
+  /** The sticky marker that follows the visitor while it works. */
+  pillRunning: 'Checking your site',
+  pillReady: 'Your result is ready',
+  /* Distinct from `pillReady`: announcing "ready" for a run that failed is
+     a small lie the visitor discovers one click later. */
+  pillError: 'That check did not finish',
+  pillJump: 'Jump to it',
+  pillJumpError: 'See why',
+
+  reportEyebrow: 'Your first check',
+  /** Never leads with a number. The subject is their site, not a score. */
+  reportHeading: 'as a phone sees it.',
+  reportLead:
+    'This is your own page, loaded on a simulated phone on a mid-range connection. Below it: what an automated first check surfaced, and what each finding would mean for the work. A person still reads it properly before anything is quoted.',
+
+  filmstripLabel: 'Loading, frame by frame',
+  filmstripNote:
+    'What a customer sees while they wait. Blank frames are seconds where there is nothing to look at yet.',
+  screenshotLabel: 'Finished page',
+  metricsLabel: 'What the wait costs',
+
+  attentionLabel: 'Worth looking at',
+  workingLabel: 'Already working',
 
   /* The highest-intent moment on the page. Wasting it by simply carrying
      on was the single biggest conversion miss in the first version. */
@@ -71,11 +101,12 @@ export const auditCopy = {
   retry: 'Try again',
 
   errors: {
-    invalid_url: 'That does not look like a web address. Try it without the https:// — just yourbusiness.com.',
+    invalid_url:
+      'That does not look like a web address. Try it without the https:// — just yourbusiness.com.',
     unreachable:
       'We could not load that page. It may be password-protected, blocking automated visits, or not published yet.',
     timeout:
-      'That check ran longer than we can wait for. Trying again usually works — the result is often ready the second time. Or send us the address and we will run it manually.',
+      'Your site took longer to analyse than this check allows — which usually means there is a lot going on in the page. That is worth a conversation in itself. Send us the address and we will run it properly.',
     quota:
       'Our check allowance for today is used up. Send us the address and we will run it manually — that is the same check, just with a person doing it.',
     rate_limited:
@@ -84,6 +115,32 @@ export const auditCopy = {
     network: 'Something went wrong reaching the audit. Try again shortly.',
   },
 } as const
+
+/**
+ * The three timings worth showing, in customer language.
+ *
+ * Lighthouse's own names are jargon ("Total Blocking Time"), and a local
+ * business owner should not have to learn them to understand the point.
+ * `note` says what the number means for a visitor, never whether it is
+ * good — the value speaks and the findings below do the interpreting.
+ */
+export const metricSpecs = [
+  {
+    id: 'fcp' as const,
+    label: 'Something appears',
+    note: 'How long the screen stays empty before the first pixel of your page arrives.',
+  },
+  {
+    id: 'lcp' as const,
+    label: 'The main content appears',
+    note: 'When the largest thing on screen — usually your headline or hero image — finishes loading.',
+  },
+  {
+    id: 'cls' as const,
+    label: 'Movement while loading',
+    note: 'How much the page jumps around as it loads. Movement is what makes people tap the wrong thing.',
+  },
+]
 
 export interface FindingSpec {
   id: string

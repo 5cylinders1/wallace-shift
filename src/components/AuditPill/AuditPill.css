@@ -1,0 +1,89 @@
+/* Status marker for a check that is running further up the page.
+   ----------------------------------------------------------------------
+   z-index 40 is deliberate: the header stack is 50, so the mobile menu
+   covers this rather than fighting it, while it still sits above all page
+   content. */
+
+.audit-pill {
+  position: fixed;
+  z-index: 40;
+  left: max(var(--gutter), env(safe-area-inset-left));
+  right: max(var(--gutter), env(safe-area-inset-right));
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  padding: 12px 16px;
+  background: var(--color-graphite);
+  color: var(--color-soft-white);
+  border: 1px solid rgba(214, 218, 223, 0.2);
+  /* Enough lift to read as floating over the page without a soft blurred
+     card look — a single tight shadow, not a glow. */
+  box-shadow: 0 10px 30px rgba(6, 7, 8, 0.5);
+}
+
+.audit-pill--ready {
+  border-color: var(--color-ember);
+}
+
+.audit-pill__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.audit-pill--ready .audit-pill__status {
+  color: var(--color-ember);
+}
+
+.audit-pill__jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  flex: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.55em 1.1em;
+  /* Comfortably tappable — the pill is a phone-first control. */
+  min-height: 44px;
+  color: var(--color-ink);
+  background: var(--color-soft-white);
+  border: 1px solid var(--color-soft-white);
+  cursor: pointer;
+}
+
+.audit-pill__jump span {
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.audit-pill__jump:hover span,
+.audit-pill__jump:focus-visible span {
+  transform: translateY(3px);
+}
+
+/* On wider screens it retreats to the corner and sizes to its content
+   rather than spanning the viewport. */
+@media (min-width: 700px) {
+  .audit-pill {
+    left: auto;
+    right: max(var(--gutter), env(safe-area-inset-right));
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    max-width: min(420px, calc(100vw - var(--gutter) * 2));
+  }
+}
+
+/* A failed run is not a ready result. Muted rather than alarming — the
+   check not finishing says nothing about the visitor's site. */
+.audit-pill--failed {
+  border-color: rgba(214, 218, 223, 0.42);
+}
+
+.audit-pill--failed .audit-pill__status {
+  color: var(--color-silver);
+}
