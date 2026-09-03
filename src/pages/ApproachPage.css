@@ -297,11 +297,13 @@
   }
 }
 
-/* Tighter interior rhythm for this page specifically — the generic
-   section padding left the substantive content spread too thin. */
+/* Tighter interior rhythm for this page specifically. Measured: the
+   assurance strip was 239px tall for 95px of content — 60% padding — which
+   is where "near-full-screen treatment for everything" starts making the
+   important sections feel no more important than the minor ones. */
 @media (min-width: 768px) {
   .interior--tight {
-    padding-block: clamp(40px, 5vw, 72px);
+    padding-block: clamp(28px, 3.4vw, 48px);
   }
 }
 
@@ -505,5 +507,56 @@
   .proof__credentials {
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
+  }
+}
+
+/* ---- Founder: the two people, named ---------------------------------
+   Replaces a single narrow text column floating in a near-empty black
+   field. Two columns of real content carry the width the section already
+   occupied. */
+.proof__people {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(20px, 2.6vw, 36px);
+  margin-top: clamp(20px, 2.6vw, 32px);
+}
+
+.proof__person-role {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ember);
+}
+
+.proof__person-name {
+  margin: 6px 0 8px;
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.proof__person-body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-silver);
+  max-width: 46ch;
+}
+
+@media (min-width: 760px) {
+  .proof__people {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(28px, 3.4vw, 56px);
+  }
+}
+
+/* The four expectations as a 2x2 block rather than a full-height stack —
+   they are reassurance, not headline content, and were consuming a whole
+   screen for four short lines. */
+@media (min-width: 700px) {
+  .expectations {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

@@ -31,7 +31,11 @@
 
   --container-max: 1720px;
   --gutter: clamp(20px, 5vw, 64px);
-  --section-pad-y: clamp(64px, 10vw, 140px);
+  /* Cut ~33% from clamp(64px, 10vw, 140px). Measured at 8.8 screens with
+     four consecutive ~1-screen sections of secondary reassurance, the
+     uniform full-screen treatment stopped reading as luxurious negative
+     space and started reading as unfinished. Generous, not cavernous. */
+  --section-pad-y: clamp(44px, 6.6vw, 94px);
 
   /* Fallback only — SiteHeader measures and overwrites this via
      ResizeObserver so any section needing clearance beneath the fixed

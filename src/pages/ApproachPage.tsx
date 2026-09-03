@@ -9,7 +9,6 @@ import { auditCopy } from '../content/audit'
 import {
   approachAssurances,
   approachCta,
-  approachExpectations,
   approachProof,
   approachStages,
   servicePaths,
@@ -182,8 +181,26 @@ export function ApproachPage() {
           <Reveal delay={0.06}>
             <h2 className="proof__heading">{approachProof.heading}</h2>
           </Reveal>
+          {/* Named, with real remits. The page previously promised "the
+              people doing the work" and then described only one of them,
+              which left the two-person structure ambiguous at exactly the
+              moment it is meant to reassure. */}
+          <div className="proof__people">
+            {approachProof.people.map((person, index) => (
+              <Reveal
+                className="proof__person"
+                delay={0.1 + index * 0.06}
+                key={person.name}
+              >
+                <span className="proof__person-role">{person.role}</span>
+                <h3 className="proof__person-name">{person.name}</h3>
+                <p className="proof__person-body">{person.body}</p>
+              </Reveal>
+            ))}
+          </div>
+
           {approachProof.paragraphs.map((paragraph, index) => (
-            <Reveal delay={0.1 + index * 0.06} key={paragraph.slice(0, 24)}>
+            <Reveal delay={0.16 + index * 0.06} key={paragraph.slice(0, 24)}>
               <p className="proof__body">{paragraph}</p>
             </Reveal>
           ))}
@@ -203,34 +220,12 @@ export function ApproachPage() {
         </div>
       </section>
 
-      <section className="interior interior--tight interior--ink">
-        <div className="container">
-          <Reveal>
-            <p className="eyebrow">{approachExpectations.eyebrow}</p>
-          </Reveal>
-          <Reveal delay={0.06}>
-            <h2 className="section-heading">{approachExpectations.heading}</h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="section-supporting">
-              {approachExpectations.supporting}
-            </p>
-          </Reveal>
-
-          <ul className="expectations">
-            {approachExpectations.items.map((item, index) => (
-              <Reveal
-                className="expectation"
-                delay={0.12 + index * 0.04}
-                key={item.title}
-              >
-                <h3 className="expectation__title">{item.title}</h3>
-                <p className="expectation__body">{item.body}</p>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* The "what you can expect" section was removed here, not merely
+          compressed. All four of its points were already stated: scope and
+          change-approval by the assurance strip, working previews by stage
+          02, ownership by stage 03. It was 530px of the page restating
+          promises the visitor had already been given, which is what made
+          the reassurance feel repetitive rather than reinforcing. */}
 
       <StandardsSection />
 

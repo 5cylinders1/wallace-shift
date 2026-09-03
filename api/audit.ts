@@ -315,10 +315,32 @@ async function run(req: IncomingMessage, res: ServerResponse): Promise<void> {
      screenshot is the whole point: it is the visitor's own site, and we
      already paid for it. */
   const shot = audits['final-screenshot']?.details?.data ?? null
-  const frames = (audits['screenshot-thumbnails']?.details?.items ?? [])
+
+  /* Sampled ACROSS the whole strip, never `.slice(0, n)`.
+     Lighthouse returns ~10 evenly spaced frames covering the entire load.
+     Taking the first six captured only the pre-render window: verified
+     against cathywangdesign.com, where all six came back byte-identical
+     blank white while the final screenshot showed a fully rendered page and
+     the metrics said content arrived at 2.6s. The page was telling every
+     visitor their site was blank for four seconds — worse than the truth,
+     and contradicted by the numbers printed beside it.
+
+     Keeping the first and last frames and spacing the rest evenly shows the
+     actual blank-to-loaded transition, which is both honest and the more
+     persuasive picture. */
+  const allFrames = (audits['screenshot-thumbnails']?.details?.items ?? [])
     .filter((f) => typeof f.data === 'string')
-    .slice(0, MAX_FRAMES)
-    .map((f) => ({ data: f.data as string, timing: f.timing ?? null }))
+  const sampled =
+    allFrames.length <= MAX_FRAMES
+      ? allFrames
+      : Array.from({ length: MAX_FRAMES }, (_unused, i) =>
+          // Spans index 0 to length-1 inclusive, so both ends are kept.
+          allFrames[Math.round((i * (allFrames.length - 1)) / (MAX_FRAMES - 1))],
+        )
+  const frames = sampled.map((f) => ({
+    data: f.data as string,
+    timing: f.timing ?? null,
+  }))
 
   /* Real numbers, not bands. `displayValue` is Lighthouse's own formatted
      string, already localised and correctly rounded, so that is what gets

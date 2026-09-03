@@ -4,8 +4,8 @@
      above, and never returns. */
   background: var(--color-ink);
   color: var(--color-soft-white);
-  padding-top: clamp(120px, 12vw, 160px);
-  padding-bottom: clamp(80px, 9vw, 130px);
+  padding-top: clamp(72px, 7.4vw, 104px);
+  padding-bottom: clamp(52px, 5.6vw, 84px);
   overflow: hidden;
 }
 

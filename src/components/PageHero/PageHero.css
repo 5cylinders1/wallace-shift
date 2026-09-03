@@ -9,8 +9,8 @@
      reason for the visit, so the opening statement never fills a viewport
      the way the homepage hero does. */
   min-height: clamp(380px, 56svh, 560px);
-  padding-block: calc(var(--site-header-height) + clamp(24px, 3.5vw, 48px))
-    clamp(92px, 9.5vw, 136px);
+  padding-block: calc(var(--site-header-height) + clamp(18px, 2.4vw, 32px))
+    clamp(56px, 6vw, 84px);
 }
 
 /* The same single ember glow the pricing hero uses, in the same corner,

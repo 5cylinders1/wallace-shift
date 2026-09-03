@@ -29,8 +29,13 @@ export interface ApproachStage {
  *  site itself rather than a claim about outcomes. */
 export const approachAssurances = [
   {
-    title: 'Two people, no handoffs',
-    body: 'The person you talk to and the person who builds it are the only two involved.',
+    // NOT "no handoffs". Bella is sales and routes technical detail to
+    // Matthew, so a handoff is exactly what happens — claiming otherwise
+    // oversells her remit and sends prospects to her with questions she
+    // cannot answer, at the first-contact moment this page exists to
+    // protect. The honest version is who does what.
+    title: 'One engineer, every project',
+    body: 'Bella is who you speak to first. Matthew designs and builds every project himself.',
   },
   {
     title: 'Prices published',
@@ -106,12 +111,11 @@ export const servicePaths = {
   items: [
     {
       service: 'Website',
-      // CONFIRM: the deposit is described in pricing.ts only as "a deposit
-      // to hold the schedule" — no percentage is published anywhere. A
-      // figure was suggested in review but is not stated as policy, so it
-      // is deliberately absent here rather than invented.
-      step: 'From $1,000, then a deposit',
-      note: 'Scope is agreed in writing first; the deposit holds your place in the schedule. Nothing is built before both are settled.',
+      // The 50% figure is Matthew's own policy, confirmed 2026-09-03. It
+      // was deliberately absent until then because pricing.ts publishes
+      // only "a deposit to hold the schedule" with no percentage.
+      step: 'From $1,000, then 50%',
+      note: 'Scope is agreed in writing first. The 50% deposit follows that approval and holds your place in the schedule — nothing is built before both are settled.',
       href: '/pricing',
     },
     {
@@ -139,10 +143,27 @@ export const servicePaths = {
  */
 export const approachProof = {
   eyebrow: 'Why trust the build',
-  heading: 'The people in the meeting are the people doing the work.',
+  // The old heading — "the people in the meeting are the people doing the
+  // work" — promised a plural the copy never delivered, and blurred who
+  // does what. Naming both, with real remits, answers the question the
+  // heading was gesturing at.
+  heading: 'You will only ever deal with two people.',
+  people: [
+    {
+      name: 'Bella Wallace',
+      role: 'Sales and first contact',
+      // Must never imply she scopes or answers technical questions.
+      body: 'The first person you speak to. She handles enquiries and keeps things moving; anything technical goes straight to Matthew rather than through her.',
+    },
+    {
+      name: 'Matthew Wallace',
+      role: 'Engineer',
+      body: 'Designs and builds every project himself, and has been building production websites and web applications since 2009 — across product development, performance, search, and conversion.',
+    },
+  ],
   paragraphs: [
-    'Matthew has been building and maintaining production websites and web applications since 2009, across product development, performance, search, and conversion. Every engagement is senior-led from the first recommendation through to launch.',
-    'Wallace Shift stays deliberately small so that stays true. Concurrent builds are limited — a constraint of the size rather than a scarcity tactic — which is what keeps the person shaping the recommendation involved when it is built.',
+    'That is the whole company. Every engagement is senior-led from the first recommendation through to launch, because there is nobody else for it to be passed to.',
+    'We limit concurrent projects so every engagement receives direct senior involvement through launch.',
   ],
   /** Factual, checkable, and about depth rather than any one technology. */
   credentials: [
@@ -153,36 +174,6 @@ export const approachProof = {
   /** Verifiable without leaving the page. */
   proofNote: 'This site is a Motion build — the same tier, the same process.',
   proofHref: '/pricing',
-} as const
-
-/** Renamed from "The terms": buyer benefits first, obligations second. */
-export const approachExpectations = {
-  eyebrow: 'What you can expect',
-  heading: 'The parts people are least comfortable asking about.',
-  supporting: 'Stated before you have to ask.',
-  /**
-   * Four, not six. Payment is already covered by the paid-step section and
-   * direct access by the founder section — repeating them here made the
-   * page feel like it was reassuring the reader twice.
-   */
-  items: [
-    {
-      title: 'Clear scope before work begins',
-      body: 'The starting price buys a complete, launched project at that level, and what it covers is written down first.',
-    },
-    {
-      title: 'Working previews at agreed checkpoints',
-      body: 'You see the real thing at a private link, at points agreed in advance.',
-    },
-    {
-      title: 'Changes approved before they are billed',
-      body: 'Anything beyond the agreed scope is priced and approved in writing before it is built.',
-    },
-    {
-      title: 'Ownership and handoff at launch',
-      body: 'The finished build and its code are yours, along with the accounts set up in your name. Third-party licences are transferred where they can be, and named where they cannot.',
-    },
-  ],
 } as const
 
 export const approachCta = {
