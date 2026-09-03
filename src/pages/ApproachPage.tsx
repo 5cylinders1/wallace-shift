@@ -61,24 +61,20 @@ export function ApproachPage() {
         </div>
       </section>
 
-      {/* Stage 01, performed rather than described. The page claims it
-          finds friction — so it finds it, on the visitor's actual site,
-          before they have spoken to anyone. Placed immediately above the
-          stages so the process below reads as "and here is what follows". */}
-      <section className="interior interior--tight">
+      {/* Stage 01, performed rather than described — and it is the only
+          Stage 01 on the page. Listing it again below the tool made the
+          page restart itself right after the visitor had engaged with it. */}
+      <section className="interior interior--stage-one">
         <div className="container">
-          <Reveal>
-            <p className="eyebrow">{auditCopy.eyebrow}</p>
-          </Reveal>
-          <Reveal delay={0.06}>
-            <h2 className="section-heading">{auditCopy.heading}</h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="section-supporting">{auditCopy.supporting}</p>
-          </Reveal>
-          <Reveal delay={0.14}>
+          <div className="stage-one">
+            <div className="stage-one__head">
+              <span className="stage__index">{auditCopy.eyebrow}</span>
+              <h2 className="stage__title">{auditCopy.heading}</h2>
+              <p className="stage__summary">{auditCopy.summary}</p>
+              <p className="stage-one__supporting">{auditCopy.supporting}</p>
+            </div>
             <SiteAudit />
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -97,7 +93,7 @@ export function ApproachPage() {
               // slide the grounds independently and tear the seams between
               // them on the way in. The content reveals; the ground holds.
               <li
-                className={`stage stage--ground-${index + 1}`}
+                className={`stage stage--ground-${index + 2}`}
                 key={stage.index}
               >
                 <Reveal className="stage__head">
@@ -174,7 +170,14 @@ export function ApproachPage() {
               <p className="proof__body">{paragraph}</p>
             </Reveal>
           ))}
-          <Reveal delay={0.24}>
+          <Reveal delay={0.22}>
+            <ul className="proof__credentials">
+              {approachProof.credentials.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </Reveal>
+          <Reveal delay={0.26}>
             <PageLink href={approachProof.proofHref} className="proof__note">
               {approachProof.proofNote}
               <span aria-hidden="true">&#8599;</span>

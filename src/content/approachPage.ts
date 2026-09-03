@@ -42,27 +42,15 @@ export const approachAssurances = [
   },
 ] as const
 
+/**
+ * Stages 02 and 03 only.
+ *
+ * Stage 01 is not here: it is the live first-check section, which performs
+ * the stage rather than describing it. Listing it again below the tool made
+ * the page restart itself — the visitor ran the check, then immediately met
+ * a fresh "01 Find the friction" heading.
+ */
 export const approachStages: ApproachStage[] = [
-  {
-    index: '01',
-    title: 'Find the friction',
-    summary:
-      'What customers need, where trust is being lost, and what is slowing the business down.',
-    fields: [
-      {
-        label: 'What happens',
-        body: 'A conversation about what is not working. We ask what you sell, who hesitates, and where the current setup gets in the way. It is not a sales call and it costs nothing.',
-      },
-      {
-        label: 'What you see',
-        body: 'The problem written back to you in plain language, with the realistic options and what each one would take.',
-      },
-      {
-        label: 'You leave with',
-        body: 'A written recommendation and an agreed next step — even if that step is smaller than a rebuild, or nothing at all.',
-      },
-    ],
-  },
   {
     index: '02',
     title: 'Make the shift',
@@ -71,15 +59,15 @@ export const approachStages: ApproachStage[] = [
     fields: [
       {
         label: 'What happens',
-        body: 'Positioning and content structure come first, so the design is built around something to say. Then design and build run together, not as separate handovers.',
+        body: 'Positioning and content structure come first, so the design is built around something to say. Design and build then run together as one piece of work.',
       },
       {
         label: 'What you see',
-        body: 'A real, viewable version at a private link — structure, design, and your content in place. Not a mockup, and not a slide deck.',
+        body: 'You review a working version through a private link, with structure, design, and real content already in place.',
       },
       {
         label: 'You leave with',
-        body: 'An approved design and a working build, with feedback consolidated into agreed revision rounds rather than drip-fed one note at a time.',
+        body: 'An approved design and a working build. Feedback is gathered at agreed checkpoints so decisions stay clear and the project keeps moving.',
       },
     ],
   },
@@ -118,8 +106,12 @@ export const servicePaths = {
   items: [
     {
       service: 'Website',
-      step: 'Approved scope and deposit',
-      note: 'The deposit holds the schedule. Nothing is built before the scope is agreed in writing.',
+      // CONFIRM: the deposit is described in pricing.ts only as "a deposit
+      // to hold the schedule" — no percentage is published anywhere. A
+      // figure was suggested in review but is not stated as policy, so it
+      // is deliberately absent here rather than invented.
+      step: 'From $1,000, then a deposit',
+      note: 'Scope is agreed in writing first; the deposit holds your place in the schedule. Nothing is built before both are settled.',
       href: '/pricing',
     },
     {
@@ -147,10 +139,16 @@ export const servicePaths = {
  */
 export const approachProof = {
   eyebrow: 'Why trust the build',
-  heading: 'The person in the meeting is the person writing the code.',
+  heading: 'The people in the meeting are the people doing the work.',
   paragraphs: [
-    'Wallace Shift is deliberately small. Matthew has been building production websites and applications since 2009 — the first was a Groupon-style marketplace, written in PHP from scratch — and every project the studio ships is designed and built by him. No subcontractors, no offshore build teams, and no template resold as custom work.',
-    'That is also why concurrent builds are limited. It is a constraint of the size rather than a scarcity tactic, and it is what keeps the person in the meeting the same person doing the work.',
+    'Matthew has been building and maintaining production websites and web applications since 2009, across product development, performance, search, and conversion. Every engagement is senior-led from the first recommendation through to launch.',
+    'Wallace Shift stays deliberately small so that stays true. Concurrent builds are limited — a constraint of the size rather than a scarcity tactic — which is what keeps the person shaping the recommendation involved when it is built.',
+  ],
+  /** Factual, checkable, and about depth rather than any one technology. */
+  credentials: [
+    'Building production web products since 2009',
+    'Strategy, design, development, and optimisation',
+    'Direct senior involvement through launch',
   ],
   /** Verifiable without leaving the page. */
   proofNote: 'This site is a Motion build — the same tier, the same process.',
@@ -162,34 +160,27 @@ export const approachExpectations = {
   eyebrow: 'What you can expect',
   heading: 'The parts people are least comfortable asking about.',
   supporting: 'Stated before you have to ask.',
+  /**
+   * Four, not six. Payment is already covered by the paid-step section and
+   * direct access by the founder section — repeating them here made the
+   * page feel like it was reassuring the reader twice.
+   */
   items: [
     {
       title: 'Clear scope before work begins',
-      body: 'The starting price buys a complete, launched project at that level. What it covers is written down first.',
+      body: 'The starting price buys a complete, launched project at that level, and what it covers is written down first.',
     },
     {
       title: 'Working previews at agreed checkpoints',
-      body: 'You see the real thing at a private link, not a status report describing it.',
+      body: 'You see the real thing at a private link, at points agreed in advance.',
     },
     {
-      title: 'Scope changes approved in writing',
-      body: 'Anything beyond the agreed scope is priced and approved before it is built. No surprise line items.',
+      title: 'Changes approved before they are billed',
+      body: 'Anything beyond the agreed scope is priced and approved in writing before it is built.',
     },
     {
-      title: 'Payment split across the project',
-      body: 'A deposit to hold the schedule, a payment at design approval, and the balance before launch. Care plans are billed monthly.',
-    },
-    {
-      // Deliberately scoped. The original wording ("accounts, assets, and
-      // code") would have promised ownership of licensed fonts and stock,
-      // which is not the studio's to give — a licence is transferred or
-      // named, not owned.
-      title: 'You own what we build',
-      body: 'The finished build and its code are yours at handover, along with the accounts set up in your name. Third-party licences are transferred where they can be, and named where they cannot.',
-    },
-    {
-      title: 'Direct access to the person doing the work',
-      body: 'We limit concurrent builds so the person in the meeting remains the person building it.',
+      title: 'Ownership and handoff at launch',
+      body: 'The finished build and its code are yours, along with the accounts set up in your name. Third-party licences are transferred where they can be, and named where they cannot.',
     },
   ],
 } as const

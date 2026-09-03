@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { PageLink } from '../PageLink/PageLink'
 import {
   auditCopy,
   findingSpecs,
@@ -123,9 +124,12 @@ export function SiteAudit() {
   const attention = findings.filter((f) => !f.passed)
   const working = findings.filter((f) => f.passed)
 
+  const showPanel = status === 'idle'
+
   return (
     <div className="audit">
-      <form className="audit__form" onSubmit={handleSubmit} noValidate>
+      <div className="audit__top">
+        <form className="audit__form" onSubmit={handleSubmit} noValidate>
         <label className="audit__label" htmlFor={`${uid}-url`}>
           {auditCopy.inputLabel}
         </label>
@@ -150,7 +154,31 @@ export function SiteAudit() {
             {status === 'done' ? auditCopy.resubmit : auditCopy.submit}
           </button>
         </div>
-      </form>
+
+        {/* The check only works on an existing public site — these keep
+            app and automation visitors from feeling shut out by it. */}
+        <ul className="audit__alts">
+          {auditCopy.alternatives.map((alt) => (
+            <li key={alt.href + alt.label}>
+              <PageLink href={alt.href}>{alt.label}</PageLink>
+            </li>
+          ))}
+        </ul>
+        </form>
+
+        {/* Fills the right column before anything has run, so the section
+            reads as composed rather than half-empty. */}
+        {showPanel && (
+          <div className="audit__panel" aria-hidden="true">
+            <p className="audit__panel-label">{auditCopy.previewLabel}</p>
+            <ul className="audit__panel-list">
+              {auditCopy.previewItems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
       <div aria-live="polite" className="audit__live">
         {status === 'running' && (
@@ -203,6 +231,19 @@ export function SiteAudit() {
                 </ul>
               </div>
             )}
+
+            <div className="audit__next">
+              <p className="audit__next-title">{auditCopy.nextTitle}</p>
+              <div className="audit__next-actions">
+                <PageLink href="/contact" className="audit__next-primary">
+                  {auditCopy.nextPrimary}
+                  <span aria-hidden="true">&#8599;</span>
+                </PageLink>
+                <PageLink href="/pricing" className="audit__next-secondary">
+                  {auditCopy.nextSecondary}
+                </PageLink>
+              </div>
+            </div>
 
             <p className="audit__disclaimer">{auditCopy.disclaimer}</p>
           </div>

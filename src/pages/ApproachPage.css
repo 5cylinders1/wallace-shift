@@ -451,3 +451,59 @@
 .interior--stages {
   padding-block: 0;
 }
+
+/* ---- Stage 01: the live first check ---------------------------------
+   Same stage vocabulary as 02 and 03, but this one performs the stage
+   instead of describing it, so it carries the tool rather than a fields
+   list. It is the page's only Stage 01. */
+.interior--stage-one {
+  padding-block: clamp(30px, 4vw, 52px) clamp(36px, 4.5vw, 64px);
+}
+
+.stage-one__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 60ch;
+}
+
+.stage-one__supporting {
+  margin: 8px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 56ch;
+}
+
+/* Factual, checkable credentials under the founder paragraphs. */
+.proof__credentials {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.proof__credentials li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 0.9375rem;
+  color: var(--color-soft-white);
+}
+
+.proof__credentials li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.66em;
+  width: 12px;
+  height: 1px;
+  background: var(--color-ember);
+}
+
+@media (min-width: 1024px) and (min-height: 650px) {
+  .proof__credentials {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+}

@@ -137,20 +137,25 @@
   max-width: 56ch;
 }
 
+/* Borders live on the cells, never on the grid.
+   The previous version drew hairlines with `gap: 1px` over a tinted grid
+   background — which works only when every row is full. An odd number of
+   findings left the final cell empty and 25.8% of the grid showing as a
+   bare grey rectangle, which read as a broken screenshot. Per-cell borders
+   cannot do that: an incomplete row simply ends. */
 .audit__findings {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1px;
-  background: rgba(6, 7, 8, 0.14);
-  border: 1px solid rgba(6, 7, 8, 0.14);
+  gap: 0;
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
 }
 
 .finding {
-  background: var(--color-bone);
-  padding: clamp(16px, 2vw, 22px);
+  padding: clamp(16px, 2vw, 22px) 0;
+  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -241,11 +246,157 @@
 @media (min-width: 1024px) and (min-height: 650px) {
   .audit__findings {
     grid-template-columns: repeat(2, 1fr);
+    column-gap: clamp(28px, 3vw, 56px);
+  }
+
+  /* The divider between columns rides on the cell, so it disappears with
+     the cell rather than outlining an empty one. */
+  .audit__findings > .finding:nth-child(even) {
+    padding-left: clamp(28px, 3vw, 56px);
+    border-left: 1px solid rgba(6, 7, 8, 0.14);
+    margin-left: calc(-1 * clamp(28px, 3vw, 56px));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .audit__step {
     transition: none;
+  }
+}
+
+/* ---- Two-column idle state ------------------------------------------
+   Before anything runs, the form used to sit alone in the upper-left of a
+   very large bone section, which read as unfinished rather than minimal.
+   The right column states plainly what the check looks at. */
+.audit__top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(24px, 3vw, 48px);
+}
+
+.audit__alts {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.audit__alts a {
+  font-size: 0.875rem;
+  color: var(--color-muted-on-bone);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(6, 7, 8, 0.22);
+  padding-bottom: 2px;
+}
+
+.audit__alts a:hover,
+.audit__alts a:focus-visible {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-ember-deep);
+}
+
+.audit__panel {
+  padding-top: 18px;
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.audit__panel-label {
+  margin: 0 0 12px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.audit__panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.audit__panel-list li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-muted-on-bone);
+}
+
+.audit__panel-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.66em;
+  width: 12px;
+  height: 1px;
+  background: rgba(6, 7, 8, 0.3);
+}
+
+/* ---- Next step ------------------------------------------------------
+   The highest-intent moment on the page. Previously the results simply
+   ended and the page carried on. */
+.audit__next {
+  margin-top: clamp(22px, 2.6vw, 30px);
+  padding-top: 18px;
+  border-top: 2px solid var(--color-ink);
+}
+
+.audit__next-title {
+  margin: 0 0 12px;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.audit__next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.audit__next-primary,
+.audit__next-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.75em 1.4em;
+  text-decoration: none;
+}
+
+.audit__next-primary {
+  background: var(--color-ember-deep);
+  color: var(--color-soft-white);
+  border: 1px solid var(--color-ember-deep);
+}
+
+.audit__next-secondary {
+  color: var(--color-ink);
+  border: 1px solid rgba(6, 7, 8, 0.28);
+}
+
+.audit__next-secondary:hover,
+.audit__next-secondary:focus-visible {
+  border-color: var(--color-ink);
+}
+
+@media (min-width: 1024px) and (min-height: 650px) {
+  .audit__top {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+  }
+
+  .audit__panel {
+    padding-top: 0;
+    border-top: none;
+    padding-left: clamp(28px, 3vw, 48px);
+    border-left: 1px solid rgba(6, 7, 8, 0.14);
   }
 }

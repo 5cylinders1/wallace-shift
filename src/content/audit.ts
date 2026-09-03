@@ -13,17 +13,39 @@
 export type Band = 'good' | 'mixed' | 'attention'
 
 export const auditCopy = {
-  eyebrow: 'Stage 01, right now',
-  heading: 'Let us find the friction.',
+  eyebrow: 'Stage 01',
+  heading: 'Find the friction.',
+  summary:
+    'What customers need, where trust is being lost, and what is slowing the business down. It starts as a conversation — but you can start it yourself, right now.',
   supporting:
-    'Give us your current site and we will run a real audit on it — the same first look we would take in a paid engagement. It takes about twenty seconds and you do not have to tell us who you are.',
+    'Enter your current website and we will run the same automated first check we use to begin a website review. It takes about twenty seconds and needs no contact information.',
   inputLabel: 'Your website address',
   placeholder: 'yourbusiness.com',
-  submit: 'Find the friction',
+  submit: 'Run the first check',
   resubmit: 'Check another site',
 
+  /* Shown beside the input before anything runs, so the section is not a
+     lone field in an empty column. */
+  previewLabel: 'What it checks',
+  previewItems: [
+    'How quickly the first content appears on a phone',
+    'What a search engine can read about the page',
+    'Accessibility basics — contrast, labels, alternatives',
+    'Whether the page is served securely',
+  ],
+
+  /* The tool only works for an existing public site. These keep the other
+     two services from feeling excluded by the page's own centrepiece. */
+  alternatives: [
+    { label: 'No website yet? Book a free fit call.', href: '/contact' },
+    {
+      label: 'Planning an app or automation? Tell us what is getting in the way.',
+      href: '/contact',
+    },
+  ],
+
   /** Shown while Google runs Lighthouse. Honest about the wait. */
-  runningTitle: 'Running a real audit',
+  runningTitle: 'Running the first check',
   runningSteps: [
     'Loading your site the way a phone would',
     'Measuring how long the first thing takes to appear',
@@ -35,10 +57,16 @@ export const auditCopy = {
   resultEyebrow: 'What we found',
   /** Never leads with a number. */
   resultLead:
-    'Here is the same first look we would take in stage 01 — and what each finding would mean for the work.',
+    'Here is what an automated first check surfaced, and what each finding would mean for the work. A person still reads it properly before anything is quoted.',
+
+  /* The highest-intent moment on the page. Wasting it by simply carrying
+     on was the single biggest conversion miss in the first version. */
+  nextTitle: 'Want help fixing what we found?',
+  nextPrimary: 'Talk through these results',
+  nextSecondary: 'See website pricing',
 
   disclaimer:
-    'Measured once, on a simulated mobile connection. A single run is a starting point for a conversation, not a verdict — real conditions vary, and plenty of successful businesses run slow sites.',
+    'An automated check, measured once on a simulated mobile connection. It is a starting point for a conversation, not a full review or a verdict — real conditions vary, and plenty of successful businesses run slow sites.',
 
   errors: {
     invalid_url: 'That does not look like a web address. Try it without the https:// — just yourbusiness.com.',
@@ -80,15 +108,15 @@ export const findingSpecs: FindingSpec[] = [
     id: 'lcp',
     stage: '02',
     label: 'How fast the first thing appears',
-    good: 'Your main content appears quickly on a phone. That is the single biggest factor in whether someone waits or leaves.',
+    good: 'Your main content appears quickly on a phone. Fast initial content gives visitors less reason to leave while the page loads.',
     attention:
-      'Your main content takes a while to appear on a phone. Most people decide whether to stay in the first few seconds, so this is usually the first thing worth fixing.',
+      'Your main content takes a while to appear on a phone. Shortening that gives visitors less reason to leave before they have seen anything.',
   },
   {
     id: 'metaDescription',
     stage: '02',
     label: 'What search results show',
-    good: 'Search engines have a description to show under your name in results.',
+    good: 'A search description is available for results pages to use.',
     attention:
       'There is no description for search engines to show under your name, so Google writes its own — usually from whatever text it finds first.',
   },
@@ -112,7 +140,7 @@ export const findingSpecs: FindingSpec[] = [
     id: 'contrast',
     stage: '02',
     label: 'Text legibility',
-    good: 'Text has enough contrast against its background to stay readable.',
+    good: 'The text sampled has enough contrast against its background to stay readable.',
     attention:
       'Some text sits too close in tone to its background to read comfortably — most often light grey on white, which looks refined on a designer’s monitor and disappears in daylight.',
   },
@@ -120,7 +148,7 @@ export const findingSpecs: FindingSpec[] = [
     id: 'altText',
     stage: '02',
     label: 'Images and screen readers',
-    good: 'Your images carry text alternatives.',
+    good: 'Alternative text is present on the images checked. Whether it describes them usefully is a human judgement, not an automated one.',
     attention:
       'Some images have no text alternative, so they are invisible to screen readers and to search engines.',
   },
@@ -128,7 +156,7 @@ export const findingSpecs: FindingSpec[] = [
     id: 'linkNames',
     stage: '03',
     label: 'Getting in touch',
-    good: 'Your links are labelled in a way assistive technology can announce.',
+    good: 'Links inspected have accessible names that assistive technology can announce.',
     attention:
       'Some links have no readable label, which matters most on the ones people use to contact you.',
   },
