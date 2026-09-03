@@ -3,7 +3,6 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { standards } from '../../content/siteConfig'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
-import { DiagonalRun } from '../DiagonalRun/DiagonalRun'
 import { StandardPrinciple } from './StandardPrinciple'
 import './StandardsSection.css'
 
@@ -85,8 +84,6 @@ export function StandardsSection() {
           ))}
         </ol>
       </div>
-
-      <DiagonalRun />
     </section>
   )
 }

@@ -1,9 +1,19 @@
 import { PageHero } from '../components/PageHero/PageHero'
 import { StandardsSection } from '../components/Standards/StandardsSection'
+import { SiteAudit } from '../components/SiteAudit/SiteAudit'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
-import { approachStages, approachTerms } from '../content/approachPage'
-import { approachPageHero } from '../content/siteConfig'
+import { auditCopy } from '../content/audit'
+import {
+  approachAssurances,
+  approachCta,
+  approachExpectations,
+  approachProof,
+  approachStages,
+  servicePaths,
+} from '../content/approachPage'
+import { approachPageHero, business } from '../content/siteConfig'
+import { renderLines } from '../lib/textLines'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
 import './InteriorPage.css'
 import './ApproachPage.css'
@@ -12,13 +22,20 @@ import './ApproachPage.css'
  * The process, in detail.
  *
  * The pit-stop sequence is the homepage's signature moment and is not
- * repeated here — running it on both pages diluted it and made this page
- * a second copy of the lander rather than somewhere to actually read what
- * happens. This page carries the substance instead: each stage expanded,
- * then the commercial terms, then the standards the work is held to.
+ * repeated here. This page has one job: let a cautious buyer answer five
+ * questions without asking them — what happens first, what they will see
+ * during the work, when they pay, why this studio, and what clicking the
+ * CTA actually does.
+ *
+ * Order matters and is deliberate: assurance before detail, tangible
+ * outputs inside each stage, the paid step named per service, credibility
+ * before commercial terms, and exactly one conclusion at the end.
  */
 export function ApproachPage() {
   useRouteMeta('/approach')
+
+  // Real scheduling link when one exists; the contact form until then.
+  const bookingHref = business.bookingUrl ?? '/contact'
 
   return (
     <>
@@ -29,70 +46,196 @@ export function ApproachPage() {
         supporting={approachPageHero.supporting}
       />
 
-      <section className="interior">
+      {/* Assurance strip — sits directly under the hero so the first
+          scroll answers "why should I keep reading" before the detail. */}
+      <section className="interior interior--tight">
+        <div className="container">
+          <ul className="assurances">
+            {approachAssurances.map((item) => (
+              <Reveal className="assurance" key={item.title}>
+                <h2 className="assurance__title">{item.title}</h2>
+                <p className="assurance__body">{item.body}</p>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Stage 01, performed rather than described. The page claims it
+          finds friction — so it finds it, on the visitor's actual site,
+          before they have spoken to anyone. Placed immediately above the
+          stages so the process below reads as "and here is what follows". */}
+      <section className="interior interior--tight">
+        <div className="container">
+          <Reveal>
+            <p className="eyebrow">{auditCopy.eyebrow}</p>
+          </Reveal>
+          <Reveal delay={0.06}>
+            <h2 className="section-heading">{auditCopy.heading}</h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="section-supporting">{auditCopy.supporting}</p>
+          </Reveal>
+          <Reveal delay={0.14}>
+            <SiteAudit />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* The three stages. Each ends on something the client physically
+          leaves with, which is what the previous bullet list never said.
+          The section carries no vertical padding of its own — each stage
+          owns its ground edge to edge, so any padding here would render as
+          a stripe of the wrong colour between them. */}
+      <section className="interior interior--stages">
         <div className="container">
           <ol className="stages">
-            {approachStages.map((stage) => (
-              <Reveal className="stage" key={stage.index}>
-                <div className="stage__head">
+            {approachStages.map((stage, index) => (
+              // The band itself never animates. Each stage is a full-bleed
+              // ground butted exactly against its neighbours, so wrapping
+              // it in a Reveal — which translates its subject 22px — would
+              // slide the grounds independently and tear the seams between
+              // them on the way in. The content reveals; the ground holds.
+              <li
+                className={`stage stage--ground-${index + 1}`}
+                key={stage.index}
+              >
+                <Reveal className="stage__head">
                   <span className="stage__index">{stage.index}</span>
                   <h2 className="stage__title">{stage.title}</h2>
                   <p className="stage__summary">{stage.summary}</p>
-                </div>
-                <ul className="stage__points">
-                  {stage.points.map((point) => (
-                    <li key={point}>{point}</li>
+                </Reveal>
+                <dl className="stage__fields">
+                  {stage.fields.map((field, fieldIndex) => (
+                    <Reveal
+                      className="stage__field"
+                      delay={0.06 + fieldIndex * 0.06}
+                      key={field.label}
+                    >
+                      <dt className="stage__field-label">{field.label}</dt>
+                      <dd className="stage__field-body">{field.body}</dd>
+                    </Reveal>
                   ))}
-                </ul>
-              </Reveal>
+                </dl>
+              </li>
             ))}
           </ol>
         </div>
       </section>
 
-      <section className="interior interior--tight">
+      {/* Where each service becomes paid — pulled out of stage 01, where
+          four different engagement types were competing in one block.
+          Ink from here down: the stages above have already completed the
+          shift, so the page never returns to bone. */}
+      <section className="interior interior--tight interior--ink">
         <div className="container">
           <Reveal>
-            <p className="eyebrow">{approachTerms.eyebrow}</p>
+            <p className="eyebrow">{servicePaths.eyebrow}</p>
           </Reveal>
           <Reveal delay={0.06}>
-            <h2 className="terms__heading">{approachTerms.heading}</h2>
+            <h2 className="section-heading">{servicePaths.heading}</h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="terms__supporting">{approachTerms.supporting}</p>
+            <p className="section-supporting">{servicePaths.supporting}</p>
           </Reveal>
 
-          <div className="terms">
-            {approachTerms.items.map((item, index) => (
-              <Reveal className="terms__item" delay={0.12 + index * 0.06} key={item.title}>
-                <h3 className="terms__title">{item.title}</h3>
-                <p className="terms__body">{item.body}</p>
+          <div className="paths">
+            {servicePaths.items.map((item, index) => (
+              <Reveal
+                className="path"
+                delay={0.12 + index * 0.05}
+                key={item.service}
+              >
+                <span className="path__service">{item.service}</span>
+                <PageLink href={item.href} className="path__step">
+                  {item.step}
+                  <span aria-hidden="true">&#8599;</span>
+                </PageLink>
+                <p className="path__note">{item.note}</p>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Credibility before commercial terms. No testimonials, no metrics,
+          no client names — none exist yet, and inventing them is the one
+          thing that would undo the rest of the page. */}
+      <section className="interior interior--ink">
+        <div className="container proof">
+          <Reveal>
+            <p className="eyebrow proof__eyebrow">{approachProof.eyebrow}</p>
+          </Reveal>
+          <Reveal delay={0.06}>
+            <h2 className="proof__heading">{approachProof.heading}</h2>
+          </Reveal>
+          {approachProof.paragraphs.map((paragraph, index) => (
+            <Reveal delay={0.1 + index * 0.06} key={paragraph.slice(0, 24)}>
+              <p className="proof__body">{paragraph}</p>
+            </Reveal>
+          ))}
+          <Reveal delay={0.24}>
+            <PageLink href={approachProof.proofHref} className="proof__note">
+              {approachProof.proofNote}
+              <span aria-hidden="true">&#8599;</span>
+            </PageLink>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="interior interior--tight interior--ink">
+        <div className="container">
+          <Reveal>
+            <p className="eyebrow">{approachExpectations.eyebrow}</p>
+          </Reveal>
+          <Reveal delay={0.06}>
+            <h2 className="section-heading">{approachExpectations.heading}</h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="section-supporting">
+              {approachExpectations.supporting}
+            </p>
+          </Reveal>
+
+          <ul className="expectations">
+            {approachExpectations.items.map((item, index) => (
+              <Reveal
+                className="expectation"
+                delay={0.12 + index * 0.04}
+                key={item.title}
+              >
+                <h3 className="expectation__title">{item.title}</h3>
+                <p className="expectation__body">{item.body}</p>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       <StandardsSection />
 
+      {/* One conclusion, not four. */}
       <section className="interior interior--ink">
         <div className="container closing">
           <Reveal>
-            <h2 className="closing__headline">Ready to find the friction?</h2>
+            <h2 className="closing__headline">
+              {renderLines(approachCta.headlineLines)}{' '}
+              <span className="accent-serif">{approachCta.headlineAccent}</span>
+            </h2>
           </Reveal>
           <Reveal delay={0.08}>
-            <p className="closing__supporting">
-              The first stage is a conversation about what is slowing the
-              business down. It costs nothing and it is not a sales call.
-            </p>
+            <p className="closing__supporting">{approachCta.supporting}</p>
           </Reveal>
           <Reveal delay={0.14} className="closing__actions">
-            <PageLink href="/contact" className="button-primary">
-              Start a project
+            <PageLink href={bookingHref} className="button-primary">
+              {approachCta.primaryLabel}
               <span aria-hidden="true">&#8599;</span>
             </PageLink>
-            <PageLink href="/pricing" className="button-secondary">
-              See pricing
+            <PageLink
+              href={approachCta.secondaryHref}
+              className="button-secondary"
+            >
+              {approachCta.secondaryLabel}
             </PageLink>
           </Reveal>
         </div>

@@ -32,6 +32,16 @@ export const business = {
 
   /** Shown beside the contact form so enquiries carry an expectation. */
   responseTime: 'within one business day',
+
+  /**
+   * Real scheduling link. Provider-agnostic — any public booking URL
+   * works, including a Google Calendar appointment schedule, Cal.com, or
+   * Calendly. While this is null the
+   * "Book a free fit call" CTA points at /contact, where a form starts the
+   * conversation instead — set it and every such CTA switches to real
+   * booking with no other change.
+   */
+  bookingUrl: null as string | null,
 }
 
 export const hero = {
@@ -98,7 +108,7 @@ export const approachPageHero = {
   headlineLines: ['How the work', 'actually'],
   headlineAccent: 'runs.',
   supporting:
-    'Three stages, in the same order every time. No mystery phase where nothing visible happens, and no invoice that arrives before you have seen anything.',
+    'Every engagement follows the same three checkpoints. The work inside them adapts to the problem. You always know what we are solving, what you need to approve, what it costs, and what happens next.',
 }
 
 export const approach = {
@@ -112,7 +122,7 @@ export const approach = {
     },
     {
       index: '02',
-      title: 'Build the shift',
+      title: 'Make the shift',
       description:
         'Create the strategy, identity, experience, and technology as one coherent system.',
     },
@@ -134,17 +144,17 @@ export const standards = {
     {
       number: '01',
       title: 'Distinctive, never confusing.',
-      description: 'Bold enough to be remembered, clear enough to navigate and trust.',
+      description: 'Distinctive enough to be remembered. Clear enough to trust and use.',
     },
     {
       number: '02',
-      title: 'Fast, never rushed.',
-      description: 'Performance is engineered from the start, then every detail is refined to feel effortless.',
+      title: 'Fast where it matters.',
+      description: 'Quick to load, easy to navigate, and delivered without avoidable delay.',
     },
     {
       number: '03',
-      title: 'Technology with a job to do.',
-      description: 'Automation and tooling are added only when they remove friction and create real value.',
+      title: 'Technology that earns its place.',
+      description: 'We add tools and automation only when they remove friction or create real value.',
     },
   ],
 } as const

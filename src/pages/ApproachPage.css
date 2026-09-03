@@ -1,7 +1,70 @@
-/* ---- Stages ----------------------------------------------------------
-   Each stage is a two-column row: the claim on the left, what actually
-   happens on the right. Wide rules and a large serif index echo the
-   services rows rather than introducing a new card pattern. */
+/* /approach
+   ----------------------------------------------------------------------
+   Density is deliberate here. The previous version put small, low-contrast
+   type inside very large containers, which reads as underfilled rather
+   than luxurious. Body copy sits at 1rem–1.0625rem, related columns are
+   pulled together, and vertical gaps are roughly a third tighter than the
+   generic interior rhythm.
+
+   The multi-column composition is gated on BOTH axes — a short desktop or
+   a landscape tablet gets the stacked treatment, because the wide scan
+   path is what made the type feel small in the first place. */
+
+.approach-page-shared {
+  /* Shared heading scale for the page's section heads. */
+}
+
+.section-heading {
+  margin: 10px 0 0;
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  max-width: 20ch;
+}
+
+.section-supporting {
+  margin: 12px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+  max-width: 54ch;
+}
+
+/* ---- Assurance strip -------------------------------------------------*/
+.assurances {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(18px, 2.4vw, 28px);
+}
+
+.assurance {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 16px;
+  border-top: 2px solid var(--color-ink);
+}
+
+.assurance__title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.assurance__body {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+}
+
+/* ---- Stages ----------------------------------------------------------*/
 .stages {
   list-style: none;
   margin: 0;
@@ -12,9 +75,9 @@
 
 .stage {
   display: grid;
-  grid-template-columns: minmax(260px, 5fr) minmax(280px, 6fr);
-  gap: clamp(20px, 4vw, 64px);
-  padding-block: clamp(32px, 4.5vw, 56px);
+  grid-template-columns: 1fr;
+  gap: clamp(18px, 2.4vw, 28px);
+  padding-block: clamp(26px, 3.2vw, 40px);
   border-top: 1px solid rgba(6, 7, 8, 0.14);
 }
 
@@ -25,12 +88,12 @@
 .stage__head {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .stage__index {
   font-family: var(--font-serif);
-  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-size: clamp(1.5rem, 2.2vw, 1.875rem);
   line-height: 1;
   color: var(--color-ember-deep);
 }
@@ -46,85 +109,152 @@
 .stage__summary {
   margin: 0;
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.55;
   color: var(--color-muted-on-bone);
-  max-width: 34ch;
+  max-width: 32ch;
 }
 
-.stage__points {
-  list-style: none;
+.stage__fields {
   margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: clamp(14px, 1.8vw, 20px);
-  align-self: center;
 }
 
-.stage__points li {
-  position: relative;
-  padding-left: 26px;
-  font-size: 0.9375rem;
-  line-height: 1.6;
+.stage__field {
+  display: grid;
+  gap: 5px;
+}
+
+.stage__field-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ember-deep);
+}
+
+.stage__field-body {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.55;
   color: var(--color-ink);
-  max-width: 56ch;
-}
-
-/* A short ember rule rather than a bullet — the site's own mark language. */
-.stage__points li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.66em;
-  width: 14px;
-  height: 1px;
-  background: var(--color-ember-deep);
-}
-
-@media (max-width: 767px) {
-  .stage {
-    grid-template-columns: 1fr;
-  }
-
-  .stage__points {
-    align-self: start;
-  }
-}
-
-/* ---- Terms -----------------------------------------------------------*/
-.terms__heading {
-  margin: 12px 0 0;
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.08;
-  max-width: 18ch;
-}
-
-.terms__supporting {
-  margin: 14px 0 0;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--color-muted-on-bone);
   max-width: 52ch;
 }
 
-.terms {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: clamp(24px, 3vw, 48px);
-  margin-top: clamp(32px, 4vw, 56px);
+/* The last field is the tangible output — the thing the stage is for. */
+.stage__field:last-child .stage__field-label {
+  color: var(--color-ink);
 }
 
-.terms__item {
+.stage__field:last-child .stage__field-body {
+  font-weight: 600;
+}
+
+/* ---- Service paths ---------------------------------------------------*/
+.paths {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(18px, 2.2vw, 26px);
+  margin-top: clamp(22px, 2.8vw, 34px);
+}
+
+.path {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 20px;
-  border-top: 2px solid var(--color-ink);
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
 }
 
-.terms__title {
+.path__service {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.path__step {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  text-decoration: none;
+  align-self: flex-start;
+  border-bottom: 1px solid var(--color-ember-deep);
+  padding-bottom: 3px;
+}
+
+.path__note {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+}
+
+/* ---- Proof (ink) -----------------------------------------------------*/
+.proof {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 62ch;
+}
+
+.proof__eyebrow {
+  color: var(--color-silver);
+}
+
+.proof__heading {
+  margin: 4px 0 6px;
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.proof__body {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--color-silver);
+}
+
+.proof__note {
+  align-self: flex-start;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-soft-white);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-ember);
+  padding-bottom: 4px;
+}
+
+/* ---- Expectations ----------------------------------------------------*/
+.expectations {
+  list-style: none;
+  margin: clamp(22px, 2.8vw, 34px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(18px, 2.2vw, 26px);
+}
+
+.expectation {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.expectation__title {
   margin: 0;
   font-size: 1.0625rem;
   font-weight: 800;
@@ -132,9 +262,192 @@
   line-height: 1.25;
 }
 
-.terms__body {
+.expectation__body {
   margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.55;
   color: var(--color-muted-on-bone);
+}
+
+/* ---- Multi-column: real desktop only ---------------------------------
+   Both axes gated. A 792x512 window previously got the full desktop
+   composition, which is what made the type read as far too small. */
+@media (min-width: 1024px) and (min-height: 650px) {
+  .assurances {
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(24px, 2.6vw, 40px);
+  }
+
+  .stage {
+    grid-template-columns: minmax(240px, 4fr) minmax(420px, 7fr);
+    gap: clamp(28px, 4vw, 64px);
+  }
+
+  .stage__fields {
+    grid-template-columns: 1fr;
+  }
+
+  .paths {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .expectations {
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: clamp(24px, 3vw, 48px);
+  }
+}
+
+/* Tighter interior rhythm for this page specifically — the generic
+   section padding left the substantive content spread too thin. */
+@media (min-width: 768px) {
+  .interior--tight {
+    padding-block: clamp(40px, 5vw, 72px);
+  }
+}
+
+/* ---- The shift ------------------------------------------------------
+   The page performs the transformation it describes: the ground steps
+   from bone to ink across the three stages, and never returns.
+
+   Stepped, not blended. A continuous bone-to-ink ramp looks obvious on
+   paper but is unshippable — measured, the mid-point puts secondary body
+   copy at 1.41:1 and the ember accent at 1.23:1 against their own ground.
+   Both are invisible. Stepping straight over that band keeps every stage
+   at full contrast (measured: headings 15–18.8:1, body 5.2–14.4:1, ember
+   4.4–5.5:1) while reading as a more decisive shift than a fade.
+
+   One slant variable drives every diagonal here, so the page's angles can
+   never disagree with each other. */
+.stages {
+  --stage-slant: clamp(28px, 3.4vw, 64px);
+}
+
+.stage {
+  position: relative;
+  isolation: isolate;
+  /* Full-bleed ground; the content keeps the container's measure. */
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+  border-top: none;
+}
+
+.stage::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+  background: var(--stage-bg);
+}
+
+/* Stages 2 and 3 slant up into the stage above, so the change of ground
+   is a wipe along the site's own diagonal rather than a straight seam. */
+.stage--ground-2::before,
+.stage--ground-3::before {
+  top: calc(var(--stage-slant) * -1);
+  clip-path: polygon(
+    0 var(--stage-slant),
+    100% 0,
+    100% 100%,
+    0 100%
+  );
+}
+
+.stage--ground-1 {
+  --stage-bg: var(--color-bone);
+  --stage-fg: var(--color-ink);
+  --stage-muted: var(--color-muted-on-bone);
+  --stage-accent: var(--color-ember-deep);
+  padding-block: clamp(26px, 3.2vw, 40px) clamp(40px, 5vw, 68px);
+}
+
+.stage--ground-2 {
+  --stage-bg: #23211e;
+  --stage-fg: var(--color-soft-white);
+  --stage-muted: var(--color-silver);
+  /* Ember proper lands at 4.38:1 on this ground — just under AA for the
+     11px field labels. Lifted 2.5% toward white, which is the smallest
+     step that clears 4.5:1 (measured) while staying in the ember family. */
+  --stage-accent: #e9582c;
+  padding-block: clamp(48px, 6vw, 84px) clamp(40px, 5vw, 68px);
+}
+
+.stage--ground-3 {
+  --stage-bg: var(--color-ink);
+  --stage-fg: var(--color-soft-white);
+  --stage-muted: var(--color-silver);
+  --stage-accent: var(--color-ember);
+  padding-block: clamp(48px, 6vw, 84px) clamp(56px, 7vw, 96px);
+}
+
+.stage:last-child {
+  border-bottom: none;
+}
+
+/* Every token below reads from the stage's own ground, so a stage can be
+   restyled by changing four variables and nothing else. */
+.stage__index,
+.stage__field-label {
+  color: var(--stage-accent);
+}
+
+.stage__title {
+  color: var(--stage-fg);
+}
+
+.stage__summary {
+  color: var(--stage-muted);
+}
+
+.stage__field-body {
+  color: var(--stage-fg);
+}
+
+/* The tangible output keeps the emphasis it had, in the stage's own ink. */
+.stage__field:last-child .stage__field-label {
+  color: var(--stage-fg);
+}
+
+/* ---- Dark-side components -------------------------------------------
+   The service paths and expectations now sit after the shift. */
+.interior--ink .section-supporting,
+.interior--ink .path__note,
+.interior--ink .expectation__body {
+  color: var(--color-silver);
+}
+
+.interior--ink .path__service {
+  color: var(--color-muted);
+}
+
+.interior--ink .path__step {
+  color: var(--color-soft-white);
+  border-bottom-color: var(--color-ember);
+}
+
+.interior--ink .path,
+.interior--ink .expectation {
+  border-top-color: rgba(214, 218, 223, 0.22);
+}
+
+.interior--ink .expectation__title {
+  color: var(--color-soft-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Nothing to disable — the shift is CSS ground, not motion. Stated so
+     the absence is deliberate rather than an oversight. */
+  .stage {
+    transition: none;
+  }
+}
+
+/* The stages own their ground and their spacing. Section padding here
+   would paint bone above the first stage and — worse — a bone stripe
+   between the ink third stage and the ink section that follows it.
+   Measured at 118px before this rule existed. */
+.interior--stages {
+  padding-block: 0;
 }

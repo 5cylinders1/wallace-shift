@@ -1,0 +1,251 @@
+/* Live site audit — sits on the bone ground, above the three stages. */
+
+.audit {
+  margin-top: clamp(22px, 3vw, 34px);
+}
+
+.audit__form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 620px;
+}
+
+.audit__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.audit__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.audit__input {
+  flex: 1 1 260px;
+  min-width: 0;
+  font: inherit;
+  font-size: 1.0625rem;
+  padding: 0.75em 0;
+  color: var(--color-ink);
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(6, 7, 8, 0.28);
+}
+
+.audit__input::placeholder {
+  color: rgba(6, 7, 8, 0.38);
+}
+
+.audit__input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--color-ember-deep);
+}
+
+.audit__submit {
+  flex: none;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.8em 1.5em;
+  color: var(--color-soft-white);
+  background: var(--color-ink);
+  border: 1px solid var(--color-ink);
+  cursor: pointer;
+  transition:
+    background var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.audit__submit:hover:not(:disabled),
+.audit__submit:focus-visible:not(:disabled) {
+  background: var(--color-ember-deep);
+  border-color: var(--color-ember-deep);
+}
+
+.audit__submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.audit__live {
+  margin-top: clamp(20px, 2.6vw, 30px);
+}
+
+/* ---- Running -------------------------------------------------------- */
+.audit__running {
+  border-left: 2px solid var(--color-ember-deep);
+  padding-left: 18px;
+}
+
+.audit__running-title {
+  margin: 0 0 10px;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.audit__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.audit__step {
+  font-size: 0.9375rem;
+  color: var(--color-muted-on-bone);
+  opacity: 0.4;
+  transition: opacity 0.5s var(--ease-out-soft);
+}
+
+.audit__step--done {
+  opacity: 1;
+}
+
+.audit__step--done::before {
+  content: '— ';
+  color: var(--color-ember-deep);
+}
+
+.audit__running-note {
+  margin: 14px 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-muted-on-bone);
+}
+
+.audit__error {
+  margin: 0;
+  padding-left: 18px;
+  border-left: 2px solid var(--color-ember-deep);
+  font-size: 1rem;
+  max-width: 56ch;
+}
+
+/* ---- Result --------------------------------------------------------- */
+.audit__result-lead {
+  margin: 0 0 clamp(18px, 2.4vw, 26px);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+  max-width: 56ch;
+}
+
+.audit__findings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: rgba(6, 7, 8, 0.14);
+  border: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.finding {
+  background: var(--color-bone);
+  padding: clamp(16px, 2vw, 22px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.finding__stage {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ember-deep);
+}
+
+.finding__label {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.finding__body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+}
+
+.finding__response {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+/* Credit where it is due — this is what stops the tool reading as a
+   sales pitch dressed as a diagnosis. */
+.audit__working {
+  margin-top: clamp(20px, 2.4vw, 28px);
+  padding-top: 16px;
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.audit__working-label {
+  margin: 0 0 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-on-bone);
+}
+
+.audit__working ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.audit__working li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-muted-on-bone);
+}
+
+.audit__working li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 12px;
+  height: 1px;
+  background: var(--color-ember-deep);
+}
+
+.audit__disclaimer {
+  margin: clamp(20px, 2.4vw, 28px) 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-muted-on-bone);
+  max-width: 62ch;
+}
+
+@media (min-width: 1024px) and (min-height: 650px) {
+  .audit__findings {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audit__step {
+    transition: none;
+  }
+}
