@@ -78,6 +78,8 @@
  * into "fails for roughly one of seven", and that failure is now reported
  * honestly instead of arriving after a long wait.
  */
+import type { IncomingMessage, ServerResponse } from 'node:http'
+
 export const config = { maxDuration: 60 }
 
 const PSI = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed'
@@ -101,18 +103,29 @@ const STALE_S = 86_400
  *  tells the loading story without bloating the cached JSON. */
 const MAX_FRAMES = 6
 
-function json(body: unknown, status: number, cacheable = false): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json',
-      // Only successful audits are cacheable. Errors must never be, or a
-      // transient failure would be pinned to a URL for an hour.
-      'cache-control': cacheable
-        ? `public, s-maxage=${CACHE_S}, stale-while-revalidate=${STALE_S}`
-        : 'no-store',
-    },
-  })
+function send(
+  res: ServerResponse,
+  body: unknown,
+  status: number,
+  cacheable = false,
+): void {
+  res.statusCode = status
+  res.setHeader('content-type', 'application/json')
+  // Only successful audits are cacheable. Errors must never be, or a
+  // transient failure would be pinned to a URL for an hour.
+  res.setHeader(
+    'cache-control',
+    cacheable
+      ? `public, s-maxage=${CACHE_S}, stale-while-revalidate=${STALE_S}`
+      : 'no-store',
+  )
+  res.end(JSON.stringify(body))
+}
+
+/** Node lowercases header names but may hand back an array. */
+function header(req: IncomingMessage, name: string): string | undefined {
+  const v = req.headers[name]
+  return Array.isArray(v) ? v[0] : v
 }
 
 /**
@@ -123,14 +136,14 @@ function json(body: unknown, status: number, cacheable = false): Response {
  * breaking the page's centrepiece over a rate-limit outage is worse than
  * briefly allowing extra requests through.
  */
-async function isRateLimited(request: Request): Promise<boolean> {
+async function isRateLimited(req: IncomingMessage): Promise<boolean> {
   const base = process.env.RATE_LIMIT_REDIS_URL
   const token = process.env.RATE_LIMIT_REDIS_TOKEN
   if (!base || !token) return false
 
   const ip =
-    request.headers.get('x-real-ip') ??
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    header(req, 'x-real-ip') ??
+    header(req, 'x-forwarded-for')?.split(',')[0]?.trim() ??
     'unknown'
   const bucket = Math.floor(Date.now() / 1000 / RATE_WINDOW_S)
   const key = `audit:${ip}:${bucket}`
@@ -207,19 +220,29 @@ type Audit = {
   details?: { data?: string; items?: Array<{ data?: string; timing?: number }> }
 }
 
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== 'GET') {
-    return json({ ok: false, error: 'method_not_allowed' }, 405)
+/**
+ * The audit itself. Split from the exported handler so that every throw —
+ * including one from code added later — is caught and answered with JSON.
+ * A crash that escapes here reaches the visitor as a text/plain platform
+ * page, which the client can only render as a generic network error. That
+ * is precisely how this endpoint failed in production.
+ */
+async function run(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (req.method !== 'GET') {
+    return send(res, { ok: false, error: 'method_not_allowed' }, 405)
   }
 
-  const target = normalizeUrl(new URL(request.url).searchParams.get('url'))
+  // `req.url` is a path with a query string, never absolute, so it needs a
+  // base to parse against. The base is discarded.
+  const query = new URL(req.url ?? '/', 'http://localhost').searchParams
+  const target = normalizeUrl(query.get('url'))
   if (!target) {
-    return json({ ok: false, error: 'invalid_url' }, 400)
+    return send(res, { ok: false, error: 'invalid_url' }, 400)
   }
 
   // Checked after validation so malformed input costs no Redis round trip.
-  if (await isRateLimited(request)) {
-    return json({ ok: false, error: 'rate_limited' }, 429)
+  if (await isRateLimited(req)) {
+    return send(res, { ok: false, error: 'rate_limited' }, 429)
   }
 
   // Three categories, not four. `best-practices` was requested solely for
@@ -242,10 +265,10 @@ export default async function handler(request: Request): Promise<Response> {
       headers: { accept: 'application/json' },
     })
   } catch {
+    return send(res, { ok: false, error: 'timeout' }, 504)
+  } finally {
     clearTimeout(timer)
-    return json({ ok: false, error: 'timeout' }, 504)
   }
-  clearTimeout(timer)
 
   if (!response.ok) {
     // 400 from PSI almost always means it could not load the page at all.
@@ -253,19 +276,19 @@ export default async function handler(request: Request): Promise<Response> {
     // allowance is gone. Reported separately so the visitor is not told to
     // "try again in a moment" when the real answer is "not until tomorrow".
     if (response.status === 400) {
-      return json({ ok: false, error: 'unreachable' }, 422)
+      return send(res, { ok: false, error: 'unreachable' }, 422)
     }
     if (response.status === 429) {
-      return json({ ok: false, error: 'quota' }, 429)
+      return send(res, { ok: false, error: 'quota' }, 429)
     }
-    return json({ ok: false, error: 'upstream' }, 502)
+    return send(res, { ok: false, error: 'upstream' }, 502)
   }
 
   let data: Record<string, unknown>
   try {
     data = (await response.json()) as Record<string, unknown>
   } catch {
-    return json({ ok: false, error: 'upstream' }, 502)
+    return send(res, { ok: false, error: 'upstream' }, 502)
   }
 
   const lh = data.lighthouseResult as
@@ -276,7 +299,7 @@ export default async function handler(request: Request): Promise<Response> {
       }
     | undefined
   if (!lh?.categories) {
-    return json({ ok: false, error: 'unreachable' }, 422)
+    return send(res, { ok: false, error: 'unreachable' }, 422)
   }
 
   const audits = lh.audits ?? {}
@@ -297,16 +320,19 @@ export default async function handler(request: Request): Promise<Response> {
     .slice(0, MAX_FRAMES)
     .map((f) => ({ data: f.data as string, timing: f.timing ?? null }))
 
-  /* Real numbers, not bands. `numericValue` is milliseconds (or unitless
-     for CLS); `displayValue` is Lighthouse's own formatted string, which is
-     already localised and correctly rounded — so display that and keep the
-     raw value for anything that needs to compare. */
-  const metric = (id: string) => ({
-    display: audits[id]?.displayValue ?? null,
-    value: typeof audits[id]?.numericValue === 'number' ? audits[id].numericValue : null,
-  })
+  /* Real numbers, not bands. `displayValue` is Lighthouse's own formatted
+     string, already localised and correctly rounded, so that is what gets
+     shown; the raw value is kept for anything that needs to compare. */
+  const metric = (id: string) => {
+    const a = audits[id]
+    return {
+      display: a?.displayValue ?? null,
+      value: typeof a?.numericValue === 'number' ? a.numericValue : null,
+    }
+  }
 
-  return json(
+  return send(
+    res,
     {
       ok: true,
       url: lh.finalUrl ?? target,
@@ -337,4 +363,21 @@ export default async function handler(request: Request): Promise<Response> {
     200,
     true,
   )
+}
+
+export default async function handler(
+  req: IncomingMessage,
+  res: ServerResponse,
+): Promise<void> {
+  try {
+    await run(req, res)
+  } catch {
+    // Last resort. The client distinguishes a JSON error it can explain
+    // from a platform failure it cannot, so always answer in JSON.
+    if (!res.headersSent) {
+      send(res, { ok: false, error: 'upstream' }, 502)
+    } else {
+      res.end()
+    }
+  }
 }
