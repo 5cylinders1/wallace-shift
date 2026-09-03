@@ -52,6 +52,8 @@ export function SiteAudit() {
   const [status, setStatus] = useState<Status>('idle')
   const [error, setError] = useState<ErrorKey>('network')
   const [result, setResult] = useState<AuditResult | null>(null)
+  /** The URL the failed run used — retry repeats that, not the live field. */
+  const [lastRun, setLastRun] = useState('')
   const [step, setStep] = useState(0)
   const resultRef = useRef<HTMLDivElement>(null)
 
@@ -67,20 +69,19 @@ export function SiteAudit() {
     return () => window.clearInterval(timer)
   }, [status])
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!url.trim() || status === 'running') return
+  const runAudit = async (target: string) => {
+    if (!target.trim() || status === 'running') return
 
     setStatus('running')
     setResult(null)
     setStep(0)
+    setLastRun(target)
 
     try {
-      const response = await fetch('/api/audit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
-      })
+      // GET, so Vercel's edge can cache the result by URL — see api/audit.ts.
+      const response = await fetch(
+        `/api/audit?url=${encodeURIComponent(target)}`,
+      )
       const body = (await response.json().catch(() => null)) as
         | ({ ok: boolean; error?: string } & Partial<AuditResult>)
         | null
@@ -108,6 +109,11 @@ export function SiteAudit() {
     }
   }
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    void runAudit(url)
+  }
+
   const findings = result
     ? findingSpecs
         .map((spec) => {
@@ -124,7 +130,10 @@ export function SiteAudit() {
   const attention = findings.filter((f) => !f.passed)
   const working = findings.filter((f) => f.passed)
 
-  const showPanel = status === 'idle'
+  // Visible until there is a result to replace it. Hiding it on error left
+  // the right column blank at exactly the moment the visitor is already
+  // looking at a failure — the same unfinished look as the idle state had.
+  const showPanel = status !== 'done'
 
   return (
     <div className="audit">
@@ -199,7 +208,19 @@ export function SiteAudit() {
         )}
 
         {status === 'error' && (
-          <p className="audit__error">{auditCopy.errors[error]}</p>
+          <div className="audit__error">
+            <p className="audit__error-text">{auditCopy.errors[error]}</p>
+            {/* Retry the URL that failed, not whatever is in the field now. */}
+            {lastRun && (
+              <button
+                type="button"
+                className="audit__retry"
+                onClick={() => void runAudit(lastRun)}
+              >
+                {auditCopy.retry}
+              </button>
+            )}
+          </div>
         )}
 
         {status === 'done' && result && (

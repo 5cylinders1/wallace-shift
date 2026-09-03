@@ -121,11 +121,33 @@
 }
 
 .audit__error {
-  margin: 0;
   padding-left: 18px;
   border-left: 2px solid var(--color-ember-deep);
-  font-size: 1rem;
   max-width: 56ch;
+}
+
+.audit__error-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.audit__retry {
+  margin-top: 12px;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.6em 1.2em;
+  color: var(--color-ink);
+  background: none;
+  border: 1px solid rgba(6, 7, 8, 0.28);
+  cursor: pointer;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.audit__retry:hover,
+.audit__retry:focus-visible {
+  border-color: var(--color-ember-deep);
 }
 
 /* ---- Result --------------------------------------------------------- */

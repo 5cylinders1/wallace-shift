@@ -15,6 +15,15 @@
  * the visitor's site; we never do. There is no SSRF surface to defend,
  * and the data is better than anything we could scrape.
  *
+ * CACHING — why this is a GET.
+ * ----------------------------------------------------------------------
+ * The audit was a POST, which no CDN will cache. As a GET with the target
+ * in the query string, Vercel's edge network caches the whole response by
+ * URL: a site audited twice in an hour is served from the edge without the
+ * function running at all. That is the result cache, and it doubles as the
+ * cheapest possible rate limit — hammering one URL costs nothing after the
+ * first call, and spends no PageSpeed quota.
+ *
  * Required environment variable:
  *   PAGESPEED_API_KEY  A Google Cloud API key with the PageSpeed Insights
  *                      API enabled. Technically the API answers without
@@ -25,23 +34,100 @@
  *                      the audit fails for most visitors, most of the day.
  *                      The free tier is 25,000 requests/day, which is far
  *                      beyond this site's traffic.
+ *
+ * Optional environment variables (rate limiting):
+ *   RATE_LIMIT_REDIS_URL    Upstash Redis REST endpoint.
+ *   RATE_LIMIT_REDIS_TOKEN  Its bearer token.
+ *
+ * Upstash speaks HTTP, so this needs no client library — one fetch, in
+ * keeping with the project's lean dependency rule. While either variable
+ * is unset the endpoint still works but is UNTHROTTLED: the cache above is
+ * then the only thing standing between a bored person with a loop and your
+ * daily PageSpeed quota. Set them before advertising the page.
  */
 
 export const config = { runtime: 'edge' }
 
 const PSI = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed'
 
-/** PSI regularly takes 15s+. Edge gives us 25s, so this leaves headroom
- *  to return a useful timeout message rather than a platform error page. */
-const TIMEOUT_MS = 20_000
+/**
+ * PSI regularly takes 15–30s for a mobile audit, and Vercel's edge runtime
+ * gives the whole request 25s. That gap is the tightest constraint in this
+ * feature: there is no timeout value that makes a slow Lighthouse run fit.
+ *
+ * So this sits as close to the platform ceiling as it can while still
+ * leaving room to return a real JSON error instead of a platform error
+ * page, and the design absorbs the rest — one fewer Lighthouse category to
+ * run, an edge cache so a URL is only ever slow once, and a retry button,
+ * because PSI frequently answers a repeat request quickly from its own
+ * warm result.
+ */
+const TIMEOUT_MS = 23_000
 
 const MAX_URL_LENGTH = 2048
 
-function json(body: unknown, status: number): Response {
+/** Distinct audits allowed per IP per window. Generous — a real visitor
+ *  checks one or two sites; this only stops automated abuse. */
+const RATE_LIMIT = 12
+const RATE_WINDOW_S = 3600
+
+/** How long the edge serves a cached audit for the same URL. */
+const CACHE_S = 3600
+const STALE_S = 86_400
+
+function json(body: unknown, status: number, cacheable = false): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+    headers: {
+      'content-type': 'application/json',
+      // Only successful audits are cacheable. Errors must never be, or a
+      // transient failure would be pinned to a URL for an hour.
+      'cache-control': cacheable
+        ? `public, s-maxage=${CACHE_S}, stale-while-revalidate=${STALE_S}`
+        : 'no-store',
+    },
   })
+}
+
+/**
+ * Fixed-window counter in Upstash, over its REST API.
+ *
+ * Returns true when the caller is over the limit. Fails OPEN: if the
+ * limiter is unreachable or unconfigured the audit still runs, because
+ * breaking the page's centrepiece over a rate-limit outage is worse than
+ * briefly allowing extra requests through.
+ */
+async function isRateLimited(request: Request): Promise<boolean> {
+  const base = process.env.RATE_LIMIT_REDIS_URL
+  const token = process.env.RATE_LIMIT_REDIS_TOKEN
+  if (!base || !token) return false
+
+  const ip =
+    request.headers.get('x-real-ip') ??
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    'unknown'
+  const bucket = Math.floor(Date.now() / 1000 / RATE_WINDOW_S)
+  const key = `audit:${ip}:${bucket}`
+
+  try {
+    const res = await fetch(`${base}/pipeline`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${token}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify([
+        ['INCR', key],
+        ['EXPIRE', key, String(RATE_WINDOW_S), 'NX'],
+      ]),
+    })
+    if (!res.ok) return false
+    const out = (await res.json()) as Array<{ result?: number }>
+    const count = out?.[0]?.result
+    return typeof count === 'number' && count > RATE_LIMIT
+  } catch {
+    return false
+  }
 }
 
 /**
@@ -90,24 +176,26 @@ function pct(score: unknown): number | null {
 type Audit = { score?: number | null; displayValue?: string; title?: string }
 
 export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== 'POST') {
+  if (request.method !== 'GET') {
     return json({ ok: false, error: 'method_not_allowed' }, 405)
   }
 
-  let body: Record<string, unknown>
-  try {
-    body = (await request.json()) as Record<string, unknown>
-  } catch {
-    return json({ ok: false, error: 'invalid' }, 400)
-  }
-
-  const target = normalizeUrl(body.url)
+  const target = normalizeUrl(new URL(request.url).searchParams.get('url'))
   if (!target) {
     return json({ ok: false, error: 'invalid_url' }, 400)
   }
 
+  // Checked after validation so malformed input costs no Redis round trip.
+  if (await isRateLimited(request)) {
+    return json({ ok: false, error: 'rate_limited' }, 429)
+  }
+
+  // Three categories, not four. `best-practices` was requested solely for
+  // the is-on-https audit, and the final URL states that outright — so the
+  // whole category was being run for something already known. Every
+  // category Lighthouse skips is time this request does not spend.
   const params = new URLSearchParams({ url: target, strategy: 'mobile' })
-  for (const c of ['performance', 'seo', 'accessibility', 'best-practices']) {
+  for (const c of ['performance', 'seo', 'accessibility']) {
     params.append('category', c)
   }
   const key = process.env.PAGESPEED_API_KEY
@@ -171,7 +259,6 @@ export default async function handler(request: Request): Promise<Response> {
         performance: pct(lh.categories.performance?.score),
         seo: pct(lh.categories.seo?.score),
         accessibility: pct(lh.categories.accessibility?.score),
-        bestPractices: pct(lh.categories['best-practices']?.score),
       },
       metrics: {
         lcp: audits['largest-contentful-paint']?.displayValue ?? null,
@@ -182,12 +269,14 @@ export default async function handler(request: Request): Promise<Response> {
         metaDescription: has('meta-description'),
         title: has('document-title'),
         viewport: has('viewport'),
-        https: has('is-on-https'),
+        // Derived rather than audited — see the category note above.
+        https: (lh.finalUrl ?? target).startsWith('https://'),
         contrast: has('color-contrast'),
         altText: has('image-alt'),
         linkNames: has('link-name'),
       },
     },
     200,
+    true,
   )
 }

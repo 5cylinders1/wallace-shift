@@ -68,14 +68,18 @@ export const auditCopy = {
   disclaimer:
     'An automated check, measured once on a simulated mobile connection. It is a starting point for a conversation, not a full review or a verdict — real conditions vary, and plenty of successful businesses run slow sites.',
 
+  retry: 'Try again',
+
   errors: {
     invalid_url: 'That does not look like a web address. Try it without the https:// — just yourbusiness.com.',
     unreachable:
       'We could not load that page. It may be password-protected, blocking automated visits, or not published yet.',
     timeout:
-      'The audit took longer than we allow. Large sites sometimes do — try again, or just tell us the address and we will look manually.',
+      'That check ran longer than we can wait for. Trying again usually works — the result is often ready the second time. Or send us the address and we will run it manually.',
     quota:
-      'Our audit allowance for today is used up. Send us the address and we will run it manually — that is the same check, just with a person doing it.',
+      'Our check allowance for today is used up. Send us the address and we will run it manually — that is the same check, just with a person doing it.',
+    rate_limited:
+      'That is a lot of checks in a short time. Give it a few minutes, or send us the address and we will run it for you.',
     upstream: 'The audit service did not respond. Try again in a moment.',
     network: 'Something went wrong reaching the audit. Try again shortly.',
   },
