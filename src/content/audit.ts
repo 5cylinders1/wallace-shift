@@ -117,6 +117,152 @@ export const auditCopy = {
 } as const
 
 /**
+ * The single decisive conclusion, and its supporting read.
+ *
+ * The result used to give the screenshot, filmstrip, metrics, findings,
+ * positives, CTA and disclaimer roughly equal weight, which left the
+ * visitor to work out for themselves what mattered. One sentence leads
+ * now, and everything else supports it.
+ *
+ * TONE RULE, applied hard here because this is the most quotable line the
+ * site will ever put in front of a stranger about their own business:
+ *
+ *  - It states a measurement, never a verdict. "Stays visually empty for
+ *    2.6 seconds" is a fact; "your site is slow" is an insult.
+ *  - No score is ever the headline.
+ *  - `clear` is a real outcome. A checker that always finds something is a
+ *    sales gimmick, and a local business owner can smell one. If every
+ *    check passes we say so and do not manufacture a concern.
+ *
+ * `{site}` is replaced with the visitor's domain, `{value}` with the real
+ * measurement. A conclusion with no `{value}` is one where a raw number
+ * would mean nothing to a non-technical reader (layout shift is scored
+ * 0–1; nobody outside the field knows that 0.31 is bad).
+ */
+export interface ConclusionCopy {
+  /** The decisive sentence. Leads the whole report. */
+  headline: string
+  /** Why it costs the business something. */
+  matters: string
+  /** What we would actually do. Never a promise of a result. */
+  change: string
+  stage: '01' | '02' | '03'
+}
+
+export const conclusions: Record<string, ConclusionCopy> = {
+  https: {
+    headline: '{site} is not served over a secure connection.',
+    matters:
+      'Browsers now mark these pages "Not secure" in the address bar, next to your name, before a visitor has read anything. It is the first thing many people notice and the hardest to explain away.',
+    change:
+      'A certificate and a site-wide redirect, so every address resolves to the secure version. This is usually the fastest thing on this list to put right.',
+    stage: '03',
+  },
+  viewport: {
+    headline: '{site} does not tell phones how to size the page.',
+    matters:
+      'Phones fall back to rendering it at desktop width and scaling it down, so visitors have to pinch and zoom to read anything. Most give up instead.',
+    change:
+      'The page is rebuilt to respond to the screen it is on, rather than being a desktop layout viewed from far away.',
+    stage: '02',
+  },
+  fcp: {
+    headline:
+      '{site} stays visually empty for {value} on a simulated mobile connection.',
+    matters:
+      'That is time a visitor spends looking at a blank screen with no evidence anything is happening. It is the point at which people go back to the search results and pick somebody else.',
+    change:
+      'Getting something meaningful on screen sooner — usually by cutting what has to load before the page can draw at all.',
+    stage: '02',
+  },
+  lcp: {
+    headline:
+      'The main content on {site} takes {value} to finish loading on a phone.',
+    matters:
+      'The largest thing on screen — normally your headline or main image — is what tells a visitor they are in the right place. Until it arrives they are waiting without knowing what for.',
+    change:
+      'Prioritising the content that matters most so it loads first, rather than last behind everything else.',
+    stage: '02',
+  },
+  cls: {
+    headline: '{site} moves under the reader while it loads.',
+    matters:
+      'Content shifting as things arrive is why people tap the wrong link, lose the line they were reading, or miss the button they were aiming for. It reads as unfinished even when nothing is broken.',
+    change:
+      'Reserving space for everything that loads late, so the page settles as it arrives instead of rearranging itself.',
+    stage: '02',
+  },
+  contrast: {
+    headline:
+      'Some text on {site} is too close in tone to its background to read comfortably.',
+    matters:
+      'It usually looks refined on the designer’s monitor and disappears in daylight, on an older screen, or for anyone with less than perfect vision — which is a large share of most local customer bases.',
+    change:
+      'Adjusting the affected text so it holds up outdoors and on ordinary screens, without flattening the design.',
+    stage: '02',
+  },
+  metaDescription: {
+    headline: '{site} has no description for search results to show.',
+    matters:
+      'Google writes its own instead, usually from whatever text it finds first. That sentence is often the only thing a customer reads before deciding whether to click you or a competitor.',
+    change:
+      'Writing the description for each page, so the line under your name in search results is one you chose.',
+    stage: '02',
+  },
+  altText: {
+    headline: 'Some images on {site} have no text alternative.',
+    matters:
+      'Those images are invisible to screen readers and to search engines — they simply are not there for either.',
+    change:
+      'Describing the images that carry meaning, and marking the purely decorative ones as decorative.',
+    stage: '02',
+  },
+  linkNames: {
+    headline: 'Some links on {site} have no readable label.',
+    matters:
+      'Assistive technology cannot announce them, which matters most on the links people use to contact you.',
+    change:
+      'Giving every link a name that says where it goes, read aloud or not.',
+    stage: '03',
+  },
+  /* Distinct from `clear`. If Lighthouse returned nothing measurable,
+     "passed every check" is a claim about work that was never done — the
+     one sentence on this page that could be flatly untrue about someone
+     else's business. Say what actually happened instead. */
+  inconclusive: {
+    headline: 'This check came back without enough detail to draw a conclusion.',
+    matters:
+      'That usually means the page blocked part of the automated visit, or responded differently to it than it would to a person. It is not a finding about your site.',
+    change:
+      'Send us the address and we will look at it directly, which is not something an automated pass can be talked into doing.',
+    stage: '01',
+  },
+  clear: {
+    // Deliberately a statement about findings, not about coverage.
+    // "Passed every check" implies a breadth we cannot guarantee — if
+    // Lighthouse skipped four of seven audits, the sentence is still
+    // technically true and still misleading. "Nothing flagged" is
+    // accurate however many ran.
+    headline: '{site} came through this first check with nothing flagged.',
+    matters:
+      'Nothing in the automated pass needs attention, which is a genuinely good result and not one we are going to talk you out of.',
+    // The honest sell: name the limit of the tool rather than inventing a
+    // problem to justify a conversation.
+    change:
+      'An automated check can only see how a page is built. It cannot tell whether the words persuade anyone, whether the offer is clear, or whether the path to enquiring makes sense — which is usually where the real friction is. That part needs a person.',
+    stage: '01',
+  },
+}
+
+export const conclusionLabels = {
+  observed: 'What we observed',
+  matters: 'Why it matters',
+  change: 'What we would change',
+  evidence: 'The measurements behind this',
+  evidenceOpen: 'View full findings',
+} as const
+
+/**
  * The three timings worth showing, in customer language.
  *
  * Lighthouse's own names are jargon ("Total Blocking Time"), and a local

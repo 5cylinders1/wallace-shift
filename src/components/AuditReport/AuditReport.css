@@ -441,3 +441,117 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---- The conclusion --------------------------------------------------
+   One sentence, at headline scale, carrying the whole result. Everything
+   below it is support. It replaced a generic "<domain>, as a phone sees
+   it." heading that told the visitor nothing they did not already know. */
+.report__conclusion {
+  margin: clamp(10px, 1.4vw, 16px) 0 0;
+  font-size: clamp(1.7rem, 3.9vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  /* Long enough to hold a domain plus a measurement, short enough that it
+     still reads as one statement rather than a paragraph. */
+  max-width: 20ch;
+  /* Domains are the one string here we do not control. */
+  overflow-wrap: anywhere;
+}
+
+/* A clean result is good news, not a null state. Ember would read as a
+   warning, so the accent is withheld and the sentence simply stands. */
+.report__conclusion--clear {
+  color: var(--color-soft-white);
+}
+
+.report__read {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.2vw, 26px);
+}
+
+.report__read-label {
+  margin: 0 0 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.report__read-body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-silver);
+  max-width: 52ch;
+}
+
+.report__read-stage {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-soft-white);
+}
+
+/* ---- Evidence disclosure --------------------------------------------- */
+
+.report__evidence {
+  margin-top: clamp(24px, 3vw, 36px);
+  border-top: 1px solid rgba(214, 218, 223, 0.14);
+}
+
+.report__evidence-summary {
+  padding: 16px 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-silver);
+  cursor: pointer;
+  /* Comfortably tappable without a box around it. */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  list-style: none;
+}
+
+.report__evidence-summary::-webkit-details-marker {
+  display: none;
+}
+
+/* A rotating chevron drawn from borders — no icon font, and it inherits
+   the accent so it matches the rest of the page. */
+.report__evidence-summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--color-ember);
+  border-bottom: 1.5px solid var(--color-ember);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.report__evidence[open] .report__evidence-summary::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.report__evidence-summary:hover,
+.report__evidence-summary:focus-visible {
+  color: var(--color-soft-white);
+}
+
+.report__evidence-body {
+  padding-bottom: clamp(16px, 2vw, 24px);
+  display: grid;
+  gap: clamp(20px, 2.6vw, 32px);
+}
+
+@media (min-width: 860px) {
+  .report__evidence-body {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+  }
+}
