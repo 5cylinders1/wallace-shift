@@ -1,0 +1,168 @@
+/* The artifact beside each stage.
+   ----------------------------------------------------------------------
+   Every colour here reads from the stage's own ground tokens
+   (--stage-fg / --stage-muted / --stage-accent), so the panel restyles
+   itself on bone, on #23211e and on ink without a single per-ground rule.
+   Same reason the stages themselves work that way. */
+
+.workbench {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workbench__label,
+.workbench__width {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stage-accent);
+}
+
+.workbench__width {
+  align-self: flex-end;
+  font-variant-numeric: tabular-nums;
+  color: var(--stage-muted);
+  letter-spacing: 0.1em;
+}
+
+/* The frame is the thing whose width changes, and it is the query
+   container — so the layout inside reflows because it is genuinely
+   narrower, not because a class told it to look narrower. */
+.workbench__frame {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 100%;
+  background: rgba(247, 247, 244, 0.04);
+  border: 1px solid rgba(214, 218, 223, 0.22);
+  padding: 10px;
+  transition: width 0.9s var(--ease-premium);
+}
+
+.workbench__frame--narrow {
+  width: 46%;
+  min-width: 168px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workbench__frame {
+    transition: none;
+  }
+}
+
+.workbench__screen {
+  background: rgba(6, 7, 8, 0.5);
+  padding: 10px;
+  min-height: 210px;
+}
+
+.workbench__caption {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--stage-muted);
+  max-width: 44ch;
+}
+
+/* ---- Structure blocks ------------------------------------------------
+   A content outline: what goes on the page, before anything is decorated.
+   Two columns while there is room, one when there is not. */
+
+.wb-blocks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wb-block {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 8px 10px;
+  background: rgba(247, 247, 244, 0.07);
+  border-left: 2px solid var(--stage-accent);
+  transition: background 0.5s var(--ease-premium);
+}
+
+.wb-block--full,
+.wb-block--wide {
+  grid-column: 1 / -1;
+}
+
+.wb-block--wide {
+  min-height: 58px;
+}
+
+.wb-block__role {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--stage-fg);
+}
+
+/* The real breakpoint. When the frame is genuinely narrow the two-up row
+   stacks, exactly as the page you are reading does. */
+@container (max-width: 300px) {
+  .wb-blocks {
+    grid-template-columns: 1fr;
+  }
+
+  .wb-block--half {
+    grid-column: 1 / -1;
+  }
+
+  .wb-block {
+    min-height: 30px;
+  }
+}
+
+/* ---- Launch checks --------------------------------------------------- */
+
+.wb-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.wb-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wb-check__mark {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--stage-accent);
+  position: relative;
+}
+
+/* A drawn tick rather than a glyph, so it scales with the border colour
+   and needs no icon font. */
+.wb-check__mark::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border-right: 2px solid var(--stage-accent);
+  border-bottom: 2px solid var(--stage-accent);
+  transform: rotate(42deg);
+}
+
+.wb-check__label {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--stage-fg);
+}

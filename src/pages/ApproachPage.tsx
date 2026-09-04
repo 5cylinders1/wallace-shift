@@ -3,6 +3,7 @@ import { StandardsSection } from '../components/Standards/StandardsSection'
 import { SiteAudit } from '../components/SiteAudit/SiteAudit'
 import { AuditReport } from '../components/AuditReport/AuditReport'
 import { AuditPill } from '../components/AuditPill/AuditPill'
+import { StageWorkbench } from '../components/StageWorkbench/StageWorkbench'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
 import { auditCopy } from '../content/audit'
@@ -123,6 +124,14 @@ export function ApproachPage() {
                     </Reveal>
                   ))}
                 </dl>
+                {/* The artifact for this stage, in the column that was
+                    previously empty. Stage 02 shows layout reflowing at a
+                    real breakpoint; stage 03 shows the launch checks this
+                    stage names. Neither depicts work that has not been
+                    done. */}
+                <StageWorkbench
+                  variant={index === 0 ? 'structure' : 'launch'}
+                />
               </li>
             ))}
           </ol>

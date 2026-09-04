@@ -134,6 +134,53 @@ export const servicePaths = {
 } as const
 
 /**
+ * Workbench artifacts — the sticky panel beside each stage.
+ *
+ * NON-FABRICATION RULE, restated because this is the easiest place on the
+ * site to break it. Nothing here may depict work we have not done. There
+ * is no mocked client dashboard, no invented redesign of the visitor's
+ * site, and no screenshot of a project that is not live.
+ *
+ * Stage 02's artifact is therefore not a picture of responsive design — it
+ * is a real layout built from this site's own tokens and its real
+ * navigation labels, reflowing at a real breakpoint. It demonstrates the
+ * behaviour rather than illustrating it, and the visitor can verify it by
+ * resizing the window they are already looking at.
+ *
+ * Stage 03's checks are the ones named in stage 03's own copy. They are
+ * process steps we actually run, not a progress bar with invented state.
+ */
+export const workbench = {
+  structure: {
+    label: 'Layout, at two widths',
+    caption:
+      'Real layout using this site’s own type and spacing, reflowing at the same breakpoint the page you are reading uses. Not a picture of responsive design — the behaviour itself.',
+    /** Mirrors stage 02's "what happens": structure precedes decoration. */
+    blocks: [
+      { role: 'Navigation', span: 'full' },
+      { role: 'What you do', span: 'wide' },
+      { role: 'Proof', span: 'half' },
+      { role: 'Offer', span: 'half' },
+      { role: 'Next step', span: 'full' },
+    ],
+  },
+  launch: {
+    label: 'Before it goes live',
+    caption:
+      'The checks named in this stage, run in order. Ownership transfers on the last one.',
+    /** Every item appears verbatim in stage 03's fields above. */
+    checks: [
+      'Accessibility review',
+      'Performance review',
+      'Foundational SEO',
+      'Analytics in place',
+      'Your domain, your accounts',
+      'Ownership and full handover',
+    ],
+  },
+} as const
+
+/**
  * Founder credibility, in place of testimonials the studio does not yet
  * have. No client names, no metrics, no invented results.
  *

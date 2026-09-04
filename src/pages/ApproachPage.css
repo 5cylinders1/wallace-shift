@@ -279,7 +279,7 @@
   }
 
   .stage {
-    grid-template-columns: minmax(240px, 4fr) minmax(420px, 7fr);
+    grid-template-columns: minmax(240px, 4fr) minmax(360px, 7fr);
     gap: clamp(28px, 4vw, 64px);
   }
 
@@ -558,5 +558,37 @@
 @media (min-width: 700px) {
   .expectations {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+/* ---- Workbench column ------------------------------------------------
+   The stage was two columns of text with a large empty band on the right,
+   which is what made these sections read as tastefully spaced rather than
+   substantial. A third column puts a real artifact in that space, so the
+   stage costs no more height than before and finally shows something.
+
+   Deliberately NOT sticky. Each stage is roughly 470px tall, which gives a
+   sticky panel almost no travel — it would pin and immediately release,
+   which reads as a glitch rather than as intent. */
+@media (min-width: 1100px) {
+  .stage {
+    grid-template-columns:
+      minmax(200px, 3fr)
+      minmax(280px, 4fr)
+      minmax(260px, 5fr);
+    align-items: start;
+  }
+}
+
+/* Below the three-column breakpoint the artifact follows the copy at full
+   width, rather than being dropped. It is content, not decoration. */
+@media (max-width: 1099px) {
+  .workbench {
+    margin-top: clamp(8px, 1.4vw, 16px);
+  }
+
+  .workbench__frame--narrow {
+    width: min(46%, 260px);
   }
 }
