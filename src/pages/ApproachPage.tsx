@@ -4,6 +4,7 @@ import { SiteAudit } from '../components/SiteAudit/SiteAudit'
 import { AuditReport } from '../components/AuditReport/AuditReport'
 import { AuditPill } from '../components/AuditPill/AuditPill'
 import { StageWorkbench } from '../components/StageWorkbench/StageWorkbench'
+import { WorkStrip } from '../components/WorkStrip/WorkStrip'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
 import { auditCopy } from '../content/audit'
@@ -13,6 +14,7 @@ import {
   approachProof,
   approachStages,
   servicePaths,
+  workSamples,
 } from '../content/approachPage'
 import { approachPageHero, business } from '../content/siteConfig'
 import { renderLines } from '../lib/textLines'
@@ -190,42 +192,58 @@ export function ApproachPage() {
           <Reveal delay={0.06}>
             <h2 className="proof__heading">{approachProof.heading}</h2>
           </Reveal>
-          {/* Named, with real remits. The page previously promised "the
-              people doing the work" and then described only one of them,
-              which left the two-person structure ambiguous at exactly the
-              moment it is meant to reassure. */}
-          <div className="proof__people">
-            {approachProof.people.map((person, index) => (
-              <Reveal
-                className="proof__person"
-                delay={0.1 + index * 0.06}
-                key={person.name}
-              >
-                <span className="proof__person-role">{person.role}</span>
-                <h3 className="proof__person-name">{person.name}</h3>
-                <p className="proof__person-body">{person.body}</p>
-              </Reveal>
-            ))}
-          </div>
 
-          {approachProof.paragraphs.map((paragraph, index) => (
-            <Reveal delay={0.16 + index * 0.06} key={paragraph.slice(0, 24)}>
-              <p className="proof__body">{paragraph}</p>
-            </Reveal>
-          ))}
-          <Reveal delay={0.22}>
-            <ul className="proof__credentials">
-              {approachProof.credentials.map((item) => (
-                <li key={item}>{item}</li>
+          {/* Two columns from here down. Everything used to stack inside a
+              62ch measure, which is what left a narrow ribbon of text in a
+              near-empty black field — and meant anything added to the
+              section could only make it taller. */}
+          <div className="proof__cols">
+            <div className="proof__col">
+              {approachProof.paragraphs.map((paragraph, index) => (
+                <Reveal delay={0.1 + index * 0.06} key={paragraph.slice(0, 24)}>
+                  <p className="proof__body">{paragraph}</p>
+                </Reveal>
               ))}
-            </ul>
-          </Reveal>
-          <Reveal delay={0.26}>
-            <PageLink href={approachProof.proofHref} className="proof__note">
-              {approachProof.proofNote}
-              <span aria-hidden="true">&#8599;</span>
-            </PageLink>
-          </Reveal>
+
+              {/* Evidence replaces claims only once there is enough of it.
+                  A single screenshot is weaker than the three credential
+                  lines, not stronger, so below three samples both are
+                  shown; at three or more the checkable thing wins. */}
+              {workSamples.length < 3 && (
+                <Reveal delay={0.22}>
+                  <ul className="proof__credentials">
+                    {approachProof.credentials.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </Reveal>
+              )}
+
+              <Reveal delay={0.26}>
+                <PageLink href={approachProof.proofHref} className="proof__note">
+                  {approachProof.proofNote}
+                  <span aria-hidden="true">&#8599;</span>
+                </PageLink>
+              </Reveal>
+            </div>
+
+            <div className="proof__col">
+              <div className="proof__people">
+                {approachProof.people.map((person, index) => (
+                  <Reveal
+                    className="proof__person"
+                    delay={0.1 + index * 0.06}
+                    key={person.name}
+                  >
+                    <span className="proof__person-role">{person.role}</span>
+                    <h3 className="proof__person-name">{person.name}</h3>
+                    <p className="proof__person-body">{person.body}</p>
+                  </Reveal>
+                ))}
+              </div>
+              <WorkStrip />
+            </div>
+          </div>
         </div>
       </section>
 

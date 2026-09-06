@@ -200,7 +200,45 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 62ch;
+}
+
+/* The heading keeps a measure; the columns below do not, because they are
+   what fills the width the section already occupied. */
+.proof__eyebrow,
+.proof__heading {
+  max-width: 24ch;
+}
+
+.proof__cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(26px, 3.2vw, 44px);
+  margin-top: clamp(10px, 1.4vw, 18px);
+}
+
+.proof__col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.proof__col .proof__body {
+  max-width: 54ch;
+}
+
+@media (min-width: 900px) {
+  .proof__cols {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    column-gap: clamp(36px, 4.4vw, 76px);
+    align-items: start;
+  }
+
+  /* Stacked inside a column rather than side by side: at this width two
+     bios abreast would each be too narrow to read comfortably. */
+  .proof__people {
+    grid-template-columns: 1fr;
+  }
 }
 
 .proof__eyebrow {
@@ -545,7 +583,11 @@
   max-width: 46ch;
 }
 
-@media (min-width: 760px) {
+/* Side by side only in the band where the section is still one column.
+   From 900px the bios move into the narrower right-hand column, where two
+   abreast would be ~259px each — around thirty characters a line, which is
+   too tight to read a bio in. They stack there instead. */
+@media (min-width: 760px) and (max-width: 899px) {
   .proof__people {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(28px, 3.4vw, 56px);

@@ -26,7 +26,15 @@ export interface RouteMeta {
   priority: number
   /** Excluded from sitemap.xml and marked noindex. */
   noindex?: boolean
+  /**
+   * Overrides the robots directive emitted for a `noindex` route.
+   * Defaults to `noindex` alone, which is what `/404` has always used.
+   */
+  robots?: string
 }
+
+/** The isolated WebGL experiment. Reachable by URL, linked from nowhere. */
+export const WATER_HERO_EXPERIMENT_PATH = '/experiments/water-hero'
 
 export const routeMeta: RouteMeta[] = [
   {
@@ -82,6 +90,15 @@ export const routeMeta: RouteMeta[] = [
     description:
       'What Wallace Shift collects through this website, why, and how to have it removed.',
     priority: 0.2,
+  },
+  {
+    path: WATER_HERO_EXPERIMENT_PATH,
+    title: 'Water hero experiment | Wallace Shift',
+    description:
+      'An isolated realtime WebGL prototype. Not part of the Wallace Shift site.',
+    priority: 0,
+    noindex: true,
+    robots: 'noindex, nofollow',
   },
   {
     path: '/404',

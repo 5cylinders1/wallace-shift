@@ -1,0 +1,362 @@
+/*
+ * Route-scoped styles for the water-hero experiment.
+ *
+ * Every selector is anchored to `.water-hero-shell`, `.water-hero` or
+ * `.water-hero-handoff`. There are no element, `:root`, `html` or `body`
+ * rules here, and nothing declares a custom property outside the
+ * experiment's own scope — the production site imports this file only
+ * because the route component does, and it must be able to do so without
+ * anything changing anywhere else.
+ *
+ * The brand tokens read from `index.css` are read only.
+ */
+
+.water-hero-shell {
+  --wh-ink: #04060a;
+  --wh-line: rgba(214, 218, 223, 0.16);
+  --wh-dim: rgba(241, 239, 233, 0.56);
+
+  position: relative;
+  background: var(--wh-ink);
+  color: var(--color-soft-white);
+  overflow-x: clip;
+}
+
+/* --- Stage ---------------------------------------------------------- */
+
+.water-hero {
+  position: relative;
+  width: 100%;
+}
+
+.water-hero__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--wh-ink);
+}
+
+.water-hero--static .water-hero__stage {
+  position: relative;
+}
+
+.water-hero__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+/* --- DOM layer ------------------------------------------------------ */
+
+.water-hero__ui-root {
+  position: absolute;
+  inset: 0;
+  /* The canvas is decorative; only the real links inside take the pointer. */
+  pointer-events: none;
+}
+
+.water-hero__ui {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(20px, 3.4vw, 40px) var(--gutter) clamp(24px, 4vw, 52px);
+}
+
+/* Hidden until the first progress write, so nothing flashes at full
+   opacity on the frame before the scene knows where it is. */
+.water-hero__ui-root [data-in-start] {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.water-hero__masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.water-hero__brand,
+.water-hero__back {
+  pointer-events: auto;
+}
+
+.water-hero__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.water-hero__brand img {
+  width: 26px;
+  height: auto;
+  opacity: 0.9;
+}
+
+.water-hero__back {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--wh-dim);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.water-hero__back:hover,
+.water-hero__back:focus-visible {
+  color: var(--color-soft-white);
+  border-bottom-color: var(--wh-line);
+}
+
+.water-hero__copy {
+  margin-top: auto;
+  max-width: 34ch;
+}
+
+.water-hero__eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: clamp(12px, 1.6vw, 20px);
+}
+
+.water-hero__statement {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3em;
+  font-size: clamp(1.55rem, 3.6vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+}
+
+.water-hero__word {
+  color: var(--color-muted);
+}
+
+.water-hero__word--lit {
+  color: var(--color-soft-white);
+}
+
+.water-hero__arrow {
+  color: var(--color-ember);
+  font-size: 0.72em;
+  transform: translateY(-0.06em);
+}
+
+.water-hero__cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(20px, 3.4vw, 36px);
+  transform: translateX(-50%);
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* --- Loading and failure -------------------------------------------- */
+
+.water-hero__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: var(--wh-ink);
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  pointer-events: none;
+  transition: opacity 0.7s var(--ease-premium);
+}
+
+.water-hero__loading[data-visible='false'] {
+  opacity: 0;
+}
+
+.water-hero__loading img {
+  width: 34px;
+  height: auto;
+  opacity: 0.5;
+}
+
+.water-hero__failure {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(20px, 3.4vw, 36px);
+  max-width: 60ch;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--color-ember);
+}
+
+.water-hero--static .water-hero__stage {
+  background:
+    radial-gradient(
+      120% 90% at 50% 78%,
+      rgba(22, 28, 36, 0.9),
+      rgba(4, 6, 10, 0) 62%
+    ),
+    var(--wh-ink);
+}
+
+/* --- Handoff -------------------------------------------------------- */
+
+.water-hero-handoff {
+  position: relative;
+  padding: clamp(72px, 12vw, 160px) var(--gutter);
+  background: var(--color-ink);
+  border-top: 1px solid var(--wh-line);
+}
+
+.water-hero-handoff__inner {
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+.water-hero-handoff__label {
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 20px;
+}
+
+.water-hero-handoff__title {
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 18px;
+}
+
+.water-hero-handoff__body {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin-bottom: 28px;
+}
+
+.water-hero-handoff__link {
+  display: inline-block;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--wh-line);
+  padding-bottom: 4px;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.water-hero-handoff__link:hover,
+.water-hero-handoff__link:focus-visible {
+  border-bottom-color: var(--color-soft-white);
+}
+
+/* --- Debug ---------------------------------------------------------- */
+
+.water-hero__debug {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  width: min(340px, calc(100vw - 24px));
+  padding: 14px 16px 16px;
+  background: rgba(4, 6, 10, 0.82);
+  border: 1px solid var(--wh-line);
+  backdrop-filter: blur(8px);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--color-silver);
+  pointer-events: auto;
+}
+
+.water-hero__debug-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: var(--color-soft-white);
+}
+
+.water-hero__debug-grid {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 2px 10px;
+  margin: 0 0 12px;
+}
+
+.water-hero__debug-grid dt {
+  color: var(--color-muted);
+}
+
+.water-hero__debug-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.water-hero__debug-section {
+  border-top: 1px solid var(--wh-line);
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+.water-hero__debug-label {
+  display: block;
+  color: var(--color-muted);
+  margin-bottom: 6px;
+}
+
+.water-hero__debug-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.water-hero__debug-buttons button {
+  padding: 4px 8px;
+  font: inherit;
+  color: var(--color-silver);
+  border: 1px solid var(--wh-line);
+  background: transparent;
+}
+
+.water-hero__debug-buttons button[data-active='true'] {
+  color: var(--wh-ink);
+  background: var(--color-silver);
+  border-color: var(--color-silver);
+}
+
+.water-hero__debug input[type='range'] {
+  width: 100%;
+  accent-color: var(--color-ember);
+}
+
+/* --- Small screens --------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .water-hero__copy {
+    max-width: none;
+  }
+
+  .water-hero__back {
+    font-size: 0.66rem;
+  }
+
+  .water-hero__debug {
+    font-size: 10px;
+  }
+}

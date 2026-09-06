@@ -188,6 +188,61 @@ export const workbench = {
  * Matthew directly. Stating the year rather than a duration keeps the line
  * accurate as time passes and reads as more specific than "X years".
  */
+/**
+ * Real built work, shown as evidence instead of claimed as credentials.
+ *
+ * GATING RULE — this list is the only thing that puts a client's site on
+ * the public web, so it is deliberately awkward to add to:
+ *
+ *  1. Only launched, publicly reachable sites. Nothing in "coming soon",
+ *     nothing unfinished, nothing behind a holding page. Presenting those
+ *     as delivered work is a lie about the work AND about the client.
+ *  2. Client sites only with the owner's say-so. Ours to show without
+ *     asking are our own ventures and this site.
+ *  3. `image` must point at a file that exists in public/work. An entry
+ *     whose image is missing is skipped at render rather than showing a
+ *     broken frame — see WorkStrip.
+ *  4. No metrics, no outcomes, no "increased conversions by". What the
+ *     site is, and who it is for. Nothing that cannot be verified by
+ *     clicking the link.
+ *
+ * Empty by default. The section renders no strip at all while this is
+ * empty, which is correct: an empty portfolio is better than a padded one.
+ */
+export interface WorkSample {
+  /** Display name. */
+  name: string
+  /** What it is, in plain terms. No outcome claims. */
+  kind: string
+  /** Public URL. Must actually resolve. */
+  href: string
+  /** Path under public/, e.g. "/work/example.jpg". */
+  image: string
+  /** Alt text describing the screenshot, not selling it. */
+  alt: string
+}
+
+export const workSamples: WorkSample[] = [
+  {
+    name: 'reply365.ai',
+    // Accurate about what exists. The marketing site is live; the product
+    // itself is still in development, and nothing here implies otherwise.
+    kind: 'Marketing site for our own product',
+    href: 'https://reply365.ai/',
+    image: '/work/reply365-ai.jpg',
+    alt: 'The reply365.ai homepage.',
+  },
+]
+
+export const workStrip = {
+  /* Two labels because one screenshot is an example, not a portfolio, and
+     calling a single item "Recent builds" is the kind of small inflation
+     that costs more trust than it buys. */
+  labelOne: 'A recent build',
+  labelMany: 'Recent builds',
+  note: 'Live and open to click. No case study, because there is nothing to add that clicking through does not already show.',
+} as const
+
 export const approachProof = {
   eyebrow: 'Why trust the build',
   // The old heading — "the people in the meeting are the people doing the

@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement } from 'react'
+import { Suspense, lazy, useEffect, type ComponentType, type ReactElement } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SiteHeader } from './components/SiteHeader/SiteHeader'
 import { SiteFooter } from './components/SiteFooter/SiteFooter'
@@ -11,6 +11,7 @@ import { ContactPage } from './pages/ContactPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { scrollToRouteTarget, useRoutePath } from './lib/router'
+import { WATER_HERO_EXPERIMENT_PATH } from './content/routeMeta'
 
 const pages: Record<string, () => ReactElement> = {
   '/': HomePage,
@@ -21,6 +22,26 @@ const pages: Record<string, () => ReactElement> = {
   '/contact': ContactPage,
   '/privacy': PrivacyPage,
   '/404': NotFoundPage,
+}
+
+/**
+ * Experimental routes, kept apart from the site proper on purpose.
+ *
+ * They are lazy so their dependencies — three.js, the GLB, the shaders —
+ * land in their own chunk and are never fetched by anyone who did not ask
+ * for the experiment by URL, and they render without the site header and
+ * footer because they are full-bleed stages rather than pages of the
+ * site. Neither affects the routes in `pages` above, which take the same
+ * path through this component that they always have.
+ */
+const WaterHeroExperimentPage = lazy(() =>
+  import('./pages/WaterHeroExperimentPage').then((module) => ({
+    default: module.WaterHeroExperimentPage,
+  })),
+)
+
+const experiments: Record<string, ComponentType> = {
+  [WATER_HERO_EXPERIMENT_PATH]: WaterHeroExperimentPage,
 }
 
 function App() {
@@ -42,6 +63,17 @@ function App() {
     ScrollTrigger.refresh()
     scrollToRouteTarget('instant')
   }, [path])
+
+  const Experiment = experiments[path]
+  if (Experiment) {
+    return (
+      <main id="main">
+        <Suspense fallback={null}>
+          <Experiment />
+        </Suspense>
+      </main>
+    )
+  }
 
   const Page = pages[path] ?? NotFoundPage
 

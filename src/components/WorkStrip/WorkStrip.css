@@ -1,0 +1,99 @@
+/* Real built work, on ink.
+   ----------------------------------------------------------------------
+   Deliberately small. The available screenshots are 250px wide, so a large
+   card would render them soft — and a modest strip claims less than a
+   full-bleed portfolio grid, which matches work described to us as solid
+   rather than showpiece. Restraint here is honesty, not just taste. */
+
+.work-strip {
+  margin-top: clamp(22px, 2.8vw, 34px);
+}
+
+.work-strip__label {
+  margin: 0 0 14px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.work-strip__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* Capped at 240px, and packed from the left rather than stretched.
+     The source screenshots are 250px wide, so a card any larger renders
+     them upscaled and soft — and a lone card stretched across the full
+     column would announce itself as a portfolio of one. */
+  grid-template-columns: repeat(auto-fill, minmax(160px, 240px));
+  justify-content: start;
+  gap: clamp(14px, 1.8vw, 24px);
+}
+
+.work-item__link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.work-item__frame {
+  display: block;
+  overflow: hidden;
+  background: var(--color-graphite);
+  border: 1px solid rgba(214, 218, 223, 0.18);
+  /* Landscape crop from a tall screenshot: the top of a page is the part
+     that identifies it. */
+  aspect-ratio: 4 / 3;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.work-item__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.work-item__link:hover .work-item__frame,
+.work-item__link:focus-visible .work-item__frame {
+  border-color: var(--color-ember);
+}
+
+.work-item__name {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-soft-white);
+}
+
+.work-item__arrow {
+  color: var(--color-ember);
+  transition: transform var(--duration-hover) var(--ease-out-soft);
+}
+
+.work-item__link:hover .work-item__arrow,
+.work-item__link:focus-visible .work-item__arrow {
+  transform: translate(2px, -2px);
+}
+
+.work-item__kind {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-silver);
+}
+
+.work-strip__note {
+  margin: clamp(14px, 1.8vw, 20px) 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+  max-width: 54ch;
+}

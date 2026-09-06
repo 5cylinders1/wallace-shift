@@ -45,7 +45,9 @@ function prerenderRoutes(): Plugin {
           `<meta name="twitter:title" content="${escapeHtml(route.title)}" />`,
           `<meta name="twitter:description" content="${escapeHtml(route.description)}" />`,
           `<meta name="twitter:image" content="${SITE_ORIGIN}/media/wallace-shift-hero-poster.webp" />`,
-          route.noindex ? `<meta name="robots" content="noindex" />` : '',
+          route.noindex
+            ? `<meta name="robots" content="${escapeHtml(route.robots ?? 'noindex')}" />`
+            : '',
         ]
           .filter(Boolean)
           .join('\n    ')

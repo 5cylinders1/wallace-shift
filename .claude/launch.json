@@ -4,8 +4,24 @@
     {
       "name": "wallace-shift-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 5173
+    },
+    {
+      "name": "wallace-shift-experiment",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5175",
+        "--strictPort"
+      ],
+      "port": 5175
     }
   ]
 }
