@@ -18,6 +18,7 @@ uniform float uSwellAmp;
 uniform float uFlowSpeed;
 uniform float uMicroAmp;
 uniform float uMicroScale;
+uniform vec2 uMicroAnisotropy;
 
 uniform sampler2D uRipple;
 uniform vec2 uRippleCenter;
@@ -29,9 +30,9 @@ uniform vec4 uContacts[2];
 uniform float uContactAmp;
 
 /**
- * Per-child surface pressure: how strongly a still-submerged part is
- * pushing the water above it. Separate from contact, which only exists
- * once geometry actually straddles the surface.
+ * Signed surface pressure. Negative values draw a localized depression
+ * beneath the hovering mark; positive values displace water over it.
+ * Contact remains independent and only exists at the intersection.
  */
 uniform vec2 uPressure;
 uniform float uPressureAmp;
@@ -151,9 +152,9 @@ vec3 swellOctave(vec2 p, float t, vec2 dir, float wavelength, float amp) {
  */
 vec3 swellFull(vec2 p, float t) {
   vec3 h = vec3(0.0);
-  h += swellOctave(p, t, vec2( 0.9781,  0.2079), 5.20, 1.000);
-  h += swellOctave(p, t, vec2(-0.7314,  0.6820), 3.10, 0.560);
-  h += swellOctave(p, t, vec2(-0.3256, -0.9455), 1.90, 0.310);
+  h += swellOctave(p, t, vec2( 0.1197, 0.9928), 2.60, 1.000);
+  h += swellOctave(p, t, vec2(-0.2195, 0.9756), 1.35, 0.450);
+  h += swellOctave(p, t, vec2( 0.3898, 0.9209), 0.74, 0.180);
   return h * 0.5376 * uSwellAmp;
 }
 
@@ -179,7 +180,7 @@ float swellHeight(vec2 p, float t) {
  */
 vec3 microDetail(vec2 p, float t) {
   vec3 sum = vec3(0.0);
-  vec2 q = p * uMicroScale;
+  vec2 q = p * uMicroAnisotropy * uMicroScale;
   float amp = 1.0;
   float freq = uMicroScale;
   mat2 back = mat2(1.0, 0.0, 0.0, 1.0);
@@ -189,14 +190,14 @@ vec3 microDetail(vec2 p, float t) {
   sum += vec3(n.x, (back * n.yz) * freq) * amp;
 
   // Octave 2
-  q = OCTAVE_ROTATION * q * 2.13; amp *= 0.54; freq *= 2.13;
+  q = OCTAVE_ROTATION * q * 2.13; amp *= 0.46; freq *= 2.13;
   back = back * OCTAVE_ROTATION_T;
   n = noised(q + vec2(t * -0.29, t * 0.19));
   sum += vec3(n.x, (back * n.yz) * freq) * amp;
 
 #if DETAIL_OCTAVES > 2
   // Octave 3
-  q = OCTAVE_ROTATION * q * 2.07; amp *= 0.54; freq *= 2.07;
+  q = OCTAVE_ROTATION * q * 2.07; amp *= 0.46; freq *= 2.07;
   back = back * OCTAVE_ROTATION_T;
   n = noised(q + vec2(t * 0.37, t * 0.31));
   sum += vec3(n.x, (back * n.yz) * freq) * amp;
@@ -204,13 +205,15 @@ vec3 microDetail(vec2 p, float t) {
 
 #if DETAIL_OCTAVES > 3
   // Octave 4
-  q = OCTAVE_ROTATION * q * 2.19; amp *= 0.54; freq *= 2.19;
+  q = OCTAVE_ROTATION * q * 2.19; amp *= 0.46; freq *= 2.19;
   back = back * OCTAVE_ROTATION_T;
   n = noised(q + vec2(t * -0.44, t * 0.41));
   sum += vec3(n.x, (back * n.yz) * freq) * amp;
 #endif
 
-  return sum * uMicroAmp;
+  // Chain rule through the initial anisotropic domain, after each
+  // octave's rotation has already been carried back to that domain.
+  return vec3(sum.x, sum.yz * uMicroAnisotropy) * uMicroAmp;
 }
 
 /* ------------------------------------------------------------------ */
@@ -282,17 +285,13 @@ float contactMask(vec2 p) {
 }
 
 /**
- * The broad, low swelling the water makes over something submerged.
- *
- * This is what stops the opening being an empty shader. A mass sitting
- * just under the surface displaces the water above it, and the resulting
- * dome bends the reflected sky — so the emblem announces itself as a
- * disturbance in the reflection well before any of it is actually visible.
- * Anticipation rather than withholding.
+ * Signed, broad pressure deformation. The authored depression anticipates
+ * entry without depending on velocity or an impact emission. Height and
+ * gradient preserve its sign so the lighting remains attached to it.
  */
 float pressureHeight(vec2 p) {
   float h = 0.0;
-  float r = uPressureRadius;
+  float r = max(uPressureRadius, 1e-4);
   for (int i = 0; i < 2; i++) {
     vec2 d = p - uContacts[i].xy;
     h += uPressure[i] * uPressureAmp * exp(-0.5 * dot(d, d) / (r * r));
@@ -302,7 +301,7 @@ float pressureHeight(vec2 p) {
 
 vec2 pressureGradient(vec2 p) {
   vec2 g = vec2(0.0);
-  float r = uPressureRadius;
+  float r = max(uPressureRadius, 1e-4);
   for (int i = 0; i < 2; i++) {
     vec2 d = p - uContacts[i].xy;
     float e = exp(-0.5 * dot(d, d) / (r * r));

@@ -53,8 +53,10 @@ function sourceBasis(source: StudioSource) {
 function renderCube(
   renderer: WebGLRenderer,
   sources: StudioSource[],
+  lighting = false,
 ): WebGLCubeRenderTarget {
   const bases = sources.map(sourceBasis)
+  const base = lighting ? ENVIRONMENT.lightingBase : ENVIRONMENT
 
   const material = new ShaderMaterial({
     side: BackSide,
@@ -64,10 +66,12 @@ function renderCube(
     vertexShader: environmentVertexShader,
     fragmentShader: environmentFragmentShader,
     uniforms: {
-      uZenith: { value: new Vector3(...ENVIRONMENT.zenith) },
-      uHorizon: { value: new Vector3(...ENVIRONMENT.horizon) },
-      uNadir: { value: new Vector3(...ENVIRONMENT.nadir) },
-      uHorizonGlow: { value: new Vector3(...ENVIRONMENT.horizonGlow) },
+      uZenith: { value: new Vector3(...base.zenith) },
+      uHorizon: { value: new Vector3(...base.horizon) },
+      uNadir: { value: new Vector3(...base.nadir) },
+      uHorizonGlow: { value: new Vector3(...base.horizonGlow) },
+      uHorizonFalloff: { value: base.horizonFalloff },
+      uNightSky: { value: lighting ? 0 : 1 },
       uSourceForward: { value: bases.map((b) => b.forward) },
       uSourceRight: { value: bases.map((b) => b.right) },
       uSourceUp: { value: bases.map((b) => b.up) },
@@ -76,10 +80,12 @@ function renderCube(
       },
       uSourceHalf: {
         value: sources.map(
-          (source) => new Vector2(source.angularSize, source.angularSize * 0.45),
+          (source) => new Vector2(source.angularSize, source.angularSize * (source.aspectRatio ?? .45)),
         ),
       },
-      uSourceIntensity: { value: sources.map((source) => source.intensity) },
+      uSourceIntensity: {
+        value: sources.map(source => lighting ? source.lightingIntensity ?? source.intensity : source.intensity),
+      },
     },
   })
 
@@ -117,7 +123,7 @@ function renderCube(
  * the water is allowed to reflect cannot be the same environment. See
  * `STUDIO_SOURCES` for the geometry behind that.
  *
- * The lighting cube is additionally prefiltered, because a roughness-0.18
+ * The lighting cube is additionally prefiltered, because the polished
  * metal needs a soft source to arrive as a soft highlight rather than as a
  * hard-edged rectangle.
  */
@@ -128,7 +134,7 @@ export function createStudioEnvironment(
     renderer,
     STUDIO_SOURCES.filter((source) => source.inSky),
   )
-  const lightingTarget = renderCube(renderer, STUDIO_SOURCES)
+  const lightingTarget = renderCube(renderer, STUDIO_SOURCES, true)
 
   const pmrem = new PMREMGenerator(renderer)
   const prefiltered = pmrem.fromCubemap(lightingTarget.texture)

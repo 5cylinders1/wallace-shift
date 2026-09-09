@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useReducedMotion } from '../../../hooks/useReducedMotion'
 import { WaterHeroErrorBoundary } from './WaterHeroErrorBoundary'
 import { WaterHeroStage } from './WaterHeroStage'
+import { WaterHeroHandoff } from './WaterHeroHandoff'
 import { useQualityTier } from './useQualityTier'
 import { createSceneState } from './waterHeroTypes'
+import { readLogoAppearance, logoAppearanceUrl } from './logoAppearance'
+import { PREVIEW_LOGO_APPEARANCE, type LogoAppearance } from './waterHeroConfig'
 import type {
   DebugTelemetry,
   ProgressSource,
@@ -29,6 +32,7 @@ interface SearchOptions {
   forceReducedMotion: boolean
   /** `?channel=` isolates one water contribution. Development only. */
   channel: number
+  appearance: LogoAppearance
 }
 
 function readSearch(): SearchOptions {
@@ -39,6 +43,7 @@ function readSearch(): SearchOptions {
       progress: null,
       forceReducedMotion: false,
       channel: 0,
+      appearance: PREVIEW_LOGO_APPEARANCE,
     }
   }
 
@@ -59,6 +64,7 @@ function readSearch(): SearchOptions {
     progress,
     forceReducedMotion: params.get('reduced') === '1',
     channel: Number(params.get('channel') ?? 0) || 0,
+    appearance: readLogoAppearance(window.location.search),
   }
 }
 
@@ -86,21 +92,24 @@ export function WaterHeroExperiment() {
       progress: pinnedProgress,
       forceReducedMotion,
       channel,
+      appearance: initialAppearance,
     },
   ] = useState(readSearch)
+  const [appearance, setAppearance] = useState(initialAppearance)
+  const onAppearance = useCallback((next: LogoAppearance) => {
+    window.history.replaceState(window.history.state, '', logoAppearanceUrl(window.location.href, next))
+    setAppearance(next)
+  }, [])
+  useEffect(() => {
+    const onPopState = () => setAppearance(readLogoAppearance(window.location.search))
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
   const reducedMotion = prefersReducedMotion || forceReducedMotion
   const { tier, setTier, downgrade, canDowngrade } = useQualityTier(requestedTier)
 
   const [failure, setFailure] = useState<string | null>(null)
   const [webgl] = useState(supportsWebGL)
-
-  // Pointer parallax is a fine-pointer affordance and a motion effect; a
-  // touch device has nothing to hover with, and reduced motion has asked
-  // for less of exactly this.
-  const pointerEnabled = useMemo(() => {
-    if (reducedMotion || typeof window === 'undefined') return false
-    return window.matchMedia('(pointer: fine)').matches
-  }, [reducedMotion])
 
   // Stable mutable channels between the DOM, the scroll driver and the
   // frame loop. `useState` with a lazy initialiser rather than `useRef`:
@@ -129,10 +138,10 @@ export function WaterHeroExperiment() {
     discoveredNames: [],
     cameraPosition: [0, 0, 0],
     cameraTarget: [0, 0, 0],
-    passageWorld: [0, 0, 0],
-    passageDistance: 0,
-    travelPerPercent: 0,
-    destinationReveal: 0,
+    phase: 'Established identity',
+    cameraUnderwater: 0,
+    blackout: 0,
+    logoYaw: 0,
   }))
 
   const onContextLost = useCallback(() => {
@@ -166,7 +175,7 @@ export function WaterHeroExperiment() {
         <StaticFallback
           detail={failure ?? 'This browser did not provide a WebGL context.'}
         />
-        <Handoff />
+        <WaterHeroHandoff still />
       </div>
     )
   }
@@ -174,7 +183,7 @@ export function WaterHeroExperiment() {
   return (
     <div className="water-hero-shell">
       <WaterHeroErrorBoundary
-        fallback={(message) => <StaticFallback detail={message} />}
+        fallback={(message) => <><StaticFallback detail={message} /><WaterHeroHandoff still /></>}
       >
         <WaterHeroStage
           progress={progress}
@@ -185,12 +194,13 @@ export function WaterHeroExperiment() {
           onTier={setTier}
           debug={debug}
           reducedMotion={reducedMotion}
-          pointerEnabled={pointerEnabled}
           onContextLost={onContextLost}
           channel={channel}
+          appearance={appearance}
+          onAppearance={onAppearance}
         />
+        <WaterHeroHandoff still={reducedMotion} progress={progress} override={override} sceneState={sceneState} />
       </WaterHeroErrorBoundary>
-      <Handoff />
     </div>
   )
 }
@@ -234,7 +244,7 @@ function HeroFallbackCopy() {
         </a>
       </header>
       <div className="water-hero__copy">
-        <p className="water-hero__eyebrow">Realtime experiment</p>
+        <p className="water-hero__eyebrow">A shift in perspective</p>
         <h1 className="water-hero__statement">
           <span className="water-hero__word">Overlooked</span>
           <span className="water-hero__arrow" aria-hidden="true">
@@ -246,33 +256,5 @@ function HeroFallbackCopy() {
         </h1>
       </div>
     </div>
-  )
-}
-
-/**
- * Proves the stage gives control back.
- *
- * Deliberately a placeholder rather than a real Wallace Shift section:
- * the experiment is not approved to replace anything, and reaching into
- * the production page for content would start coupling the two.
- */
-function Handoff() {
-  return (
-    <section className="water-hero-handoff">
-      <div className="water-hero-handoff__inner">
-        <p className="water-hero-handoff__label">End of stage</p>
-        <h2 className="water-hero-handoff__title">
-          Document scroll resumes here.
-        </h2>
-        <p className="water-hero-handoff__body">
-          Everything above this line is a single realtime scene driven by
-          scroll position. Nothing below it is — this section exists only to
-          confirm the stage unpins cleanly and hands the page back.
-        </p>
-        <a className="water-hero-handoff__link" href="/">
-          Return to the Wallace Shift site
-        </a>
-      </div>
-    </section>
   )
 }

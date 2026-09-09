@@ -1,30 +1,16 @@
 import { useEffect, useState } from 'react'
 import {
   IMPLEMENTED_PROGRESS_MAX,
-  PHASES,
   QUALITY,
   SUBMERSION_PRESETS,
 } from './waterHeroConfig'
-import {
-  PASSAGE,
-  REQUIRED_SPLIT_DISPLACEMENT,
-  REQUIRED_SPLIT_FRACTION,
-} from './cameraPath'
+import { DESCENT_POSES } from './sceneDirector'
 import type {
   DebugTelemetry,
   DebugOverride,
   ProgressSource,
   QualityTier,
 } from './waterHeroTypes'
-
-/** Phase boundaries, so a reviewer can land on each one exactly. */
-const PROGRESS_MARKS = [
-  { label: 'Beneath', value: 0 },
-  { label: 'Breach', value: PHASES.breach[0] },
-  { label: 'Crossing', value: 0.19 },
-  { label: 'Clear', value: PHASES.beautyShot[0] },
-  { label: 'Beauty', value: 0.41 },
-] as const
 
 interface DebugOverlayProps {
   telemetry: DebugTelemetry
@@ -82,12 +68,13 @@ export function DebugOverlay({
   return (
     <div className="water-hero__debug">
       <div className="water-hero__debug-head">
-        <strong>water-hero</strong>
+        <strong>WS · entry into depth</strong>
         <span>{snapshot.fps.toFixed(0)} fps</span>
       </div>
 
       <dl className="water-hero__debug-grid">
         <Row label="progress" value={snapshot.progress.toFixed(4)} />
+        <Row label="pose" value={snapshot.phase} />
         <Row label="logo world Y" value={snapshot.logoWorldY.toFixed(3)} />
         <Row
           label="bounds Y"
@@ -119,13 +106,11 @@ export function DebugOverlay({
           value={snapshot.cameraTarget.map((v) => v.toFixed(2)).join(', ')}
         />
         <Row
-          label="passage"
-          value={`${snapshot.passageWorld.map((v) => v.toFixed(2)).join(', ')} · ${snapshot.passageDistance.toFixed(2)} away`}
+          label="camera depth"
+          value={`${(snapshot.cameraUnderwater * 100).toFixed(0)}% underwater`}
         />
-        <Row
-          label="split needed"
-          value={`±${REQUIRED_SPLIT_DISPLACEMENT.toFixed(3)} (${(REQUIRED_SPLIT_FRACTION * 100).toFixed(0)}% of width) for ${PASSAGE.targetClearance.toFixed(2)} clearance`}
-        />
+        <Row label="logo yaw" value={`${snapshot.logoYaw.toFixed(1)}°`} />
+        <Row label="blackout" value={`${(snapshot.blackout * 100).toFixed(0)}%`} />
         <Row
           label="tier"
           value={`${tier} · ${quality.waterSegments}² water · ${quality.reflectionSize}px refl · ${quality.rippleSize}² ripple`}
@@ -170,14 +155,14 @@ export function DebugOverlay({
           Narrative progress {pinned === null ? '(scroll)' : `(pinned ${pinned.toFixed(3)})`}
         </span>
         <div className="water-hero__debug-buttons">
-          {PROGRESS_MARKS.map((mark) => (
+          {DESCENT_POSES.map((mark) => (
             <button
-              key={mark.label}
+              key={mark.at}
               type="button"
-              data-active={pinned === mark.value ? 'true' : undefined}
-              onClick={() => setPin(mark.value)}
+              data-active={pinned === mark.at ? 'true' : undefined}
+              onClick={() => setPin(mark.at)}
             >
-              {mark.label}
+              {mark.name}
             </button>
           ))}
           <button

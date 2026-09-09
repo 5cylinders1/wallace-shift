@@ -1,74 +1,42 @@
-import { useMemo, useRef } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
-import { Vector3 } from 'three'
-import { sampleJourney, type CameraJourney } from './cameraPath'
-import { POINTER } from './waterHeroConfig'
-import type { DebugTelemetry, ProgressSource } from './waterHeroTypes'
+import { useFrame } from '@react-three/fiber'
+import type { PerspectiveCamera } from 'three'
+import { sampleDescent } from './sceneDirector'
+import { STAR_LOOK_ELEVATION } from './starLookInteraction'
+import { useStarLook } from './useStarLook'
+import type { DebugOverride, DebugTelemetry, ProgressSource, SceneState } from './waterHeroTypes'
 
-
-const UP = new Vector3(0, 1, 0)
-
-export function CameraRig({
-  progress,
-  pointerEnabled,
-  journey,
-  telemetry,
-}: {
+export function CameraRig({ progress, telemetry, sceneState, override, reducedMotion = true }: {
   progress: ProgressSource
-  pointerEnabled: boolean
-  journey: CameraJourney
   telemetry: DebugTelemetry
+  sceneState: SceneState
+  override?: DebugOverride
+  reducedMotion?: boolean
 }) {
-  const camera = useThree((state) => state.camera)
-
-  const pointer = useRef({ x: 0, y: 0 })
-  const scratch = useMemo(
-    () => ({
-      position: new Vector3(),
-      target: new Vector3(),
-      right: new Vector3(),
-      sampled: { position: new Vector3(), target: new Vector3() },
-    }),
-    [],
-  )
-
-  useFrame((state, delta) => {
-    const narrative = progress.current
-
-    sampleJourney(narrative, journey, scratch.sampled)
-    scratch.position.copy(scratch.sampled.position)
-    scratch.target.copy(scratch.sampled.target)
-
-
-    if (pointerEnabled) {
-      const approach = Math.min(1, delta * POINTER.damping)
-      pointer.current.x += (state.pointer.x - pointer.current.x) * approach
-      pointer.current.y += (state.pointer.y - pointer.current.y) * approach
-
-      scratch.position.sub(scratch.target)
-      scratch.position.applyAxisAngle(UP, pointer.current.x * POINTER.cameraYaw)
-      scratch.right.crossVectors(UP, scratch.position).normalize()
-      scratch.position.applyAxisAngle(
-        scratch.right,
-        -pointer.current.y * POINTER.cameraPitch,
-      )
-      scratch.position.add(scratch.target)
+  const starLook = useStarLook({ progress, override, reducedMotion })
+  useFrame(({ camera }, delta) => {
+    const pose = sampleDescent(progress.current, (camera as PerspectiveCamera).aspect)
+    const look = starLook(delta)
+    const target: [number, number, number] = [...pose.target]
+    if (look > 0) {
+      const dx = target[0] - pose.camera[0]
+      const dz = target[2] - pose.camera[2]
+      const horizontal = Math.hypot(dx, dz)
+      const baseElevation = Math.atan2(target[1] - pose.camera[1], horizontal)
+      const elevation = baseElevation + (STAR_LOOK_ELEVATION - baseElevation) * look
+      target[1] = pose.camera[1] + Math.tan(elevation) * horizontal
     }
-
-    camera.position.copy(scratch.position)
-    camera.lookAt(scratch.target)
-
-    telemetry.cameraPosition = [
-      scratch.position.x,
-      scratch.position.y,
-      scratch.position.z,
-    ]
-    telemetry.cameraTarget = [
-      scratch.target.x,
-      scratch.target.y,
-      scratch.target.z,
-    ]
-  })
-
+    camera.position.set(...pose.camera)
+    camera.lookAt(...target)
+    camera.updateMatrixWorld()
+    sceneState.progress = pose.progress
+    sceneState.underwater = pose.underwater
+    sceneState.lightLevel = pose.lightLevel
+    telemetry.cameraPosition = pose.camera
+    telemetry.cameraTarget = target
+    telemetry.phase = pose.phase
+    telemetry.cameraUnderwater = pose.underwater
+    telemetry.blackout = pose.blackout
+    telemetry.logoYaw = pose.yaw * 180 / Math.PI
+  }, -3)
   return null
 }

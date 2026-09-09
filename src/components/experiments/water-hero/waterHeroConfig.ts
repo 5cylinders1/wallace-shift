@@ -73,114 +73,11 @@ export const LOGO_CENTER_XZ: [number, number] = [0, 0]
 /* Narrative phases                                                    */
 /* ------------------------------------------------------------------ */
 
-/**
- * The full seven-phase narrative, in normalized progress. Phases 4-7 are
- * declared but not yet driven — they are here so the constants that the
- * later milestones need never have to be renumbered.
- */
-export const PHASES = {
-  beneathTheSurface: [0.0, 0.1],
-  breach: [0.1, 0.3],
-  beautyShot: [0.3, 0.43],
-  /** A held beat, then the pull begins. */
-  attraction: [0.43, 0.58],
-  approach: [0.58, 0.82],
-  split: [0.82, 0.94],
-  passage: [0.94, 1.0],
-} as const
-
-/**
- * How much of the narrative is driven by scroll.
- *
- * Now the whole of it. The journey runs from submerged anticipation
- * through the breach and the beauty shot into the approach, the split and
- * the passage, so the stage carries its full scroll distance.
- */
-export const IMPLEMENTED_PROGRESS_MAX = 1.0
-
-/** Stage height at full narrative, in svh. Scaled by the value above. */
-export const FULL_STAGE_SCROLL_SVH = 720
-
-export const STAGE_SCROLL_SVH = Math.round(
-  FULL_STAGE_SCROLL_SVH * IMPLEMENTED_PROGRESS_MAX,
-)
-
-/**
- * Where the reduced-motion build parks.
- *
- * Late in phase 3: the emblem is clear of the water, the camera is in the
- * three-quarter composition, and nothing needs to move for the frame to
- * make sense.
- */
-export const REDUCED_MOTION_PROGRESS = 0.4
-
-/* ------------------------------------------------------------------ */
-/* Camera                                                              */
-/* ------------------------------------------------------------------ */
-
-export const CAMERA = {
-  fov: 32,
-  near: 0.05,
-  far: 400,
-
-  /**
-   * Three keyframes spanning phases 1-3. `azimuth` is measured in radians
-   * around +Y from the +Z axis; `height` and `distance` are world units.
-   * The director interpolates between them with a smoothstep so a stop
-   * anywhere reads as a deliberate hold rather than a pause mid-tween.
-   */
-  keys: [
-    // Phase 1 — close, and angled down into the water rather than across
-    // it.
-    //
-    // The instinct is to open low and level for the cinematic horizon, and
-    // it does not work: at a couple of degrees off the surface the Fresnel
-    // term is about 0.9, the water becomes a mirror, and the submerged
-    // emblem is not merely subtle but genuinely absent. Roughly 17 degrees
-    // down brings transmission back over 80% and the silhouette reads.
-    { at: 0.0, distance: 3.3, height: 0.9, azimuth: 0.06, targetY: -0.22 },
-    // Phase 2 — rising and pulling back as the emblem breaches, trading
-    // the downward angle for the reflection.
-    { at: 0.3, distance: 5.0, height: 0.42, azimuth: 0.17, targetY: 0.28 },
-    // Phase 3 — restrained lateral move into the three-quarter beauty shot.
-    //
-    // 17 degrees off-axis: enough to open the sidewalls and read the
-    // emblem as a solid, short of the orbit that would turn it into a
-    // turntable. The eyeline stays low deliberately — lifting the camera
-    // to look down reads better in a wireframe and worse in the render,
-    // because at 20 degrees the Fresnel term collapses to about 0.05 and
-    // the water stops reflecting, losing half the composition.
-    { at: 0.43, distance: 5.75, height: 0.62, azimuth: 0.4, targetY: 0.56 },
-  ],
-} as const
-
-/**
- * How much of the frame's width the emblem is allowed to occupy.
- *
- * The camera keyframes are composed for a landscape frame. A portrait
- * viewport keeps the same vertical field of view but has far less
- * horizontal coverage, so those distances would crop the emblem off both
- * sides. The rig pulls back until the logo fits this fraction, and the
- * fraction itself opens up on narrow screens — a phone wants the mark
- * filling the width, not the same airy landscape composition shrunk.
- */
-export const FRAMING = {
-  landscapeWidthFraction: 0.36,
-  portraitWidthFraction: 0.88,
-  /** Aspect at or above which the landscape composition is used as authored. */
-  landscapeAspect: 1.3,
-  /** Aspect at or below which the portrait framing is fully applied. */
-  portraitAspect: 0.5,
-} as const
-
-/** Pointer parallax, in radians. Deliberately almost imperceptible. */
-export const POINTER = {
-  cameraYaw: 0.026,
-  cameraPitch: 0.014,
-  logoYaw: 0.032,
-  /** Per-second approach rate of the damped follow. */
-  damping: 3.2,
-} as const
+/** The experiment uses a CSS sticky stage and direct normalized scroll. */
+export const IMPLEMENTED_PROGRESS_MAX = 1
+export const STAGE_SCROLL_SVH = 600
+export const REDUCED_MOTION_PROGRESS = 0
+export const CAMERA = { fov: 32, near: 0.025, far: 400 } as const
 
 /* ------------------------------------------------------------------ */
 /* Water                                                               */
@@ -198,13 +95,14 @@ export const WATER = {
    * eye has no reference for the scale of a black surface, so a broad
    * glossy curve becomes a solid.
    */
-  swellAmplitude: 0.0105,
+  swellAmplitude: 0.013,
   /** Amplitude of the noise band that carries the normal. */
-  microAmplitude: 0.031,
-  /** World-to-noise frequency. 3.4 puts the base octave near 30cm. */
-  microScale: 4.6,
+  microAmplitude: 0.014,
+  /** Fine ripples stretch along X into quiet horizontal crests. */
+  microScale: 7.6,
+  microAnisotropy: [0.42, 1.0] as [number, number],
   /** Global time multiplier for the ambient surface. */
-  flowSpeed: 0.16,
+  flowSpeed: 0.18,
 
   /** Schlick F0 for water. */
   fresnelF0: 0.02,
@@ -225,37 +123,36 @@ export const WATER = {
    * blow-out it used to cause is handled by the rolloff below instead —
    * two problems that look identical and need opposite corrections.
    */
-  reflectionDistortion: 0.072,
+  reflectionDistortion: 0.075,
   /**
    * Compression applied to the reflection. Higher rolls the peaks off
    * harder; 0 leaves it linear and lets the horizon band blow out.
    */
-  reflectionRolloff: 2.4,
+  reflectionRolloff: 1.05,
+  /** Filtered reflection grows softer toward camera instead of keeping a
+   * perfectly sharp emblem inside every distorted foreground wave. */
+  reflectionBlur: [0.15, 4.5] as [number, number],
+  reflectionAttenuation: 0.13,
   /**
-   * World radius over which the reflection stays coherent.
-   *
-   * Tightened hard. At 1.5 the reflection held together far enough toward
-   * the camera to read as a dark road laid on the water — the same
-   * coherent central strip the white lanes used to make, just inverted.
-   * Confining it to roughly the emblem's own footprint gives a
-   * recognisable reflection directly beneath the mark that breaks into
-   * ordinary water within about a logo-width.
+   * Preserve the reflected mark through the visible foreground. Fine
+   * horizontal ripples break its image; a tiny spatial mask must not erase
+   * the long silver reflection that grounds the production composition.
    */
-  reflectionFocus: 0.62,
+  reflectionFocus: 8.0,
   /** Same, for the refraction sample. Lower — refraction bends less. */
-  refractionDistortion: 0.058,
+  refractionDistortion: 0.040,
 
   /** Per-channel extinction. Red dies first, which is what makes it deep. */
   extinction: [0.78, 0.44, 0.32] as [number, number, number],
   /** The colour water converges to once nothing is left to transmit. */
-  deepColor: [0.008, 0.0155, 0.021] as [number, number, number],
+  deepColor: [0.00135, 0.00245, 0.0034] as [number, number, number],
   /**
    * Light scattered back out of the water column.
    *
    * Small, but it is the difference between a foreground that reads as
    * deep water and one that reads as a hole cut in the frame.
    */
-  scatterColor: [0.0125, 0.0225, 0.0315] as [number, number, number],
+  scatterColor: [0.0017, 0.0036, 0.0050] as [number, number, number],
   /**
    * Distance fog on the surface.
    *
@@ -269,13 +166,13 @@ export const WATER = {
   fogDensity: 0.032,
 
   /** Roughness driving the specular lobe for the sky's fill source. */
-  specularRoughness: 0.14,
+  specularRoughness: 0.17,
   /**
    * Level fed into the lobe before its rolloff, so the rolloff can
    * actually bound the result. Small: a GGX peak at this roughness is
    * already in the hundreds.
    */
-  specularStrength: 0.055,
+  specularStrength: 0.033,
 } as const
 
 /* ------------------------------------------------------------------ */
@@ -305,14 +202,14 @@ export const INTERACTION = {
   proximityRange: 0.55,
 
   /** How much of the ripple height reaches the geometry vs. the normal. */
-  rippleDisplacement: 0.34,
-  rippleNormalGain: 2.0,
+  rippleDisplacement: 0.40,
+  rippleNormalGain: 2.5,
 
   /* Persistent contact — analytic, never enters the ripple simulation. */
   /** Radius of a contact patch as a fraction of the logo's width. */
   contactRadius: 0.135,
   /** Peak height of the meniscus, in world units. */
-  contactAmplitude: 0.019,
+  contactAmplitude: 0.024,
   /** How much the contact patch dulls the surface. 0 = no darkening. */
   contactDarkening: 0.42,
 
@@ -329,206 +226,71 @@ export const INTERACTION = {
   pressureAmplitude: 0.0055,
   /** Dome radius, as a multiple of the contact radius. Deliberately broad. */
   pressureRadiusScale: 2.8,
-  /** Depth below the surface at which the approach dome has fully built. */
-  pressureRange: 0.45,
-  /** Faint floor kept while the mass is still deep. */
-  deepPressureFloor: 0.14,
-  /** Depth over which even that faint indication fades away. */
-  deepPressureRange: 1.9,
+
 } as const
 
 /* ------------------------------------------------------------------ */
 /* Logo material                                                       */
 /* ------------------------------------------------------------------ */
 
-/**
- * A minimal, non-destructive correction to the exported material.
- *
- * The GLB authors WS_BlackMetal as metalness 0.9 with a base colour of
- * 0.0012. Under glTF's metallic-roughness model a metal's base colour *is*
- * its reflectance, so 0.0012 does not describe black metal — it describes
- * a surface that absorbs 99.9% of everything it sees, and it renders as a
- * hole in the frame with no bevel, no highlight and no environment. The
- * value is plausible in Blender's viewport and wrong in a glTF renderer.
- *
- * Roughness and metalness are taken from the file untouched; only
- * reflectance is lifted, to the low end of real blackened steel. The
- * source GLB is not modified and the material is cloned before this is
- * applied.
- */
-export const WETNESS = {
-  /**
-   * How fast the wet line falls back toward the waterline, in world units
-   * per second. Slow: a heavy object drains for a while after it surfaces,
-   * and a film that vanished the instant it cleared the water would read
-   * as a rendering glitch rather than as drying.
-   */
-  drainRate: 0.085,
-  /** Height of the wet-to-dry transition. */
-  fade: 0.19,
-  /**
-   * Brightness of the meniscus line at the draining edge.
-   *
-   * Restrained on purpose. This is the cue that carries wetness on a
-   * near-black surface, and it is also the one that would tip the emblem
-   * into looking lacquered if pushed.
-   */
-  beadGain: [0.2, 0.225, 0.26] as [number, number, number],
-} as const
-
-/**
- * The emblem as the water is allowed to see it.
- *
- * Duller, rougher and darker than the real thing, and lit from the sky
- * cube alone so no low key light can reach it. That last part is what
- * removes the lanes at source: there is no bright sidewall left to smear
- * across the foreground, only a graphite silhouette that reads as the mark
- * without competing with it.
- */
-export const REFLECTION_PROXY_MATERIAL = {
-  /**
-   * Brighter than the first attempt, and safe to be.
-   *
-   * Once the proxy is lit from the sky cube alone there is no low key for
-   * it to catch, so raising it cannot bring the lanes back — it only makes
-   * the reflection legible as the mark. Too dark and the water carries an
-   * anonymous dark carpet, which is the failure this architecture was
-   * supposed to fix.
-   */
-  baseColor: 0.058,
-  roughness: 0.34,
-  envMapIntensity: 1.15,
-} as const
-
-/**
- * The split, which exists to open a passage rather than to animate a logo.
- *
- * The displacement is not a chosen percentage — it comes from measuring
- * the assembled mark. See PASSAGE in cameraPath.ts: the corridor is 0.191
- * wide with the emblem closed, opens at 0.9 per unit of per-side movement,
- * and needs ±0.143 to give the camera comfortable clearance.
- */
-export const SPLIT = {
-  /** Rotation each half takes, in radians. Restrained: engineered, not thrown. */
-  rotation: 0.1,
-  /** Complementary depth shift, so the two halves pass rather than mirror. */
-  depthShift: 0.06,
-} as const
-
-/**
- * The light inside the mark.
- *
- * A structural cue for the opening, not an effect. It lights the interior
- * sidewalls that the split exposes and nothing else — the emblem stays a
- * physical black-metal object, because making the whole thing emissive
- * would throw away every bit of material weight the lighting rig just
- * bought. This is also the one place the brand's warm accent is spent, and
- * it is spent only once something has happened to justify it.
- */
-export const SEAM = {
-  color: [1.0, 0.46, 0.24] as [number, number, number],
-  /** Peak emissive level on the interior faces at full separation. */
-  intensity: 0.55,
-  /** How far the glow reaches from the split plane, in world units. */
-  falloff: 0.42,
-} as const
-
-/** The space beyond the aperture. Placeholder, not the production section. */
-export const DESTINATION = {
-  /**
-   * The space beyond the aperture.
-   *
-   * Revealed by proximity to the opening rather than by a progress
-   * threshold, and deliberately not a grid. A uniform lattice switching on
-   * while the camera still faces the emblem reads as a debug room and as a
-   * mode change — both of which it was. Horizontal rules at uneven depths
-   * echo the site's own dividers, carry depth hierarchy, and only resolve
-   * once the mark is large enough in frame to be doing the revealing.
-   */
-  /** Depths behind the mark, and each layer's relative weight. */
-  layers: [
-    { distance: 5.2, rules: 5, spread: 1.5, opacity: 1.0 },
-    { distance: 8.0, rules: 7, spread: 2.4, opacity: 0.6 },
-    { distance: 12.0, rules: 9, spread: 3.4, opacity: 0.32 },
-  ],
-  /**
-   * Narrow on purpose. A field wide enough to span the frame is a backdrop
-   * and reads as the environment changing; one that fits inside the
-   * aperture's cone reads as something seen *through* the opening, which
-   * is the whole point of revealing it there.
-   */
-  width: 4.2,
-  /**
-   * Bright enough to exist.
-   *
-   * The first values put the brightest rule at 0.21 against a sky of
-   * roughly 0.2-0.25 — the same value as the thing it was drawn on, which
-   * is why the field never appeared in playback despite being correctly
-   * placed, correctly timed, and filling 114% of the frame's width. It was
-   * not missing; it had no contrast.
-   */
-  color: [0.62, 0.74, 0.95] as [number, number, number],
-  /**
-   * Camera distance to the aperture at which the field is fully revealed,
-   * and at which it is still invisible. Closer means more occluded frame.
-   */
-  revealAt: 1.4,
-  hiddenAt: 3.4,
-  peakOpacity: 0.9,
-} as const
-
+/** Smoked optical glass. Refraction is composited from an isolated scene
+ * capture so transparent underwater particles are present inside the glass.
+ * The authored bevels carry a restrained cool luminous rim. RGB is linear. */
 export const LOGO_MATERIAL = {
-  /** Reflectance for dark polished metal. Blackened steel sits ~0.04-0.08. */
-  baseColor: 0.05,
-  /** Multiplier on the reflected environment. */
-  envMapIntensity: 1.5,
+  baseColor: [.48, .59, .66],
+  metalness: 0,
+  roughness: .16,
+  ior: 1.46,
+  specularIntensity: .85,
+  envMapIntensity: 1.08,
+  rimColor: [.42, .78, 1.0],
+  rimStrength: .82,
 } as const
 
-/* ------------------------------------------------------------------ */
-/* Breach particles                                                    */
-/* ------------------------------------------------------------------ */
+export const REFLECTION_PROXY_MATERIAL = LOGO_MATERIAL
 
-/**
- * Droplets and spray, and only those.
- *
- * Restrained deliberately: this is water leaving a surface, not an effect.
- * Everything here is physically motivated by the crossing — nothing spawns
- * anywhere except at a contact patch that is genuinely cutting the water.
- */
-export const PARTICLES = {
-  /**
-   * Off.
-   *
-   * Two attempts — round point sprites, then velocity-stretched capsules —
-   * and both read as debris rather than as water. Sprite-based spray on a
-   * near-black surface is a harder problem than it looks, and a clean
-   * breach carried by displacement, contact deformation and runoff is
-   * better than a breach with unconvincing particles in it. The system is
-   * kept intact behind this flag; the activated field later is a separate
-   * visual problem and will be solved as one.
-   */
-  enabled: false,
+/** Clear dielectric variant; kept separate from the earlier smoked prototype. */
+export const GLASSMORPH_LOGO_MATERIAL = {
+  baseColor: [1, 1, 1],
+  metalness: 0,
+  roughness: .045,
+  ior: 1.52,
+  specularIntensity: 1,
+  envMapIntensity: 1.12,
+  absorption: [.024, .010, .006],
+  /** Clear glass has no opaque diffuse undercoat, in either view. */
+  bodyFill: [0, 0],
+  iridescence: .64,
+  iridescenceIOR: 1.36,
+  iridescenceThicknessRange: [180, 460],
+  /** Red-to-blue IOR difference; refraction scales with thickness, not pixels. */
+  dispersion: .045,
+  internalReflection: .65,
+} as const
 
-  /** Pool size at the high tier. Scaled down with quality. */
-  count: 340,
-  /** Droplets per second per contact, at full intensity. */
-  rate: 34,
-  /** Vertical speed below which nothing is thrown at all. */
-  minSpeed: 0.18,
-  /** Speed at which emission and launch velocity saturate. */
-  saturationSpeed: 2.4,
+export type LogoAppearance = 'led' | 'electric' | 'glass' | 'chrome' | 'frosted' | 'pearl' | 'copper' | 'mercury' | 'cutlight'
+/** User-approved favorite. Selecting the comparison never rewrites this. */
+export const PREFERRED_LOGO_APPEARANCE: LogoAppearance = 'led'
+export const PREVIEW_LOGO_APPEARANCE: LogoAppearance = 'glass'
 
-  lift: 1.5,
-  spread: 0.5,
-  gravity: 5.2,
-  /** Air resistance. Fine spray decelerates fast; this is what stops it
-   *  looking like debris on a ballistic arc. */
-  drag: 1.4,
-  lifetime: 1.15,
+/** Saved top runner: full-glow opal LED, approved 2026-09-07.
+ * Keep this profile and its full additive halo unchanged when trying variants. */
+export const LED_LOGO_MATERIAL = {
+  housingColor: [.028, .040, .050],
+  metalness: .28,
+  roughness: .30,
+  envMapIntensity: .72,
+  color: [.64, .88, 1.0],
+  intensity: 1.65,
+  reflectionGain: .62,
+} as const
 
-  sizeMin: 0.008,
-  sizeRange: 0.016,
-  color: [0.46, 0.52, 0.6] as [number, number, number],
+/** Alternate direction: a dark energized body with cyan branching currents.
+ * It shares the solid mesh, reflection proxy and selective emission halo. */
+export const ELECTRIC_LOGO_MATERIAL = {
+  color: [.08, .50, 1.0],
+  intensity: 2.4,
+  reflectionGain: .62,
 } as const
 
 /* ------------------------------------------------------------------ */
@@ -546,7 +308,11 @@ export interface StudioSource {
   azimuth: number
   elevation: number
   angularSize: number
+  /** Height relative to width; lighting cards can be taller than the sky source. */
+  aspectRatio?: number
   intensity: number
+  /** Separate metal-side level for a source also visible in the sky. */
+  lightingIntensity?: number
   color: [number, number, number]
   inSky: boolean
 }
@@ -573,75 +339,70 @@ export interface StudioSource {
  * scene geometry rather than from the background.
  */
 export const STUDIO_SOURCES: StudioSource[] = [
-  /**
-   * The front-face shaper. Large, only moderately bright, and kept out of
-   * the sky — this is the source that was drawing the ribbons.
-   *
-   * Size matters more than intensity. At roughness 0.18 a small bright
-   * source leaves a hard dot on a black face while a large dim one lays a
-   * gradient across it, and that gradient is what reads as machined metal.
-   * There is a ceiling on that: taken far enough the source covers every
-   * direction the faces point at, every face returns the same value, and
-   * the emblem goes flat grey. This sits below it.
-   */
+  /** Offset key: the front reflects its continuous shoulder, not a flat white center. */
   {
     name: 'key',
-    azimuth: -0.42,
-    elevation: 0.3,
-    angularSize: 0.72,
-    intensity: 1.5,
+    azimuth: -.34,
+    elevation: .16,
+    angularSize: .78,
+    aspectRatio: .90,
+    intensity: 1.45,
     color: [1.0, 0.985, 0.965],
     inSky: false,
   },
-  /**
-   * High and narrow: this is what draws the bevels. Kept in the sky, since
-   * at 57 degrees its reflection lands a few centimetres from the camera
-   * rather than streaking away toward the horizon.
-   */
+  /** Keep the visible sky source; flag down its contribution to metal edges. */
   {
     name: 'fill',
-    azimuth: 0.58,
-    elevation: 1.0,
-    angularSize: 0.46,
-    intensity: 4.6,
-    color: [0.9, 0.94, 1.0],
+    azimuth: .45,
+    elevation: .92,
+    angularSize: .86,
+    intensity: 1.70,
+    lightingIntensity: .62,
+    color: [.96, .975, 1.0],
     inSky: true,
   },
-  /**
-   * Silhouette separation on the far edge. Lighting only — at 26 degrees
-   * its reflection would land in the lower third of the frame.
-   *
-   * This used to be a warm ember source: it read as a visible light card
-   * floating in the environment, and it spent the brand accent before
-   * anything had happened to justify it. The warm light belongs to
-   * activation, where it comes from inside the mark.
-   */
+  /** Quiet side fill preserves the thickness as the logo turns. */
   {
     name: 'rim',
-    azimuth: 1.78,
-    elevation: 0.46,
-    angularSize: 0.44,
-    intensity: 3.4,
-    color: [0.93, 0.96, 1.0],
+    azimuth: 1.80,
+    elevation: .38,
+    angularSize: 1.10,
+    aspectRatio: .90,
+    intensity: .58,
+    color: [.96, .975, 1.0],
     inSky: false,
   },
-  /**
-   * The reflection card.
-   *
-   * Below the horizon, so the water surface can never reflect it — the
-   * reflected ray from a camera above the water always points up. Its only
-   * job is to put light on the emblem's undersides and lower bevels, which
-   * are the faces a planar reflection actually shows. Without it the
-   * reflection is an unlit shape and reads as an unrelated dark mass
-   * rather than as a continuation of the mark.
-   */
+  /** Cool, broad water bounce sits below the key without becoming a bright stripe. */
   {
     name: 'underlight',
-    azimuth: -0.2,
-    elevation: -0.42,
-    angularSize: 0.85,
-    intensity: 2.3,
-    color: [0.88, 0.92, 1.0],
+    azimuth: -.20,
+    elevation: -.40,
+    angularSize: 1.20,
+    aspectRatio: .70,
+    intensity: .32,
+    color: [.74, .86, 1.0],
+    inSky: false,
+  },
+  /** The reverse face remains metal throughout the complete underwater turn. */
+  {
+    name: 'rear-softbox',
+    azimuth: -2.70,
+    elevation: .25,
+    angularSize: 1.20,
+    aspectRatio: .90,
+    intensity: 1.0,
+    color: [.94, .965, 1.0],
+    inSky: false,
+  },
+  /** Overlapping low-level fill prevents an unlit gap in the 180-degree turn. */
+  {
+    name: 'turn-fill',
+    azimuth: -1.65,
+    elevation: .24,
+    angularSize: 1.30,
+    aspectRatio: 1.0,
+    intensity: .38,
+    color: [.86, .92, 1.0],
     inSky: false,
   },
 ]
@@ -650,11 +411,22 @@ export const ENVIRONMENT = {
   /** Face size of the procedural cubes. One render each, at mount. */
   cubeSize: 256,
 
-  zenith: [0.007, 0.0085, 0.012] as [number, number, number],
-  horizon: [0.036, 0.043, 0.055] as [number, number, number],
-  nadir: [0.004, 0.005, 0.007] as [number, number, number],
-  /** The wide band of lift at eye level — the rig's primary source. */
-  horizonGlow: [0.074, 0.086, 0.108] as [number, number, number],
+  /** Visible void: near black, with a narrow trace of blue at the water. */
+  zenith: [0.0001, 0.0002, 0.0003] as [number, number, number],
+  horizon: [0.004, 0.0055, 0.007] as [number, number, number],
+  nadir: [0.0002, 0.00035, 0.0005] as [number, number, number],
+  horizonGlow: [0.008, 0.012, 0.017] as [number, number, number],
+  horizonFalloff: 20,
+
+  /** Metal retains its established diffuse studio base. Darkening the
+   * visible sky must not remove the lighting that describes its surfaces. */
+  lightingBase: {
+    zenith: [0.007, 0.0085, 0.012] as [number, number, number],
+    horizon: [0.036, 0.043, 0.055] as [number, number, number],
+    nadir: [0.004, 0.005, 0.007] as [number, number, number],
+    horizonGlow: [0.074, 0.086, 0.108] as [number, number, number],
+    horizonFalloff: 7.5,
+  },
 
   /**
    * Background dimming.
@@ -681,7 +453,7 @@ export const QUALITY: Record<QualityTier, QualitySettings> = {
     refractionSize: 1024,
     rippleSize: 256,
     detailOctaves: 4,
-    particles: PARTICLES.count,
+    particles: 2600,
   },
   medium: {
     dprCap: 1.35,
@@ -690,7 +462,7 @@ export const QUALITY: Record<QualityTier, QualitySettings> = {
     refractionSize: 768,
     rippleSize: 192,
     detailOctaves: 3,
-    particles: Math.round(PARTICLES.count * 0.55),
+    particles: 1700,
   },
   low: {
     dprCap: 1.0,
@@ -699,7 +471,7 @@ export const QUALITY: Record<QualityTier, QualitySettings> = {
     refractionSize: 512,
     rippleSize: 128,
     detailOctaves: 2,
-    particles: Math.round(PARTICLES.count * 0.28),
+    particles: 850,
   },
 }
 

@@ -14,7 +14,14 @@ interface HeroUIProps {
 export function HeroUI({ still }: HeroUIProps) {
   return (
     <div className="water-hero__ui">
-      <header className="water-hero__masthead">
+      <header
+        className="water-hero__masthead"
+        data-in-start="-1"
+        data-in-end="0"
+        data-out-start="0.25"
+        data-out-end="0.35"
+        data-shift="0"
+      >
         <a className="water-hero__brand" href="/">
           <img
             src="/brand/wallace-shift-logo-white.svg"
@@ -32,28 +39,28 @@ export function HeroUI({ still }: HeroUIProps) {
       <div className="water-hero__copy">
         <p
           className="water-hero__eyebrow"
-          data-in-start="0.003"
-          data-in-end="0.03"
-          data-out-start="0.46"
-          data-out-end="0.60"
+          data-in-start="-1"
+          data-in-end="0"
+          data-out-start="0.25"
+          data-out-end="0.35"
           data-shift="14"
         >
-          Realtime experiment
+          A shift in perspective
         </p>
 
         <h1
           className="water-hero__statement"
-          data-in-start="0.008"
-          data-in-end="0.055"
-          data-out-start="0.48"
-          data-out-end="0.63"
+          data-in-start="-1"
+          data-in-end="0"
+          data-out-start="0.25"
+          data-out-end="0.35"
           data-shift="22"
         >
-          <span className="water-hero__word">Overlooked</span>
+          <span className="water-hero__word" data-opening-word="before" style={{ opacity: still ? .45 : .90 }}>Overlooked</span>
           <span className="water-hero__arrow" aria-hidden="true">
             →
           </span>
-          <span className="water-hero__word water-hero__word--lit">
+          <span className="water-hero__word water-hero__word--lit" data-opening-word="after" style={{ opacity: still ? 1 : .38 }}>
             Unforgettable
           </span>
         </h1>
@@ -62,10 +69,10 @@ export function HeroUI({ still }: HeroUIProps) {
       {!still && (
         <p
           className="water-hero__cue"
-          data-in-start="0.004"
-          data-in-end="0.03"
-          data-out-start="0.06"
-          data-out-end="0.13"
+          data-in-start="-1"
+          data-in-end="0"
+          data-out-start="0.10"
+          data-out-end="0.16"
           data-shift="8"
         >
           Scroll

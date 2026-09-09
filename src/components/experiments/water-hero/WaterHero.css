@@ -14,10 +14,10 @@
 .water-hero-shell {
   --wh-ink: #04060a;
   --wh-line: rgba(214, 218, 223, 0.16);
-  --wh-dim: rgba(241, 239, 233, 0.56);
+  --wh-dim: rgba(241, 239, 233, 0.72);
 
   position: relative;
-  background: var(--wh-ink);
+  background: #000;
   color: var(--color-soft-white);
   overflow-x: clip;
 }
@@ -53,6 +53,7 @@
 .water-hero__ui-root {
   position: absolute;
   inset: 0;
+  z-index: 2;
   /* The canvas is decorative; only the real links inside take the pointer. */
   pointer-events: none;
 }
@@ -69,6 +70,7 @@
    opacity on the frame before the scene knows where it is. */
 .water-hero__ui-root [data-in-start] {
   opacity: 0;
+  visibility: hidden;
   will-change: opacity, transform;
 }
 
@@ -158,11 +160,93 @@
   position: absolute;
   left: 50%;
   bottom: clamp(20px, 3.4vw, 36px);
-  transform: translateX(-50%);
+  translate: -50% 0;
   font-size: 0.66rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--wh-dim);
+}
+
+/* --- Appearance comparison ----------------------------------------- */
+
+.water-hero__looks {
+  position: absolute;
+  z-index: 4;
+  right: var(--gutter);
+  bottom: max(24px, env(safe-area-inset-bottom));
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid rgba(220, 233, 241, .22);
+  border-radius: 12px;
+  background: rgba(6, 12, 17, .82);
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+}
+
+.water-hero__looks button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 13px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(238, 244, 248, .78);
+  font: inherit;
+  font-size: .72rem;
+  line-height: 1.25;
+  letter-spacing: .015em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.water-hero__looks button[aria-pressed='true'] {
+  border-color: rgba(210, 235, 249, .28);
+  background: rgba(181, 219, 241, .14);
+  color: #f5f9fc;
+}
+
+.water-hero__looks button:hover {
+  background: rgba(181, 219, 241, .20);
+  color: #fff;
+}
+
+.water-hero__looks button:focus-visible {
+  outline: 2px solid #a9dfff;
+  outline-offset: 3px;
+}
+
+.water-hero__look-menu {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding-left: 12px;
+  color: rgba(238, 244, 248, .78);
+  font-size: .7rem;
+}
+
+.water-hero__look-menu select {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #f5f9fc;
+  color-scheme: dark;
+  font: inherit;
+  font-size: .78rem;
+  cursor: pointer;
+}
+
+.water-hero__look-menu select:hover {
+  background: rgba(181, 219, 241, .14);
+}
+
+.water-hero__look-menu select:focus-visible {
+  outline: 2px solid #a9dfff;
+  outline-offset: -2px;
 }
 
 /* --- Loading and failure -------------------------------------------- */
@@ -218,51 +302,199 @@
 
 .water-hero-handoff {
   position: relative;
-  padding: clamp(72px, 12vw, 160px) var(--gutter);
-  background: var(--color-ink);
-  border-top: 1px solid var(--wh-line);
+  z-index: 3;
+  /* The exact overlap comes from the same split timing as the logo. The
+     transparent sticky stage begins while the two pieces move apart. */
+  background: transparent;
+  pointer-events: none;
+}
+
+.water-hero-handoff[aria-hidden='true'] {
+  pointer-events: none;
+}
+
+.water-hero-handoff__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(32px, 6svh, 76px) var(--gutter);
+  background: transparent;
+  visibility: hidden;
+}
+
+.water-hero-handoff[data-inspection='true'] .water-hero-handoff__stage {
+  position: fixed;
+  left: 0;
 }
 
 .water-hero-handoff__inner {
-  max-width: 62ch;
+  position: relative;
+  width: min(100%, 1080px);
   margin-inline: auto;
+  text-align: center;
+}
+
+.water-hero-handoff__aperture {
+  clip-path: polygon(50% 0%, 50% 100%, 50% 100%, 50% 0%);
+  opacity: 0;
+  visibility: hidden;
+  will-change: clip-path, opacity;
+}
+
+.water-hero-handoff [data-handoff-start] {
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
 }
 
 .water-hero-handoff__label {
-  font-size: 0.68rem;
+  position: absolute;
+  bottom: calc(100% + clamp(18px, 3svh, 30px));
+  left: 0;
+  right: 0;
+  font-size: clamp(.68rem, .8vw, .82rem);
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--color-muted);
-  margin-bottom: 20px;
+  color: rgba(241, 239, 233, .52);
+  margin: 0;
 }
 
 .water-hero-handoff__title {
-  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  font-size: clamp(2.5rem, 6.2vw, 6.8rem);
   font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  margin-bottom: 18px;
+  line-height: 1.02;
+  letter-spacing: -.05em;
+  color: var(--color-soft-white);
+  margin: 0;
+}
+
+.water-hero-handoff__title span {
+  display: block;
+}
+
+.water-hero-handoff__support {
+  position: absolute;
+  top: calc(100% + clamp(24px, 4svh, 42px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 31rem);
+  margin: 0;
 }
 
 .water-hero-handoff__body {
-  color: var(--color-muted);
-  font-size: 0.95rem;
-  line-height: 1.65;
-  margin-bottom: 28px;
+  color: rgba(241, 239, 233, .78);
+  font-size: clamp(.95rem, 1.15vw, 1.1rem);
+  line-height: 1.55;
+  max-width: 36ch;
+  margin-inline: auto;
+  margin-bottom: clamp(18px, 2.6svh, 28px);
 }
 
 .water-hero-handoff__link {
-  display: inline-block;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 44px;
   font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  border-bottom: 1px solid var(--wh-line);
-  padding-bottom: 4px;
-  transition: border-color var(--duration-hover) var(--ease-out-soft);
+  letter-spacing: 0.03em;
+  color: var(--color-soft-white);
+  border-bottom: 1px solid rgba(241, 239, 233, .30);
+  padding-block: 8px;
+  transition: color var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft);
 }
 
 .water-hero-handoff__link:hover,
 .water-hero-handoff__link:focus-visible {
+  color: #fff;
   border-bottom-color: var(--color-soft-white);
+}
+
+.water-hero-handoff__link:focus-visible {
+  outline: 1px solid var(--color-soft-white);
+  outline-offset: 6px;
+}
+
+.water-hero-handoff--direct {
+  height: auto;
+  margin-top: 0;
+}
+
+.water-hero-handoff--direct .water-hero-handoff__stage {
+  position: relative;
+  height: auto;
+  min-height: 100svh;
+  visibility: visible;
+}
+
+.water-hero-handoff--direct [data-handoff-start] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  will-change: auto;
+}
+
+.water-hero-handoff--direct .water-hero-handoff__aperture {
+  clip-path: none;
+  opacity: 1;
+  visibility: visible;
+  will-change: auto;
+}
+
+@media (max-height: 600px) {
+  .water-hero-handoff__stage {
+    padding-block: 24px;
+  }
+
+  .water-hero-handoff__label {
+    bottom: calc(100% + 18px);
+  }
+
+  .water-hero-handoff__title {
+    font-size: clamp(2.75rem, 6vw, 5rem);
+  }
+
+}
+
+@media (max-height: 420px) {
+  .water-hero-handoff__stage {
+    padding-block: 12px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .water-hero-handoff__inner {
+    margin-block: auto;
+  }
+
+  .water-hero-handoff__label {
+    position: static;
+    font-size: .625rem;
+    margin-bottom: 8px;
+  }
+
+  .water-hero-handoff__title {
+    font-size: clamp(1.75rem, 12svh, 3.25rem);
+  }
+
+  .water-hero-handoff__support {
+    position: static;
+    transform: none;
+    margin-inline: auto;
+    margin-top: 12px;
+  }
+
+  .water-hero-handoff__body {
+    font-size: .875rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
 }
 
 /* --- Debug ---------------------------------------------------------- */
@@ -347,6 +579,27 @@
 
 /* --- Small screens --------------------------------------------------- */
 
+/* Nine full labels use a compact native menu before crowding the scroll cue. */
+@media (max-width: 2400px) {
+  .water-hero__looks {
+    box-sizing: border-box;
+    display: block;
+    left: 50%;
+    right: auto;
+    translate: -50% 0;
+    bottom: calc(clamp(144px, 20svh, 184px) + env(safe-area-inset-bottom));
+    width: min(340px, calc(100% - 32px));
+  }
+
+  .water-hero__looks button {
+    display: none;
+  }
+
+  .water-hero__look-menu {
+    display: flex;
+  }
+}
+
 @media (max-width: 640px) {
   .water-hero__copy {
     max-width: none;
@@ -358,5 +611,9 @@
 
   .water-hero__debug {
     font-size: 10px;
+  }
+
+  .water-hero-handoff__support {
+    margin-left: 0;
   }
 }

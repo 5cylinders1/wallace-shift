@@ -56,3 +56,7 @@ dist-ssr
 /public/media/wallace-shift-hero.mp4
 /public/media/wallace-shift-hero.webm
 .vercel
+
+# Local review artifacts and temporary files.
+/review-assets/
+/tmp/

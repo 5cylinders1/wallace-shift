@@ -61,7 +61,10 @@ uniform float uRippleNormalGain;
 uniform float uF0;
 uniform float uReflectionDistortion;
 uniform float uReflectionRolloff;
+uniform vec2 uReflectionBlur;
+uniform float uReflectionAttenuation;
 uniform vec2 uLogoCenter;
+uniform float uLogoHalfWidth;
 uniform float uReflectionFocus;
 uniform float uRefractionDistortion;
 uniform vec3 uExtinction;
@@ -69,6 +72,10 @@ uniform vec3 uDeepColor;
 uniform vec3 uScatterColor;
 uniform float uFogDensity;
 uniform float uBackgroundIntensity;
+uniform float uSkyBehindIntensity;
+uniform float uUnderwater;
+uniform float uLightLevel;
+uniform float uSurfaceVisibility;
 
 uniform vec3 uKeyDirection;
 uniform vec3 uKeyColor;
@@ -116,6 +123,8 @@ vec2 rippleGradient(vec2 p) {
  */
 vec3 computeNormal(vec2 p, float t, float camDist, out float detailFade) {
   detailFade = 1.0 - smoothstep(26.0, 130.0, camDist);
+  vec2 footprint = fwidth(p) * uMicroScale * uMicroAnisotropy;
+  detailFade *= 1.0 - smoothstep(.65, 2.8, max(footprint.x, footprint.y));
 
   vec2 grad = swellFull(p, t).yz;
   grad += microDetail(p, t).yz * detailFade;
@@ -146,6 +155,44 @@ void main() {
 
   float detailFade;
   vec3 N = computeNormal(vWorldPos.xz, uTime, camDist, detailFade);
+  vec2 screenUv = gl_FragCoord.xy / uResolution;
+
+  // Looking up from inside the water is a different optical boundary.
+  // The above-water thickness sample cannot describe it: that distance
+  // starts at the surface, whereas the camera is already in the medium.
+  // Keep a restrained transmitted sky window and total internal reflection
+  // on the underside, with attenuation along the camera-to-surface ray.
+  if (!gl_FrontFacing) {
+    vec3 inwardNormal = -N;
+    float facing = clamp(dot(inwardNormal, V), 0.0, 1.0);
+    float undersideFresnel = uF0 + (1.0 - uF0) * pow(1.0 - facing, 5.0);
+    vec3 transmittedRay = refract(-V, inwardNormal, 1.333);
+    float canTransmit = step(1e-5, dot(transmittedRay, transmittedRay));
+    vec3 skyRay = canTransmit > 0.5 ? transmittedRay : vec3(0.0, 1.0, 0.0);
+    vec3 transmittedSky = textureCube(uEnvMap, skyRay).rgb * uBackgroundIntensity;
+    vec3 internalReflection = uDeepColor * (0.12 + 0.20 * facing);
+    float transmission = canTransmit * (1.0 - undersideFresnel);
+    vec3 underside = mix(internalReflection, transmittedSky, transmission);
+    vec3 pathTransmission = exp(-camDist * uExtinction * 0.32);
+    underside *= pathTransmission * uLightLevel;
+    underside += uScatterColor * 0.06 * (1.0 - pathTransmission) * uLightLevel;
+
+    // The surface leaves the composition as we descend. Blend against
+    // the freshly rendered water-free scene, so reaching zero is exactly
+    // continuous with hiding the mesh and retiring its two planar passes.
+    vec3 unobstructed = texture2D(uRefraction, screenUv).rgb;
+    // Let the distant underside merge into the water-free background at
+    // grazing angles instead of exposing the finite plane as a straight edge.
+    float horizonBlend = smoothstep(.015, .12, facing);
+    float visible = uSurfaceVisibility * mix(1.0, 0.92, uUnderwater) * horizonBlend;
+    vec3 color = mix(unobstructed, underside, visible);
+    if (uChannel == 2) color = underside;
+    else if (uChannel == 4) color = vec3(1.0 - pathTransmission) * 0.5;
+    gl_FragColor = vec4(color, 1.0);
+    #include <tonemapping_fragment>
+    #include <colorspace_fragment>
+    return;
+  }
 
   // Distortion has to shrink with distance or the far field smears: the
   // same world-space normal covers far fewer pixels out there.
@@ -165,42 +212,44 @@ void main() {
   vec3 environmentReflection =
     textureCube(uEnvMap, mirrored).rgb * uBackgroundIntensity;
 
+  // Keep the reflected base connected across the emblem's footprint.
+  // Wave breakup builds continuously as the reflection extends away from
+  // that footprint; this changes sampling, never masks the reflected image.
+  vec2 fromLogo = vWorldPos.xz - uLogoCenter;
+  float contactDistance = length(vec2(max(abs(fromLogo.x) - uLogoHalfWidth, 0.0), fromLogo.y));
+  float reflectionBreakup = mix(.22, 1.0, smoothstep(.08, 1.8, contactDistance));
   vec2 reflUv = vReflectCoord.xy / max(vReflectCoord.w, 1e-4);
-  reflUv += N.xz * uReflectionDistortion * distortScale;
+  reflUv += N.xz * uReflectionDistortion * distortScale * reflectionBreakup;
 
   vec2 reflEdge = min(reflUv, 1.0 - reflUv);
   float planarValid = smoothstep(0.0, 0.035, min(reflEdge.x, reflEdge.y))
                     * step(1e-4, vReflectCoord.w);
 
+  // Accumulated surface slope spreads the reflection with distance from
+  // its subject. A mip-filtered image supplies actual soft detail instead
+  // of merely bending a sharp white logo into high-contrast zigzags.
+  float logoDistance = length(vWorldPos.xz - uLogoCenter);
+  float reflectionBlur = mix(uReflectionBlur.x, uReflectionBlur.y,
+    smoothstep(.15, 6.5, contactDistance));
   vec3 reflection = mix(
     environmentReflection,
-    texture2D(uReflection, clamp(reflUv, 0.002, 0.998)).rgb,
+    texture2D(uReflection, clamp(reflUv, 0.002, 0.998), reflectionBlur).rgb,
     planarValid
   );
 
-  // Once the micro band has faded there is no longer any structure left to
-  // break the reflection up, and a perfectly smooth mirror is precisely
-  // what makes dark water read as tar. Rolling the far field toward the
-  // environment keeps it soft instead of specular.
-  // Clearest directly beneath the emblem, dissolving with distance from
-  // it. A reflection that stays equally coherent all the way to the bottom
-  // of the frame reads as a runway laid on the water — which is what
-  // replaced the white lanes and was no better. Real water loses a
-  // reflection to accumulated slope error long before it loses brightness.
-  float logoDistance = length(vWorldPos.xz - uLogoCenter);
+  // The reference's silver reflection runs through the foreground. Its
+  // breakup comes from horizontal wave normals, not a small radial mask
+  // that erases almost all of the reflected mark a metre from its base.
   float focus = 1.0 - smoothstep(
     uReflectionFocus,
-    uReflectionFocus * 2.4,
+    uReflectionFocus * 3.0,
     logoDistance
   );
-  // Squared, so coherence falls away sharply rather than tapering into a
-  // long strip. Beyond the emblem's own footprint the water goes back to
-  // being water.
-  focus *= focus;
   reflection = mix(
     environmentReflection,
     reflection,
-    (0.06 + 0.94 * focus) * (0.35 + 0.65 * detailFade)
+    (0.25 + 0.75 * focus) * (0.60 + 0.40 * detailFade)
+      * exp(-logoDistance * uReflectionAttenuation)
   );
 
   // Controlled reflection exposure.
@@ -215,7 +264,6 @@ void main() {
   reflection = reflection / (1.0 + reflection * uReflectionRolloff);
 
   /* --- Refraction and absorption ---------------------------------- */
-  vec2 screenUv = gl_FragCoord.xy / uResolution;
   vec2 refrUv = screenUv + N.xz * uRefractionDistortion * distortScale;
   refrUv = clamp(refrUv, 0.002, 0.998);
 
@@ -287,7 +335,7 @@ void main() {
   /* --- Horizon ----------------------------------------------------- */
   // Fog resolves to the sky actually behind this fragment, so the far
   // edge of the plane dissolves into the background instead of ending.
-  vec3 skyBehind = textureCube(uEnvMap, -V).rgb * uBackgroundIntensity;
+  vec3 skyBehind = textureCube(uEnvMap, -V).rgb * uSkyBehindIntensity;
   float fogAmount = 1.0 - exp(-pow(camDist * uFogDensity, 2.0));
   color = mix(color, skyBehind, fogAmount);
 

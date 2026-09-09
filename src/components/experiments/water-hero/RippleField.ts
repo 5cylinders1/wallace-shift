@@ -1,5 +1,6 @@
 import {
   ClampToEdgeWrapping,
+  Color,
   HalfFloatType,
   LinearFilter,
   Mesh,
@@ -104,11 +105,27 @@ export class RippleField {
   /** Both buffers start flat, or the first step propagates uninitialised memory. */
   private clear() {
     const previous = this.renderer.getRenderTarget()
-    for (const target of this.targets) {
-      this.renderer.setRenderTarget(target)
-      this.renderer.clearColor()
+    const clearColor = this.renderer.getClearColor(new Color())
+    const clearAlpha = this.renderer.getClearAlpha()
+    try {
+      this.renderer.setClearColor(0x000000, 0)
+      for (const target of this.targets) {
+        this.renderer.setRenderTarget(target)
+        this.renderer.clearColor()
+      }
+    } finally {
+      this.renderer.setRenderTarget(previous)
+      this.renderer.setClearColor(clearColor, clearAlpha)
     }
-    this.renderer.setRenderTarget(previous)
+  }
+
+  /** A seek starts from calm water rather than replaying stale impulses. */
+  reset() {
+    this.pending.length = 0
+    this.accumulator = 0
+    this.read = 0
+    this.energy = 0
+    this.clear()
   }
 
   get texture() {
@@ -123,6 +140,17 @@ export class RippleField {
   addImpulse(u: number, v: number, amplitude: number) {
     if (amplitude === 0) return
     if (u < 0 || u > 1 || v < 0 || v > 1) return
+    // A fast display can submit several frames before one simulation
+    // tick. Combine each stationary contact instead of exhausting slots
+    // with copies of the same emitter and losing some of its energy.
+    const existing = this.pending.find(
+      (impulse) => Math.abs(impulse.x - u) < 1e-5 && Math.abs(impulse.y - v) < 1e-5,
+    )
+    if (existing) {
+      existing.w += amplitude
+      this.energy += Math.abs(amplitude)
+      return
+    }
     if (this.pending.length >= MAX_SPLATS) return
     this.pending.push(new Vector4(u, v, INTERACTION.splatRadius, amplitude))
     this.energy += Math.abs(amplitude)
@@ -166,7 +194,9 @@ export class RippleField {
       this.accumulator = 0
     }
 
-    this.pending.length = 0
+    // No fixed tick means nothing consumed the queue yet. Retain it for
+    // the next frame, including on 120/144 Hz displays.
+    if (steps > 0) this.pending.length = 0
   }
 
   dispose() {

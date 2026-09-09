@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import {
   DepthFormat,
   DepthTexture,
-  FrontSide,
+  DoubleSide,
   HalfFloatType,
   Matrix4,
   Mesh,
@@ -21,19 +21,30 @@ import { RippleField } from './RippleField'
 import { REFLECTION_LAYER } from './useLogoModel'
 import { useDisposable } from './useDisposable'
 import { waterFragmentShader, waterVertexShader } from './shaders/waterShader'
+import { createReflectionScratch, updateWaterReflectionCamera } from './waterReflectionCamera'
+import { createWaterReflectionTarget } from './waterReflectionTarget'
+import { refractionLayerMask } from './waterRenderLayers'
+import { createLEDGlow, renderLEDGlow } from './logoLEDGlow'
+import { OPENING_REVEAL } from './openingReveal'
+import { captureGlassScene, createGlassSceneCapture } from './glassSceneCapture'
+import { bindGlassScene, logoMaterials } from './logoMaterial'
 import {
   ENVIRONMENT,
   INTERACTION,
   LOGO_CENTER_XZ,
+  LOGO_TARGET_WIDTH,
   STUDIO_SOURCES,
   WATER,
   WATER_LEVEL,
+  type LogoAppearance,
 } from './waterHeroConfig'
 import type { StudioEnvironment } from './studioEnvironment'
 import type {
   DebugTelemetry,
   QualitySettings,
   SceneState,
+  SurfaceFogDepth,
+  LogoNodes,
 } from './waterHeroTypes'
 
 interface WaterSurfaceProps {
@@ -43,7 +54,10 @@ interface WaterSurfaceProps {
   environment: StudioEnvironment
   /** Development channel isolator; 0 is the composite. */
   channel: number
-  /** Logo materials, clipped to above-water during the reflection pass. */
+  reducedMotion: boolean
+  fogDepth: SurfaceFogDepth
+  logoNodes: LogoNodes
+  appearance: LogoAppearance
 }
 
 /**
@@ -78,15 +92,16 @@ function createWaterGeometry(segments: number) {
   return geometry
 }
 
-const PLANE_NORMAL = new Vector3(0, 1, 0)
-const PLANE_ORIGIN = new Vector3(0, WATER_LEVEL, 0)
-
 export function WaterSurface({
   sceneState,
   telemetry,
   quality,
   environment,
   channel,
+  reducedMotion,
+  fogDepth,
+  logoNodes,
+  appearance,
 }: WaterSurfaceProps) {
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
@@ -123,11 +138,7 @@ export function WaterSurface({
     // Half float, because the studio sources are well above 1.0 and a
     // byte target would clip every highlight the metal is meant to catch
     // before the water ever samples it.
-    const reflection = new WebGLRenderTarget(
-      reflectionSize.width,
-      reflectionSize.height,
-      { type: HalfFloatType, depthBuffer: true, stencilBuffer: false },
-    )
+    const reflection = createWaterReflectionTarget(reflectionSize.width, reflectionSize.height)
 
     const refraction = new WebGLRenderTarget(
       refractionSize.width,
@@ -142,12 +153,41 @@ export function WaterSurface({
     depth.magFilter = NearestFilter
     refraction.depthTexture = depth
 
-    return { reflection, refraction, depth }
+    const glowSize = fit(quality.refractionSize * .5)
+    const glow = createLEDGlow(glowSize.width, glowSize.height)
+    return { reflection, refraction, depth, glow }
   }, (value) => {
     value.reflection.dispose()
     value.refraction.dispose()
     value.depth.dispose()
+    value.glow.dispose()
   }, [bufferSize, quality.reflectionSize, quality.refractionSize])
+
+  // Both crystal looks share a capture lifetime while retaining separate
+  // material bindings. The established water/glow targets remain mounted.
+  const glassEnabled = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper'
+  const glassCapture = useDisposable(() => {
+    if (!glassEnabled) return null
+    const scale = Math.min(1, quality.refractionSize / Math.max(bufferSize.width, bufferSize.height))
+    const capture = createGlassSceneCapture(
+      Math.max(2, Math.round(bufferSize.width * scale)),
+      Math.max(2, Math.round(bufferSize.height * scale)),
+    )
+    return { ...capture, boundMaterials: [] as ReturnType<typeof logoMaterials> }
+  }, value => {
+    if (!value) return
+    // Clear the exact materials bound by this capture, even if the selected
+    // logo materials have already changed or a resize replaced its targets.
+    bindGlassScene(value.boundMaterials, null)
+    value.dispose()
+  }, [glassEnabled, bufferSize, quality.refractionSize])
+
+  useEffect(() => {
+    fogDepth.texture = targets?.depth ?? null
+    return () => {
+      if (fogDepth.texture === targets?.depth) fogDepth.texture = null
+    }
+  }, [targets, fogDepth])
 
   const ripple = useDisposable(
     () => new RippleField(gl, quality.rippleSize),
@@ -165,7 +205,7 @@ export function WaterSurface({
     return new ShaderMaterial({
       vertexShader: waterVertexShader,
       fragmentShader: waterFragmentShader,
-      side: FrontSide,
+      side: DoubleSide,
       transparent: false,
       defines: { DETAIL_OCTAVES: quality.detailOctaves },
       uniforms: {
@@ -174,6 +214,7 @@ export function WaterSurface({
         uFlowSpeed: { value: WATER.flowSpeed },
         uMicroAmp: { value: WATER.microAmplitude },
         uMicroScale: { value: WATER.microScale },
+        uMicroAnisotropy: { value: new Vector2(...WATER.microAnisotropy) },
 
         uRipple: { value: null },
         uRippleCenter: { value: new Vector2(...LOGO_CENTER_XZ) },
@@ -202,7 +243,10 @@ export function WaterSurface({
         uF0: { value: WATER.fresnelF0 },
         uReflectionDistortion: { value: WATER.reflectionDistortion },
         uReflectionRolloff: { value: WATER.reflectionRolloff },
+        uReflectionBlur: { value: new Vector2(...WATER.reflectionBlur) },
+        uReflectionAttenuation: { value: WATER.reflectionAttenuation },
         uLogoCenter: { value: new Vector2(...LOGO_CENTER_XZ) },
+        uLogoHalfWidth: { value: LOGO_TARGET_WIDTH * .5 },
         uReflectionFocus: { value: WATER.reflectionFocus },
         uRefractionDistortion: { value: WATER.refractionDistortion },
         uExtinction: { value: new Vector3(...WATER.extinction) },
@@ -210,6 +254,10 @@ export function WaterSurface({
         uScatterColor: { value: new Vector3(...WATER.scatterColor) },
         uFogDensity: { value: WATER.fogDensity },
         uBackgroundIntensity: { value: ENVIRONMENT.backgroundIntensity },
+        uSkyBehindIntensity: { value: ENVIRONMENT.backgroundIntensity },
+        uUnderwater: { value: 0 },
+        uLightLevel: { value: 1 },
+        uSurfaceVisibility: { value: 1 },
 
         uKeyDirection: { value: keyLightDirection() },
         uKeyColor: { value: waterSpecularColor() },
@@ -227,18 +275,10 @@ export function WaterSurface({
   /* --- Frame ------------------------------------------------------- */
 
   const frameTimes = useRef<number[]>([])
+  const wasSurfaceVisible = useRef(true)
   const drawingBuffer = useRef(new Vector2())
   const textureMatrix = useMemo(() => new Matrix4(), [])
-  const scratch = useMemo(
-    () => ({
-      cameraWorld: new Vector3(),
-      view: new Vector3(),
-      target: new Vector3(),
-      lookAt: new Vector3(),
-      rotation: new Matrix4(),
-    }),
-    [],
-  )
+  const scratch = useMemo(() => createReflectionScratch(), [])
 
   useFrame((state, delta) => {
     const mesh = meshRef.current
@@ -247,17 +287,68 @@ export function WaterSurface({
     const { scene, camera } = state
     const uniforms = material.uniforms
 
-    /* 1 — Interaction, on its own clock and never gated by scroll. */
-    for (const impulse of sceneState.impulses) {
-      const u = (impulse.x - LOGO_CENTER_XZ[0]) / INTERACTION.extent + 0.5
-      const v = (impulse.z - LOGO_CENTER_XZ[1]) / INTERACTION.extent + 0.5
-      ripple.addImpulse(u, v, impulse.amplitude)
+    // This component owns the final frame even when the water is absent.
+    // A positive useFrame priority disables R3F's automatic render.
+    const surfaceVisible = reducedMotion || sceneState.progress < 0.57
+    const openingGlow = !reducedMotion && sceneState.progress > OPENING_REVEAL.traceStart
+      && sceneState.progress < OPENING_REVEAL.surfaceEnd
+    const glowEnabled = appearance === 'led' || appearance === 'electric'
+      || appearance === 'chrome' || appearance === 'frosted' || appearance === 'cutlight' || openingGlow
+    if (sceneState.resetRipples || (!surfaceVisible && wasSurfaceVisible.current)) {
+      ripple.reset()
     }
-    ripple.step(delta)
+    wasSurfaceVisible.current = surfaceVisible
+    mesh.visible = surfaceVisible
+
+    if (glassEnabled && (reducedMotion || sceneState.progress < .98)) {
+      if (!glassCapture) return
+      // WSLogo selects the active materials earlier in the frame. Capture
+      // before both the water refraction and final beauty draws, and never
+      // bind a beauty-camera texture to the mirrored reflection proxy.
+      // Switching glass finishes retains these targets. Release the previous
+      // material binding before capturing, including when the next draw fails.
+      bindGlassScene(glassCapture.boundMaterials, null)
+      glassCapture.boundMaterials = logoMaterials(logoNodes.sceneRoot)
+      const background = captureGlassScene(gl, scene, camera, glassCapture, logoNodes, mesh)
+      bindGlassScene(glassCapture.boundMaterials, background,
+        glassCapture.colorTarget.width, glassCapture.colorTarget.height)
+    }
+
+    const times = frameTimes.current
+    times.push(delta)
+    if (times.length > 45) times.shift()
+    const mean = times.reduce((sum, value) => sum + value, 0) / times.length
+    telemetry.fps = mean > 0 ? 1 / mean : 0
+
+    if (!surfaceVisible) {
+      // The underside has already faded to this exact water-free image.
+      // No surface or ripple work remains; draw the underwater scene directly.
+      gl.setRenderTarget(null)
+      gl.render(scene, camera)
+      if (glowEnabled && sceneState.progress < .98) renderLEDGlow(gl, scene, camera, targets.glow, logoNodes, mesh)
+      telemetry.rippleEnergy = 0
+      return
+    }
+
+    /* 1 — Local residual waves have their own clock. */
+    if (!reducedMotion) {
+      for (const impulse of sceneState.impulses) {
+        const u = (impulse.x - LOGO_CENTER_XZ[0]) / INTERACTION.extent + 0.5
+        const v = (impulse.z - LOGO_CENTER_XZ[1]) / INTERACTION.extent + 0.5
+        ripple.addImpulse(u, v, impulse.amplitude)
+      }
+      ripple.step(delta)
+    }
 
     /* 2 — Uniforms. */
     uniforms.uChannel.value = channel
-    uniforms.uTime.value = state.clock.elapsedTime
+    uniforms.uTime.value = reducedMotion ? 0 : state.clock.elapsedTime
+    uniforms.uUnderwater.value = sceneState.underwater
+    uniforms.uLightLevel.value = sceneState.lightLevel
+    uniforms.uSkyBehindIntensity.value = scene.backgroundIntensity
+    uniforms.uSurfaceVisibility.value = reducedMotion
+      ? 1
+      : 1 - smoothstep(0.50, 0.57, sceneState.progress)
     uniforms.uRipple.value = ripple.texture
     uniforms.uReflection.value = targets.reflection.texture
     uniforms.uRefraction.value = targets.refraction.texture
@@ -287,72 +378,56 @@ export function WaterSurface({
            its above-water half so the submerged part is not mirrored
            into a surface that could not physically show it. */
     mesh.visible = false
+    const beautyLayers = camera.layers.mask
 
-    scratch.cameraWorld.setFromMatrixPosition(camera.matrixWorld)
-    scratch.view
-      .subVectors(scratch.cameraWorld, PLANE_ORIGIN)
-      .reflect(PLANE_NORMAL)
-      .negate()
-      .add(PLANE_ORIGIN)
+    try {
+      // Once the camera is fully underwater only the underside branch is
+      // visible. It samples the sky directly and needs no planar reflection.
+      if (sceneState.underwater < 1) {
+        updateWaterReflectionCamera(perspective, reflectionCamera, WATER_LEVEL, scratch)
+        reflectionCamera.layers.set(REFLECTION_LAYER)
 
-    scratch.rotation.extractRotation(camera.matrixWorld)
-    scratch.lookAt.set(0, 0, -1).applyMatrix4(scratch.rotation)
-    scratch.target
-      .copy(scratch.cameraWorld)
-      .add(scratch.lookAt)
-      .sub(PLANE_ORIGIN)
-      .reflect(PLANE_NORMAL)
-      .negate()
-      .add(PLANE_ORIGIN)
+        textureMatrix.set(
+          0.5, 0, 0, 0.5,
+          0, 0.5, 0, 0.5,
+          0, 0, 0.5, 0.5,
+          0, 0, 0, 1,
+        )
+        textureMatrix.multiply(reflectionCamera.projectionMatrix)
+        textureMatrix.multiply(reflectionCamera.matrixWorldInverse)
+        ;(uniforms.uReflectMatrix.value as Matrix4).copy(textureMatrix)
 
-    reflectionCamera.position.copy(scratch.view)
-    reflectionCamera.up.set(0, 1, 0).applyMatrix4(scratch.rotation).reflect(PLANE_NORMAL)
-    reflectionCamera.lookAt(scratch.target)
-    reflectionCamera.near = perspective.near
-    reflectionCamera.far = perspective.far
-    reflectionCamera.fov = perspective.fov
-    reflectionCamera.aspect = perspective.aspect
-    reflectionCamera.updateProjectionMatrix()
-    reflectionCamera.projectionMatrix.copy(perspective.projectionMatrix)
-    reflectionCamera.updateMatrixWorld()
-    reflectionCamera.layers.set(REFLECTION_LAYER)
+        // Only the proxy is on the reflection layer, so this pass draws the
+        // controlled stand-in and never the production emblem. The proxy owns
+        // its clipping plane permanently, which also means no material has to
+        // be mutated per frame and no program is swapped in and out.
+        gl.setRenderTarget(targets.reflection)
+        gl.render(scene, reflectionCamera)
+      }
 
-    textureMatrix.set(
-      0.5, 0, 0, 0.5,
-      0, 0.5, 0, 0.5,
-      0, 0, 0.5, 0.5,
-      0, 0, 0, 1,
-    )
-    textureMatrix.multiply(reflectionCamera.projectionMatrix)
-    textureMatrix.multiply(reflectionCamera.matrixWorldInverse)
-    ;(uniforms.uReflectMatrix.value as Matrix4).copy(textureMatrix)
-
-    // Only the proxy is on the reflection layer, so this pass draws the
-    // controlled stand-in and never the production emblem. The proxy owns
-    // its clipping plane permanently, which also means no material has to
-    // be mutated per frame and no program is swapped in and out.
-    gl.setRenderTarget(targets.reflection)
-    gl.render(scene, reflectionCamera)
-
-    /* 4 — Refraction: the same view with the water absent, so everything
-           beneath the surface is captured unoccluded. This is what makes
-           the submerged half of the logo visible at all; the surface
-           itself stays fully opaque. */
-    gl.setRenderTarget(targets.refraction)
-    gl.render(scene, camera)
+      /* 4 — Refraction: the same view with the water absent, so everything
+             beneath the surface is captured unoccluded. This is what makes
+             the submerged half of the logo visible at all; the surface
+             itself stays fully opaque. */
+      gl.setRenderTarget(targets.refraction)
+      // Air mist is beauty-only. Below the surface, transparent particles
+      // are also beauty-only: they sit between the camera and the underside.
+      // Baking them into its background would draw them twice above the
+      // projected horizon, producing a visible color/brightness boundary.
+      camera.layers.mask = refractionLayerMask(beautyLayers, camera.position.y, WATER_LEVEL)
+      gl.render(scene, camera)
+    } finally {
+      camera.layers.mask = beautyLayers
+      gl.setRenderTarget(null)
+      mesh.visible = true
+    }
 
     /* 5 — Beauty pass. */
-    gl.setRenderTarget(null)
-    mesh.visible = true
     gl.render(scene, camera)
+    if (glowEnabled) renderLEDGlow(gl, scene, camera, targets.glow, logoNodes, mesh)
 
     /* 6 — Telemetry. */
     telemetry.rippleEnergy = ripple.energy
-    const times = frameTimes.current
-    times.push(delta)
-    if (times.length > 45) times.shift()
-    const mean = times.reduce((sum, value) => sum + value, 0) / times.length
-    telemetry.fps = mean > 0 ? 1 / mean : 0
   }, 1)
 
   useEffect(() => {
@@ -373,6 +448,11 @@ export function WaterSurface({
       renderOrder={1}
     />
   )
+}
+
+function smoothstep(start: number, end: number, value: number) {
+  const t = Math.min(1, Math.max(0, (value - start) / (end - start)))
+  return t * t * (3 - 2 * t)
 }
 
 /**

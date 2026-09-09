@@ -1,7 +1,12 @@
 /** Shared types for the water-hero experiment. */
-import type { Object3D, Quaternion, Vector3 } from 'three'
+import type { Object3D, Quaternion, Texture, Vector3 } from 'three'
 
 export type QualityTier = 'high' | 'medium' | 'low'
+
+/** Borrowed water-free scene depth; the water surface owns its lifetime. */
+export interface SurfaceFogDepth {
+  texture: Texture | null
+}
 
 export interface QualitySettings {
   dprCap: number
@@ -91,13 +96,10 @@ export interface DebugTelemetry {
   cameraPosition: [number, number, number]
   /** Where the camera is aimed. */
   cameraTarget: [number, number, number]
-  /** Corridor centre in world space, and the camera's distance to it. */
-  passageWorld: [number, number, number]
-  passageDistance: number
-  /** World units the camera covers per 1% of progress. */
-  travelPerPercent: number
-  /** 0-1, how revealed the destination is. */
-  destinationReveal: number
+  phase: string
+  cameraUnderwater: number
+  blackout: number
+  logoYaw: number
 }
 
 /**
@@ -122,9 +124,8 @@ export interface SurfaceContact {
   /** 0 when the part is clear of the surface or wholly beneath it. */
   strength: number
   /**
-   * How hard this part is pushing the surface from below while still
-   * fully submerged. Complementary to `strength`: one of the two is
-   * always fading in as the other fades out.
+   * Signed authored surface tension. Negative draws a depression before
+   * the plunge; contact strength takes over at the actual intersection.
    */
   pressure: number
 }
@@ -151,8 +152,12 @@ export interface SceneState {
   boundsMin: number
   boundsMax: number
   verticalVelocity: number
-  /** 0 closed, 1 fully open. Drives the seam light and the water. */
-  separation: number
+  progress: number
+  underwater: number
+  lightLevel: number
+  /** Projected inner silhouette edges of the parting logo, in NDC. */
+  logoReveal: LogoRevealContour | null
+  resetRipples: boolean
 }
 
 export function createSceneState(): SceneState {
@@ -167,6 +172,20 @@ export function createSceneState(): SceneState {
     boundsMin: 0,
     boundsMax: 0,
     verticalVelocity: 0,
-    separation: 0,
+    progress: 0,
+    underwater: 0,
+    lightLevel: 1,
+    logoReveal: null,
+    resetRipples: false,
   }
+}
+
+export interface LogoRevealContour {
+  /** Ascending screen-space Y samples, from -1 at bottom to +1 at top. */
+  rows: number[]
+  left: number[]
+  right: number[]
+  version: number
+  open: boolean
+  complete: boolean
 }

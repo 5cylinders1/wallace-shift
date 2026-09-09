@@ -1,14 +1,5 @@
-/**
- * Writes the hero DOM layer's state straight from progress.
- *
- * Deliberately not React state and not a GSAP timeline: every element is
- * a pure function of the current progress, which is what makes scrolling
- * back up land on exactly the frame the user saw on the way down, and
- * what keeps a scrollbar jump from arriving mid-transition.
- *
- * Kept out of `HeroUI.tsx` so that file exports only a component and
- * stays eligible for fast refresh.
- */
+/** Direct progress writes keep the HTML and WebGL compositions synchronized. */
+import { sampleOpeningReveal } from './openingReveal'
 
 function clamp01(value: number): number {
   return value < 0 ? 0 : value > 1 ? 1 : value
@@ -25,35 +16,40 @@ export function applyHeroUiProgress(
 ) {
   if (!root) return
 
+  // Emphasis is purely visual: both words remain semantic, selectable text.
+  // Their parent controls the existing visibility/accessibility exit behavior.
+  const { prominence } = sampleOpeningReveal(narrative, still)
+  const before = root.querySelector<HTMLElement>('[data-opening-word="before"]')
+  const after = root.querySelector<HTMLElement>('[data-opening-word="after"]')
+  if (before) before.style.opacity = String(.90 - .45 * prominence)
+  if (after) after.style.opacity = String(.38 + .62 * prominence)
+
   const elements = root.querySelectorAll<HTMLElement>('[data-in-start]')
 
   elements.forEach((element) => {
-    if (still) {
-      element.style.opacity = '1'
-      element.style.transform = 'none'
-      return
-    }
-
     const inStart = Number(element.dataset.inStart)
     const inEnd = Number(element.dataset.inEnd)
-    const outStart = element.dataset.outStart
-      ? Number(element.dataset.outStart)
-      : Number.POSITIVE_INFINITY
-    const outEnd = element.dataset.outEnd
-      ? Number(element.dataset.outEnd)
-      : Number.POSITIVE_INFINITY
-    const shift = element.dataset.shift ? Number(element.dataset.shift) : 20
+    const outStart = Number(element.dataset.outStart ?? Infinity)
+    const outEnd = Number(element.dataset.outEnd ?? Infinity)
+    const shift = Number(element.dataset.shift ?? 20)
+    const appear = still
+      ? 1
+      : ease(clamp01((narrative - inStart) / Math.max(inEnd - inStart, 1e-6)))
+    const leave = still || !Number.isFinite(outStart)
+      ? 0
+      : ease(clamp01((narrative - outStart) / Math.max(outEnd - outStart, 1e-6)))
+    const opacity = appear * (1 - leave)
+    const hidden = opacity <= 0.001
 
-    const appear = ease(
-      clamp01((narrative - inStart) / Math.max(inEnd - inStart, 1e-6)),
-    )
-    const leave = Number.isFinite(outStart)
-      ? ease(clamp01((narrative - outStart) / Math.max(outEnd - outStart, 1e-6)))
-      : 0
-
-    element.style.opacity = String(appear * (1 - leave))
-    element.style.transform = `translate3d(0, ${
-      (1 - appear) * shift - leave * shift * 0.5
-    }px, 0)`
+    element.style.opacity = String(opacity)
+    element.style.transform = still
+      ? 'none'
+      : `translate3d(0, ${(1 - appear) * shift - leave * shift * 0.5}px, 0)`
+    element.style.visibility = hidden ? 'hidden' : 'visible'
+    element.inert = hidden
+    element.setAttribute('aria-hidden', String(hidden))
+    if (hidden && element.contains(document.activeElement)) {
+      (document.activeElement as HTMLElement | null)?.blur()
+    }
   })
 }

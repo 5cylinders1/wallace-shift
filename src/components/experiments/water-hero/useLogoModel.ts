@@ -2,10 +2,8 @@ import { useMemo } from 'react'
 import { useLoader } from '@react-three/fiber'
 import {
   Box3,
-  Mesh,
   Matrix4,
   Vector3,
-  type Material,
   type Object3D,
 } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
@@ -18,6 +16,7 @@ import {
   WS_LOGO_URL,
 } from './waterHeroConfig'
 import type { CapturedTransform, LogoMetrics, LogoNodes } from './waterHeroTypes'
+import { createLogoMaterialVariants, disposeLogoMaterialVariants } from './logoMaterialVariants'
 
 /** Everything the camera sees directly. */
 export const SCENE_LAYER = 0
@@ -83,20 +82,8 @@ export function useLogoModel(): LogoModelResult {
 
     const sceneRoot = gltf.scene.clone(true)
 
-    /**
-     * A second, independent clone used only by the water.
-     *
-     * The water stopped reflecting the production emblem because a literal
-     * reflection of it does not make a good image. The sidewalls are lit to
-     * describe machined metal, and at grazing incidence a lit vertical edge
-     * reflects as a long unbroken lane — the lamp-post-on-wet-road effect,
-     * which is why it kept reading as paint however much it was fragmented.
-     *
-     * So the reflection gets its own object: same geometry, same transforms,
-     * deliberately duller material, and no exposure to the low key light.
-     * Physical accuracy is traded for an image that works, which is what a
-     * stage does when it flags a light off the water.
-     */
+    // Independent planar-water proxy with the same diffuser and a quieter
+    // light level so its rippled reflection retains detail.
     const proxyRoot = gltf.scene.clone(true)
 
     const root = sceneRoot.getObjectByName(NODE_NAMES.root)
@@ -133,21 +120,6 @@ export function useLogoModel(): LogoModelResult {
       }
     }
 
-    // Clone materials before touching them. The cached glTF's materials
-    // are shared, and tuning one in place would follow the asset into any
-    // other consumer and outlive this route.
-    for (const graph of [sceneRoot, proxyRoot]) {
-      graph.traverse((child) => {
-        if (!(child instanceof Mesh)) return
-        child.castShadow = false
-        child.receiveShadow = false
-        const source = child.material as Material | Material[]
-        child.material = Array.isArray(source)
-          ? source.map((entry) => entry.clone())
-          : source.clone()
-      })
-    }
-
     // Layers keep the two apart without either pass having to walk the
     // scene and toggle visibility every frame: the beauty and refraction
     // passes see only the real emblem, the planar reflection pass sees
@@ -167,6 +139,8 @@ export function useLogoModel(): LogoModelResult {
     const width = rawSize.x * scale
     const height = rawSize.z * scale
     const depth = rawSize.y * scale
+    createLogoMaterialVariants(sceneRoot, depth)
+    createLogoMaterialVariants(proxyRoot, depth, true)
 
     const orient = new Matrix4().makeRotationX(ORIENT_X)
     const orientedCenter = rawCenter.clone().applyMatrix4(orient).multiplyScalar(scale)
@@ -236,12 +210,7 @@ export function preloadLogo() {
 /** Frees only what this module allocated: the per-instance materials. */
 export function disposeLogoInstance(nodes: LogoNodes) {
   for (const graph of [nodes.sceneRoot, nodes.proxyRoot]) {
-    graph.traverse((child) => {
-      if (!(child instanceof Mesh)) return
-      const material = child.material as Material | Material[]
-      if (Array.isArray(material)) material.forEach((entry) => entry.dispose())
-      else material.dispose()
-    })
+    disposeLogoMaterialVariants(graph)
   }
 }
 
