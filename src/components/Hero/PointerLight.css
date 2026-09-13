@@ -29,16 +29,16 @@
   );
 }
 
-/* Wider, fainter, warmer, slower — the ember trail behind the light. Kept
+/* Wider, fainter, slower — a soft accent trail behind the light. Kept
    well below the point of tinting the WS itself. */
 .pointer-light__halo {
   width: min(56vw, 860px);
   height: min(56vw, 860px);
   background: radial-gradient(
     circle,
-    rgba(232, 84, 39, 0.075) 0%,
-    rgba(232, 84, 39, 0.04) 38%,
-    rgba(232, 84, 39, 0.015) 58%,
-    rgba(232, 84, 39, 0) 74%
+    rgb(var(--color-accent-rgb) / 0.075) 0%,
+    rgb(var(--color-accent-rgb) / 0.04) 38%,
+    rgb(var(--color-accent-rgb) / 0.015) 58%,
+    rgb(var(--color-accent-rgb) / 0) 74%
   );
 }

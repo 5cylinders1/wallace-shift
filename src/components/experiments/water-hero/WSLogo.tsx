@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Box3, Vector3, type Group, type Plane, type Texture, type PerspectiveCamera } from 'three'
 import { INTERACTION, WATER_LEVEL, type LogoAppearance } from './waterHeroConfig'
 import { sampleDescent, smoothRange } from './sceneDirector'
-import { logoGlassUniforms, updateGlassRim, updateLEDLighting } from './logoMaterial'
+import { logoGlassUniforms, updateGlassRim, updateGlassTurnSoftness, updateLEDLighting } from './logoMaterial'
 import { updateChromeLighting } from './logoChrome'
 import { updateFrostedLighting } from './logoFrosted'
 import { updatePearlLighting } from './logoPearl'
@@ -72,7 +72,10 @@ export function WSLogo({ nodes, progress, override, scene, telemetry, reducedMot
     if (appearance === 'pearl') updatePearlLighting(materials, reducedMotion ? 0 : pose.yaw)
     if (appearance === 'mercury') updateMercuryLighting(materials, time)
     updateLogoOpening(materials, progress.current, reducedMotion)
-    if (appearance === 'glass') updateGlassRim(materials, time, underwater)
+    if (appearance === 'glass') {
+      updateGlassRim(materials, time, underwater)
+      updateGlassTurnSoftness(materials, reducedMotion ? 0 : pose.yaw)
+    }
     const y = override.value === null ? pose.logoY : WATER_LEVEL + metrics.height * (.5 - override.value)
     rig.current.position.y = y
     rig.current.rotation.set(pose.pitch, pose.yaw, 0, 'YXZ')

@@ -36,6 +36,9 @@ export interface RouteMeta {
 /** The isolated WebGL experiment. Reachable by URL, linked from nowhere. */
 export const WATER_HERO_EXPERIMENT_PATH = '/experiments/water-hero'
 
+/** The preserved scroll-driven pit-stop scene, outside the production lander. */
+export const PIT_STOP_EXPERIMENT_PATH = '/experiments/pit-stop'
+
 export const routeMeta: RouteMeta[] = [
   {
     path: '/',
@@ -96,6 +99,15 @@ export const routeMeta: RouteMeta[] = [
     title: 'Water hero experiment | Wallace Shift',
     description:
       'An isolated realtime WebGL prototype. Not part of the Wallace Shift site.',
+    priority: 0,
+    noindex: true,
+    robots: 'noindex, nofollow',
+  },
+  {
+    path: PIT_STOP_EXPERIMENT_PATH,
+    title: 'Pit-stop experiment | Wallace Shift',
+    description:
+      'The preserved scroll-driven pit-stop animation: find the friction, make the shift, and launch with momentum.',
     priority: 0,
     noindex: true,
     robots: 'noindex, nofollow',

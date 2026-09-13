@@ -9,6 +9,7 @@ type Variant = 'structure' | 'launch'
 
 interface StageWorkbenchProps {
   variant: Variant
+  compact?: boolean
 }
 
 /** How long each width is held before the layout reflows. */
@@ -29,7 +30,7 @@ const REFLOW_MS = 3200
  * Neither variant depicts work that has not been done — see the
  * non-fabrication note on `workbench` in content/approachPage.ts.
  */
-export function StageWorkbench({ variant }: StageWorkbenchProps) {
+export function StageWorkbench({ variant, compact = false }: StageWorkbenchProps) {
   const ref = useRef<HTMLDivElement>(null)
   const reducedMotion = useReducedMotion()
   const [inView, setInView] = useState(false)
@@ -123,11 +124,17 @@ export function StageWorkbench({ variant }: StageWorkbenchProps) {
 
       {variant === 'structure' && (
         <p className="workbench__width" aria-hidden="true">
-          {narrow ? '390px' : '1440px'}
+          {compact ? narrow ? 'Narrow layout' : 'Wide layout' : narrow ? '390px' : '1440px'}
         </p>
       )}
 
-      <p className="workbench__caption">{data.caption}</p>
+      <p className="workbench__caption">
+        {compact
+          ? variant === 'structure'
+            ? 'A real layout, adapting to its space. Your project takes shape in a working preview you can review.'
+            : 'The pre-launch checklist. Your domain, your accounts, and a full handover.'
+          : data.caption}
+      </p>
     </div>
   )
 }

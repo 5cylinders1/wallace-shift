@@ -1,9 +1,10 @@
 import { Color, FrontSide, Mesh, MeshPhysicalMaterial, MeshStandardMaterial, Vector2, Vector4,
   type Material, type Object3D, type Texture } from 'three'
-import { ELECTRIC_LOGO_MATERIAL, GLASSMORPH_LOGO_MATERIAL, LED_LOGO_MATERIAL, LOGO_MATERIAL, type LogoAppearance } from './waterHeroConfig'
+import { CLEAR_CRYSTAL_MATERIAL, ELECTRIC_LOGO_MATERIAL, GLASSMORPH_LOGO_MATERIAL, LED_LOGO_MATERIAL, LOGO_MATERIAL, type LogoAppearance } from './waterHeroConfig'
 import { COLOR_WAVE, UNDERWATER_PALETTE } from './shaders/underwaterColor'
 import { logoGlassVertexPars, logoGlassVertexNormal, logoGlassVertexProject,
-  logoGlassFragmentPars, logoGlassFragmentComposite, logoCrystalFragmentComposite, logoCrystalFragmentNormal } from './shaders/logoGlass'
+  logoGlassFragmentPars, logoGlassFragmentComposite, logoCrystalFragmentComposite, logoCrystalFragmentNormal, logoCrystalIridescence,
+  GLASS_EARLY_TURN, logoCrystalEarlyReflection } from './shaders/logoGlass'
 import { logoLEDVertexPars, logoLEDVertexNormal, logoLEDVertexProject,
   logoLEDFragmentPars, logoLEDFragmentComposite } from './shaders/logoLED'
 
@@ -36,6 +37,7 @@ function createGlassUniforms(worldThickness: number) {
 export type LogoGlassUniforms = ReturnType<typeof createGlassUniforms>
 const glassUniforms = new WeakMap<MeshStandardMaterial, LogoGlassUniforms>()
 export const logoGlassUniforms = (material: MeshStandardMaterial) => glassUniforms.get(material)
+const glassTurnUniforms = new WeakMap<MeshStandardMaterial, { value: number }>()
 
 /** A route-owned material; never modify the cached source GLB. The opaque
  * depth write is deliberate: the shader already transmits the captured
@@ -76,11 +78,11 @@ export function createLogoGlassMaterial(source: Material, worldThickness: number
   return material
 }
 
-/** Clear polished glass uses the same scene capture and authored bevels as
- * the smoked prototype, with much less absorption and no emitted rim. */
-export function createLogoCrystalMaterial(source: Material, worldThickness: number) {
+/** Polished glass with a view-dependent spectral film. Derivative looks can
+ * retain the original clear base without inheriting the stronger face sheen. */
+export function createLogoCrystalMaterial(source: Material, worldThickness: number, finish: 'clear' | 'iridescent' = 'iridescent') {
   const material = createLogoGlassMaterial(source, worldThickness)
-  const profile = GLASSMORPH_LOGO_MATERIAL
+  const profile = finish === 'iridescent' ? GLASSMORPH_LOGO_MATERIAL : CLEAR_CRYSTAL_MATERIAL
   material.name = `${source.name || 'WS'}_CrystalGlass`
   material.color.setRGB(...profile.baseColor)
   material.metalness = profile.metalness
@@ -98,18 +100,29 @@ export function createLogoCrystalMaterial(source: Material, worldThickness: numb
   uniforms.uGlassDispersion.value = profile.dispersion
   uniforms.uGlassInternalReflection.value = profile.internalReflection
   uniforms.uGlassRimStrength.value = 0
+  const turnSoftness = finish === 'iridescent' ? { value: 0 } : null
+  if (turnSoftness) glassTurnUniforms.set(material, turnSoftness)
   const compileGlass = material.onBeforeCompile
   material.onBeforeCompile = (shader, renderer) => {
     compileGlass(shader, renderer)
     shader.fragmentShader = shader.fragmentShader.replace(logoGlassFragmentComposite, logoCrystalFragmentComposite)
+    if (turnSoftness) {
+      shader.uniforms.uGlassEarlyTurn = turnSoftness
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform float uGlassEarlyTurn;')
+        .replace('getIBLRadiance(insideView, rearNormal, roughness)',
+          'getIBLRadiance(insideView, rearNormal, crystalReflectionRoughness)')
+    }
     shader.fragmentShader = shader.fragmentShader.replace(
       '#include <normal_fragment_maps>', `#include <normal_fragment_maps>\n${logoCrystalFragmentNormal}`,
     )
-    // Native thin-film Fresnel only on the actual rounded shoulders; the
-    // broad front/back planes remain clear, not a rainbow-painted surface.
+    // Only the Glass comparison gains the broader film. Derived optical
+    // looks keep their original shoulder-only Fresnel and thickness range.
     shader.fragmentShader = shader.fragmentShader.replace(
       '#include <lights_physical_fragment>',
-      `#include <lights_physical_fragment>
+      finish === 'iridescent'
+        ? `#include <lights_physical_fragment>\n${logoCrystalEarlyReflection}\n${logoCrystalIridescence}`
+        : `#include <lights_physical_fragment>
       #ifdef USE_IRIDESCENCE
         float crystalBevel = smoothstep(.003, .045, vGlassBevel)
           * (1.0 - smoothstep(.70, .98, vGlassBevel));
@@ -119,7 +132,8 @@ export function createLogoCrystalMaterial(source: Material, worldThickness: numb
       #endif`,
     )
   }
-  material.customProgramCacheKey = () => 'water-hero-crystal-glass-v3'
+  material.customProgramCacheKey = () => finish === 'iridescent'
+    ? 'water-hero-iridescent-glass-v2' : 'water-hero-crystal-glass-v3'
   return material
 }
 
@@ -138,6 +152,18 @@ export function bindGlassScene(materials: readonly MeshStandardMaterial[], textu
 const smooth = (a: number, b: number, x: number) => {
   const t = Math.max(0, Math.min(1, (x - a) / (b - a)))
   return t * t * (3 - 2 * t)
+}
+
+/** A reversible pose response, not a clock-driven sweep. Updating both the
+ * beauty and water proxy keeps them coherent; other finishes have no entry. */
+export function updateGlassTurnSoftness(materials: readonly MeshStandardMaterial[], yaw: number) {
+  const degrees = yaw * 180 / Math.PI
+  const { start, full, release, end } = GLASS_EARLY_TURN
+  const strength = smooth(start, full, degrees) * (1 - smooth(release, end, degrees))
+  for (const material of materials) {
+    const uniform = glassTurnUniforms.get(material)
+    if (uniform) uniform.value = strength
+  }
 }
 
 /** Sample the same front at the logo rim's representative world radius.

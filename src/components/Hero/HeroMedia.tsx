@@ -3,12 +3,12 @@ import './HeroMedia.css'
 
 const POSTER = '/media/wallace-shift-hero-poster.webp'
 
-export function HeroMedia() {
+export function HeroMedia({ posterOnly = false }: { posterOnly?: boolean }) {
   const reducedMotion = useReducedMotion()
 
   return (
     <div className="hero-media" aria-hidden="true">
-      {reducedMotion ? (
+      {posterOnly || reducedMotion ? (
         <img src={POSTER} alt="" className="hero-media__frame" />
       ) : (
         <video

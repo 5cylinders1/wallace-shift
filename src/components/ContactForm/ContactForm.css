@@ -47,6 +47,57 @@
   opacity: 0.7;
 }
 
+/* Selects inherit the underlined-field treatment rather than arriving as an
+   operating-system control on a cinematic ground. The arrow is drawn here
+   because `appearance: none` removes the native one. */
+.contact-form__field select {
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, rgba(214, 218, 223, 0.75) 50%) calc(100% - 11px) calc(50% + 2px) / 6px 6px no-repeat,
+    linear-gradient(135deg, rgba(214, 218, 223, 0.75) 50%, transparent 50%) calc(100% - 5px) calc(50% + 2px) / 6px 6px no-repeat;
+  border: none;
+  border-bottom: 1px solid rgba(214, 218, 223, 0.32);
+  border-radius: 0;
+  padding: 10px 24px 10px 0;
+  color: var(--color-soft-white);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+.contact-form__field select:focus { border-color: var(--color-ember); }
+/* The list itself is an OS surface: give it a ground its text can sit on. */
+.contact-form__field select option { background: var(--color-graphite); color: var(--color-soft-white); }
+
+/* Paired fields. Each row aligns its labels on one line and lets the taller
+   member (the website field carries a checkbox) set the row height. */
+.contact-form__row { display: grid; gap: 15px; align-items: start; }
+@media (min-width: 560px) {
+  .contact-form__row { grid-template-columns: 1fr 1fr; column-gap: clamp(16px, 2.4vw, 26px); }
+}
+
+.contact-form__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+.contact-form__toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+/* Emptied and dimmed rather than removed, so the field it replaces stays
+   visible and the choice is reversible without the layout moving. */
+.contact-form__field input:disabled { opacity: 0.4; cursor: not-allowed; }
+
 .contact-form__submit {
   align-self: flex-start;
   margin-top: 8px;
@@ -64,7 +115,7 @@
 
 .contact-form__submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 34px rgba(232, 84, 39, 0.3);
+  box-shadow: 0 10px 34px rgb(var(--color-accent-rgb) / 0.3);
 }
 
 .contact-form__submit:disabled {

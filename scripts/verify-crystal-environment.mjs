@@ -24,7 +24,7 @@ async function sourceModule(url) {
   return result
 }
 const baseUrl = new URL('../src/components/experiments/water-hero/', import.meta.url)
-const { CRYSTAL_REFLECTION_CARDS, CRYSTAL_ENVIRONMENT_SIZE, CRYSTAL_AMBIENT,
+const { CRYSTAL_REFLECTION_CARDS, SOFT_GLASS_REFLECTION_CARDS, CRYSTAL_ENVIRONMENT_SIZE, CRYSTAL_AMBIENT,
   crystalCardBasis, createCrystalEnvironmentMaterial, createCrystalEnvironment } = await import(
   await sourceModule(new URL('crystalEnvironment.ts', baseUrl)),
 )
@@ -126,7 +126,55 @@ await test('card radiance stays linear HDR with shaped edges and a restrained am
   material.dispose()
 })
 
-function renderFixture(failAt = '') {
+await test('Glass replaces white shoulder plateaus with lower-peak continuous falloff while retaining opening face lights', () => {
+  const original = createCrystalEnvironmentMaterial()
+  const soft = createCrystalEnvironmentMaterial('soft-glass')
+  try {
+    assert.equal(SOFT_GLASS_REFLECTION_CARDS.length, CRYSTAL_REFLECTION_CARDS.length)
+    assert.deepEqual(soft.uniforms.uAmbient.value, original.uniforms.uAmbient.value)
+    assert.deepEqual(soft.uniforms.uHalf.value, original.uniforms.uHalf.value)
+    assert.deepEqual(soft.uniforms.uForward.value, original.uniforms.uForward.value)
+    assert.deepEqual(soft.uniforms.uColor.value, original.uniforms.uColor.value)
+    assert.ok(soft.uniforms.uSoftOval.value.every(value => value === 1))
+    assert.ok(Math.max(...soft.uniforms.uIntensity.value) < 6,
+      'Glass should no longer inherit the 18–28 HDR white card peaks')
+    const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
+    // CPU source-radiance estimate at fixed horizontal offsets in a card.
+    // This checks the authored light source, not its rendered BRDF or GPU.
+    const sample = (material, i, fraction) => {
+      const half = material.uniforms.uHalf.value[i]
+      const x = half.x * fraction
+      let coverage
+      if (material.uniforms.uSoftOval.value[i] > .5) {
+        coverage = Math.exp(-fraction * fraction * 2.4) * (1 - smooth(.8, 1.6, Math.abs(fraction)))
+      } else {
+        const radius = Math.min(half.x, half.y) * .22
+        const qx = Math.abs(x) - half.x + radius, qy = -half.y + radius
+        const distance = Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - radius
+        const feather = Math.min(half.x, half.y) * .12
+        coverage = 1 - smooth(-feather, feather, distance)
+      }
+      return material.uniforms.uIntensity.value[i] * coverage * .83
+    }
+    for (const [i, card] of CRYSTAL_REFLECTION_CARDS.entries()) {
+      if (card.softOval) {
+        assert.deepEqual(SOFT_GLASS_REFLECTION_CARDS[i], card, 'retain the selective front/back opening reflections')
+        continue
+      }
+      const peak = sample(soft, i, 0)
+      assert.ok(peak <= sample(original, i, 0) * .201)
+      assert.ok(Math.abs(sample(original, i, .5) / sample(original, i, 0) - 1) < 1e-12,
+        'the original source contains the broad plateau visible in the reference')
+      const values = [0, .25, .5, .75, 1, 1.5, 1.6].map(x => sample(soft, i, x))
+      assert.ok(values.every((value, j) => j === 0 || value < values[j - 1]), 'radiance falls throughout the card instead of ending in a hard step')
+      assert.ok(values[2] < peak * .60)
+      assert.ok(values[4] < peak * .10)
+      assert.equal(values.at(-1), 0, 'the light has finite extent and leaves dark passages')
+    }
+  } finally { original.dispose(); soft.dispose() }
+})
+
+function renderFixture(failAt = '', profile = 'original') {
   const oldCubeUpdate = CubeCamera.prototype.update
   const oldFilter = PMREMGenerator.prototype.fromCubemap
   const oldDispose = PMREMGenerator.prototype.dispose
@@ -157,6 +205,9 @@ function renderFixture(failAt = '') {
     assert.equal(capturedCube.texture.generateMipmaps, false)
     assert.equal(scene.children.length, 1, 'only the owned photographic rig is captured')
     const mesh = scene.children[0]
+    const cards = profile === 'soft-glass' ? SOFT_GLASS_REFLECTION_CARDS : CRYSTAL_REFLECTION_CARDS
+    assert.deepEqual(mesh.material.uniforms.uIntensity.value, cards.map(card => card.intensity))
+    assert.deepEqual(mesh.material.uniforms.uSoftOval.value, cards.map(card => card.softOval ? 1 : 0))
     capturedCube.addEventListener('dispose', () => disposed.cube++)
     mesh.geometry.addEventListener('dispose', () => disposed.geometry++)
     mesh.material.addEventListener('dispose', () => disposed.material++)
@@ -176,7 +227,7 @@ function renderFixture(failAt = '') {
   }
   PMREMGenerator.prototype.dispose = function() { disposed.generator++ }
   return {
-    run: () => createCrystalEnvironment(renderer), disposed,
+    run: () => createCrystalEnvironment(renderer, profile), disposed,
     verify(environment) {
       assert.equal(cubeDraws, 1)
       assert.equal(filters, failAt === 'cube' ? 0 : 1)
@@ -188,6 +239,7 @@ function renderFixture(failAt = '') {
       assert.deepEqual(clear.toArray(), [.02, .04, .08]); assert.equal(alpha, .25)
       assert.equal(disposed.geometry, 1); assert.equal(disposed.material, 1); assert.equal(disposed.generator, 1)
       if (environment) {
+        assert.equal(environment.profile, profile, 'source identity follows the allocated profile')
         assert.equal(environment.environment, filteredTarget.texture)
         assert.equal(environment.radiance, capturedCube.texture, 'probe uses raw radiance, avoiding a second source blur')
         assert.equal(disposed.cube, 0); assert.equal(disposed.filtered, 0)
@@ -205,13 +257,15 @@ function renderFixture(failAt = '') {
 }
 
 await test('crystal capture retains only its two textures and restores caller rendering state', () => {
-  const f = renderFixture()
-  try { f.verify(f.run()) } finally { f.restore() }
+  for (const profile of ['original', 'soft-glass']) {
+    const f = renderFixture('', profile)
+    try { f.verify(f.run()) } finally { f.restore() }
+  }
 })
 
 await test('failed cube or filtering work releases owned resources and restores renderer state', () => {
-  for (const pass of ['cube', 'filter']) {
-    const f = renderFixture(pass)
+  for (const profile of ['original', 'soft-glass']) for (const pass of ['cube', 'filter']) {
+    const f = renderFixture(pass, profile)
     try { assert.throws(f.run, /injected crystal/); f.verify() } finally { f.restore() }
   }
 })
@@ -220,7 +274,13 @@ await test('glass reflection rig stays separate from sky, water and LED/Electric
   const base = '../src/components/experiments/water-hero/'
   const [scene, logo, probe] = await Promise.all(['WaterScene.tsx', 'WSLogo.tsx', 'LogoParticleReflection.tsx']
     .map(name => readFile(new URL(base + name, import.meta.url), 'utf8')))
-  assert.match(scene, /glassEnabled \? createCrystalEnvironment\(gl\) : null/)
+  assert.match(scene, /crystalProfile = appearance === 'glass' \? 'soft-glass' : 'original'/)
+  assert.match(scene, /glassEnabled \? createCrystalEnvironment\(gl, crystalProfile\) : null/)
+  assert.match(scene, /\[gl, glassEnabled, crystalProfile\]/, 'switching optical looks reallocates the matching source')
+  assert.match(scene, /activeCrystalEnvironment = glassEnabled && crystalEnvironment\?\.profile === crystalProfile\s*\? crystalEnvironment : null/,
+    'a disposed or previous-profile cube cannot leak through during a switch')
+  assert.match(scene, /crystalEnvironment=\{activeCrystalEnvironment\?\.environment \?\? null\}/)
+  assert.match(scene, /crystalEnvironment=\{activeCrystalEnvironment\}/)
   assert.match(scene, /scene.background = environment.background/)
   assert.match(scene, /scene.environment = environment.environment/)
   assert.match(scene, /<NightSky environment=\{environment\}/)

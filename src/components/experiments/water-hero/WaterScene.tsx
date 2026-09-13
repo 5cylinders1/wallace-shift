@@ -40,8 +40,11 @@ export function WaterScene({ progress, override, sceneState, telemetry, tier, re
   const fog = useMemo(() => new FogExp2(0x000000, 0), [])
   const environment = useDisposable(() => createStudioEnvironment(gl), value => value.dispose(), [gl])
   const glassEnabled = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper'
-  const crystalEnvironment = useDisposable(() => glassEnabled ? createCrystalEnvironment(gl) : null,
-    value => value?.dispose(), [gl, glassEnabled])
+  const crystalProfile = appearance === 'glass' ? 'soft-glass' : 'original'
+  const crystalEnvironment = useDisposable(() => glassEnabled ? createCrystalEnvironment(gl, crystalProfile) : null,
+    value => value?.dispose(), [gl, glassEnabled, crystalProfile])
+  const activeCrystalEnvironment = glassEnabled && crystalEnvironment?.profile === crystalProfile
+    ? crystalEnvironment : null
 
   useEffect(() => {
     const enabled = camera.layers.isEnabled(SUBMERGED_PARTICLE_LAYER)
@@ -82,10 +85,10 @@ export function WaterScene({ progress, override, sceneState, telemetry, tier, re
     <NightSky environment={environment} sceneState={sceneState} reducedMotion={reducedMotion} />
     <WSLogo nodes={nodes} progress={progress} override={override} scene={sceneState}
       telemetry={telemetry} reducedMotion={reducedMotion} appearance={appearance}
-      crystalEnvironment={glassEnabled ? crystalEnvironment?.environment ?? null : null}
+      crystalEnvironment={activeCrystalEnvironment?.environment ?? null}
       reflectionEnvironment={environment.environment} reflectionClip={REFLECTION_CLIP} />
     <LogoParticleReflection nodes={nodes} sceneState={sceneState} environment={environment.environment}
-      crystalEnvironment={glassEnabled ? crystalEnvironment : null} appearance={appearance}
+      crystalEnvironment={activeCrystalEnvironment} appearance={appearance}
       tier={tier} reducedMotion={reducedMotion} />
     <UnderwaterFlow progress={progress} tier={tier} reducedMotion={reducedMotion} pointer={particlePointer} />
     <UnderwaterBurst progress={progress} tier={tier} reducedMotion={reducedMotion} pointer={particlePointer} />

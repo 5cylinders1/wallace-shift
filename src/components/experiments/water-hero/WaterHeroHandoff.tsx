@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react'
+import { hero } from '../../../content/siteConfig'
+import { PageLink } from '../../PageLink/PageLink'
 import { SPLIT_START } from './sceneDirector'
 import { applyHandoffProgress, type RevealBounds } from './handoffProgress'
 import { STAGE_SCROLL_SVH } from './waterHeroConfig'
@@ -6,8 +8,9 @@ import type { DebugOverride, ProgressSource, SceneState } from './waterHeroTypes
 
 /** The ending and next section share this single heading. Its transparent
  * sticky stage begins during the split and continues after the canvas exits. */
-export function WaterHeroHandoff({ still, progress, override, sceneState }: {
+export function WaterHeroHandoff({ still, progress, override, sceneState, mode = 'experiment' }: {
   still: boolean; progress?: ProgressSource; override?: DebugOverride; sceneState?: SceneState
+  mode?: 'experiment' | 'landing'
 }) {
   const sectionRef = useRef<HTMLElement>(null)
   const heroTravel = (STAGE_SCROLL_SVH - 100) / 100
@@ -89,9 +92,15 @@ export function WaterHeroHandoff({ still, progress, override, sceneState }: {
           <p className="water-hero-handoff__body" data-handoff-start=".945" data-handoff-end=".985">
             The shift is where possibility becomes something you can see.
           </p>
-          <a className="water-hero-handoff__link" href="/" data-handoff-start=".965" data-handoff-end=".995">
+          {mode === 'landing' ? <div className="water-hero__landing-links"
+            data-handoff-start=".965" data-handoff-end=".995">
+            <PageLink className="water-hero-handoff__link" href={hero.primaryCta.href}>
+              {hero.primaryCta.label} <span aria-hidden="true">↗</span>
+            </PageLink>
+            <PageLink className="water-hero-handoff__link" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</PageLink>
+          </div> : <a className="water-hero-handoff__link" href="/" data-handoff-start=".965" data-handoff-end=".995">
             Return to the Wallace Shift site <span aria-hidden="true">↗</span>
-          </a>
+          </a>}
         </div>
       </div>
     </div>

@@ -24,6 +24,14 @@ export const serviceMedia: Record<ServiceOutcome, AmbientMediaAsset> = {
   },
 }
 
+// Cool grades of the preserved original loops, used only by the homepage.
+// The original Runway assets and portfolio archives remain unchanged.
+export const homeServiceMedia: Record<ServiceOutcome, AmbientMediaAsset> = {
+  TRUST: { poster: '/media/services/svc-trust-ice.webp', video: '/media/services/svc-trust-ice.mp4' },
+  FLOW: { poster: '/media/services/svc-flow-ice.webp', video: '/media/services/svc-flow-ice.mp4' },
+  TIME: { poster: '/media/services/svc-time-ice.webp', video: '/media/services/svc-time-ice.mp4' },
+}
+
 export const contactMedia: AmbientMediaAsset = {
   poster: '/media/generated/contact-horizon.webp',
   video: '/media/generated/contact-horizon.mp4',

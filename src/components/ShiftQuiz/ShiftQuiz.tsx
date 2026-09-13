@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import {
@@ -18,7 +18,13 @@ import './ShiftQuiz.css'
 
 const TOTAL_STEPS = quizQuestions.length
 
-export function ShiftQuiz() {
+/** `onProgress` reports how many questions have been committed to, for
+ * callers that give the quiz a companion visual. It is called on mount and
+ * whenever that count changes, including a reset from Start over. */
+export function ShiftQuiz({ showSpotlight = true, onProgress }: {
+  showSpotlight?: boolean
+  onProgress?: (answered: number, total: number) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const quizColRef = useRef<HTMLDivElement>(null)
   const questionWrapRef = useRef<HTMLDivElement>(null)
@@ -34,6 +40,11 @@ export function ShiftQuiz() {
     null,
   ])
   const [announcement, setAnnouncement] = useState('')
+
+  const answeredCount = answers.filter(Boolean).length
+  useEffect(() => {
+    onProgress?.(answeredCount, TOTAL_STEPS)
+  }, [answeredCount, onProgress])
 
   const reducedMotion = useReducedMotion()
   // The spotlight is a pointer-driven effect on a wide, dark stage. Small
@@ -72,7 +83,7 @@ export function ShiftQuiz() {
     () => {
       const section = sectionRef.current
       const quizCol = quizColRef.current
-      if (!section || !quizCol || reducedMotion || isMobile || isResult) return
+      if (!showSpotlight || !section || !quizCol || reducedMotion || isMobile || isResult) return
 
       const handleFocusIn = (event: FocusEvent) => {
         const target = event.target as HTMLElement
@@ -102,7 +113,7 @@ export function ShiftQuiz() {
         section.removeEventListener('focusout', handleFocusOut)
       }
     },
-    { scope: sectionRef, dependencies: [reducedMotion, isMobile, step, isResult] },
+    { scope: sectionRef, dependencies: [reducedMotion, isMobile, step, isResult, showSpotlight] },
   )
 
   // Entrance animation + focus + announcement whenever the visible step changes.
@@ -204,7 +215,7 @@ export function ShiftQuiz() {
 
   return (
     <section id="shift-finder" className="shift-quiz" ref={sectionRef}>
-      {!isMobile && (
+      {showSpotlight && !isMobile && (
         <div className="shift-quiz__media">
           <SpotlightMedia ref={mediaRef} listenRef={sectionRef} getBoundsRect={getAnswerBounds} />
           <div className="shift-quiz__scrim" />
@@ -226,7 +237,7 @@ export function ShiftQuiz() {
               {shiftQuizCopy.eyebrow.toUpperCase()}
             </p>
             <h2 className="shift-quiz__headline">
-              {shiftQuizCopy.headline.toUpperCase()}
+              {showSpotlight ? shiftQuizCopy.headline.toUpperCase() : shiftQuizCopy.headline}
             </h2>
             <p className="shift-quiz__supporting">
               {shiftQuizCopy.supporting}

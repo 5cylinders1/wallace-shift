@@ -249,8 +249,9 @@ export const LOGO_MATERIAL = {
 
 export const REFLECTION_PROXY_MATERIAL = LOGO_MATERIAL
 
-/** Clear dielectric variant; kept separate from the earlier smoked prototype. */
-export const GLASSMORPH_LOGO_MATERIAL = {
+/** Original clear optical base, also used by Frosted and Smoked Copper.
+ * Keep these inherited settings stable when refining the Glass comparison. */
+export const CLEAR_CRYSTAL_MATERIAL = {
   baseColor: [1, 1, 1],
   metalness: 0,
   roughness: .045,
@@ -266,6 +267,21 @@ export const GLASSMORPH_LOGO_MATERIAL = {
   /** Red-to-blue IOR difference; refraction scales with thickness, not pixels. */
   dispersion: .045,
   internalReflection: .65,
+} as const
+
+/** Iridescent Glass: a stronger dielectric film in reflected light, while
+ * the body retains the clear base's absorption and clean optical surface. */
+export const GLASSMORPH_LOGO_MATERIAL = {
+  ...CLEAR_CRYSTAL_MATERIAL,
+  /** Broaden studio glints without blurring the captured scene through glass.
+   * Lower reflected energy keeps the white cards from washing out the film. */
+  roughness: .14,
+  envMapIntensity: .70,
+  internalReflection: .42,
+  iridescence: 1,
+  iridescenceIOR: 1.78,
+  iridescenceThicknessRange: [220, 620],
+  dispersion: .065,
 } as const
 
 export type LogoAppearance = 'led' | 'electric' | 'glass' | 'chrome' | 'frosted' | 'pearl' | 'copper' | 'mercury' | 'cutlight'

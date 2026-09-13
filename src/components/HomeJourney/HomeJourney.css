@@ -1,0 +1,329 @@
+.home-journey {
+  --journey-heading-height: clamp(260px, 32vh, 340px);
+  --journey-header-offset: var(--site-header-height, 80px);
+  position: relative;
+  isolation: isolate;
+  background: var(--color-pearl);
+  color: var(--color-ink);
+}
+
+.home-journey__visual {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100svh;
+  margin-bottom: -100svh;
+  pointer-events: none;
+  opacity: var(--journey-visibility, 0);
+  overflow: clip;
+}
+.home-journey__visual > div:not(.home-journey__grip) { width: 100%; height: 100%; }
+.home-journey__loading-mark { position: absolute; left: var(--journey-x, 130%); top: var(--journey-y, 30%); width: var(--journey-width, 23%); height: auto; transform: translate(-50%, calc(-50% - 50% * var(--journey-anchor-ratio, 1))); filter: invert(calc(var(--journey-finish, 0) + var(--journey-services-surface, 1))); opacity: 0.6; }
+.home-journey__grip {
+  position: absolute;
+  left: var(--journey-x, 130%);
+  top: var(--journey-y, 30%);
+  width: var(--journey-width, 23%);
+  /* The finalized mark's own proportion, matching the closing scale guard. */
+  aspect-ratio: 1 / 0.549;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  touch-action: none;
+  cursor: grab;
+}
+/* The renderer sets this once the quiz chapter really owns the mark, so the
+   grab area can never sit over the answers, the footer or the process. */
+.home-journey[data-grip="true"] .home-journey__grip { pointer-events: auto; }
+html[data-journey-grabbing],
+html[data-journey-grabbing] body,
+html[data-journey-grabbing] .home-journey__grip { cursor: grabbing; }
+html[data-journey-grabbing] body { user-select: none; }
+
+.home-journey h2 { font-family: var(--font-serif); font-weight: 400; font-size: clamp(2.5rem, 4.5vw, 4.5rem); line-height: 1.06; letter-spacing: -0.025em; }
+.journey-kicker { color: var(--color-accent-deep); margin-bottom: 22px; }
+.journey-services { position: relative; background: #fff; }
+.journey-services__pin { position: relative; }
+.journey-services__header {
+  position: sticky;
+  top: var(--journey-header-offset);
+  z-index: 2;
+  height: var(--journey-heading-height);
+  border: 0;
+  background: var(--color-graphite);
+  color: var(--color-pearl);
+}
+.journey-services__header .journey-kicker { color: var(--color-accent); }
+.journey-services__heading-wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+.journey-services__header h2 { max-width: 18ch; }
+.journey-services__baseline, .journey-process__baseline { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
+.journey-static-mark { width: clamp(100px, 19vw, 240px); opacity: 0.85; height: auto; filter: invert(1); }
+.home-journey[data-live="true"] .journey-static-mark { visibility: hidden; }
+.journey-services__links { display: flex; gap: clamp(30px, 6vw, 100px); padding-block: 48px; }
+.journey-services__links a { display: flex; flex-direction: column; gap: 12px; font-size: 1rem; }
+.journey-services__links a > span:last-child { border-bottom: 1px solid rgb(var(--color-accent-deep-rgb) / 0.35); padding-bottom: 9px; }
+.journey-services__links .eyebrow { color: var(--color-accent-deep); }
+.journey-services a:focus-visible, .journey-process a:focus-visible { outline: 2px solid var(--color-accent-deep); outline-offset: 6px; }
+.journey-services__entrance { height: clamp(360px, 65svh, 720px); }
+
+.journey-process { position: relative; isolation: isolate; z-index: 1; background: #fff; }
+.journey-process__stage { position: sticky; top: var(--journey-header-offset); height: calc(100svh - var(--journey-header-offset)); overflow: clip; }
+.journey-process__panel { position: absolute; inset: 0; display: flex; align-items: flex-start; padding-block: var(--journey-panel-padding, clamp(70px, 13svh, 150px)); background: #fff; color: var(--color-ink); }
+.journey-process__panel > .container { width: 100%; }
+.journey-process__panel--intro { z-index: 0; }
+.journey-process__panel--find { z-index: 1; background: #cbdde4; transform: translateY(calc((1 - var(--journey-find-wipe, 0)) * 100%)); }
+.journey-process__panel--make { z-index: 2; background: #18353e; color: #edf4f6; transform: translateY(calc((1 - var(--journey-make-wipe, 0)) * 100%)); }
+.journey-process__panel--launch { z-index: 3; background: #202131; color: #f0eef8; transform: translateY(calc((1 - var(--journey-launch-wipe, 0)) * 100%)); }
+.journey-process__copy { width: min(52%, 640px); }
+.journey-process__copy h2 { width: fit-content; max-width: 17ch; }
+.journey-process__annotation { margin-top: 42px; font: 400 .7rem/1.5 var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: #64737c; }
+.journey-process__phase { display: flex; gap: 22px; align-items: center; text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; color: #365967; }
+.journey-process__phase span { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid currentColor; border-radius: 50%; letter-spacing: 0; }
+.journey-process__copy h3 { width: fit-content; max-width: 100%; font-family: var(--font-serif); font-weight: 400; font-size: clamp(2.5rem, 4.5vw, 4.5rem); letter-spacing: -0.025em; line-height: 1.06; margin-block: 25px 20px; }
+.journey-process__copy > p:not([class]) { max-width: 42ch; font-size: 1.1rem; line-height: 1.7; color: #354f5b; }
+.journey-process__panel--make .journey-process__phase,
+.journey-process__panel--make .journey-process__copy > p:not([class]) { color: #bcd5dc; }
+.journey-process__panel--launch .journey-process__phase,
+.journey-process__panel--launch .journey-process__copy > p:not([class]) { color: #c9c8df; }
+.journey-process__link { display: inline-flex; gap: 25px; margin-top: 38px; padding-bottom: 12px; border-bottom: 1px solid rgb(211 208 241 / .45); color: #e1def4; }
+.journey-process__panel--launch a:focus-visible { outline-color: #e1def4; }
+
+.home-journey .shift-quiz { isolation: auto; background: linear-gradient(180deg, #121d25, var(--color-ink) 70%); padding-block: clamp(110px, 16vh, 180px); }
+.home-journey .shift-quiz__content { z-index: 4; }
+.home-journey .shift-quiz__quiz-col { max-width: min(52%, 620px); }
+.home-journey .shift-quiz__headline { font-family: var(--font-serif); font-weight: 400; font-size: clamp(2.6rem, 4.5vw, 4.5rem); text-transform: none; line-height: 1.08; letter-spacing: -0.025em; }
+.home-journey .shift-quiz__mark { display: none; }
+.home-journey .shift-quiz__eyebrow { color: var(--color-accent); }
+.home-journey .shift-quiz__supporting { color: #afbec8; }
+
+/* Flat ink, like the ground under the /contact sunset. The radial that used
+   to give this section some tone was lifting the upper left, which is exactly
+   where the reference is at its darkest — the dawn supplies the atmosphere
+   now, and it cannot read against a ground that is already lit. */
+.home-journey__closing { position: relative; color: var(--color-pearl); background: var(--color-ink); }
+/* One composed screen, not two. The enquiry card holds the upper band and the
+   mark, its water and the dawn hold the lower one; anything taller than this
+   leaves a screen of empty ground between the card scrolling away and the
+   footer arriving. The footer then sits straight on the waterline. */
+/* The closing is exactly one screen: the section takes the viewport less the
+   measured footer, so there is nothing to scroll past it.
+
+   The enquiry block is anchored to the TOP of that screen, directly under
+   navigation. Reserving a band at the bottom and pushing the block up against
+   it made the block's position depend on its own height, which is why the
+   heading and the card kept ending up above the viewport at full scroll. This
+   way their top edge is fixed by construction, and the band the mark stands in
+   is simply whatever is left — which the renderer already measures. */
+.home-journey__closing .contact-cta--scene {
+  min-height: calc(100svh - var(--journey-footer-height, 240px));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-block: calc(var(--journey-header-offset) + clamp(18px, 2.4vh, 34px)) 0;
+}
+/* Both columns start on one line at the top of the composition. The card is
+   the taller of the two and the copy block now carries its own alternatives,
+   so a shared top edge reads as a grid where a shared bottom edge read as a
+   headline floating over empty ground. */
+.home-journey__closing .contact-cta__intro { align-self: start; }
+/* The enquiry is the substantial half of this section, so it takes the
+   larger column rather than an even split. */
+@media (min-width: 900px) {
+  .home-journey__closing .contact-cta__inner { grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); }
+}
+/* The card, the band and the footer have to share one screen. Every value
+   below is reclaimed so the card's head clears navigation at the bottom of
+   the page rather than being cut off behind it. */
+.home-journey__closing .site-footer { padding-block: clamp(18px, 2vw, 26px); }
+.home-journey__closing .site-footer__inner { gap: clamp(12px, 1.6vw, 16px); }
+.home-journey__closing .contact-form { gap: 15px; }
+.home-journey__closing .contact-form__field { gap: 6px; }
+.home-journey__closing .contact-form__field textarea { height: 86px; min-height: 86px; }
+.home-journey__closing .contact-form__submit { margin-top: 4px; }
+.home-journey__closing .contact-cta__inner { z-index: 4; }
+/* One measure for the left column: the supporting line is set narrower than
+   the headline above it and balanced, so the block reads as a single shape
+   with one right edge instead of a wide line hanging off a short one. */
+.home-journey__closing .contact-cta__supporting { color: #afbec8; max-width: 34ch; text-wrap: balance; }
+.home-journey__closing .contact-cta__headline { text-wrap: balance; }
+/* Frosted glass over the dawn rather than a dark plate on top of it: a low
+   opacity so the sky reads through, a light-catching top edge, a hairline rim
+   and a soft cast shadow lifting the card off the water. This is the one
+   treated surface on the page, not a pattern the rest of the site adopts. */
+.home-journey__closing .contact-cta__form-wrap {
+  position: relative;
+  padding: 22px 24px;
+  border: 0;
+  border-radius: 24px;
+  background:
+    linear-gradient(152deg, rgb(226 238 247 / 0.11), rgb(226 238 247 / 0.02) 44%, rgb(8 13 18 / 0.12)),
+    rgb(10 16 22 / 0.42);
+  backdrop-filter: blur(30px) saturate(135%);
+  -webkit-backdrop-filter: blur(30px) saturate(135%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    inset 0 0 0 1px rgb(226 238 247 / 0.10),
+    0 30px 70px rgb(2 5 9 / 0.5);
+}
+/* No ground of its own: the composition runs behind the footer to the bottom
+   of the page. The water below the horizon is the darkest thing in the frame,
+   so the footer's type keeps its contrast without a plate under it. */
+.home-journey__closing .site-footer { position: relative; z-index: 4; background: transparent; border-top-color: rgb(214 218 223 / 0.10); }
+.home-journey__still-water { position: absolute; inset: 24% 0 0; overflow: hidden; opacity: 0.35; pointer-events: none; background: radial-gradient(ellipse at 24% 43%, rgb(var(--color-accent-rgb) / 0.15), transparent 48%); }
+.home-journey__still-water img { position: absolute; top: 26%; left: 14%; width: 22%; height: auto; opacity: 0.6; filter: drop-shadow(0 10px 20px rgb(var(--color-accent-rgb) / 0.22)); }
+.home-journey[data-live="true"] .home-journey__still-water { display: none; }
+
+/* --- Stage art ---------------------------------------------------------- *
+ * The mark in the state each stage leaves it in, for the panels the live
+ * scene does not reach. It is the finalized mark and nothing else: the shape
+ * is the approved SVG used as a mask, so what changes between stages is the
+ * light and the ground behind it, never the geometry. */
+.journey-stage-art { position: relative; display: none; }
+.home-journey[data-live="false"] .journey-stage-art {
+  display: block; flex: 1; min-height: clamp(190px, 34svh, 360px);
+  margin-top: clamp(26px, 5vw, 46px);
+}
+.journey-stage-art__field, .journey-stage-art__mark { position: absolute; display: block; }
+.journey-stage-art__field { inset: 0; }
+.journey-stage-art__mark {
+  inset: 7% 9%;
+  -webkit-mask: url('/brand/wallace-shift-logo-black.svg') center / contain no-repeat;
+  mask: url('/brand/wallace-shift-logo-black.svg') center / contain no-repeat;
+}
+
+/* 01 Identify — the object surveyed: the mark read back as fine measure
+   lines, on a horizon and one diagonal at the brand angle. */
+.journey-stage-art--find .journey-stage-art__mark {
+  background-image: repeating-linear-gradient(to bottom,
+    rgb(9 30 39 / .62) 0 1px, transparent 1px 8px);
+}
+.journey-stage-art--find .journey-stage-art__field {
+  background-image:
+    linear-gradient(to bottom, transparent calc(62% - 1px),
+      rgb(9 30 39 / .20) calc(62% - 1px) 62%, transparent 62%),
+    linear-gradient(104deg, transparent calc(50% - .5px),
+      rgb(9 30 39 / .13) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px));
+}
+
+/* 02 Transform — the shift crossing the object: one diagonal seam with the
+   old light behind it and azure ahead of it. The mark stays whole; only what
+   falls on it changes. */
+.journey-stage-art--make .journey-stage-art__mark {
+  background-image: linear-gradient(112deg,
+    rgb(188 213 220 / .30) 0 40%,
+    rgb(237 244 246 / .95) 40% 42%,
+    rgb(var(--color-accent-rgb) / .52) 42%);
+  /* Wider than the box so the seam has somewhere to travel, and placed so it
+     crosses the middle of the mark rather than clipping its leading edge. */
+  background-size: 220% 100%;
+  background-position: 34% 0;
+}
+.journey-stage-art--make .journey-stage-art__field {
+  background-image: linear-gradient(112deg, transparent 42%,
+    rgb(214 233 238 / .06) 42% 62%, transparent 62%);
+}
+
+/* 03 Resolve — the object settled and lit, on a horizon: the same language as
+   the closing section, without repeating its water. */
+.journey-stage-art--launch .journey-stage-art__mark {
+  background-image: linear-gradient(to bottom,
+    rgb(240 238 248 / .92), rgb(240 238 248 / .42));
+}
+.journey-stage-art--launch .journey-stage-art__field {
+  background-image:
+    radial-gradient(58% 46% at 50% 46%, rgb(var(--color-accent-rgb) / .20), transparent 70%),
+    linear-gradient(to bottom, transparent calc(78% - 1px),
+      rgb(214 218 240 / .28) calc(78% - 1px) 78%, transparent 78%);
+}
+
+/* Slow enough to be noticed only on a second look. The panel's own arrival is
+   the motion that carries the section; this sits under it. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-journey[data-live="false"] .journey-stage-art--find .journey-stage-art__mark {
+    animation: journey-art-survey 13s ease-in-out infinite alternate;
+  }
+  .home-journey[data-live="false"] .journey-stage-art--make .journey-stage-art__mark {
+    animation: journey-art-shift 17s ease-in-out infinite alternate;
+  }
+  .home-journey[data-live="false"] .journey-stage-art--launch .journey-stage-art__field {
+    animation: journey-art-settle 15s ease-in-out infinite alternate;
+  }
+}
+@keyframes journey-art-survey { from { background-position-y: 0; } to { background-position-y: 8px; } }
+@keyframes journey-art-shift { from { background-position-x: 42%; } to { background-position-x: 26%; } }
+@keyframes journey-art-settle { from { opacity: .78; } to { opacity: 1; } }
+
+.home-journey[data-scroll="false"] .journey-services__header { position: relative; top: auto; }
+.home-journey[data-scroll="false"] .journey-services__entrance { height: 0; }
+.home-journey[data-live="false"] .journey-process__stage { position: relative; top: auto; height: auto; overflow: visible; }
+.home-journey[data-live="false"] .journey-process__panel { position: relative; transform: none; padding-block: clamp(70px, 12vw, 110px); }
+.home-journey[data-live="false"] .journey-process__copy { width: min(100%, 680px); }
+/* The copy sits at the top and the stage art takes whatever is left, so a
+   panel reads as a composed frame rather than copy with space under it. */
+.home-journey[data-live="false"] .journey-process__step { align-items: stretch; }
+.home-journey[data-live="false"] .journey-process__step > .container { display: flex; flex-direction: column; }
+.home-journey[data-live="false"] .shift-quiz__quiz-col { max-width: 680px; }
+
+@media (max-width: 1023px) {
+  .home-journey { --journey-heading-height: auto; }
+  .journey-services__header { padding-block: 65px; }
+  .journey-services__links { flex-wrap: wrap; }
+  .home-journey .shift-quiz__quiz-col { max-width: 100%; }
+  .home-journey__closing .contact-cta--scene { min-height: 0; padding-bottom: 120px; }
+  .home-journey__closing .site-footer { background: var(--color-ink); }
+  .home-journey__closing .contact-cta__form-wrap { padding: 22px; }
+  .home-journey__still-water { inset: 0; opacity: 0.2; }
+  .home-journey__still-water img { top: auto; bottom: 26%; left: 12%; width: 38%; }
+
+  /* The approach panels stack the way the pricing packages do: each fills the
+     frame, holds once its own end reaches the bottom of it, and the next rides
+     up over it. The panels already carry the z-order and the opaque grounds
+     the live scene wipes between, so this is the same layered look driven by
+     scroll position instead of by the director.
+
+     The hold is `frame - the panel's own height`, measured per panel, so a
+     panel taller than the frame is read all the way through before it stops.
+     `min()` keeps the intro — which is only as tall as its heading — against
+     the header rather than pushing it down the screen. */
+  .home-journey[data-live="false"] .journey-process__panel {
+    position: sticky;
+    /* The live stage sets `inset: 0` to make every panel fill one frame. The
+       `bottom: 0` in that shorthand is a second sticky constraint, and it pins
+       each panel's bottom edge to the bottom of the frame — which drags all of
+       them up onto each other from the moment the section appears. Cleared
+       before the one edge this needs is set. */
+    inset: auto;
+    top: min(
+      var(--journey-header-offset),
+      calc(100svh - var(--journey-panel-height, 0px))
+    );
+  }
+  .home-journey[data-live="false"] .journey-process__step {
+    min-height: calc(100svh - var(--journey-header-offset));
+  }
+  /* A panel holds only while something is coming up behind it. Nothing
+     follows the last one inside the section to ride over it, so it leaves
+     with the page and the quiz below takes over. */
+  .home-journey[data-live="false"] .journey-process__panel--launch {
+    position: relative;
+    /* And the edge goes with the hold: a relatively positioned box with a
+       `top` is displaced by it, which would push the last panel down the page
+       by the height of the header. */
+    top: auto;
+  }
+}
+@media (max-width: 600px) {
+  .journey-services__heading-wrap { align-items: flex-start; }
+  .journey-static-mark { width: 58px; margin-top: 52px; }
+  .home-journey h2 { font-size: clamp(2.1rem, 7.2vw, 3rem); }
+  .journey-services__links { flex-direction: column; gap: 30px; }
+  .journey-services__links a { align-self: flex-start; }
+  .journey-process__copy h3 { font-size: 2.5rem; }
+  .home-journey__closing .contact-cta__form-wrap { padding: 20px 18px; border-radius: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-process__phase span { transition: none; }
+  /* The live scene never mounts under reduced motion, but keep the grab
+     affordance from appearing if that gate is ever widened. */
+  .home-journey__grip { display: none; }
+}

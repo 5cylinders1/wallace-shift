@@ -1,29 +1,14 @@
-import { useId, useState, type FormEvent } from 'react'
-import { submitContactRequest } from '../../lib/contactAdapter'
+import { useId, type FormEvent } from 'react'
+import { useHeroContactState } from './useHeroContactState'
 import './HeroContactCard.css'
 
-type Status = 'idle' | 'submitting' | 'sent' | 'not_configured' | 'error'
-
 export function HeroContactCard() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<Status>('idle')
+  const { name, setName, email, setEmail, status, submit } = useHeroContactState()
   const statusId = useId()
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setStatus('submitting')
-
-    const result = await submitContactRequest({ name, email, message: '' })
-
-    if (result.ok) {
-      setStatus('sent')
-      setName('')
-      setEmail('')
-      return
-    }
-
-    setStatus(result.reason === 'not_configured' ? 'not_configured' : 'error')
+    await submit()
   }
 
   return (

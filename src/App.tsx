@@ -11,7 +11,7 @@ import { ContactPage } from './pages/ContactPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { scrollToRouteTarget, useRoutePath } from './lib/router'
-import { WATER_HERO_EXPERIMENT_PATH } from './content/routeMeta'
+import { PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH } from './content/routeMeta'
 
 const pages: Record<string, () => ReactElement> = {
   '/': HomePage,
@@ -27,12 +27,10 @@ const pages: Record<string, () => ReactElement> = {
 /**
  * Experimental routes, kept apart from the site proper on purpose.
  *
- * They are lazy so their dependencies — three.js, the GLB, the shaders —
- * land in their own chunk and are never fetched by anyone who did not ask
- * for the experiment by URL, and they render without the site header and
- * footer because they are full-bleed stages rather than pages of the
- * site. Neither affects the routes in `pages` above, which take the same
- * path through this component that they always have.
+ * They load on demand and render without the site header and footer.
+ * The homepage separately lazy-loads the water scene for eligible desktops;
+ * mobile visitors keep the existing video and do not load its WebGL chunk.
+ * The experiment still owns its review controls and noindex metadata.
  */
 const WaterHeroExperimentPage = lazy(() =>
   import('./pages/WaterHeroExperimentPage').then((module) => ({
@@ -40,8 +38,15 @@ const WaterHeroExperimentPage = lazy(() =>
   })),
 )
 
+const PitStopExperimentPage = lazy(() =>
+  import('./pages/PitStopExperimentPage').then((module) => ({
+    default: module.PitStopExperimentPage,
+  })),
+)
+
 const experiments: Record<string, ComponentType> = {
   [WATER_HERO_EXPERIMENT_PATH]: WaterHeroExperimentPage,
+  [PIT_STOP_EXPERIMENT_PATH]: PitStopExperimentPage,
 }
 
 function App() {
@@ -83,7 +88,7 @@ function App() {
       <main id="main">
         <Page />
       </main>
-      <SiteFooter />
+      {path !== '/' && <SiteFooter />}
     </>
   )
 }

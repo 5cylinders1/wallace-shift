@@ -84,6 +84,10 @@
   gap: clamp(24px, 3vw, 48px);
 }
 
+.audit__status:empty {
+  display: none;
+}
+
 .audit__alts {
   list-style: none;
   margin: 16px 0 0;
@@ -252,4 +256,154 @@
 
 .audit__panel--error .audit__panel-label {
   color: var(--color-ink);
+}
+
+/* The hero carries the stage heading; this variant keeps the useful part
+   within easy reach of it, including on a short laptop screen. */
+.audit--compact {
+  margin-top: 22px;
+}
+
+.audit--compact .audit__signals {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.audit--compact .audit__signals li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--color-silver);
+  font-size: 0.6875rem;
+}
+
+.audit--compact .audit__signals svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--color-ember);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.audit--compact .audit__top {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.audit--compact .audit__form {
+  max-width: none;
+}
+
+.audit--compact .audit__label {
+  color: var(--color-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+}
+
+.audit--compact .audit__row {
+  flex-direction: column;
+  gap: 9px;
+}
+
+.audit--compact .audit__input {
+  flex: initial;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 13px;
+  color: var(--color-soft-white);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(214, 218, 223, 0.3);
+  border-radius: 0;
+  font-size: 1rem;
+}
+
+.audit--compact .audit__input::placeholder {
+  color: var(--color-muted);
+}
+
+.audit--compact .audit__input:focus-visible {
+  outline: 1px solid var(--color-ember);
+  outline-offset: 2px;
+  border-color: var(--color-ember);
+}
+
+.audit--compact .audit__submit {
+  width: 100%;
+  min-height: 46px;
+  color: var(--color-ink);
+  background: var(--color-ember);
+  border-color: var(--color-ember);
+  font-size: 0.8125rem;
+}
+
+.audit--compact .audit__submit:disabled {
+  opacity: 0.62;
+}
+
+.audit--compact .audit__submit:hover:not(:disabled),
+.audit--compact .audit__submit:focus-visible:not(:disabled) {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+.audit--compact .audit__submit:focus-visible {
+  outline: 2px solid var(--color-soft-white);
+  outline-offset: 3px;
+}
+
+.audit--compact .audit__alts {
+  margin-top: 3px;
+  gap: 0;
+}
+
+.audit--compact .audit__alts a {
+  padding-block: 4px;
+  min-height: 26px;
+  color: var(--color-muted);
+  border-bottom: none;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  text-decoration: underline;
+  text-decoration-color: rgba(214, 218, 223, 0.3);
+  text-underline-offset: 3px;
+}
+
+.audit--compact .audit__alts a:hover,
+.audit--compact .audit__alts a:focus-visible {
+  color: var(--color-soft-white);
+  text-decoration-color: var(--color-ember);
+}
+
+.audit--compact .audit__panel {
+  padding: 16px 0 0;
+  border-left: none;
+  border-top: 1px solid rgba(214, 218, 223, 0.18);
+}
+
+.audit--compact .audit__panel-label {
+  margin-bottom: 8px;
+  color: var(--color-ember);
+  font-size: 0.625rem;
+}
+
+.audit--compact .audit__running-body {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}
+
+.audit--compact .audit__scroll-on {
+  margin-top: 12px;
+  color: var(--color-soft-white);
+  font-size: 0.75rem;
+}
+
+.audit--compact .audit__panel--done .audit__scroll-on {
+  margin-top: 0;
 }

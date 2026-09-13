@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
 import type { ServiceItem } from '../../content/siteConfig'
-import { serviceMedia } from '../../content/mediaAssets'
+import { serviceMedia, type AmbientMediaAsset } from '../../content/mediaAssets'
 import { OutcomeField } from './OutcomeField'
 
 interface ServiceRowProps {
@@ -8,6 +8,7 @@ interface ServiceRowProps {
   isActive: boolean
   reducedMotion: boolean
   isMobile: boolean
+  media?: AmbientMediaAsset
   onPointerEnter: () => void
   onPointerLeave: () => void
   onFocus: () => void
@@ -22,6 +23,7 @@ export const ServiceRow = forwardRef<HTMLButtonElement, ServiceRowProps>(
       isActive,
       reducedMotion,
       isMobile,
+      media,
       onPointerEnter,
       onPointerLeave,
       onFocus,
@@ -54,7 +56,7 @@ export const ServiceRow = forwardRef<HTMLButtonElement, ServiceRowProps>(
           isActive={isActive}
           reducedMotion={reducedMotion}
           isMobile={isMobile}
-          media={serviceMedia[item.outcomeWord]}
+          media={media ?? serviceMedia[item.outcomeWord]}
         />
       </button>
     )

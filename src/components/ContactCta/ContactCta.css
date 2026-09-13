@@ -7,6 +7,11 @@
   overflow: hidden;
 }
 
+.contact-cta--scene {
+  isolation: auto;
+  background: transparent;
+}
+
 /* Generated ember-horizon loop behind the closing CTA — the dawn-side
    bookend to the hero's night water. Anchored to the bottom so the
    horizon line stays in frame at any section height. */
@@ -50,3 +55,48 @@
   font-size: clamp(1rem, 1.8vw, 1.125rem);
   max-width: 42ch;
 }
+
+/* The card's place in the grid. It never moves, which is what lets the card's
+   geometry be measured while the card itself is still sliding in. */
+.contact-cta__form-slot { min-width: 0; }
+
+/* Real alternatives for a reader who will not fill in a form, and the block
+   that keeps the left column from being a headline over empty ground. */
+.contact-cta__alternatives {
+  margin-top: clamp(28px, 4vh, 44px);
+  padding-top: clamp(20px, 2.6vh, 28px);
+  border-top: 1px solid rgb(var(--color-accent-rgb) / 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 34ch;
+}
+
+.contact-cta__alternatives .eyebrow { color: var(--color-accent); }
+
+.contact-cta__email {
+  font-size: clamp(1rem, 1.6vw, 1.0625rem);
+  color: var(--color-silver);
+}
+
+.contact-cta__email a {
+  color: var(--color-soft-white);
+  border-bottom: 1px solid rgb(var(--color-accent-rgb) / 0.4);
+  padding-bottom: 2px;
+  transition: border-color var(--duration-hover) var(--ease-out-soft);
+}
+
+.contact-cta__email a:hover { border-bottom-color: var(--color-accent); }
+
+.contact-cta__pricing-link {
+  display: inline-flex;
+  gap: 14px;
+  font-size: 0.9375rem;
+  color: var(--color-silver);
+  border-bottom: 1px solid rgb(var(--color-accent-rgb) / 0.28);
+  padding-bottom: 8px;
+  transition: color var(--duration-hover) var(--ease-out-soft);
+}
+
+.contact-cta__pricing-link:hover { color: var(--color-soft-white); }

@@ -42,6 +42,13 @@
    --------------------------------------------------------------------- */
 
 .tier {
+  /* The card's three text roles, named so a card sitting on a surface other
+     than the page ground can restate them. Nothing but the mobile stack does;
+     these resolve to the same values they were written as. */
+  --tier-body: #3d4143;
+  --tier-quiet: var(--color-muted-on-bone);
+  --tier-accent: var(--color-ember-deep);
+
   position: relative;
   display: flex;
   flex-direction: column;
@@ -52,7 +59,6 @@
 /* Marked by a rule down the inside edge; the other two are never dimmed. */
 .tier--recommended {
   padding-left: clamp(16px, 2.5vw, 24px);
-  --color-ember-deep: #b33918;
 }
 
 .tier--recommended::before {
@@ -62,7 +68,7 @@
   bottom: clamp(26px, 3vw, 36px);
   left: 0;
   width: 1px;
-  background: rgba(179, 57, 24, 0.4);
+  background: rgb(var(--color-accent-deep-rgb) / .4);
 }
 
 .tier__bar {
@@ -77,7 +83,7 @@
 
 .tier--recommended .tier__bar {
   height: 3px;
-  background: var(--color-ember-deep);
+  background: var(--tier-accent);
 }
 
 .tier__badge {
@@ -85,7 +91,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-ember-deep);
+  color: var(--tier-accent);
 }
 
 .tier__badge:empty {
@@ -103,7 +109,7 @@
   font-family: var(--font-serif);
   font-size: 1.125rem;
   line-height: 1;
-  color: var(--color-ember-deep);
+  color: var(--tier-accent);
   margin-bottom: 2px;
 }
 
@@ -119,12 +125,12 @@
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: #3d4143;
+  color: var(--tier-body);
 }
 
 .tier__tagline {
   font-size: 0.875rem;
-  color: var(--color-muted-on-bone);
+  color: var(--tier-quiet);
 }
 
 .tier__proof {
@@ -140,7 +146,7 @@
   font-weight: 600;
   line-height: 1.45;
   color: var(--color-ink);
-  border-left: 2px solid var(--color-ember-deep);
+  border-left: 2px solid var(--tier-accent);
   padding-left: 10px;
 }
 
@@ -156,7 +162,7 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-muted-on-bone);
+  color: var(--tier-quiet);
 }
 
 .tier__price-value {
@@ -184,7 +190,7 @@
   gap: 4px;
   font-size: 0.8125rem;
   line-height: 1.5;
-  color: #3d4143;
+  color: var(--tier-body);
 }
 
 .tier__cta {
@@ -204,8 +210,8 @@
 }
 
 .tier--recommended .tier__cta {
-  color: var(--color-ember-deep);
-  border-bottom-color: var(--color-ember-deep);
+  color: var(--tier-accent);
+  border-bottom-color: var(--tier-accent);
 }
 
 .tier__cta-arrow {
@@ -214,8 +220,8 @@
 }
 
 .tier__cta:hover {
-  color: var(--color-ember-deep);
-  border-bottom-color: var(--color-ember-deep);
+  color: var(--tier-accent);
+  border-bottom-color: var(--tier-accent);
 }
 
 .tier__cta:hover .tier__cta-arrow,
@@ -229,7 +235,7 @@
   border-top: 1px solid rgba(6, 7, 8, 0.14);
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: #3d4143;
+  color: var(--tier-body);
 }
 
 .tier__best-for {
@@ -242,14 +248,14 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-muted-on-bone);
+  color: var(--tier-quiet);
   margin-bottom: 4px;
 }
 
 .tier__best-for p {
   font-size: 0.875rem;
   line-height: 1.5;
-  color: #3d4143;
+  color: var(--tier-body);
 }
 
 .tier__scope {
@@ -264,12 +270,12 @@
   padding-block: 10px;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: #3d4143;
+  color: var(--tier-body);
   break-inside: avoid;
 }
 
 .tier__scope-item--inherited {
-  color: var(--color-ember-deep);
+  color: var(--tier-accent);
   font-weight: 600;
 }
 
@@ -284,7 +290,7 @@
 .tier__scope-note p {
   font-size: 0.75rem;
   line-height: 1.55;
-  color: var(--color-muted-on-bone);
+  color: var(--tier-quiet);
 }
 
 @media (max-width: 599px) {

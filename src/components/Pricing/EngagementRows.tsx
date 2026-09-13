@@ -1,4 +1,7 @@
 import type { EngagementGroup } from '../../content/pricing'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
+import { PricingPackage } from './PricingPackage'
+import { packageFromEngagement } from './pricingPackageData'
 import { Reveal } from '../Reveal/Reveal'
 import './EngagementRows.css'
 
@@ -16,7 +19,12 @@ interface EngagementPanelProps {
  * are sequential parts of one engagement, not competing packages — there
  * is nothing to read column-against-column.
  */
+/** Below this the area presents as three packages, like the website tiers;
+ *  above it the established row layout is unchanged. */
+const PACKAGE_QUERY = '(max-width: 1023px)'
+
 export function EngagementPanel({ group }: EngagementPanelProps) {
+  const asPackages = useMediaQuery(PACKAGE_QUERY)
   return (
     <section className="engagement-group" id={group.id}>
       <div className="container">
@@ -32,6 +40,18 @@ export function EngagementPanel({ group }: EngagementPanelProps) {
           </Reveal>
         </div>
 
+        {asPackages ? (
+          <div className="tier-table__grid engagement-group__packages">
+            {group.items.map((item, index) => (
+              <PricingPackage
+                key={item.title}
+                data={packageFromEngagement(group.id, item)}
+                delay={index * 0.05}
+                revealY={REVEAL_Y}
+              />
+            ))}
+          </div>
+        ) : (
         <div className="engagement-group__rows">
           {group.items.map((item, index) => (
             <Reveal
@@ -68,9 +88,10 @@ export function EngagementPanel({ group }: EngagementPanelProps) {
               </div>
             </Reveal>
           ))}
-        </div>
+          </div>
+        )}
 
-        <Reveal y={REVEAL_Y}>
+        <Reveal y={REVEAL_Y} className="engagement-group__outro">
           <p className="engagement-group__note">{group.note}</p>
         </Reveal>
       </div>

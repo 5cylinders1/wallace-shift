@@ -25,6 +25,10 @@ const RESEND_ENDPOINT = 'https://api.resend.com/emails'
 const MAX_NAME = 120
 const MAX_EMAIL = 200
 const MAX_MESSAGE = 5000
+/** The structured fields are chosen from short lists, so anything longer
+ *  than this did not come from the form and is dropped rather than relayed. */
+const MAX_CHOICE = 80
+const MAX_URL = 300
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
@@ -40,6 +44,15 @@ function cleanField(value: unknown, max: number): string | null {
   const trimmed = value.trim()
   if (trimmed === '' || trimmed.length > max) return null
   return trimmed
+}
+
+/** Optional context. Absent, unanswered or over-length all become empty, so
+ *  a missing answer never blocks an enquiry. Line breaks are collapsed: these
+ *  are single-line choices, and they are rendered into a plain-text body
+ *  where a stray newline would forge another labelled line. */
+function optionalField(value: unknown, max: number): string {
+  const cleaned = cleanField(value, max)
+  return cleaned === null ? '' : cleaned.replace(/[\r\n]+/g, ' ')
 }
 
 export default async function handler(request: Request): Promise<Response> {
@@ -75,6 +88,12 @@ export default async function handler(request: Request): Promise<Response> {
   const name = cleanField(body.name, MAX_NAME)
   const email = cleanField(body.email, MAX_EMAIL)
   const message = cleanField(body.message, MAX_MESSAGE)
+  const website = body.noWebsite === true
+    ? 'No website yet'
+    : optionalField(body.website, MAX_URL)
+  const service = optionalField(body.service, MAX_CHOICE)
+  const packageChoice = optionalField(body.package, MAX_CHOICE)
+  const budget = optionalField(body.budget, MAX_CHOICE)
 
   if (!name || !email || !message) {
     return json({ ok: false, error: 'invalid' }, 400)
@@ -101,7 +120,17 @@ export default async function handler(request: Request): Promise<Response> {
         // rather than the noreply sender.
         reply_to: email,
         subject: `New enquiry from ${name}`,
-        text: `Name: ${name}\nEmail: ${email}\n\n${message}\n`,
+        text: [
+          `Name: ${name}`,
+          `Email: ${email}`,
+          ...(website ? [`Website: ${website}`] : []),
+          ...(service ? [`Service: ${service}`] : []),
+          ...(packageChoice ? [`Package: ${packageChoice}`] : []),
+          ...(budget ? [`Budget: ${budget}`] : []),
+          '',
+          message,
+          '',
+        ].join('\n'),
       }),
     })
   } catch {

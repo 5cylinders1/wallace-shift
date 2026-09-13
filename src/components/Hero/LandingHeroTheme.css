@@ -1,0 +1,181 @@
+/* The live Glass opening gets its own quiet palette. These tokens stop at
+   the opening UI: the video, portfolio looks and bone/ember wipe keep theirs. */
+.water-hero-shell--landing .water-hero__landing-ui {
+  --color-soft-white: #e8eef1;
+  --color-silver: #c3d0d8;
+  --color-muted: #adbec9;
+  --color-ember: var(--color-accent);
+}
+
+.water-hero-shell--landing .water-hero__landing-content {
+  position: relative;
+}
+
+/* The former video supplied its own dark ground for the text. Give only
+   the left column that support; leave the logo and its fog unobstructed.
+   This belongs to the fading copy group, so it also leaves on descent. */
+.water-hero-shell--landing .water-hero__landing-content::before {
+  content: '';
+  position: absolute;
+  inset: -12svh 0;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    rgb(4 9 14 / .76),
+    rgb(4 9 14 / .58) 24%,
+    rgb(4 9 14 / .14) 35%,
+    transparent 42%);
+  mask-image: linear-gradient(transparent, #000 14%, #000 82%, transparent);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__headline {
+  color: var(--color-soft-white);
+  font-size: clamp(3rem, 4.3vw, 4.5rem);
+  text-shadow: 0 2px 18px rgb(4 9 14 / .18);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__eyebrow,
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__eyebrow {
+  font-weight: 500;
+  letter-spacing: .11em;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__supporting {
+  color: var(--color-silver);
+  font-size: .875rem;
+  line-height: 1.65;
+  text-shadow: 0 1px 8px rgb(4 9 14 / .35);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__cta-primary {
+  background: #d3e0e5;
+  color: #131d25;
+  font-weight: 500;
+  font-size: .875rem;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1.65em;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__cta-primary:hover {
+  box-shadow: 0 6px 24px rgb(169 199 215 / .12);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__cta-secondary {
+  font-weight: 500;
+  font-size: .875rem;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__cta-secondary::after {
+  background: rgb(195 208 216 / .34);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card {
+  background: linear-gradient(150deg, rgb(19 27 34 / .86), rgb(8 14 20 / .92));
+  border-color: rgb(185 206 219 / .18);
+  box-shadow: inset 0 1px 0 rgb(226 238 245 / .035), 0 16px 48px rgb(0 0 0 / .16);
+  backdrop-filter: blur(14px) saturate(.8);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__heading {
+  color: #dce6ec;
+  font-size: clamp(1.75rem, 2.1vw, 2rem);
+  line-height: 1.18;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__count {
+  color: #93a6b3;
+  font-size: .6875rem;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__field label {
+  color: #b6c5cf;
+  font-weight: 500;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__field input {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  border-bottom-color: #718996;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__field input::placeholder {
+  font-family: var(--font-sans);
+  color: #a4b5c1;
+  opacity: 1;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__field input:focus {
+  border-bottom-color: var(--color-ember);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__status {
+  color: #adbec9;
+  line-height: 1.6;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__submit {
+  background: #14222d;
+  color: #dce9f0;
+  border: 1px solid #718996;
+  transition:
+    background var(--duration-hover) var(--ease-out-soft),
+    border-color var(--duration-hover) var(--ease-out-soft),
+    color var(--duration-hover) var(--ease-out-soft),
+    transform var(--duration-hover) var(--ease-out-soft),
+    opacity var(--duration-hover) var(--ease-out-soft);
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__submit:hover:not(:disabled),
+.water-hero-shell--landing .water-hero__landing-ui .hero-contact-card__submit:focus-visible:not(:disabled) {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #131d25;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui :focus-visible {
+  outline-color: #c4dce9;
+  outline-offset: 4px;
+}
+
+.water-hero-shell--landing .water-hero__landing-ui .hero__scroll-cue {
+  color: #acbdc8;
+  font-weight: 400;
+  letter-spacing: .2em;
+}
+
+/* Presence-scoped because the production header sits outside the hero.
+   Only its opening state changes; video/failure routes and the solid header
+   retain the site's treatment. Keep filters off the fixed-menu ancestor. */
+body:has(.water-hero-shell--landing .water-hero__landing-ui) .site-header:not(.site-header--solid) {
+  --color-ember: var(--color-accent);
+  --color-soft-white: #e8eef1;
+  --color-silver: #c3d0d8;
+}
+
+body:has(.water-hero-shell--landing .water-hero__landing-ui) .site-header:not(.site-header--solid) .site-header__brand {
+  font-weight: 600;
+}
+
+body:has(.water-hero-shell--landing .water-hero__landing-ui) .site-header:not(.site-header--solid) .site-header__nav ul {
+  background: rgb(13 20 26 / .22);
+  border-color: rgb(185 206 219 / .13);
+}
+
+body:has(.water-hero-shell--landing .water-hero__landing-ui) .site-header:not(.site-header--solid) .site-header__nav a {
+  font-weight: 400;
+}
+
+body:has(.water-hero-shell--landing .water-hero__landing-ui) .site-header:not(.site-header--solid) .site-header__cta {
+  font-weight: 500;
+  border-bottom-color: rgb(185 206 219 / .28);
+}
+
+body:has(.water-hero-shell--landing .water-hero__landing-ui) .site-header:not(.site-header--solid) .site-header__cta:hover,
+body:has(.water-hero-shell--landing .water-hero__landing-ui) .site-header:not(.site-header--solid) .site-header__cta:focus-visible {
+  color: var(--color-ember);
+  border-bottom-color: var(--color-ember);
+}

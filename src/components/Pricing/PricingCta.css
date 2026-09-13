@@ -16,9 +16,9 @@
   transform: translateX(-50%);
   background: radial-gradient(
     circle,
-    rgba(232, 84, 39, 0.12) 0%,
-    rgba(232, 84, 39, 0.04) 40%,
-    rgba(232, 84, 39, 0) 70%
+    rgb(var(--color-accent-rgb) / 0.12) 0%,
+    rgb(var(--color-accent-rgb) / 0.04) 40%,
+    rgb(var(--color-accent-rgb) / 0) 70%
   );
   pointer-events: none;
 }
@@ -49,7 +49,7 @@
 }
 
 /* Matches the homepage hero's primary action, including the diagonal
-   ember wipe on hover — one button treatment across the site. */
+   accent wipe on hover — one button treatment across the site. */
 .pricing-cta__button {
   position: relative;
   overflow: hidden;
@@ -84,5 +84,5 @@
 }
 
 .pricing-cta__button:hover {
-  box-shadow: 0 8px 30px rgba(232, 84, 39, 0.28);
+  box-shadow: 0 8px 30px rgb(var(--color-accent-rgb) / 0.28);
 }

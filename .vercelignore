@@ -35,3 +35,6 @@ public/media/spot-light.mp4
 public/media/spot-light-poster.webp
 public/media/wallace-shift-hero.mp4
 public/media/wallace-shift-hero.webm
+
+# Preserved homepage source and retired media; never served by the site.
+/archive/homepage-2026-09-10/

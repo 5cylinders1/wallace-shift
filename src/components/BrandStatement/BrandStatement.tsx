@@ -3,32 +3,12 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { brandStatement } from '../../content/siteConfig'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
+import { BrandStatementContent } from './BrandStatementContent'
+import { START_LEFT_Y, END_LEFT_Y, FALLBACK_BAND_PCT, getBrandStatementBandPct, getBrandStatementWipe } from './brandStatementWipe'
 import './BrandStatement.css'
 
-// Diagonal tilt (percentage points of stage height) between the plane's
-// left-edge and right-edge Y position. Matches the site's existing
-// lower-left-to-upper-right divider convention.
-const TILT_PCT = 55
-// Left-edge Y position (in % of stage height) when fully hidden below the
-// viewport, and once the plane has completely covered the stage.
-const START_LEFT_Y = 170
-const END_LEFT_Y = -20
-// Fallback highlight-band thickness as a % of stage height, used until the
-// real stage height is measured.
-const FALLBACK_BAND_PCT = 0.4
 // Matches --ease-premium in index.css, for a consistent motion signature.
 const EASE_PREMIUM = 'cubic-bezier(0.16, 1, 0.3, 1)'
-
-function ShiftWipeHeadline() {
-  return (
-    <h2 className="shift-wipe__headline">
-      <span className="shift-wipe__line">
-        From <span className="shift-wipe__word">overlooked</span> to
-      </span>
-      <span className="shift-wipe__line">unforgettable.</span>
-    </h2>
-  )
-}
 
 export function BrandStatement() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -51,19 +31,15 @@ export function BrandStatement() {
       let bandPct = FALLBACK_BAND_PCT
 
       const applyMask = () => {
-        const rightY = proxy.leftY - TILT_PCT
-        const planePolygon = `polygon(0% ${proxy.leftY}%, 100% ${rightY}%, 100% 100%, 0% 100%)`
-        plane.style.setProperty('clip-path', planePolygon)
-        plane.style.setProperty('-webkit-clip-path', planePolygon)
-
-        const edgePolygon = `polygon(0% ${proxy.leftY - bandPct}%, 100% ${rightY - bandPct}%, 100% ${rightY}%, 0% ${proxy.leftY}%)`
-        edge.style.setProperty('clip-path', edgePolygon)
-        edge.style.setProperty('-webkit-clip-path', edgePolygon)
+        const clip = getBrandStatementWipe(proxy.leftY, bandPct)
+        plane.style.setProperty('clip-path', clip.plane)
+        plane.style.setProperty('-webkit-clip-path', clip.plane)
+        edge.style.setProperty('clip-path', clip.edge)
+        edge.style.setProperty('-webkit-clip-path', clip.edge)
       }
 
       const measureBand = () => {
-        const height = stage.clientHeight
-        if (height > 0) bandPct = (3 / height) * 100
+        bandPct = getBrandStatementBandPct(stage.clientHeight, bandPct)
       }
 
       measureBand()
@@ -163,18 +139,12 @@ export function BrandStatement() {
     <section className="shift-wipe" ref={sectionRef}>
       <div className="shift-wipe__stage" ref={stageRef}>
         <div className="shift-wipe__content shift-wipe__content--base">
-          <div className="shift-wipe__headline-wrap" ref={headlineRef}>
-            <ShiftWipeHeadline />
-          </div>
-          <p className="shift-wipe__body" ref={bodyRef}>
-            {brandStatement.body}
-          </p>
+          <BrandStatementContent headlineRef={headlineRef} bodyRef={bodyRef} />
         </div>
 
         <div className="shift-wipe__plane" ref={planeRef} aria-hidden="true">
           <div className="shift-wipe__content shift-wipe__content--duplicate">
-            <ShiftWipeHeadline />
-            <p className="shift-wipe__body">{brandStatement.body}</p>
+            <BrandStatementContent />
           </div>
           <div className="shift-wipe__edge" ref={edgeRef} />
         </div>

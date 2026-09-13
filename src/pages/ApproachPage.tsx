@@ -1,289 +1,233 @@
-import { PageHero } from '../components/PageHero/PageHero'
-import { StandardsSection } from '../components/Standards/StandardsSection'
+import { Fragment, useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SiteAudit } from '../components/SiteAudit/SiteAudit'
 import { AuditReport } from '../components/AuditReport/AuditReport'
 import { AuditPill } from '../components/AuditPill/AuditPill'
 import { StageWorkbench } from '../components/StageWorkbench/StageWorkbench'
-import { WorkStrip } from '../components/WorkStrip/WorkStrip'
-import { Reveal } from '../components/Reveal/Reveal'
-import { PageLink } from '../components/PageLink/PageLink'
-import { auditCopy } from '../content/audit'
-import {
-  approachAssurances,
-  approachCta,
-  approachProof,
-  approachStages,
-  servicePaths,
-  workSamples,
-} from '../content/approachPage'
-import { approachPageHero, business } from '../content/siteConfig'
-import { renderLines } from '../lib/textLines'
+import { ApproachDetails } from '../components/ApproachDetails/ApproachDetails'
+import { approachAssurances, approachStages } from '../content/approachPage'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
 import { useSiteAudit } from '../hooks/useSiteAudit'
+import { useReducedMotion } from '../hooks/useReducedMotion'
 import './InteriorPage.css'
 import './ApproachPage.css'
 
-/**
- * The process, in detail.
- *
- * The pit-stop sequence is the homepage's signature moment and is not
- * repeated here. This page has one job: let a cautious buyer answer five
- * questions without asking them — what happens first, what they will see
- * during the work, when they pay, why this studio, and what clicking the
- * CTA actually does.
- *
- * Order matters and is deliberate: assurance before detail, tangible
- * outputs inside each stage, the paid step named per service, credibility
- * before commercial terms, and exactly one conclusion at the end.
- */
+const checkpoints = [
+  { id: 'approach-start', label: 'Find the friction' },
+  { id: 'approach-build', label: 'Make the shift' },
+  { id: 'approach-launch', label: 'Launch with momentum' },
+]
+
+function CheckpointNav({ current }: { current: number }) {
+  return (
+    <nav className="checkpoint-nav" aria-label={`Process navigation, step ${current + 1}`}>
+      {checkpoints.map((checkpoint, index) => (
+        <a href={`#${checkpoint.id}`} key={checkpoint.id} aria-current={index === current ? 'step' : undefined}>
+          <span className="checkpoint-nav__number">0{index + 1}</span>
+          <span>{checkpoint.label}</span>
+          <span className="checkpoint-nav__line" aria-hidden="true" />
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+function PromiseDrawing({ index }: { index: number }) {
+  return (
+    <svg className="promise-drawing" viewBox="0 0 240 100" fill="none" aria-hidden="true">
+      {index === 0 ? (
+        <>
+          <path className="promise-drawing__guide" d="M0 50H240M120 0V100" />
+          <circle className="promise-drawing__orbit" cx="120" cy="50" r="39" />
+          <path className="promise-drawing__stroke" pathLength="1" d="M18 73L72 26L120 50L168 26L222 73" />
+          <circle className="promise-drawing__node" cx="120" cy="50" r="10" />
+          <circle className="promise-drawing__node" cx="18" cy="73" r="4" />
+          <circle className="promise-drawing__node" cx="222" cy="73" r="4" />
+        </>
+      ) : index === 1 ? (
+        <>
+          <path className="promise-drawing__guide" d="M0 84H240M40 0V100M120 0V100M200 0V100" />
+          <path className="promise-drawing__stroke" pathLength="1" d="M16 82V61H85V41H154V20H222" />
+          <path className="promise-drawing__orbit" d="M16 93V72H85V52H154V31H222" />
+          <circle className="promise-drawing__node" cx="85" cy="61" r="5" />
+          <circle className="promise-drawing__node" cx="154" cy="41" r="5" />
+          <circle className="promise-drawing__node" cx="222" cy="20" r="5" />
+        </>
+      ) : (
+        <>
+          <path className="promise-drawing__guide" d="M0 50H240M120 0V100" />
+          <path className="promise-drawing__orbit" d="M24 18H89V82H24ZM151 18H216V82H151Z" />
+          <path className="promise-drawing__stroke" pathLength="1" d="M44 50L57 63L80 35M89 50H151M171 50L184 63L207 35" />
+          <circle className="promise-drawing__node" cx="120" cy="50" r="6" />
+        </>
+      )}
+    </svg>
+  )
+}
+
 export function ApproachPage() {
   useRouteMeta('/approach')
-
-  /* Owned here, not inside the input: the field is in stage 01 and the
-     result renders after stage 03, so both halves read the same state. */
   const audit = useSiteAudit()
+  const root = useRef<HTMLDivElement>(null)
+  const reducedMotion = useReducedMotion()
 
-  // Real scheduling link when one exists; the contact form until then.
-  const bookingHref = business.bookingUrl ?? '/contact'
+  useGSAP(() => {
+    if (reducedMotion) return
+    gsap.from('.approach-intro__copy > *, .first-check', {
+      y: 22, opacity: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out',
+    })
+    gsap.utils.toArray<HTMLElement>('.approach-promise').forEach((promise, index) => {
+      const timeline = gsap.timeline({
+        scrollTrigger: { trigger: promise, start: 'top 92%', end: 'center 48%', scrub: 0.45 },
+      })
+      timeline.fromTo(promise, { '--promise-fill': 0 }, { '--promise-fill': 1, duration: 1 }, 0)
+        .fromTo(promise.querySelector('.promise-drawing__stroke'),
+          { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.85 }, index * 0.12)
+        .fromTo(promise.querySelectorAll('.promise-drawing__node'),
+          { scale: 0.25, transformOrigin: 'center', opacity: 0.3 },
+          { scale: 1, opacity: 1, stagger: 0.1, duration: 0.5 }, 0.2)
+        .fromTo(promise.querySelector('.promise-drawing__orbit'),
+          { x: -12 }, { x: 0, duration: 1 }, 0)
+    })
+    const chapters = gsap.utils.toArray<HTMLElement>('.approach-chapter')
+    const intro = root.current?.querySelector('.approach-intro')
+    let stackMotion: gsap.Context | undefined
+    let frame = 0
+    const syncLayout = () => {
+      const element = root.current
+      if (!element) return
+      const headerHeight = parseFloat(getComputedStyle(element).getPropertyValue('--site-header-height'))
+      const fits = window.innerWidth >= 960 && chapters.every(chapter => chapter.offsetHeight <= window.innerHeight - headerHeight - 24)
+      const changed = (element.dataset.stacked === 'true') !== fits
+      element.dataset.stacked = String(fits)
+      if (changed) {
+        stackMotion?.revert()
+        stackMotion = fits ? gsap.context(() => {
+          chapters.forEach((chapter, index) => {
+            const previous = index === 0
+              ? root.current?.querySelector('.approach-promises__inner')
+              : chapters[index - 1].querySelector('.approach-chapter__inner')
+            gsap.fromTo(chapter.querySelector('.chapter-art'), { y: 65, rotate: 4 }, {
+              y: 0, rotate: 0, ease: 'none',
+              scrollTrigger: { trigger: chapter.previousElementSibling, start: 'top bottom', end: 'top 22%', scrub: 0.6 },
+            })
+            if (previous) gsap.to(previous, {
+              y: -40, scale: 0.97, opacity: 0.45, transformOrigin: 'center top', ease: 'none',
+              scrollTrigger: { trigger: chapter.previousElementSibling, start: 'top 65%', end: 'top 12%', scrub: 0.5 },
+            })
+          })
+        }, root) : undefined
+      }
+      ScrollTrigger.refresh(true)
+    }
+    const scheduleLayout = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(syncLayout)
+    }
+    // Both audit status and the live layout demonstration can change height.
+    // Measure actual content, so short screens and larger text never clip.
+    const observer = new ResizeObserver(scheduleLayout)
+    if (intro) observer.observe(intro)
+    chapters.forEach(chapter => observer.observe(chapter))
+    window.addEventListener('resize', scheduleLayout)
+    scheduleLayout()
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', scheduleLayout)
+      cancelAnimationFrame(frame)
+      stackMotion?.revert()
+      if (root.current) delete root.current.dataset.stacked
+    }
+  }, { scope: root, dependencies: [reducedMotion], revertOnUpdate: true })
 
   return (
-    <>
-      <PageHero
-        eyebrow={approachPageHero.eyebrow}
-        headlineLines={approachPageHero.headlineLines}
-        headlineAccent={approachPageHero.headlineAccent}
-        supporting={approachPageHero.supporting}
-      />
-
-      {/* Assurance strip — sits directly under the hero so the first
-          scroll answers "why should I keep reading" before the detail. */}
-      <section className="interior interior--tight">
+    <div className="approach-experience" ref={root}>
+      <section className="approach-intro" id="approach-start" aria-labelledby="approach-heading">
         <div className="container">
-          <ul className="assurances">
-            {approachAssurances.map((item) => (
-              <Reveal className="assurance" key={item.title}>
-                <h2 className="assurance__title">{item.title}</h2>
-                <p className="assurance__body">{item.body}</p>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Stage 01, performed rather than described — and it is the only
-          Stage 01 on the page. Listing it again below the tool made the
-          page restart itself right after the visitor had engaged with it. */}
-      <section className="interior interior--stage-one">
-        <div className="container">
-          <div className="stage-one">
-            <div className="stage-one__head">
-              <span className="stage__index">{auditCopy.eyebrow}</span>
-              <h2 className="stage__title">{auditCopy.heading}</h2>
-              <p className="stage__summary">{auditCopy.summary}</p>
-              <p className="stage-one__supporting">{auditCopy.supporting}</p>
+          <div className="approach-intro__grid">
+            <div className="approach-intro__copy">
+              <p className="eyebrow">The approach / 3 clear steps</p>
+              <h1 id="approach-heading">Less friction.<br />More <span className="accent-serif">forward.</span></h1>
+              <p className="approach-intro__lead">A clear path from what’s holding you back to what comes next. See how we work. Start with your own site.</p>
+              <a className="approach-intro__scroll" href="#approach-stages">Follow the process <span aria-hidden="true">↓</span></a>
             </div>
-            <SiteAudit
-              state={audit}
-              continueTo="approach-stages"
-              reportId="audit-report"
-            />
+            <div className="first-check">
+              <div className="first-check__eyebrow"><span>01 / Start right here</span><span className="first-check__free">Free · No signup</span></div>
+              <h2>Find the <span className="accent-serif">friction.</span></h2>
+              <p>See how your website loads on a simulated phone, and what might be getting in the way.</p>
+              <SiteAudit compact state={audit} continueTo="approach-stages" reportId="audit-report" />
+            </div>
           </div>
+          <CheckpointNav current={0} />
         </div>
       </section>
-
-      {/* The three stages. Each ends on something the client physically
-          leaves with, which is what the previous bullet list never said.
-          The section carries no vertical padding of its own — each stage
-          owns its ground edge to edge, so any padding here would render as
-          a stripe of the wrong colour between them. */}
-      <section className="interior interior--stages" id="approach-stages">
-        <div className="container">
-          <ol className="stages">
-            {approachStages.map((stage, index) => (
-              // The band itself never animates. Each stage is a full-bleed
-              // ground butted exactly against its neighbours, so wrapping
-              // it in a Reveal — which translates its subject 22px — would
-              // slide the grounds independently and tear the seams between
-              // them on the way in. The content reveals; the ground holds.
-              <li
-                className={`stage stage--ground-${index + 2}`}
-                key={stage.index}
-              >
-                <Reveal className="stage__head">
-                  <span className="stage__index">{stage.index}</span>
-                  <h2 className="stage__title">{stage.title}</h2>
-                  <p className="stage__summary">{stage.summary}</p>
-                </Reveal>
-                <dl className="stage__fields">
-                  {stage.fields.map((field, fieldIndex) => (
-                    <Reveal
-                      className="stage__field"
-                      delay={0.06 + fieldIndex * 0.06}
-                      key={field.label}
-                    >
-                      <dt className="stage__field-label">{field.label}</dt>
-                      <dd className="stage__field-body">{field.body}</dd>
-                    </Reveal>
-                  ))}
-                </dl>
-                {/* The artifact for this stage, in the column that was
-                    previously empty. Stage 02 shows layout reflowing at a
-                    real breakpoint; stage 03 shows the launch checks this
-                    stage names. Neither depicts work that has not been
-                    done. */}
-                <StageWorkbench
-                  variant={index === 0 ? 'structure' : 'launch'}
-                />
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* The other half of stage 01. It renders nothing until a check has
-          been started, so the page is unchanged for visitors who never use
-          the tool — and lands exactly where someone arrives after reading
-          the three stages they just waited through. */}
-      <AuditReport state={audit} id="audit-report" />
-
-      {/* Where each service becomes paid — pulled out of stage 01, where
-          four different engagement types were competing in one block.
-          Ink from here down: the stages above have already completed the
-          shift, so the page never returns to bone. */}
-      <section className="interior interior--tight interior--ink">
-        <div className="container">
-          <Reveal>
-            <p className="eyebrow">{servicePaths.eyebrow}</p>
-          </Reveal>
-          <Reveal delay={0.06}>
-            <h2 className="section-heading">{servicePaths.heading}</h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="section-supporting">{servicePaths.supporting}</p>
-          </Reveal>
-
-          <div className="paths">
-            {servicePaths.items.map((item, index) => (
-              <Reveal
-                className="path"
-                delay={0.12 + index * 0.05}
-                key={item.service}
-              >
-                <span className="path__service">{item.service}</span>
-                <PageLink href={item.href} className="path__step">
-                  {item.step}
-                  <span aria-hidden="true">&#8599;</span>
-                </PageLink>
-                <p className="path__note">{item.note}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Credibility before commercial terms. No testimonials, no metrics,
-          no client names — none exist yet, and inventing them is the one
-          thing that would undo the rest of the page. */}
-      <section className="interior interior--ink">
-        <div className="container proof">
-          <Reveal>
-            <p className="eyebrow proof__eyebrow">{approachProof.eyebrow}</p>
-          </Reveal>
-          <Reveal delay={0.06}>
-            <h2 className="proof__heading">{approachProof.heading}</h2>
-          </Reveal>
-
-          {/* Two columns from here down. Everything used to stack inside a
-              62ch measure, which is what left a narrow ribbon of text in a
-              near-empty black field — and meant anything added to the
-              section could only make it taller. */}
-          <div className="proof__cols">
-            <div className="proof__col">
-              {approachProof.paragraphs.map((paragraph, index) => (
-                <Reveal delay={0.1 + index * 0.06} key={paragraph.slice(0, 24)}>
-                  <p className="proof__body">{paragraph}</p>
-                </Reveal>
+      <div className="approach-sequence" id="approach-stages">
+        <section className="approach-promises" aria-label="What you can count on">
+          <div className="container approach-promises__inner">
+            <div className="approach-promises__heading"><p className="eyebrow">A few things stay constant</p><span>Clarity, at every step.</span></div>
+            <ul className="approach-promises__grid">
+              {approachAssurances.map((item, index) => (
+                <li className="approach-promise" key={item.title}>
+                  <div className="approach-promise__visual"><span>0{index + 1}</span><PromiseDrawing index={index} /></div>
+                  <h2>{item.title}</h2>
+                  <p>{item.body}</p>
+                </li>
               ))}
-
-              {/* Evidence replaces claims only once there is enough of it.
-                  A single screenshot is weaker than the three credential
-                  lines, not stronger, so below three samples both are
-                  shown; at three or more the checkable thing wins. */}
-              {workSamples.length < 3 && (
-                <Reveal delay={0.22}>
-                  <ul className="proof__credentials">
-                    {approachProof.credentials.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </Reveal>
-              )}
-
-              <Reveal delay={0.26}>
-                <PageLink href={approachProof.proofHref} className="proof__note">
-                  {approachProof.proofNote}
-                  <span aria-hidden="true">&#8599;</span>
-                </PageLink>
-              </Reveal>
-            </div>
-
-            <div className="proof__col">
-              <div className="proof__people">
-                {approachProof.people.map((person, index) => (
-                  <Reveal
-                    className="proof__person"
-                    delay={0.1 + index * 0.06}
-                    key={person.name}
-                  >
-                    <span className="proof__person-role">{person.role}</span>
-                    <h3 className="proof__person-name">{person.name}</h3>
-                    <p className="proof__person-body">{person.body}</p>
-                  </Reveal>
-                ))}
-              </div>
-              <WorkStrip />
-            </div>
+            </ul>
+            <div className="approach-promises__next"><span>From a first look to a working build</span><span aria-hidden="true">↓</span></div>
           </div>
-        </div>
-      </section>
-
-      {/* The "what you can expect" section was removed here, not merely
-          compressed. All four of its points were already stated: scope and
-          change-approval by the assurance strip, working previews by stage
-          02, ownership by stage 03. It was 530px of the page restating
-          promises the visitor had already been given, which is what made
-          the reassurance feel repetitive rather than reinforcing. */}
-
-      <StandardsSection />
-
-      {/* One conclusion, not four. */}
-      <section className="interior interior--ink">
-        <div className="container closing">
-          <Reveal>
-            <h2 className="closing__headline">
-              {renderLines(approachCta.headlineLines)}{' '}
-              <span className="accent-serif">{approachCta.headlineAccent}</span>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <p className="closing__supporting">{approachCta.supporting}</p>
-          </Reveal>
-          <Reveal delay={0.14} className="closing__actions">
-            <PageLink href={bookingHref} className="button-primary">
-              {approachCta.primaryLabel}
-              <span aria-hidden="true">&#8599;</span>
-            </PageLink>
-            <PageLink
-              href={approachCta.secondaryHref}
-              className="button-secondary"
+        </section>
+        {approachStages.map((stage, index) => (
+          <Fragment key={stage.index}>
+            <div className="checkpoint-marker" id={checkpoints[index + 1].id} />
+            <section
+              className={`approach-chapter approach-chapter--${index + 2}`}
+              aria-labelledby={`chapter-title-${stage.index}`}
+              onFocusCapture={(event) => {
+                // Shift-Tab can reach a link in a covered sticky panel.
+                // Restore that panel before letting focus become invisible.
+                if (root.current?.dataset.stacked !== 'true' || !event.target.matches(':focus-visible')) return
+                const marker = document.getElementById(checkpoints[index + 1].id)
+                if (marker && marker.getBoundingClientRect().top < 0) {
+                  marker.scrollIntoView({ behavior: 'instant', block: 'start' })
+                }
+              }}
             >
-              {approachCta.secondaryLabel}
-            </PageLink>
-          </Reveal>
-        </div>
-      </section>
-
-      <AuditPill state={audit} targetId="audit-report" />
-    </>
+              <div className="container">
+                <CheckpointNav current={index + 1} />
+                <div className="approach-chapter__inner">
+                  <div className="approach-chapter__copy">
+                    <p className="approach-chapter__kicker">{index === 0 ? 'From insight to a working system' : 'From working build to what’s next'}</p>
+                    <h2 id={`chapter-title-${stage.index}`}>{index === 0 ? <>Make the <span className="accent-serif">shift.</span></> : <>Launch with <span className="accent-serif">momentum.</span></>}</h2>
+                    <p className="approach-chapter__summary">{stage.summary}</p>
+                    <dl className="approach-chapter__fields">
+                      {stage.fields.map((field) => (
+                        <div key={field.label}><dt>{field.label}</dt><dd>{field.body}</dd></div>
+                      ))}
+                    </dl>
+                  </div>
+                  <div className="chapter-art">
+                    <div className="chapter-art__heading"><span className="chapter-art__number" aria-hidden="true">{stage.index}</span><span>{index === 0 ? 'Ideas take shape.' : 'Ready for the real world.'}</span></div>
+                    <StageWorkbench compact variant={index === 0 ? 'structure' : 'launch'} />
+                    <div className="chapter-art__footer"><span>{index === 0 ? 'Structure → Design → Build' : 'Refine → Launch → Handover'}</span><span aria-hidden="true">↗</span></div>
+                  </div>
+                </div>
+                <div className="approach-chapter__next">
+                  <span>{index === 0 ? 'Next / Put it into the world' : audit.status === 'idle' ? 'The process is clear. Choose your starting point.' : 'Next / Your first findings'}</span>
+                  <a href={index === 0 ? '#approach-launch' : '#approach-findings'} aria-label={index === 0 ? 'Continue to launch' : 'Continue to findings and next steps'}>↓</a>
+                </div>
+              </div>
+            </section>
+          </Fragment>
+        ))}
+      </div>
+      <div id="approach-findings">
+        <AuditReport state={audit} id="audit-report" />
+        <ApproachDetails />
+      </div>
+      <AuditPill key={audit.lastRun} state={audit} targetId="audit-report" />
+    </div>
   )
 }

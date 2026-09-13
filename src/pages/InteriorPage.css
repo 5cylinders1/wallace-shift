@@ -398,6 +398,22 @@
   outline-offset: 3px;
 }
 
+/* Ice belongs on dark grounds. The same actions use petrol on pearl so
+   the control boundary and keyboard focus remain distinct from the page. */
+.interior:not(.interior--ink) .button-primary {
+  background: var(--color-accent-deep);
+  color: var(--color-soft-white);
+}
+
+.interior:not(.interior--ink) .button-primary:hover,
+.interior:not(.interior--ink) .button-primary:focus-visible {
+  background: var(--color-ink);
+}
+
+.interior:not(.interior--ink) :focus-visible {
+  outline-color: var(--color-accent-deep);
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 900px) {

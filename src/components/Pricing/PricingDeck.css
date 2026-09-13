@@ -36,17 +36,173 @@
 }
 
 @media (max-width: 1023px) {
+  /* The three areas are layered rather than laid end to end: one is on screen,
+     and a tab change slides one across the top of another. Absolute panels
+     leave no height behind them, so the track is given the active area's.
+
+     `overflow-x: clip` rather than `hidden` on purpose. `clip` does not make
+     this a scroll container; `hidden` would, and every package inside would
+     then stick to the track instead of to the viewport — silently breaking
+     the whole vertical mechanism to stop one transient scrollbar. */
   .pricing-deck__track {
     display: block;
-    overflow-x: visible;
+    position: relative;
+    overflow-x: clip;
     overflow-y: visible;
     scroll-snap-type: none;
     transition: none;
-    /* Beats the inline height PricingDeck writes for the deck. The media
-       query owns the layout; JavaScript only supplies a number for the
-       width that asked for one. Without this, a viewport that crosses the
-       breakpoint before the media-query listener runs leaves the stacked
-       panels clipped inside a deck-sized box. */
-    height: auto !important;
+    height: var(--pricing-track-lock, auto) !important;
+  }
+
+  .pricing-deck__panel {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: var(--pricing-area-layer, 1);
+    background: var(--color-bone);
+  }
+  .pricing-deck__panel:nth-child(2) { --pricing-area-layer: 2; }
+  .pricing-deck__panel:nth-child(3) { --pricing-area-layer: 3; }
+
+  /* Only the area being read is exposed. `visibility` rather than `display`
+     keeps the other two measurable, and still takes them out of the tab order
+     and the accessibility tree. */
+  .pricing-deck__panel[data-active='false'] { visibility: hidden; }
+  .pricing-deck__panel--sliding { visibility: visible; }
+
+  /* The arriving area, held to the frame for the length of its slide at the
+     exact position the page is about to scroll to. Without it the area comes
+     in showing whatever sits at the visitor's current depth rather than its
+     beginning; with it the scroll that follows the slide is invisible, which
+     is what lets the two motions be sequenced instead of run together. The
+     offset is measured — the area's own top relative to where the page lands. */
+  .pricing-deck__panel--frozen {
+    position: fixed;
+    top: var(--pricing-freeze-top, var(--pricing-frame-top, 0px));
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+
+  .pricing-deck__panel--moving {
+    transition: transform var(--pricing-slide-duration, 520ms) var(--ease-premium);
+  }
+
+  /* A package holds against the bar while the next one rides up over it, so
+     the run of them reads as one stack rather than three long sections.
+
+     Two things have to be true for that, and both are about the box the
+     packages live in rather than the packages themselves.
+
+     First, a sticky box is bounded by its containing block, so that block has
+     to run past the last package — while it ended at the last package there
+     was no room left to hold into, and the last one never held at all. Both
+     wrappers between the packages and the area's section are collapsed, which
+     hands them the section: it continues through the closing card below them.
+     Only the panel's own column is collapsed; the one inside the care band is
+     a different element and keeps its box. */
+  .pricing-deck__panel > .tier-table > .container,
+  .pricing-deck__panel > .engagement-group > .container,
+  .pricing-deck__panel .tier-table__grid {
+    display: contents;
+  }
+
+  /* Which means each of those children now carries the column itself. */
+  .pricing-deck__panel .tier-table__intro,
+  .pricing-deck__panel .engagement-group__intro,
+  .pricing-deck__panel .tier,
+  .pricing-deck__panel .website-standard,
+  .pricing-deck__panel .engagement-group__outro {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Second, that same bound is what keeps a released package from reappearing
+     underneath the card that covered it: the packages and the closing card now
+     end at the same edge, so a package can never be pushed past it.
+
+     The hold is `frame - the package's own height`, measured per package, so
+     a package taller than the frame is read all the way to its end before it
+     stops. That offset is negative for those, which holds them with their
+     head above the bar — the cost of being able to reach the end of a long
+     scope list. `min()` keeps a package shorter than the frame at the bar
+     rather than pushing it down the screen. */
+  .pricing-deck__panel .tier {
+    position: sticky;
+    top: min(
+      var(--pricing-frame-top, 0px),
+      calc(100svh - var(--pricing-package-height, 0px))
+    );
+    min-height: calc(100svh - var(--pricing-frame-top, 0px));
+    z-index: var(--pricing-package-layer, 1);
+    background: var(--color-bone);
+  }
+  .pricing-deck__panel .tier:nth-child(2) { --pricing-package-layer: 2; }
+  .pricing-deck__panel .tier:nth-child(3) { --pricing-package-layer: 3; }
+
+  /* Each level has a surface of its own, a step further from the page ground
+     along the line between pearl and silver, so a package arriving over
+     another reads as a new plane rather than more of the same one. Opaque,
+     because covering is the whole mechanism.
+
+     The steps are even in contrast rather than even in hex: 1.26 between each
+     surface and the next, which is roughly two and a half times the first
+     attempt at this and is the difference between seeing three planes and
+     seeing one. */
+  .pricing-deck__panel .tier:nth-child(1) { background: #edf1f2; }
+  .pricing-deck__panel .tier:nth-child(2) { background: #cfd9df; }
+  .pricing-deck__panel .tier:nth-child(3) { background: #b3c3ce; }
+
+  /* A surface that dark carries the card's quieter text below AA, so the two
+     supporting roles step down with it. Ink and the card's structure do not
+     move; only the greys and, on the deepest level, the accent. The hierarchy
+     is kept — body stays darker than quiet on every surface. */
+  .pricing-deck__panel .tier:nth-child(2) {
+    --tier-body: #363c3f;
+    --tier-quiet: #475560;
+  }
+  .pricing-deck__panel .tier:nth-child(3) {
+    --tier-body: #2f363b;
+    --tier-quiet: #3d4a54;
+    --tier-accent: #0e4776;
+  }
+
+  /* A package holds only while something is coming up behind it. The last
+     package of an engagement area has a closing note under it and nothing
+     else, so it leaves with the page rather than holding against a frame edge
+     that nothing ever arrives at. */
+  .pricing-deck__panel .engagement-group .tier:last-child {
+    position: relative;
+  }
+
+  /* What follows the packages rides over them, so the last package is covered
+     the way the others are. Opaque, and above them. It returns to the page
+     ground rather than taking a fourth step down the ramp: arriving lighter
+     than the level it covers is what reads as the stack being over, and it
+     keeps the closing card's contrast exactly where it already was. */
+  .pricing-deck__panel .website-standard,
+  .pricing-deck__panel .engagement-group__outro {
+    position: relative;
+    z-index: 4;
+    background: var(--color-bone);
+    padding-top: clamp(26px, 4vw, 44px);
+  }
+
+  /* The care band is the card that covers the last website package — it is
+     the maintenance package, and it is what sits under the third level. It
+     fills the frame like the packages do, both so it can cover one of them
+     completely and so the stack ends on a card rather than on a strip. */
+  .pricing-deck__panel .website-care {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    align-content: center;
+    min-height: calc(100svh - var(--pricing-frame-top, 0px));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-deck__panel--moving { transition: none; }
   }
 }

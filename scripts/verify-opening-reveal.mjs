@@ -123,13 +123,22 @@ await test('headline emphasis follows the material reveal while both words remai
   }
 })
 
-await test('markup keeps the existing copy and links, and extends headline/eyebrow exits past the finished hold', async () => {
+await test('markup keeps the experiment copy and links, with the original landing copy/form sharing its finished hold and exit', async () => {
   const markup = await readFile(new URL('../src/components/experiments/water-hero/HeroUI.tsx', import.meta.url), 'utf8')
-  assert.equal((markup.match(/data-out-start="0\.25"/g) ?? []).length, 3)
-  assert.equal((markup.match(/data-out-end="0\.35"/g) ?? []).length, 3)
+  for (const group of ['masthead', 'eyebrow', 'statement']) {
+    const tag = markup.match(new RegExp(`className="water-hero__${group}"[^>]*`))?.[0]
+    assert.ok(tag, `${group} retains its progress attributes`)
+    assert.match(tag, /data-out-start="0\.25"/)
+    assert.match(tag, /data-out-end="0\.35"/)
+  }
   assert.match(markup, /data-out-start="0.10"/)
   assert.match(markup, />Overlooked<\/span>/)
   assert.match(markup, /Unforgettable/)
   assert.match(markup, /A shift in perspective/)
   assert.equal((markup.match(/href="\/"/g) ?? []).length, 2)
+  const landing = await readFile(new URL('../src/components/experiments/water-hero/LandingHeroUI.tsx', import.meta.url), 'utf8')
+  const content = landing.match(/className="water-hero__landing-content"[^>]+/)?.[0]
+  assert.ok(content)
+  assert.match(content, /data-out-start="0\.25"/)
+  assert.match(content, /data-out-end="0\.35"/)
 })

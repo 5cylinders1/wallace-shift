@@ -1,0 +1,149 @@
+{
+  "purpose": "Reproducible selective ice-blue color grade of the preserved original homepage service loops. No generation service was used.",
+  "createdDate": "2026-09-10",
+  "originalArchivePolicy": "Existing archive files and checksum manifests remain unchanged. This is additive derivative provenance.",
+  "grade": {
+    "file": "ice-grade.cube",
+    "sha256": "065dba4bdda2bb6c5ec8623429fb20574b476ea762b71c9c69e214adef3745a4",
+    "sizeBytes": 1078206,
+    "format": "33x33x33 RGB 3D LUT, input domain 0..1",
+    "intent": "Selectively replace orange-red highlights with restrained ice blue, preserve source luminance and graphite detail, and lightly cool neutral highlights."
+  },
+  "tools": {
+    "ffmpeg": "ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "cwebp": "1.6.0\nlibsharpyuv: 0.4.2"
+  },
+  "encoding": {
+    "videoCodec": "libx264",
+    "preset": "slow",
+    "crf": 23,
+    "pixelFormat": "yuv420p",
+    "movflags": "+faststart",
+    "audio": "removed with -an",
+    "metadata": "removed with -map_metadata -1",
+    "posterQuality": 83,
+    "posterTimeSeconds": 0
+  },
+  "assets": [
+    {
+      "name": "trust",
+      "outputs": [
+        {
+          "path": "public/media/services/svc-trust-ice.mp4",
+          "bytes": 454546,
+          "sha256": "33563e55cd4a9585bb751b3aa19abe9c89f2953e5fe59dc47f4d994bd4ea5599",
+          "source": "public/media/generated/svc-trust.mp4",
+          "sourceSha256": "b80a82ce86078b934a4f318a8d9c829c8ab0c07c497118c3af99960bd3e0ef7f",
+          "sourceAndArchiveVerified": true
+        },
+        {
+          "path": "public/media/services/svc-trust-ice.webp",
+          "bytes": 33780,
+          "sha256": "a5c0b8399350c82f68a1ac2a6425c12e4b324c860cc81b0b41a644a859d15a0e",
+          "source": "public/media/generated/svc-trust.webp",
+          "sourceSha256": "d01bf0aaac8fe717a6a82a677148843946d6d0aee1056378b90a9514b0270eaf",
+          "sourceAndArchiveVerified": true
+        }
+      ],
+      "video": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "5.041667",
+          "size": "454546"
+        }
+      },
+      "posterDerivation": "First frame of the encoded ice-grade MP4, exported to PNG with ffmpeg then WebP quality 83 with cwebp. The poster source entry records the preserved original reference poster; the derivative pixels originate in the MP4."
+    },
+    {
+      "name": "flow",
+      "outputs": [
+        {
+          "path": "public/media/services/svc-flow-ice.mp4",
+          "bytes": 237713,
+          "sha256": "7fe2696b2f5fc2959b1cdb555b570f6ce9e6c0c814d4b817ea0fe3594255df73",
+          "source": "public/media/generated/svc-flow.mp4",
+          "sourceSha256": "94ffb36430c9e22ff2e27522967c9f73adf19d4d654b4bfa6fe86febff7080ce",
+          "sourceAndArchiveVerified": true
+        },
+        {
+          "path": "public/media/services/svc-flow-ice.webp",
+          "bytes": 14192,
+          "sha256": "ad8fce2c483190cd744ee9cbcb0b5e7160005c465288da54c27097ab4e066cd0",
+          "source": "public/media/generated/svc-flow.webp",
+          "sourceSha256": "a2e46d19fd87f788466c9b21d72f253afa1a89b3ae149b7cd37a4cf55613deb6",
+          "sourceAndArchiveVerified": true
+        }
+      ],
+      "video": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "5.041667",
+          "size": "237713"
+        }
+      },
+      "posterDerivation": "First frame of the encoded ice-grade MP4, exported to PNG with ffmpeg then WebP quality 83 with cwebp. The poster source entry records the preserved original reference poster; the derivative pixels originate in the MP4."
+    },
+    {
+      "name": "time",
+      "outputs": [
+        {
+          "path": "public/media/services/svc-time-ice.mp4",
+          "bytes": 318618,
+          "sha256": "c1c934a4f780e8a4ffa15ca9287fac4a99f3ff591acabb5c833193c5d355d809",
+          "source": "public/media/generated/svc-time.mp4",
+          "sourceSha256": "b393188726662e44efca4c987d9120c8740b44350e42ab505d3170029bab2373",
+          "sourceAndArchiveVerified": true
+        },
+        {
+          "path": "public/media/services/svc-time-ice.webp",
+          "bytes": 40148,
+          "sha256": "f4f2a794a3573d9c409c677324ae294fc392f5ff6ba3f23335718be52d8dc79b",
+          "source": "public/media/generated/svc-time.webp",
+          "sourceSha256": "5bb227c4cf9a07c3d3ed67c122ece9d6db58f9ab6abb8576f1215fbf9089d31c",
+          "sourceAndArchiveVerified": true
+        }
+      ],
+      "video": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "5.041667",
+          "size": "318618"
+        }
+      },
+      "posterDerivation": "First frame of the encoded ice-grade MP4, exported to PNG with ffmpeg then WebP quality 83 with cwebp. The poster source entry records the preserved original reference poster; the derivative pixels originate in the MP4."
+    }
+  ]
+}

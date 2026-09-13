@@ -67,7 +67,7 @@
   z-index: 4;
   background: linear-gradient(
     100deg,
-    rgba(232, 84, 39, 0.9),
+    rgb(var(--color-accent-rgb) / 0.9),
     rgba(214, 218, 223, 0.85) 55%,
     rgba(247, 247, 244, 0.55)
   );

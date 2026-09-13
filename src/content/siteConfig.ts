@@ -165,6 +165,16 @@ export const contactCta = {
   headlineLines: ['Ready to stop', 'being overlooked?'],
   supporting: 'Tell us what is not working. We will show you what can shift.',
   primaryCtaLabel: 'Start a project',
+  /** Real alternatives for a reader who does not want to fill in a form.
+   *  Both destinations already exist, and nothing here promises a response
+   *  time or anything else that is not already true. The email link is
+   *  rendered only while `business.email` is set. */
+  alternatives: {
+    eyebrow: 'Rather not fill in a form?',
+    emailLead: 'Email',
+    pricingLabel: 'See what this costs',
+    pricingHref: '/pricing',
+  },
 }
 
 export const footer = {

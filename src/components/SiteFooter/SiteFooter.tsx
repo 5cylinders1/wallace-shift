@@ -7,7 +7,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" role="contentinfo">
       <div className="container site-footer__inner">
         <div className="site-footer__top">
           <div className="site-footer__identity">

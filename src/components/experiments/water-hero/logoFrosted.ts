@@ -35,7 +35,7 @@ export const logoFrostedUniforms = (material: MeshStandardMaterial) => frostedMa
  * background-capture registry and the shallow optical-normal lens. All
  * overrides belong to this new material; the original Glass stays exact. */
 export function createLogoFrostedMaterial(source: Material, worldThickness: number, reflectionProxy = false) {
-  const material = createLogoCrystalMaterial(source, worldThickness)
+  const material = createLogoCrystalMaterial(source, worldThickness, 'clear')
   const profile = FROSTED_CRYSTAL_MATERIAL
   material.name = `${source.name || 'WS'}_FrostedCrystal`
   material.color.setRGB(...profile.baseColor)

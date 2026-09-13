@@ -1,12 +1,14 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { DebugOverlay } from './DebugOverlay'
 import { HeroUI } from './HeroUI'
+import { LandingHeroUI } from './LandingHeroUI'
 import { applyHeroUiProgress } from './heroUiProgress'
 import { LoadingFallback } from './LoadingFallback'
 import { LogoAppearanceSelector } from './LogoAppearanceSelector'
 import { WaterScene } from './WaterScene'
 import { useScrollProgress } from './useScrollProgress'
+import { startSceneFrames } from './sceneActivity'
 import {
   CAMERA,
   QUALITY,
@@ -35,6 +37,7 @@ interface WaterHeroStageProps {
   channel: number
   appearance: LogoAppearance
   onAppearance: (appearance: LogoAppearance) => void
+  mode?: 'experiment' | 'landing'
 }
 
 /**
@@ -47,6 +50,15 @@ function SceneReady({ onReady }: { onReady: () => void }) {
   useEffect(() => {
     onReady()
   }, [onReady])
+  return null
+}
+
+function LandingSceneActivity({ active }: { active: boolean }) {
+  const clock = useThree(state => state.clock)
+  const advance = useThree(state => state.advance)
+  useEffect(() => {
+    if (active) return startSceneFrames({ clock, advance })
+  }, [clock, advance, active])
   return null
 }
 
@@ -63,10 +75,31 @@ export function WaterHeroStage({
   channel,
   appearance,
   onAppearance,
+  mode = 'experiment',
 }: WaterHeroStageProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const uiRef = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
+  const [active, setActive] = useState(true)
+
+  // The homepage continues below this scene. Keep its resources ready for
+  // reverse scrolling, but stop GPU work once the canvas leaves the viewport.
+  useEffect(() => {
+    if (mode !== 'landing' || !sectionRef.current) return
+    let visible = true
+    const update = () => setActive(visible && !document.hidden)
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      update()
+    })
+    observer.observe(sectionRef.current)
+    document.addEventListener('visibilitychange', update)
+    update()
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', update)
+    }
+  }, [mode])
 
   const onProgress = useCallback(
     (narrative: number) => {
@@ -95,6 +128,7 @@ export function WaterHeroStage({
 
   return (
       <section
+        id={mode === 'landing' ? 'top' : undefined}
         ref={sectionRef}
         className="water-hero"
         style={{ height: reducedMotion ? '100svh' : `${STAGE_SCROLL_SVH}svh` }}
@@ -102,6 +136,7 @@ export function WaterHeroStage({
         <div className="water-hero__stage">
           <Canvas
             className="water-hero__canvas"
+            frameloop={mode === 'landing' ? 'never' : 'always'}
             aria-hidden="true"
             dpr={[1, QUALITY[tier].dprCap]}
             gl={{
@@ -121,6 +156,7 @@ export function WaterHeroStage({
               })
             }}
           >
+            {mode === 'landing' && <LandingSceneActivity active={active} />}
             <Suspense fallback={null}>
               <SceneReady onReady={() => setReady(true)} />
               <WaterScene
@@ -137,13 +173,13 @@ export function WaterHeroStage({
           </Canvas>
 
           <div ref={uiRef} className="water-hero__ui-root">
-            <HeroUI still={reducedMotion} />
+            {mode === 'landing' ? <LandingHeroUI still={reducedMotion} /> : <HeroUI still={reducedMotion} />}
             <LoadingFallback visible={!ready} />
           </div>
 
-          {ready && <LogoAppearanceSelector appearance={appearance} onChange={onAppearance} />}
+          {mode === 'experiment' && ready && <LogoAppearanceSelector appearance={appearance} onChange={onAppearance} />}
 
-          {debug && (
+          {mode === 'experiment' && debug && (
             <DebugOverlay
               telemetry={telemetry}
               override={override}

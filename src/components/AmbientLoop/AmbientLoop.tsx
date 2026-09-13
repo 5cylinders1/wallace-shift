@@ -6,6 +6,7 @@ import './AmbientLoop.css'
 interface AmbientLoopProps {
   media: AmbientMediaAsset
   className?: string
+  active?: boolean
 }
 
 // Decorative looping background media. The poster paints immediately; the
@@ -14,7 +15,7 @@ interface AmbientLoopProps {
 // playback error simply leaves the poster in place — the loop's first and
 // last frames match the poster, so the video appearing over it is
 // seamless.
-export function AmbientLoop({ media, className }: AmbientLoopProps) {
+export function AmbientLoop({ media, className, active = true }: AmbientLoopProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [shouldLoad, setShouldLoad] = useState(false)
@@ -24,7 +25,7 @@ export function AmbientLoop({ media, className }: AmbientLoopProps) {
   const showVideo = Boolean(media.video) && !reducedMotion && !failed
 
   useEffect(() => {
-    if (!showVideo || shouldLoad) return
+    if (!showVideo || shouldLoad || !active) return
     const root = rootRef.current
     if (!root) return
 
@@ -39,13 +40,14 @@ export function AmbientLoop({ media, className }: AmbientLoopProps) {
     )
     loadObserver.observe(root)
     return () => loadObserver.disconnect()
-  }, [showVideo, shouldLoad])
+  }, [showVideo, shouldLoad, active])
 
   useEffect(() => {
     if (!showVideo || !shouldLoad) return
     const root = rootRef.current
     const videoEl = videoRef.current
     if (!root || !videoEl) return
+    if (!active) { videoEl.pause(); return }
 
     const playObserver = new IntersectionObserver(
       (entries) => {
@@ -62,8 +64,8 @@ export function AmbientLoop({ media, className }: AmbientLoopProps) {
       { threshold: 0.1 },
     )
     playObserver.observe(root)
-    return () => playObserver.disconnect()
-  }, [showVideo, shouldLoad])
+    return () => { playObserver.disconnect(); videoEl.pause() }
+  }, [showVideo, shouldLoad, active])
 
   return (
     <div

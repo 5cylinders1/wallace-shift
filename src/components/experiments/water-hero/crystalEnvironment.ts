@@ -11,7 +11,7 @@ interface CrystalCard {
   half: readonly [number, number]
   intensity: number
   color: readonly [number, number, number]
-  /** Smooth finite oval reflection used only for faint face highlights. */
+  /** Smooth finite oval reflection, fading continuously from the center. */
   softOval?: boolean
 }
 
@@ -30,6 +30,16 @@ export const CRYSTAL_REFLECTION_CARDS: readonly CrystalCard[] = [
   { azimuth: Math.PI - .070, elevation: .085, half: [.043, .055], intensity: 2.8, color: [1.02, .99, .96], softOval: true },
   { azimuth: Math.PI + .075, elevation: .085, half: [.035, .035], intensity: 2.4, color: [.95, 1.00, 1.05], softOval: true },
 ]
+/** Glass gets a soft source, not just a rougher mirror of a white rectangle.
+ * Preserve the small opening-face cards; replace the bright shoulder/card
+ * plateaus with continuous oval falloff at one fifth of their peak radiance.
+ * The original rig remains exact for Frosted Crystal and Smoked Copper. */
+export const SOFT_GLASS_REFLECTION_CARDS: readonly CrystalCard[] = CRYSTAL_REFLECTION_CARDS.map(card => ({
+  ...card,
+  intensity: card.softOval ? card.intensity : card.intensity * .20,
+  softOval: true,
+}))
+export type CrystalEnvironmentProfile = 'original' | 'soft-glass'
 export const CRYSTAL_ENVIRONMENT_SIZE = 256
 export const CRYSTAL_AMBIENT = [.0008, .0010, .0014] as const
 
@@ -79,11 +89,12 @@ void main() {
 
 /** Exposed separately so its linear-HDR source contract can be tested without
  * pretending a mocked renderer verifies the resulting glass appearance. */
-export function createCrystalEnvironmentMaterial() {
-  const bases = CRYSTAL_REFLECTION_CARDS.map(crystalCardBasis)
+export function createCrystalEnvironmentMaterial(profile: CrystalEnvironmentProfile = 'original') {
+  const cards = profile === 'soft-glass' ? SOFT_GLASS_REFLECTION_CARDS : CRYSTAL_REFLECTION_CARDS
+  const bases = cards.map(crystalCardBasis)
   return new ShaderMaterial({
     side: BackSide, depthWrite: false, depthTest: false, toneMapped: false,
-    defines: { CARD_COUNT: CRYSTAL_REFLECTION_CARDS.length },
+    defines: { CARD_COUNT: cards.length },
     vertexShader: /* glsl */ `
       varying vec3 vDirection;
       void main() {
@@ -97,15 +108,17 @@ export function createCrystalEnvironmentMaterial() {
       uForward: { value: bases.map(basis => basis.forward) },
       uRight: { value: bases.map(basis => basis.right) },
       uUp: { value: bases.map(basis => basis.up) },
-      uHalf: { value: CRYSTAL_REFLECTION_CARDS.map(card => new Vector2(...card.half)) },
-      uColor: { value: CRYSTAL_REFLECTION_CARDS.map(card => new Vector3(...card.color)) },
-      uIntensity: { value: CRYSTAL_REFLECTION_CARDS.map(card => card.intensity) },
-      uSoftOval: { value: CRYSTAL_REFLECTION_CARDS.map(card => card.softOval ? 1 : 0) },
+      uHalf: { value: cards.map(card => new Vector2(...card.half)) },
+      uColor: { value: cards.map(card => new Vector3(...card.color)) },
+      uIntensity: { value: cards.map(card => card.intensity) },
+      uSoftOval: { value: cards.map(card => card.softOval ? 1 : 0) },
     },
   })
 }
 
 export interface CrystalEnvironment {
+  /** Reject the previous look's source while its replacement is allocated. */
+  profile: CrystalEnvironmentProfile
   /** Native physical reflections use the roughness-prefiltered map. */
   environment: Texture
   /** Particle probes start with unfiltered card radiance, avoiding two PMREMs. */
@@ -115,9 +128,9 @@ export interface CrystalEnvironment {
 
 /** Independent from the visible sky, water and existing LED/Electric studio.
  * Allocate only while glass is selected, and free both retained targets. */
-export function createCrystalEnvironment(renderer: WebGLRenderer): CrystalEnvironment {
+export function createCrystalEnvironment(renderer: WebGLRenderer, profile: CrystalEnvironmentProfile = 'original'): CrystalEnvironment {
   const geometry = new BoxGeometry(4, 4, 4)
-  const material = createCrystalEnvironmentMaterial()
+  const material = createCrystalEnvironmentMaterial(profile)
   const scene = new Scene()
   scene.background = new Color(0)
   const mesh = new Mesh(geometry, material)
@@ -145,6 +158,7 @@ export function createCrystalEnvironment(renderer: WebGLRenderer): CrystalEnviro
     camera.update(renderer, scene)
     filtered = pmrem.fromCubemap(cube.texture)
     return {
+      profile,
       environment: filtered.texture, radiance: cube.texture,
       dispose() { cube.dispose(); filtered?.dispose() },
     }

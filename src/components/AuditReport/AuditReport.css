@@ -401,9 +401,15 @@
 }
 
 .report__next-primary {
-  background: var(--color-ember-deep);
-  color: var(--color-soft-white);
-  border: 1px solid var(--color-ember-deep);
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border: 1px solid var(--color-accent);
+}
+
+.report__next-primary:hover,
+.report__next-primary:focus-visible {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
 }
 
 .report__next-secondary {

@@ -1,0 +1,441 @@
+{
+  "createdAt": "2026-09-10T19:33:55.294270+00:00",
+  "purpose": "Retain all assets retired from the homepage redesign and preserve the original pit-stop animation. Original media remain in public for current routes and portfolio use.",
+  "experimentRoute": "/experiments/pit-stop",
+  "assets": [
+    {
+      "original": "public/media/generated/svc-trust.webp",
+      "savedAs": "assets/services/svc-trust.webp",
+      "usage": "Former homepage service outcome field",
+      "bytes": 31344,
+      "sha256": "d01bf0aaac8fe717a6a82a677148843946d6d0aee1056378b90a9514b0270eaf",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/generated/svc-trust.mp4",
+      "savedAs": "assets/services/svc-trust.mp4",
+      "usage": "Former homepage service outcome field",
+      "bytes": 483606,
+      "sha256": "b80a82ce86078b934a4f318a8d9c829c8ab0c07c497118c3af99960bd3e0ef7f",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/generated/svc-flow.webp",
+      "savedAs": "assets/services/svc-flow.webp",
+      "usage": "Former homepage service outcome field",
+      "bytes": 10926,
+      "sha256": "a2e46d19fd87f788466c9b21d72f253afa1a89b3ae149b7cd37a4cf55613deb6",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/generated/svc-flow.mp4",
+      "savedAs": "assets/services/svc-flow.mp4",
+      "usage": "Former homepage service outcome field",
+      "bytes": 238971,
+      "sha256": "94ffb36430c9e22ff2e27522967c9f73adf19d4d654b4bfa6fe86febff7080ce",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/generated/svc-time.webp",
+      "savedAs": "assets/services/svc-time.webp",
+      "usage": "Former homepage service outcome field",
+      "bytes": 34980,
+      "sha256": "5bb227c4cf9a07c3d3ed67c122ece9d6db58f9ab6abb8576f1215fbf9089d31c",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/generated/svc-time.mp4",
+      "savedAs": "assets/services/svc-time.mp4",
+      "usage": "Former homepage service outcome field",
+      "bytes": 354852,
+      "sha256": "b393188726662e44efca4c987d9120c8740b44350e42ab505d3170029bab2373",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/generated/contact-horizon.webp",
+      "savedAs": "assets/contact/contact-horizon.webp",
+      "usage": "Former homepage closing contact background",
+      "bytes": 30876,
+      "sha256": "e356b32f2a13c0816cf0664934e33f78e89fd23b75fe6e3e2591e5351d1aac47",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/generated/contact-horizon.mp4",
+      "savedAs": "assets/contact/contact-horizon.mp4",
+      "usage": "Former homepage closing contact background",
+      "bytes": 1484681,
+      "sha256": "0d63e64c31097981e39c4ab9a4ea3eeb8cddb6ab5d9e449a39edd8fde1214bb0",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/spotlight-final.mp4",
+      "savedAs": "assets/quiz/spotlight-final.mp4",
+      "usage": "Former homepage quiz spotlight",
+      "bytes": 2880215,
+      "sha256": "b95c13840488661dd55fdd3a9d4b6c48fac3eca32a1e0741c50b59cb9c162b63",
+      "originalRetained": true
+    },
+    {
+      "original": "public/media/spotlight-final-poster.webp",
+      "savedAs": "assets/quiz/spotlight-final-poster.webp",
+      "usage": "Former homepage quiz spotlight",
+      "bytes": 29042,
+      "sha256": "f262e006747a0c2e3d5469c959344b83dc489ead932febb3ff51d0477ad9f475",
+      "originalRetained": true
+    }
+  ],
+  "sourceArchive": "original-components-and-pit-stop.tar.gz",
+  "sourceArchiveSha256": "3d7235787d363c6408a6cab0324354f85d256151301fa501c973bf2d474938d7",
+  "sourceFiles": [
+    {
+      "original": "package-lock.json",
+      "archiveEntry": "package-lock.json",
+      "bytes": 102734,
+      "sha256": "4ff8dbbddd7dd088d0e1e6faf345e4760316e869ff805c03568a985bae1285ee"
+    },
+    {
+      "original": "package.json",
+      "archiveEntry": "package.json",
+      "bytes": 860,
+      "sha256": "b34c380f5366eb03fb0b61e7beef1289d795a61383c1311429746ff55586e094"
+    },
+    {
+      "original": "public/media/generated/car-ember.webp",
+      "archiveEntry": "public/media/generated/car-ember.webp",
+      "bytes": 56174,
+      "sha256": "6f9db87a91208d3c0fe7e8ace6e25c8193ca258f26039d24442cd89669f9c8e7"
+    },
+    {
+      "original": "public/media/pit-stop/formula-car-chassis.png",
+      "archiveEntry": "public/media/pit-stop/formula-car-chassis.png",
+      "bytes": 1107722,
+      "sha256": "a24fae0c7424671e3973059e7499954ed8a023675fb8cb411b89c2d9a10658b5"
+    },
+    {
+      "original": "public/media/pit-stop/formula-tire-front-lower.png",
+      "archiveEntry": "public/media/pit-stop/formula-tire-front-lower.png",
+      "bytes": 75788,
+      "sha256": "eecc8c243f8dfda067148ac5dd74ff33ef9acd78a5b2b7cbb4ee0c09db8d0455"
+    },
+    {
+      "original": "public/media/pit-stop/formula-tire-front-upper.png",
+      "archiveEntry": "public/media/pit-stop/formula-tire-front-upper.png",
+      "bytes": 74157,
+      "sha256": "b6be3ad9ec13149bcc145bd82d38937c450fb6749f636d85dc982e849bafb627"
+    },
+    {
+      "original": "public/media/pit-stop/formula-tire-rear-lower.png",
+      "archiveEntry": "public/media/pit-stop/formula-tire-rear-lower.png",
+      "bytes": 81091,
+      "sha256": "8e0bf49d43455a0d176c1072ac5345caeb6364de9f17e42fb68ff85dd2d951c9"
+    },
+    {
+      "original": "public/media/pit-stop/formula-tire-rear-upper.png",
+      "archiveEntry": "public/media/pit-stop/formula-tire-rear-upper.png",
+      "bytes": 83093,
+      "sha256": "3121a18ffb44d5c184f8d3dfebaf49a69984b04257d6dee50f7e6e89e3f9f790"
+    },
+    {
+      "original": "src/components/AmbientLoop/AmbientLoop.css",
+      "archiveEntry": "src/components/AmbientLoop/AmbientLoop.css",
+      "bytes": 283,
+      "sha256": "e4138e3dc7e0091ac0e5719e904885db75c5df89402eee4cc7cb8bc61cf9fd55"
+    },
+    {
+      "original": "src/components/AmbientLoop/AmbientLoop.tsx",
+      "archiveEntry": "src/components/AmbientLoop/AmbientLoop.tsx",
+      "bytes": 2800,
+      "sha256": "eb2129fbc3d922fe265c4163c5585f082373679e1c3046813938b51044b3876a"
+    },
+    {
+      "original": "src/components/Approach/PitStopCar.css",
+      "archiveEntry": "src/components/Approach/PitStopCar.css",
+      "bytes": 465,
+      "sha256": "6651e7440568bbf6cb47d6ae9ac6486437435f83c9928ae015c5479c64400eed"
+    },
+    {
+      "original": "src/components/Approach/PitStopCar.tsx",
+      "archiveEntry": "src/components/Approach/PitStopCar.tsx",
+      "bytes": 3816,
+      "sha256": "0ea1845f12c169e1532d8906c0cc65bf66fad45adc3b165b0f71558e2de5290d"
+    },
+    {
+      "original": "src/components/Approach/PitStopScene.css",
+      "archiveEntry": "src/components/Approach/PitStopScene.css",
+      "bytes": 3527,
+      "sha256": "5220c356be13972a1fe30fa7a8a38ea5eaca49a383c4cf648188d05fa0e4bde9"
+    },
+    {
+      "original": "src/components/Approach/PitStopScene.tsx",
+      "archiveEntry": "src/components/Approach/PitStopScene.tsx",
+      "bytes": 7599,
+      "sha256": "a62e73c3a5300ec9ed5cdda2d08ad276db77d2d5c35f80b4d4a57f2482a89e95"
+    },
+    {
+      "original": "src/components/Approach/pitStopGeometry.ts",
+      "archiveEntry": "src/components/Approach/pitStopGeometry.ts",
+      "bytes": 3171,
+      "sha256": "8f3e2cee58cbfe8c56f8b881be50014f01a1b0fbdfe2537ec2d1de139b0ae89d"
+    },
+    {
+      "original": "src/components/Approach/usePitStopSceneTimeline.ts",
+      "archiveEntry": "src/components/Approach/usePitStopSceneTimeline.ts",
+      "bytes": 9574,
+      "sha256": "23e239960275612e43cb72ae167fccd45c879c69df2b0caf9c79454dd976f125"
+    },
+    {
+      "original": "src/components/ApproachSummary/ApproachSummary.css",
+      "archiveEntry": "src/components/ApproachSummary/ApproachSummary.css",
+      "bytes": 7825,
+      "sha256": "1e992e0c8e245f011d6026d567c20ce6a2a2c8bd675252e34970e14dcb49bd65"
+    },
+    {
+      "original": "src/components/ApproachSummary/ApproachSummary.tsx",
+      "archiveEntry": "src/components/ApproachSummary/ApproachSummary.tsx",
+      "bytes": 15386,
+      "sha256": "a3f500bd951d1ca6949984e7988331af29abd76d380ed22e13487d17d30f203a"
+    },
+    {
+      "original": "src/components/ApproachSummary/ApproachTrack.css",
+      "archiveEntry": "src/components/ApproachSummary/ApproachTrack.css",
+      "bytes": 1591,
+      "sha256": "a3294ccf5bba5f9daf174ce99b4331e1221f579fb423f0839897b3f46d3fe369"
+    },
+    {
+      "original": "src/components/ApproachSummary/ApproachTrack.tsx",
+      "archiveEntry": "src/components/ApproachSummary/ApproachTrack.tsx",
+      "bytes": 3040,
+      "sha256": "2e293c53d1837988b538c357a1bbb8516987221f007ad9ddbc0faf0040b669e7"
+    },
+    {
+      "original": "src/components/ContactCta/ContactCta.css",
+      "archiveEntry": "src/components/ContactCta/ContactCta.css",
+      "bytes": 1229,
+      "sha256": "86924673f7102d627a0f8a5cdcac4c57e17fd39eca33fd89920770fbd00fec8e"
+    },
+    {
+      "original": "src/components/ContactCta/ContactCta.tsx",
+      "archiveEntry": "src/components/ContactCta/ContactCta.tsx",
+      "bytes": 1425,
+      "sha256": "7daa62b0404f4b0ec60358b17d1640eb20bb94f0fa088562d072ebf97093ae0b"
+    },
+    {
+      "original": "src/components/ContactForm/ContactForm.css",
+      "archiveEntry": "src/components/ContactForm/ContactForm.css",
+      "bytes": 2204,
+      "sha256": "f0ea685a7815cfe5a37f9174ec0cefece867f57f67dba42b5b01b20970cafed0"
+    },
+    {
+      "original": "src/components/ContactForm/ContactForm.tsx",
+      "archiveEntry": "src/components/ContactForm/ContactForm.tsx",
+      "bytes": 5071,
+      "sha256": "6973cf42ddbb2da22cd22701efcf572e8a45a6b552b329c86a27ba7927b3a577"
+    },
+    {
+      "original": "src/components/DiagonalRun/DiagonalRun.css",
+      "archiveEntry": "src/components/DiagonalRun/DiagonalRun.css",
+      "bytes": 3950,
+      "sha256": "a30bf0fd74b9220af4e20b64f8bb16abbc6758c8bf45a94115615272f65d1023"
+    },
+    {
+      "original": "src/components/DiagonalRun/DiagonalRun.tsx",
+      "archiveEntry": "src/components/DiagonalRun/DiagonalRun.tsx",
+      "bytes": 4723,
+      "sha256": "8131bf46bba336b22b626de6adab91ab66813ee6ab4a6b2229fb73c4aba108c6"
+    },
+    {
+      "original": "src/components/LineReveal/LineReveal.css",
+      "archiveEntry": "src/components/LineReveal/LineReveal.css",
+      "bytes": 467,
+      "sha256": "8a207545432cfa7ec57e211111bca8ededfd243aa85fca1c44d8fa2ca75d2acc"
+    },
+    {
+      "original": "src/components/LineReveal/LineReveal.tsx",
+      "archiveEntry": "src/components/LineReveal/LineReveal.tsx",
+      "bytes": 1730,
+      "sha256": "bda449d9c0507722f0ff1a6c70414f0dfd5f442cf0e16e6edbc9a2a4ad08c114"
+    },
+    {
+      "original": "src/components/PageLink/PageLink.tsx",
+      "archiveEntry": "src/components/PageLink/PageLink.tsx",
+      "bytes": 1039,
+      "sha256": "fa95d58c16b5aa89595577f2ec326a78a3fa211e470509ec1085f433561a2270"
+    },
+    {
+      "original": "src/components/Reveal/Reveal.tsx",
+      "archiveEntry": "src/components/Reveal/Reveal.tsx",
+      "bytes": 1325,
+      "sha256": "9fc68c38cbde318bd39ef3f0971b9ca44feeafeb0b9795d9c11216311c038bb9"
+    },
+    {
+      "original": "src/components/Services/OutcomeField.css",
+      "archiveEntry": "src/components/Services/OutcomeField.css",
+      "bytes": 4795,
+      "sha256": "b1a6a576197dc75f1db203035bca22fc0fb04278f601d28265d9124ea9ab6e8f"
+    },
+    {
+      "original": "src/components/Services/OutcomeField.tsx",
+      "archiveEntry": "src/components/Services/OutcomeField.tsx",
+      "bytes": 8959,
+      "sha256": "64bf4c3a29ae29f3d5254664f1b2654128c073ac45059c725b4727d6bb5870e9"
+    },
+    {
+      "original": "src/components/Services/ServiceRow.tsx",
+      "archiveEntry": "src/components/Services/ServiceRow.tsx",
+      "bytes": 1639,
+      "sha256": "16285f37b5404b82361fcde5a8016e74111114d33888f3b31038db3527cf2972"
+    },
+    {
+      "original": "src/components/Services/Services.css",
+      "archiveEntry": "src/components/Services/Services.css",
+      "bytes": 6629,
+      "sha256": "f206f80c8766e21257e8bca45432cb1a1a800855d03b94789b363f2b85846335"
+    },
+    {
+      "original": "src/components/Services/Services.tsx",
+      "archiveEntry": "src/components/Services/Services.tsx",
+      "bytes": 4028,
+      "sha256": "5232edd6cdefcbbb3cd70302bc20069f5ba7049a07b1f4ded2b0006fc23fa559"
+    },
+    {
+      "original": "src/components/ShiftQuiz/SpotlightMedia.css",
+      "archiveEntry": "src/components/ShiftQuiz/SpotlightMedia.css",
+      "bytes": 435,
+      "sha256": "5acc01001f0532fe0d5edfb8ea5243b22cee3809a5029f46297f702810a4ee45"
+    },
+    {
+      "original": "src/components/ShiftQuiz/SpotlightMedia.tsx",
+      "archiveEntry": "src/components/ShiftQuiz/SpotlightMedia.tsx",
+      "bytes": 9299,
+      "sha256": "bc0fba9580360dd95c32ad966bef067344a05943fca6e08dfce90cda7eaed3f4"
+    },
+    {
+      "original": "src/content/mediaAssets.ts",
+      "archiveEntry": "src/content/mediaAssets.ts",
+      "bytes": 922,
+      "sha256": "42aa969bf526e05ad7c5ee66ca87cc421d7783c42942fcb42845bf81cff4f9ec"
+    },
+    {
+      "original": "src/content/routeMeta.ts",
+      "archiveEntry": "src/content/routeMeta.ts",
+      "bytes": 4525,
+      "sha256": "cff9abccf86b43b9ff6d5fa3c773f3c9c4dc6c2d21e922d97a324c2628d9913e"
+    },
+    {
+      "original": "src/content/shiftQuiz.ts",
+      "archiveEntry": "src/content/shiftQuiz.ts",
+      "bytes": 4362,
+      "sha256": "881042d302d869faff664d435b2cbe71d53fcb4b179db4b6b1357931e0e2d58d"
+    },
+    {
+      "original": "src/content/siteConfig.ts",
+      "archiveEntry": "src/content/siteConfig.ts",
+      "bytes": 5936,
+      "sha256": "2e3eac164b9e0e33d4cbed94263b80e467bfecf5f856b7671b0a3e0f2f179cc4"
+    },
+    {
+      "original": "src/hooks/useMediaQuery.ts",
+      "archiveEntry": "src/hooks/useMediaQuery.ts",
+      "bytes": 502,
+      "sha256": "d6f82f3be77f3032d404c710c8b02a0c2a81c12c94eed73ebb07b65286cd75b9"
+    },
+    {
+      "original": "src/hooks/useReducedMotion.ts",
+      "archiveEntry": "src/hooks/useReducedMotion.ts",
+      "bytes": 563,
+      "sha256": "fb19d96e963a6bee9073583e9ea970364feb51787823f4632f42bd374f07da75"
+    },
+    {
+      "original": "src/lib/contactAdapter.ts",
+      "archiveEntry": "src/lib/contactAdapter.ts",
+      "bytes": 1837,
+      "sha256": "4541bd6b59007c2727e422b23d5d40ee77ffbd5f2072d42975eea2b0533bc10e"
+    },
+    {
+      "original": "src/lib/router.ts",
+      "archiveEntry": "src/lib/router.ts",
+      "bytes": 4543,
+      "sha256": "af7b6854d8bd4e00556430ad3af9591a1fb3a7f5aa1953e87ce2a0b18dadb33f"
+    },
+    {
+      "original": "src/lib/textLines.tsx",
+      "archiveEntry": "src/lib/textLines.tsx",
+      "bytes": 266,
+      "sha256": "4ee14f9c00140a295a49b45190b2678c0f059dd691ede086e4e23a5480e716ec"
+    }
+  ],
+  "supplements": [
+    {
+      "archive": "legacy-quiz-and-palette-supplement.tar.gz",
+      "bytes": 9853,
+      "sha256": "8803d9a602f7d120ecb29f741b2aa7babfaa261873e8622068d5dff2598270ea",
+      "sourceRevision": "0324da9ab7de9b7799df55a064b99356a47cc373",
+      "provenance": "Git baseline. The ShiftQuiz components were clean in the working tree when this task began; this supplemental archive restores the surrounding quiz and records the original global palette without copying already modified source.",
+      "files": [
+        {
+          "original": "src/components/ShiftQuiz/QuizQuestion.css",
+          "archiveEntry": "src/components/ShiftQuiz/QuizQuestion.css",
+          "bytes": 2347,
+          "sha256": "0702a8f5feba6accb3748ae0d18a82be12c1dfc5587b36b900653cfa6b3bc38f",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/QuizQuestion.css"
+        },
+        {
+          "original": "src/components/ShiftQuiz/QuizQuestion.tsx",
+          "archiveEntry": "src/components/ShiftQuiz/QuizQuestion.tsx",
+          "bytes": 2143,
+          "sha256": "7952590536a2ec36846d17037b4f3ee93b3a5a82818bf60ebe0710d0d9e0547d",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/QuizQuestion.tsx"
+        },
+        {
+          "original": "src/components/ShiftQuiz/QuizResult.css",
+          "archiveEntry": "src/components/ShiftQuiz/QuizResult.css",
+          "bytes": 1493,
+          "sha256": "00d1b508c042760b07f82e861d7147986234691a244eb1d1f8ab4046c7607194",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/QuizResult.css"
+        },
+        {
+          "original": "src/components/ShiftQuiz/QuizResult.tsx",
+          "archiveEntry": "src/components/ShiftQuiz/QuizResult.tsx",
+          "bytes": 1362,
+          "sha256": "d5a95ba486dd1374a7d730c6d840062f86acd02b454e9146cc03e8d21d740090",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/QuizResult.tsx"
+        },
+        {
+          "original": "src/components/ShiftQuiz/ShiftQuiz.css",
+          "archiveEntry": "src/components/ShiftQuiz/ShiftQuiz.css",
+          "bytes": 1579,
+          "sha256": "8727a9013edba71da3593e7d1f43479439695b5fd151353cdfb8d4cf2c9d7568",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/ShiftQuiz.css"
+        },
+        {
+          "original": "src/components/ShiftQuiz/ShiftQuiz.tsx",
+          "archiveEntry": "src/components/ShiftQuiz/ShiftQuiz.tsx",
+          "bytes": 8906,
+          "sha256": "554833eae9431f71db1734a8f4754158e81a5406b3370a64c08d4abe19a0c2ff",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/ShiftQuiz.tsx"
+        },
+        {
+          "original": "src/components/ShiftQuiz/SpotlightMedia.css",
+          "archiveEntry": "src/components/ShiftQuiz/SpotlightMedia.css",
+          "bytes": 435,
+          "sha256": "5acc01001f0532fe0d5edfb8ea5243b22cee3809a5029f46297f702810a4ee45",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/SpotlightMedia.css"
+        },
+        {
+          "original": "src/components/ShiftQuiz/SpotlightMedia.tsx",
+          "archiveEntry": "src/components/ShiftQuiz/SpotlightMedia.tsx",
+          "bytes": 9299,
+          "sha256": "bc0fba9580360dd95c32ad966bef067344a05943fca6e08dfce90cda7eaed3f4",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/components/ShiftQuiz/SpotlightMedia.tsx"
+        },
+        {
+          "original": "src/index.css",
+          "archiveEntry": "src/index.css",
+          "bytes": 4641,
+          "sha256": "5f2ebf61734ed49c0e8f404e38af15c7138c640810805f7f3e493cb5a204b312",
+          "source": "git:0324da9ab7de9b7799df55a064b99356a47cc373:src/index.css"
+        }
+      ]
+    }
+  ]
+}

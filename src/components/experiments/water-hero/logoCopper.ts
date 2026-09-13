@@ -33,7 +33,7 @@ export const logoCopperUniforms = (material: MeshStandardMaterial) => copperMate
  * registry and rounded-face normal hooks. Clear Glass and its source GLB
  * remain unchanged; no copper geometry or extra capture is allocated. */
 export function createLogoCopperMaterial(source: Material, worldThickness: number, reflectionProxy = false) {
-  const material = createLogoCrystalMaterial(source, worldThickness)
+  const material = createLogoCrystalMaterial(source, worldThickness, 'clear')
   const profile = SMOKED_COPPER_MATERIAL
   material.name = `${source.name || 'WS'}_SmokedCopperGlass`
   material.color.setRGB(...profile.baseColor)

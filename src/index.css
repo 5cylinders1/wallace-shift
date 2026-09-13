@@ -1,23 +1,25 @@
 :root {
-  --color-ink: #060708;
-  --color-graphite: #101214;
-  --color-bone: #f1efe9;
-  --color-soft-white: #f7f7f4;
-  --color-muted: #9ea3a6;
-  --color-silver: #d6dadf;
-  /* --color-muted reads as secondary on ink but only reaches 2.2:1 on
-     bone, so warm sections get their own secondary tone. 5.19:1 on bone
-     and 4.92:1 on the tier table's flagged wash — both clear AA at the
-     small label sizes it is used for. */
-  --color-muted-on-bone: #606467;
+  --color-ink: #080d12;
+  --color-graphite: #121a21;
+  --color-pearl: #edf1f2;
+  --color-bone: var(--color-pearl);
+  --color-soft-white: var(--color-pearl);
+  --color-muted: #adbac3;
+  --color-silver: #c3d0d8;
+  --color-muted-on-bone: #52616b;
 
-  /* Single chromatic accent — ember. Warm signal color shared by the
-     generated imagery (rim light, horizon glow, car livery) and the UI.
-     `--color-ember` is tuned for dark grounds; `--color-ember-deep` has
-     the contrast needed for accents sitting on bone. */
-  --color-ember: #e85427;
-  --color-ember-deep: #c2401c;
-  --color-ember-soft: rgba(232, 84, 39, 0.16);
+  /* Azure for dark surfaces; deep azure for text, controls and focus on pearl.
+     One hue family at two lightnesses, because a light accent and a readable
+     accent on light are different jobs. The older names remain aliases so
+     shared components adopt the palette without confusing the two. */
+  --color-accent: #4fa8ff;
+  --color-accent-hover: #7cc4ff;
+  --color-accent-deep: #175c99;
+  --color-accent-rgb: 79 168 255;
+  --color-accent-deep-rgb: 23 92 153;
+  --color-ember: var(--color-accent);
+  --color-ember-deep: var(--color-accent-deep);
+  --color-ember-soft: rgb(var(--color-accent-rgb) / .16);
 
   --font-sans:
     'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
@@ -47,6 +49,27 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* The retired pit-stop remains an original portfolio piece. These values
+   also preserve shared CSS lights that now read the semantic RGB tokens. */
+.pit-stop-experiment {
+  --color-ink: #060708;
+  --color-graphite: #101214;
+  --color-pearl: #f1efe9;
+  --color-bone: #f1efe9;
+  --color-soft-white: #f7f7f4;
+  --color-muted: #9ea3a6;
+  --color-silver: #d6dadf;
+  --color-muted-on-bone: #606467;
+  --color-accent: #e85427;
+  --color-accent-hover: #ff815b;
+  --color-accent-deep: #c2401c;
+  --color-accent-rgb: 232 84 39;
+  --color-accent-deep-rgb: 194 64 28;
+  --color-ember: #e85427;
+  --color-ember-deep: #c2401c;
+  --color-ember-soft: rgba(232, 84, 39, .16);
 }
 
 *,
@@ -178,11 +201,10 @@ textarea {
   border-radius: 2px;
 }
 
-/* Silver outlines vanish against bone — light sections get the deep ember
-   focus ring instead. */
+/* Light sections need a petrol focus ring; dark sections retain silver. */
 .services :focus-visible,
 .approach :focus-visible,
-.standards :focus-visible,
+.pit-stop-experiment .standards :focus-visible,
 .tier-table :focus-visible,
 .website-care :focus-visible,
 .engagements :focus-visible,

@@ -10,6 +10,8 @@ interface SiteAuditProps {
   continueTo: string
   /** The report, for the error state to point at. */
   reportId: string
+  /** A compact, dark-ground version for starting the check in the hero. */
+  compact?: boolean
 }
 
 /**
@@ -21,7 +23,7 @@ interface SiteAuditProps {
  * something worth reading while it happens. The page already had the
  * something: its own three stages.
  */
-export function SiteAudit({ state, continueTo, reportId }: SiteAuditProps) {
+export function SiteAudit({ state, continueTo, reportId, compact = false }: SiteAuditProps) {
   const uid = useId()
   const [url, setUrl] = useState('')
   const { status, run } = state
@@ -30,15 +32,16 @@ export function SiteAudit({ state, continueTo, reportId }: SiteAuditProps) {
     event.preventDefault()
     if (!url.trim() || status === 'running') return
     run(url)
-    scrollOn()
+    // The status panel changes the hero's height. Aim at the committed layout.
+    requestAnimationFrame(() => scrollTo(continueTo, true))
   }
 
-  const scrollTo = (id: string) => {
+  const scrollTo = (id: string, immediate = false) => {
     const target = document.getElementById(id)
     if (!target) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     target.scrollIntoView({
-      behavior: reduced ? 'auto' : 'smooth',
+      behavior: reduced || immediate ? 'instant' : 'smooth',
       block: 'start',
     })
   }
@@ -53,7 +56,31 @@ export function SiteAudit({ state, continueTo, reportId }: SiteAuditProps) {
   const showPanel = status === 'idle'
 
   return (
-    <div className="audit">
+    <div className={`audit${compact ? ' audit--compact' : ''}`}>
+      {compact && (
+        <ul className="audit__signals" aria-label="The first check includes">
+          <li>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M3 15V9m5 6V5m5 10V7m4 8V3" />
+            </svg>
+            Loading
+          </li>
+          <li>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="8.5" cy="8.5" r="5" />
+              <path d="m12.5 12.5 4 4" />
+            </svg>
+            Search
+          </li>
+          <li>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="10" cy="4" r="1.5" />
+              <path d="m3 7 7 2 7-2M10 9v3m0 0-4 5m4-5 4 5" />
+            </svg>
+            Accessibility
+          </li>
+        </ul>
+      )}
       <div className="audit__top">
         <form className="audit__form" onSubmit={handleSubmit} noValidate>
           <label className="audit__label" htmlFor={`${uid}-url`}>
@@ -86,9 +113,15 @@ export function SiteAudit({ state, continueTo, reportId }: SiteAuditProps) {
           {/* The check only works on an existing public site — these keep
               app and automation visitors from feeling shut out by it. */}
           <ul className="audit__alts">
-            {auditCopy.alternatives.map((alt) => (
+            {auditCopy.alternatives.map((alt, index) => (
               <li key={alt.href + alt.label}>
-                <PageLink href={alt.href}>{alt.label}</PageLink>
+                <PageLink href={alt.href}>
+                  {compact
+                    ? index === 0
+                      ? 'No website? Book a free fit call.'
+                      : 'App or automation? Tell us about it.'
+                    : alt.label}
+                </PageLink>
               </li>
             ))}
           </ul>
@@ -96,7 +129,7 @@ export function SiteAudit({ state, continueTo, reportId }: SiteAuditProps) {
 
         {/* Fills the right column before anything has run, so the section
             reads as composed rather than half-empty. */}
-        {showPanel && (
+        {showPanel && !compact && (
           <div className="audit__panel" aria-hidden="true">
             <p className="audit__panel-label">{auditCopy.previewLabel}</p>
             <ul className="audit__panel-list">
@@ -107,30 +140,41 @@ export function SiteAudit({ state, continueTo, reportId }: SiteAuditProps) {
           </div>
         )}
 
-        {status === 'error' && (
-          <div className="audit__panel audit__panel--error">
-            <p className="audit__panel-label">{auditCopy.errorPanelTitle}</p>
-            <p className="audit__running-body">{auditCopy.errorPanelBody}</p>
-            <button type="button" className="audit__scroll-on" onClick={scrollToReport}>
-              {auditCopy.errorPanelCta}
-              <span aria-hidden="true">&#8595;</span>
-            </button>
-          </div>
-        )}
+        <div className="audit__status" role="status" aria-live="polite" aria-atomic="true">
+          {status === 'error' && (
+            <div className="audit__panel audit__panel--error">
+              <p className="audit__panel-label">{auditCopy.errorPanelTitle}</p>
+              <p className="audit__running-body">{auditCopy.errorPanelBody}</p>
+              <button type="button" className="audit__scroll-on" onClick={scrollToReport}>
+                {auditCopy.errorPanelCta}
+                <span aria-hidden="true">&#8595;</span>
+              </button>
+            </div>
+          )}
 
-        {status === 'running' && (
-          <div className="audit__panel audit__panel--running">
-            <p className="audit__panel-label">
-              <span className="audit__spinner" aria-hidden="true" />
-              {auditCopy.runningTitle}
-            </p>
-            <p className="audit__running-body">{auditCopy.runningBody}</p>
-            <button type="button" className="audit__scroll-on" onClick={scrollOn}>
-              {auditCopy.runningCta}
-              <span aria-hidden="true">&#8595;</span>
-            </button>
-          </div>
-        )}
+          {status === 'running' && (
+            <div className="audit__panel audit__panel--running">
+              <p className="audit__panel-label">
+                <span className="audit__spinner" aria-hidden="true" />
+                {auditCopy.runningTitle}
+              </p>
+              <p className="audit__running-body">{auditCopy.runningBody}</p>
+              <button type="button" className="audit__scroll-on" onClick={scrollOn}>
+                {auditCopy.runningCta}
+                <span aria-hidden="true">&#8595;</span>
+              </button>
+            </div>
+          )}
+          {status === 'done' && (
+            <div className="audit__panel audit__panel--done">
+              <p className="audit__panel-label">{auditCopy.pillReady}</p>
+              <button type="button" className="audit__scroll-on" onClick={scrollToReport}>
+                See your findings
+                <span aria-hidden="true">&#8595;</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

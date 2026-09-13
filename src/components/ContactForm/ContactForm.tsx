@@ -1,8 +1,14 @@
 import { useId, useState, type FormEvent } from 'react'
 import { business } from '../../content/siteConfig'
+import { enquiryBudgets, enquiryCopy, enquiryPackages, enquiryServices,
+  type EnquiryOption } from '../../content/enquiry'
 import { submitContactRequest } from '../../lib/contactAdapter'
 import type { ServiceRecommendation } from '../../content/shiftQuiz'
 import './ContactForm.css'
+
+/** The endpoint receives what the reader actually read, not an internal id. */
+const labelFor = (options: EnquiryOption[], value: string) =>
+  options.find(option => option.value === value)?.label ?? ''
 
 type Status =
   | 'idle'
@@ -22,6 +28,29 @@ type ContactFormProps = {
    * remounts the form rather than keeping the previous prefill.
    */
   handoff?: ServiceRecommendation | null
+  /** Adds budget, service, package and current-website questions. The short
+   *  form stays the default: the extra context is worth asking for where
+   *  there is room for it, and a barrier everywhere else. */
+  detailed?: boolean
+}
+
+/** One labelled select. The blank first option is the unanswered state:
+ *  none of these questions is required, so none of them may preselect. */
+function Choice({ id, label, value, options, onChange }: {
+  id: string; label: string; value: string
+  options: EnquiryOption[]; onChange: (value: string) => void
+}) {
+  return (
+    <div className="contact-form__field">
+      <label htmlFor={id}>{label}</label>
+      <select id={id} name={id} value={value} onChange={event => onChange(event.target.value)}>
+        <option value="">{enquiryCopy.choosePlaceholder}</option>
+        {options.map(option => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+    </div>
+  )
 }
 
 /**
@@ -37,6 +66,7 @@ export function ContactForm({
   idPrefix,
   submitLabel,
   handoff,
+  detailed = false,
 }: ContactFormProps) {
   const uid = useId()
   const [name, setName] = useState('')
@@ -44,6 +74,11 @@ export function ContactForm({
   const [message, setMessage] = useState(() =>
     handoff ? `Recommended shift: ${handoff.title}. ` : '',
   )
+  const [website, setWebsite] = useState('')
+  const [noWebsite, setNoWebsite] = useState(false)
+  const [service, setService] = useState('')
+  const [packageChoice, setPackageChoice] = useState('')
+  const [budget, setBudget] = useState('')
   // Honeypot. Stays empty for anyone who can actually see the form.
   const [company, setCompany] = useState('')
   const [status, setStatus] = useState<Status>('idle')
@@ -53,13 +88,26 @@ export function ContactForm({
     event.preventDefault()
     setStatus('submitting')
 
-    const result = await submitContactRequest({ name, email, message, company })
+    const result = await submitContactRequest({
+      name, email, message, company,
+      ...(detailed ? {
+        website: noWebsite ? '' : website, noWebsite,
+        service: labelFor(enquiryServices, service),
+        package: labelFor(enquiryPackages, packageChoice),
+        budget: labelFor(enquiryBudgets, budget),
+      } : {}),
+    })
 
     if (result.ok) {
       setStatus('sent')
       setName('')
       setEmail('')
       setMessage('')
+      setWebsite('')
+      setNoWebsite(false)
+      setService('')
+      setPackageChoice('')
+      setBudget('')
       return
     }
 
@@ -68,41 +116,84 @@ export function ContactForm({
 
   return (
     <form className="contact-form" onSubmit={handleSubmit} noValidate>
-      <div className="contact-form__field">
-        <label htmlFor={`${idPrefix}-name`}>Name</label>
-        <input
-          id={`${idPrefix}-name`}
-          name="name"
-          type="text"
-          autoComplete="name"
-          placeholder="Your name"
-          required
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-        />
+      {/* Paired so the detailed card stays a compact block. Seven stacked
+          fields make it taller than the screen it has to share. */}
+      <div className={detailed ? 'contact-form__row' : undefined}>
+        <div className="contact-form__field">
+          <label htmlFor={`${idPrefix}-name`}>Name</label>
+          <input
+            id={`${idPrefix}-name`}
+            name="name"
+            type="text"
+            autoComplete="name"
+            placeholder="Your name"
+            required
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
+        </div>
+
+        <div className="contact-form__field">
+          <label htmlFor={`${idPrefix}-email`}>Email</label>
+          <input
+            id={`${idPrefix}-email`}
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@business.com"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="contact-form__field">
-        <label htmlFor={`${idPrefix}-email`}>Email</label>
-        <input
-          id={`${idPrefix}-email`}
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="you@business.com"
-          required
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
-      </div>
+      {detailed && (
+        <div className="contact-form__row">
+          <div className="contact-form__field">
+            <label htmlFor={`${idPrefix}-website`}>{enquiryCopy.websiteLabel}</label>
+            <input
+              id={`${idPrefix}-website`}
+              name="website"
+              type="url"
+              inputMode="url"
+              autoComplete="url"
+              placeholder={enquiryCopy.websitePlaceholder}
+              value={noWebsite ? '' : website}
+              disabled={noWebsite}
+              onChange={(event) => setWebsite(event.target.value)}
+            />
+            <label className="contact-form__toggle">
+              <input
+                type="checkbox"
+                name="noWebsite"
+                checked={noWebsite}
+                onChange={(event) => setNoWebsite(event.target.checked)}
+              />
+              {enquiryCopy.noWebsiteLabel}
+            </label>
+          </div>
+          <Choice id={`${idPrefix}-package`} label={enquiryCopy.packageLabel}
+            value={packageChoice} options={enquiryPackages} onChange={setPackageChoice} />
+        </div>
+      )}
+
+      {detailed && (
+        <div className="contact-form__row">
+          <Choice id={`${idPrefix}-service`} label={enquiryCopy.serviceLabel}
+            value={service} options={enquiryServices} onChange={setService} />
+          <Choice id={`${idPrefix}-budget`} label={enquiryCopy.budgetLabel}
+            value={budget} options={enquiryBudgets} onChange={setBudget} />
+        </div>
+      )}
 
       <div className="contact-form__field">
-        <label htmlFor={`${idPrefix}-message`}>What is not working?</label>
+        <label htmlFor={`${idPrefix}-message`}>{enquiryCopy.messageLabel}</label>
         <textarea
           id={`${idPrefix}-message`}
           name="message"
           rows={4}
-          placeholder="What isn't working right now?"
+          placeholder={enquiryCopy.messagePlaceholder}
           required
           value={message}
           onChange={(event) => setMessage(event.target.value)}

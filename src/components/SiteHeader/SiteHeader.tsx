@@ -42,7 +42,9 @@ export function SiteHeader() {
     setHeightVar()
 
     const observer = new ResizeObserver(setHeightVar)
-    observer.observe(header)
+    // The scrolled state changes padding while the content height stays
+    // constant. Measure the border box so pinned sections track that change.
+    observer.observe(header, { box: 'border-box' })
     return () => observer.disconnect()
   }, [])
 

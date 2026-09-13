@@ -193,6 +193,21 @@ export interface EngagementItem {
   priceUnit?: string
   window: string
   note?: string
+  /**
+   * DRAFTED BY CLAUDE ON 2026-09-12 — NOT YET APPROVED.
+   *
+   * The four fields the website tiers carry and these did not, added so the
+   * three areas present identically. `scope` lines are deliberately near
+   * restatements of each item's own approved `description` and `note` rather
+   * than new commitments; `category`, `tagline` and `bestFor` are new
+   * positioning. No warranty, response time, or capability not already
+   * claimed elsewhere on the site appears in them. Review before launch.
+   */
+  category?: string
+  tagline?: string
+  bestFor?: string
+  scope?: string[]
+  ctaLabel?: string
 }
 
 export interface EngagementGroup {
@@ -222,6 +237,19 @@ export const engagementGroups: EngagementGroup[] = [
         startsAt: false,
         window: '1 week',
         note: 'Applied to the project total when the build begins within 30 days.',
+        category: 'Discovery and technical plan',
+        tagline: 'The clarifying shift.',
+        bestFor:
+          'Businesses with a product idea that needs a defined shape before anyone commits a budget to building it.',
+        scope: [
+          'User and role mapping',
+          'Workflow mapping',
+          'Integration requirements',
+          'Edge cases identified',
+          'Technical approach defined',
+          'Costed build plan',
+        ],
+        ctaLabel: 'Start a definition sprint',
       },
       {
         index: '02',
@@ -231,6 +259,18 @@ export const engagementGroups: EngagementGroup[] = [
         price: '18,000',
         startsAt: true,
         window: '6–10 weeks',
+        category: 'Custom portal, tool, or dashboard',
+        tagline: 'The working shift.',
+        bestFor:
+          'Businesses running a core workflow on spreadsheets, email, or software that was never meant for it.',
+        scope: [
+          'Everything in the definition sprint',
+          'One primary business workflow, built end to end',
+          'Customer portal, booking system, internal tool, or dashboard',
+          'Interface designed around the people who use it',
+          'Responsive across desktop and mobile',
+        ],
+        ctaLabel: 'Start a web app project',
         note: 'Multi-tenant SaaS, extensive user roles, legacy data migration, native mobile apps, advanced compliance such as HIPAA or PCI, complex AI systems, and large integration counts are scoped separately.',
       },
       {
@@ -243,6 +283,17 @@ export const engagementGroups: EngagementGroup[] = [
         priceUnit: '/month',
         window: '3-month initial term',
         note: 'Rolling monthly after the initial term, with 30 days’ notice.',
+        category: 'Reserved ongoing capacity',
+        tagline: 'The continuing shift.',
+        bestFor:
+          'Businesses whose product keeps changing and needs steady hands rather than another one-off project.',
+        scope: [
+          'Reserved design and development capacity',
+          'Continued feature work and refinement',
+          'Maintenance as the product evolves',
+          'Rolling monthly after the initial term',
+        ],
+        ctaLabel: 'Start a product partnership',
       },
     ],
     note: 'Hosting, third-party subscriptions, API usage, payment-processing fees, and advanced compliance requirements are quoted separately.',
@@ -263,6 +314,17 @@ export const engagementGroups: EngagementGroup[] = [
         startsAt: false,
         window: '3–5 business days',
         note: 'Credited toward qualifying automation builds of $5,000 or more.',
+        category: 'Measured opportunity report',
+        tagline: 'The honest shift.',
+        bestFor:
+          'Businesses that know work is being repeated but not what it costs or where to start.',
+        scope: [
+          'Repetitive work traced across systems',
+          'The cost of that work calculated',
+          'Failure points identified',
+          'Prioritized automation plan returned',
+        ],
+        ctaLabel: 'Start an automation audit',
       },
       {
         index: '02',
@@ -272,6 +334,17 @@ export const engagementGroups: EngagementGroup[] = [
         price: '2,500',
         startsAt: true,
         window: '1–3 weeks',
+        category: 'One connected workflow',
+        tagline: 'The practical shift.',
+        bestFor:
+          'Businesses losing hours to one repeatable process, or losing customers to follow-up that never happens.',
+        scope: [
+          'Everything in the automation audit',
+          'One focused workflow, built end to end',
+          'Systems, follow-up, and handoffs connected',
+          'Tested against real business cases',
+        ],
+        ctaLabel: 'Start a workflow build',
         note: 'Multi-system, business-critical, and custom-coded workflows are scoped separately.',
       },
       {
@@ -283,6 +356,17 @@ export const engagementGroups: EngagementGroup[] = [
         startsAt: true,
         priceUnit: '/month',
         window: 'Rolling',
+        category: 'Monitoring and upkeep',
+        tagline: 'The dependable shift.',
+        bestFor:
+          'Businesses already running automations that the business cannot afford to have quietly fail.',
+        scope: [
+          'Monitoring of running workflows',
+          'Maintenance as connected systems change',
+          'Failure recovery',
+          'Minor adjustments to existing workflows',
+        ],
+        ctaLabel: 'Start managed automation',
         note: 'New workflows and substantial changes are scoped separately.',
       },
     ],

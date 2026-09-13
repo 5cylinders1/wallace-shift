@@ -45,13 +45,19 @@ export function OutcomeField({ word, isActive, reducedMotion, isMobile, media }:
   const lastAppliedRef = useRef<boolean | null>(null)
   const proxy = useRef({ xTop: HIDDEN.xTop, xBottom: HIDDEN.xBottom })
   const highlightPct = useRef(FALLBACK_HIGHLIGHT_PCT)
+  const revealObserver = useRef<IntersectionObserver | null>(null)
+  const activeTimeline = useRef<gsap.core.Timeline | null>(null)
 
   useGSAP(
-    () => {
+    (_context, contextSafe) => {
+      revealObserver.current?.disconnect()
+      activeTimeline.current?.kill()
       const field = fieldRef.current
       const edge = edgeRef.current
       const wordEl = wordRef.current
       if (!field || !edge || !wordEl) return
+      // Returning from mobile restores the full-height desktop panel.
+      if (!isMobile && rootRef.current) gsap.set(rootRef.current, { clearProps: 'height' })
 
       const width = field.clientWidth
       if (width > 0) highlightPct.current = (2.5 / width) * 100
@@ -83,6 +89,7 @@ export function OutcomeField({ word, isActive, reducedMotion, isMobile, media }:
 
       const playEnter = () => {
         const tl = gsap.timeline()
+        activeTimeline.current = tl
 
         if (isMobile && rootRef.current) {
           tl.to(rootRef.current, { height: MOBILE_FIELD_HEIGHT, duration: 0.6, ease: 'power3.inOut' }, 0)
@@ -112,6 +119,7 @@ export function OutcomeField({ word, isActive, reducedMotion, isMobile, media }:
 
       const playExit = () => {
         const tl = gsap.timeline()
+        activeTimeline.current = tl
 
         tl.to(wordEl, { yPercent: -40, opacity: 0, duration: 0.32, ease: 'power2.in' }, 0)
         tl.to(
@@ -148,20 +156,23 @@ export function OutcomeField({ word, isActive, reducedMotion, isMobile, media }:
         // reveal behind intersection so it plays once, only once the section
         // is actually visible, rather than immediately at mount.
         setInstant(false)
-        const target = rootRef.current
+        // The mobile field begins at zero height; observe its row so the
+        // first reveal can open it without waiting on invisible media.
+        const target = rootRef.current?.closest('.service-row') ?? rootRef.current
         if (!target) return
 
         const observer = new IntersectionObserver(
-          (entries) => {
+          contextSafe!((entries: IntersectionObserverEntry[]) => {
             for (const entry of entries) {
               if (!entry.isIntersecting) continue
               playEnter()
               observer.unobserve(target)
             }
-          },
+          }),
           { threshold: 0.3 },
         )
         observer.observe(target)
+        revealObserver.current = observer
         return () => observer.disconnect()
       }
 
@@ -176,7 +187,7 @@ export function OutcomeField({ word, isActive, reducedMotion, isMobile, media }:
       <div className="outcome-field__field" ref={fieldRef}>
         {media && (
           <div className="outcome-field__media" ref={mediaRef}>
-            <AmbientLoop media={media} />
+            <AmbientLoop media={media} active={isActive} />
             <div className="outcome-field__media-scrim" />
           </div>
         )}

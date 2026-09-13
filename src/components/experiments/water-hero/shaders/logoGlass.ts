@@ -12,6 +12,20 @@ export const CRYSTAL_FACE_CURVATURE = {
   xz: .004,
 } as const
 
+/** Art-directed diffusion on the exposed wall during the first turn only.
+ * Later views reuse that light source, so leave the source itself intact. */
+export const GLASS_EARLY_TURN = { start: 20, full: 45, release: 80, end: 110, roughness: .34 } as const
+
+/** Glass only, after native material initialization and before lighting.
+ * Cap faces retain their polish and refraction. The wall and its shoulder
+ * smoothly broaden the reflected lobe without changing their normals. */
+export const logoCrystalEarlyReflection = /* glsl */ `
+float crystalSideSoftness = uGlassEarlyTurn * smoothstep(.18, .78, vGlassBevel);
+float crystalReflectionRoughness = mix(roughness,
+  max(roughness, ${GLASS_EARLY_TURN.roughness}), crystalSideSoftness);
+material.roughness = max(material.roughness, crystalReflectionRoughness);
+`
+
 export const logoGlassVertexPars = /* glsl */ `
 varying float vGlassBevel;
 varying vec3 vGlassFaceNormal;
@@ -85,6 +99,33 @@ vec3 crystalLensTilt = normalize(vGlassTangentX) * crystalLensSlope.x
   + normalize(vGlassTangentZ) * crystalLensSlope.y;
 crystalLensTilt -= normal * dot(normal, crystalLensTilt);
 normal = normalize(normal - crystalLensTilt * crystalFaceSign * crystalFaceWeight);
+`
+
+/** Glass comparison only, after lights_physical_fragment initializes the
+ * material and before native thin-film Fresnel evaluation. Thickness is
+ * fixed to the object, so its spectrum changes with the view and real light,
+ * never with a color-cycling clock. It tints specular light, not transmission. */
+export const logoCrystalIridescence = /* glsl */ `
+#ifdef USE_IRIDESCENCE
+  float crystalFilmNoV = clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0);
+  float crystalFilmShoulder = smoothstep(.003, .045, vGlassBevel)
+    * (1.0 - smoothstep(.70, .98, vGlassBevel));
+  float crystalFilmFace = 1.0 - smoothstep(.004, .045, vGlassBevel);
+  // Broad, continuous thickness variation puts different spectral glints on
+  // the face and polished shoulders without introducing a texture or seam.
+  float crystalFilmPosition = clamp(.48 + .24 * vGlassPlane.x
+    - .20 * vGlassPlane.y + .055 * vGlassPlane.x * vGlassPlane.y, 0.0, 1.0);
+  float crystalFaceSheen = mix(.46, .76,
+    smoothstep(.02, .78, 1.0 - crystalFilmNoV))
+    * mix(.60, 1.0, smoothstep(.12, .90, crystalFilmPosition));
+  float crystalFilmWeight = max(crystalFilmShoulder,
+    crystalFilmFace * crystalFaceSheen);
+  material.iridescence *= crystalFilmWeight;
+  float crystalFilmThickness = clamp(crystalFilmPosition
+    + .22 * smoothstep(.015, .38, vGlassBevel), 0.0, 1.0);
+  material.iridescenceThickness = mix(iridescenceThicknessMinimum,
+    iridescenceThicknessMaximum, crystalFilmThickness);
+#endif
 `
 
 /** Insert immediately before opaque_fragment, after the physical shader has

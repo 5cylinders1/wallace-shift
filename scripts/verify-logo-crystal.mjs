@@ -19,17 +19,29 @@ const base = '../src/components/experiments/water-hero/'
 const configUrl = await sourceModule(`${base}waterHeroConfig.ts`)
 const colorUrl = await sourceModule(`${base}shaders/underwaterColor.ts`)
 const glassUrl = await sourceModule(`${base}shaders/logoGlass.ts`)
-const { CRYSTAL_FACE_CURVATURE, logoCrystalFragmentNormal } = await import(glassUrl)
+const { CRYSTAL_FACE_CURVATURE, GLASS_EARLY_TURN, logoCrystalEarlyReflection, logoCrystalFragmentNormal, logoCrystalIridescence } = await import(glassUrl)
 const ledUrl = await sourceModule(`${base}shaders/logoLED.ts`)
-const { GLASSMORPH_LOGO_MATERIAL, LOGO_MATERIAL, WS_LOGO_URL } = await import(configUrl)
-const { createLogoCrystalMaterial, createLogoGlassMaterial, logoGlassUniforms, bindGlassScene, updateGlassRim } = await import(
-  await sourceModule(`${base}logoMaterial.ts`, [
+const { CLEAR_CRYSTAL_MATERIAL, GLASSMORPH_LOGO_MATERIAL, LOGO_MATERIAL, WS_LOGO_URL } = await import(configUrl)
+const materialUrl = await sourceModule(`${base}logoMaterial.ts`, [
     ["from './waterHeroConfig'", `from '${configUrl}'`],
     ["from './shaders/underwaterColor'", `from '${colorUrl}'`],
     ["from './shaders/logoGlass'", `from '${glassUrl}'`],
     ["from './shaders/logoLED'", `from '${ledUrl}'`],
-  ]),
-)
+  ])
+const { createLogoCrystalMaterial, createLogoGlassMaterial, logoGlassUniforms, bindGlassScene, updateGlassRim, updateGlassTurnSoftness } = await import(materialUrl)
+const frostedUrl = await sourceModule(`${base}shaders/logoFrosted.ts`)
+const { createLogoFrostedMaterial } = await import(await sourceModule(`${base}logoFrosted.ts`, [
+  ["from './logoMaterial'", `from '${materialUrl}'`],
+  ["from './shaders/underwaterColor'", `from '${colorUrl}'`],
+  ["from './shaders/logoGlass'", `from '${glassUrl}'`],
+  ["from './shaders/logoFrosted'", `from '${frostedUrl}'`],
+]))
+const copperUrl = await sourceModule(`${base}shaders/logoCopper.ts`)
+const { createLogoCopperMaterial } = await import(await sourceModule(`${base}logoCopper.ts`, [
+  ["from './logoMaterial'", `from '${materialUrl}'`],
+  ["from './shaders/logoGlass'", `from '${glassUrl}'`],
+  ["from './shaders/logoCopper'", `from '${copperUrl}'`],
+]))
 const bytes = await readFile(new URL(`../public${WS_LOGO_URL}`, import.meta.url))
 const { scene } = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
 scene.updateMatrixWorld(true)
@@ -109,10 +121,12 @@ await test('clear iridescence modifies native material parameters before lightin
   assert.ok(lens < shader.fragmentShader.indexOf('#include <lights_physical_fragment>'),
     'the optical face normal must affect native reflections and transmission together')
   const initialize = fragment.indexOf('material.iridescence = iridescence;')
-  const bevelGate = fragment.indexOf('material.iridescence *= crystalBevel;')
+  const filmGate = fragment.indexOf('material.iridescence *= crystalFilmWeight;')
   const evaluate = fragment.search(/material\.iridescenceFresnel\w*\s*=\s*evalIridescence/)
-  assert.ok(initialize >= 0 && bevelGate > initialize && evaluate > bevelGate,
-    'bevel-only thin-film strength must be set before native Fresnel evaluation')
+  assert.ok(initialize >= 0 && filmGate > initialize && evaluate > filmGate,
+    'selective face and shoulder film must be set before native Fresnel evaluation')
+  assert.doesNotMatch(logoCrystalIridescence, /uTime|sin\(|cos\(|texture2D|outgoingLight|totalDiffuse|emissive/,
+    'spectral highlights come from physical reflections, without a clock-driven color overlay')
   assert.ok(fragment.includes('uniform float iridescenceThicknessMinimum;'))
   assert.ok(fragment.includes('uniform float iridescenceThicknessMaximum;'))
   const composite = shader.fragmentShader.indexOf('outgoingLight = totalSpecular + crystalBody + crystalRearReflection;')
@@ -123,11 +137,83 @@ await test('clear iridescence modifies native material parameters before lightin
   const optics = shader.fragmentShader.slice(shader.fragmentShader.indexOf('vec3 crystalView'), composite)
   assert.ok(!optics.includes('totalDiffuse'), 'clear compositing cannot wash the transparent face with diffuse gray')
   assert.ok(!optics.includes('uGlassRimStrength'), 'crystal edges reflect their environment rather than emit a white outline')
-  assert.ok(optics.includes('getIBLRadiance(insideView, rearNormal, roughness)'), 'a second interface must use the actual environment')
+  assert.ok(optics.includes('getIBLRadiance(insideView, rearNormal, crystalReflectionRoughness)'), 'both interfaces use the same pose-limited reflection diffusion')
   const oldShader = { vertexShader: ShaderLib.physical.vertexShader, fragmentShader: ShaderLib.physical.fragmentShader, uniforms: {} }
   smoked.onBeforeCompile(oldShader, {})
-  assert.ok(!oldShader.fragmentShader.includes('material.iridescence *= crystalBevel;'))
+  assert.ok(!oldShader.fragmentShader.includes('material.iridescence *= crystalFilmWeight;'))
   assert.ok(!oldShader.fragmentShader.includes('float crystalFaceWeight ='), 'the old smoked profile must retain its original normals')
+})
+
+await test('early Glass wall reflections soften continuously, restoring the exact later polish and all other finishes', async t => {
+  const beauty = createLogoCrystalMaterial(meshes[0].material, thickness)
+  const proxy = createLogoCrystalMaterial(meshes[0].material, thickness)
+  const clear = createLogoCrystalMaterial(meshes[0].material, thickness, 'clear')
+  const frosted = createLogoFrostedMaterial(meshes[0].material, thickness)
+  const copper = createLogoCopperMaterial(meshes[0].material, thickness)
+  const materials = [beauty, proxy, clear, frosted, copper]
+  t.after(() => materials.forEach(material => material.dispose()))
+  const shaders = materials.map(material => {
+    const shader = { vertexShader: ShaderLib.physical.vertexShader, fragmentShader: ShaderLib.physical.fragmentShader, uniforms: {} }
+    material.onBeforeCompile(shader, {})
+    return shader
+  })
+  assert.notEqual(shaders[0].uniforms.uGlassEarlyTurn, shaders[1].uniforms.uGlassEarlyTurn)
+  for (const shader of shaders.slice(2)) {
+    assert.equal(shader.uniforms.uGlassEarlyTurn, undefined)
+    assert.ok(!shader.fragmentShader.includes('crystalReflectionRoughness'))
+  }
+  const fragment = expandIncludes(shaders[0].fragmentShader)
+  const adjustment = fragment.indexOf('material.roughness = max(material.roughness, crystalReflectionRoughness);')
+  assert.ok(adjustment > fragment.indexOf('material.roughness = max( roughnessFactor'))
+  assert.ok(adjustment < fragment.indexOf('radiance += getIBLRadiance('), 'apply diffusion before the native environment lookup')
+  assert.match(logoCrystalEarlyReflection, /smoothstep\(\.18, \.78, vGlassBevel\)/)
+  assert.doesNotMatch(logoCrystalEarlyReflection, /normal\s*=|crystalBody|crystalTransmission|uTime|emissive/)
+  const sample = degrees => {
+    updateGlassTurnSoftness(materials, degrees * Math.PI / 180)
+    const value = shaders[0].uniforms.uGlassEarlyTurn.value
+    assert.equal(shaders[1].uniforms.uGlassEarlyTurn.value, value, 'beauty and proxy follow the same pose')
+    return value
+  }
+  const forward = Array.from({ length: 721 }, (_, i) => sample(i / 4))
+  for (let i = 720; i >= 0; i--) assert.equal(sample(i / 4), forward[i], 'reverse scrolling has no accumulated state')
+  for (const degrees of [0, 20, 110, 125, 165, 180]) assert.equal(sample(degrees), 0, 'opening and later views use exactly the existing reflection roughness')
+  for (const degrees of [45, 60, 75, 80]) assert.equal(sample(degrees), 1)
+  assert.ok(forward.every((value, i) => value >= 0 && value <= 1 && (i === 0 || Math.abs(value - forward[i - 1]) < .016)),
+    'the early pose correction must blend without a step')
+  assert.ok(GLASS_EARLY_TURN.roughness > beauty.roughness && GLASS_EARLY_TURN.roughness < .4)
+  assert.equal(beauty.roughness, GLASSMORPH_LOGO_MATERIAL.roughness, 'base material and clear cap polish remain intact')
+  const wsLogo = await readFile(new URL(`${base}WSLogo.tsx`, import.meta.url), 'utf8')
+  assert.match(wsLogo, /updateGlassTurnSoftness\(materials, reducedMotion \? 0 : pose\.yaw\)/)
+})
+
+await test('the iridescent finish keeps the clear base, Frosted and Copper on their original optical profile and shader gate', t => {
+  const source = meshes[0].material
+  const enhanced = createLogoCrystalMaterial(source, thickness)
+  const clear = createLogoCrystalMaterial(source, thickness, 'clear')
+  const frost = createLogoFrostedMaterial(source, thickness)
+  const copper = createLogoCopperMaterial(source, thickness)
+  t.after(() => [enhanced, clear, frost, copper].forEach(material => material.dispose()))
+  assert.equal(CLEAR_CRYSTAL_MATERIAL.iridescence, .64)
+  assert.equal(CLEAR_CRYSTAL_MATERIAL.iridescenceIOR, 1.36)
+  assert.deepEqual(CLEAR_CRYSTAL_MATERIAL.iridescenceThicknessRange, [180, 460])
+  assert.equal(CLEAR_CRYSTAL_MATERIAL.dispersion, .045)
+  assert.ok(enhanced.iridescence > clear.iridescence)
+  assert.ok(enhanced.iridescenceIOR > clear.iridescenceIOR)
+  assert.ok(logoGlassUniforms(enhanced).uGlassDispersion.value > logoGlassUniforms(clear).uGlassDispersion.value)
+  assert.notEqual(enhanced.customProgramCacheKey(), clear.customProgramCacheKey(), 'different native film gates require separate shader programs')
+  for (const material of [clear, frost, copper]) {
+    assert.equal(material.iridescenceIOR, CLEAR_CRYSTAL_MATERIAL.iridescenceIOR)
+    assert.deepEqual(material.iridescenceThicknessRange, [...CLEAR_CRYSTAL_MATERIAL.iridescenceThicknessRange])
+    assert.notEqual(material.iridescenceThicknessRange, enhanced.iridescenceThicknessRange)
+    const shader = { vertexShader: ShaderLib.physical.vertexShader, fragmentShader: ShaderLib.physical.fragmentShader, uniforms: {} }
+    material.onBeforeCompile(shader, {})
+    assert.ok(shader.fragmentShader.includes('material.iridescence *= crystalBevel;'))
+    assert.ok(!shader.fragmentShader.includes('crystalFilmWeight'), 'derived materials must not inherit the broader face sheen')
+  }
+  assert.equal(logoGlassUniforms(frost).uGlassDispersion.value, CLEAR_CRYSTAL_MATERIAL.dispersion)
+  assert.equal(logoGlassUniforms(copper).uGlassDispersion.value, 0)
+  assert.equal(frost.iridescence, .22)
+  assert.equal(copper.iridescence, 0)
 })
 
 await test('clear face lensing stays shallow, continuous and subordinate to the rounded shoulders', t => {

@@ -11,6 +11,13 @@ export type ContactPayload = {
   name: string
   email: string
   message: string
+  /** Structured context, all optional: an enquiry is still valid without
+   *  any of it, and the endpoint only adds the ones that were answered. */
+  website?: string
+  noWebsite?: boolean
+  service?: string
+  package?: string
+  budget?: string
   /** Honeypot. Always empty for a real person; see ContactForm. */
   company?: string
 }

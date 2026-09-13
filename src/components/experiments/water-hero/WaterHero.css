@@ -1,12 +1,11 @@
 /*
- * Route-scoped styles for the water-hero experiment.
+ * Scoped styles for the water hero and its portfolio experiment.
  *
  * Every selector is anchored to `.water-hero-shell`, `.water-hero` or
  * `.water-hero-handoff`. There are no element, `:root`, `html` or `body`
  * rules here, and nothing declares a custom property outside the
- * experiment's own scope — the production site imports this file only
- * because the route component does, and it must be able to do so without
- * anything changing anywhere else.
+ * hero's own scope. Landing-specific additions use the --landing modifier;
+ * the standalone experiment retains its original presentation.
  *
  * The brand tokens read from `index.css` are read only.
  */
@@ -20,6 +19,27 @@
   background: #000;
   color: var(--color-soft-white);
   overflow-x: clip;
+}
+
+/* Preserve the portfolio experiment's original palette independently of
+   the production site's pearl and ice identity. */
+.water-hero-shell:not(.water-hero-shell--landing) {
+  --color-ink: #060708;
+  --color-graphite: #101214;
+  --color-pearl: #f1efe9;
+  --color-bone: #f1efe9;
+  --color-soft-white: #f7f7f4;
+  --color-muted: #9ea3a6;
+  --color-silver: #d6dadf;
+  --color-muted-on-bone: #606467;
+  --color-accent: #e85427;
+  --color-accent-hover: #ff815b;
+  --color-accent-deep: #c2401c;
+  --color-accent-rgb: 232 84 39;
+  --color-accent-deep-rgb: 194 64 28;
+  --color-ember: #e85427;
+  --color-ember-deep: #c2401c;
+  --color-ember-soft: rgba(232, 84, 39, .16);
 }
 
 /* --- Stage ---------------------------------------------------------- */
@@ -165,6 +185,91 @@
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--wh-dim);
+}
+
+/* --- Landing presentation: production navigation lives above the stage. */
+
+.water-hero-shell--landing .water-hero__landing-ui {
+  position: relative;
+  /* Keep the form visible and usable above the scene's loading curtain. */
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.water-hero-shell--landing .water-hero__landing-content {
+  width: 100%;
+}
+
+.water-hero-shell--landing .water-hero__landing-cue {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.water-hero-shell--landing .water-hero__landing-content .hero__copy,
+.water-hero-shell--landing .water-hero__landing-content .hero-contact-card {
+  pointer-events: auto;
+}
+
+/* A tall, narrow desktop camera gives the mark more horizontal space.
+   Keep the original form clear of that footprint without changing the scene. */
+@media (min-width: 1120px) and (max-width: 1399px) {
+  .water-hero-shell--landing .hero-contact-card {
+    width: 26vw;
+  }
+}
+
+/* Unlike the video hero's 760px minimum, the scroll scene occupies exactly
+   one viewport. Keep the original form reachable on shorter desktop windows. */
+@media (max-height: 759px) {
+  .water-hero-shell--landing .water-hero__landing-ui {
+    padding-top: calc(var(--site-header-height, 96px) + 12px);
+    padding-bottom: 64px;
+  }
+
+  .water-hero-shell--landing .water-hero__landing-content .hero__copy,
+  .water-hero-shell--landing .water-hero__landing-content .hero-contact-card {
+    max-height: max(120px, calc(100svh - var(--site-header-height, 96px) - 76px));
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+  }
+}
+
+.water-hero-shell--landing .water-hero__landing-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.water-hero-shell--landing .water-hero__landing-links a {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  border-bottom: 1px solid rgba(241, 239, 233, .35);
+  color: var(--color-soft-white);
+  font-size: .8rem;
+  line-height: 1.4;
+  transition: color var(--duration-hover), border-color var(--duration-hover);
+}
+
+.water-hero-shell--landing .water-hero__landing-links a:hover {
+  color: var(--color-ember);
+  border-color: var(--color-ember);
+}
+
+.water-hero-shell--landing .water-hero__landing-links a:focus-visible {
+  outline: 2px solid var(--color-soft-white);
+  outline-offset: 5px;
+}
+
+.water-hero-shell--landing .water-hero-handoff__support .water-hero__landing-links {
+  justify-content: center;
 }
 
 /* --- Appearance comparison ----------------------------------------- */

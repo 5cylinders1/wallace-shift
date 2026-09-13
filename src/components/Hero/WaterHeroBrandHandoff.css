@@ -1,0 +1,31 @@
+.water-hero-brand {
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.water-hero-brand__stage {
+  background: transparent;
+  visibility: hidden;
+}
+
+/* The aperture fills the canvas viewport, keeping its polygon in the same
+   coordinates as the actual logo contours at every desktop aspect ratio. */
+.water-hero-brand__aperture {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  clip-path: polygon(50% 0%, 50% 100%, 50% 100%, 50% 0%);
+}
+
+@media (max-height: 500px) {
+  .water-hero-brand .shift-wipe__content {
+    padding-top: var(--site-header-height, 96px);
+    gap: 18px;
+  }
+
+  .water-hero-brand .shift-wipe__headline {
+    font-size: clamp(2rem, 9svh, 3.9rem);
+  }
+}

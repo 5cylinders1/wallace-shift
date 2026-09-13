@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useReducedMotion } from '../../../hooks/useReducedMotion'
 import { WaterHeroErrorBoundary } from './WaterHeroErrorBoundary'
 import { WaterHeroStage } from './WaterHeroStage'
 import { WaterHeroHandoff } from './WaterHeroHandoff'
+import { WaterHeroBrandHandoff } from '../../Hero/WaterHeroBrandHandoff'
 import { useQualityTier } from './useQualityTier'
 import { createSceneState } from './waterHeroTypes'
 import { readLogoAppearance, logoAppearanceUrl } from './logoAppearance'
@@ -83,7 +84,14 @@ function supportsWebGL(): boolean {
   }
 }
 
-export function WaterHeroExperiment() {
+interface WaterHeroExperimentProps {
+  /** The portfolio experiment remains the default, including its review tools. */
+  mode?: 'experiment' | 'landing'
+  /** The homepage supplies its existing poster composition on scene failure. */
+  fallback?: ReactNode
+}
+
+export function WaterHeroExperiment({ mode = 'experiment', fallback }: WaterHeroExperimentProps) {
   const prefersReducedMotion = useReducedMotion()
   const [
     {
@@ -94,17 +102,22 @@ export function WaterHeroExperiment() {
       channel,
       appearance: initialAppearance,
     },
-  ] = useState(readSearch)
+  ] = useState<SearchOptions>(() => mode === 'landing' ? {
+    debug: false, tier: undefined, progress: null, forceReducedMotion: false,
+    channel: 0, appearance: 'glass',
+  } : readSearch())
   const [appearance, setAppearance] = useState(initialAppearance)
   const onAppearance = useCallback((next: LogoAppearance) => {
+    if (mode === 'landing') return
     window.history.replaceState(window.history.state, '', logoAppearanceUrl(window.location.href, next))
     setAppearance(next)
-  }, [])
+  }, [mode])
   useEffect(() => {
+    if (mode === 'landing') return
     const onPopState = () => setAppearance(readLogoAppearance(window.location.search))
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)
-  }, [])
+  }, [mode])
   const reducedMotion = prefersReducedMotion || forceReducedMotion
   const { tier, setTier, downgrade, canDowngrade } = useQualityTier(requestedTier)
 
@@ -170,6 +183,7 @@ export function WaterHeroExperiment() {
   }, [canDowngrade, downgrade, requestedTier, telemetry])
 
   if (!webgl || failure) {
+    if (mode === 'landing' && fallback) return <>{fallback}</>
     return (
       <div className="water-hero-shell">
         <StaticFallback
@@ -181,9 +195,10 @@ export function WaterHeroExperiment() {
   }
 
   return (
-    <div className="water-hero-shell">
+    <div className={`water-hero-shell${mode === 'landing' ? ' water-hero-shell--landing' : ''}`}>
       <WaterHeroErrorBoundary
-        fallback={(message) => <><StaticFallback detail={message} /><WaterHeroHandoff still /></>}
+        fallback={(message) => mode === 'landing' && fallback
+          ? fallback : <><StaticFallback detail={message} /><WaterHeroHandoff still /></>}
       >
         <WaterHeroStage
           progress={progress}
@@ -198,8 +213,11 @@ export function WaterHeroExperiment() {
           channel={channel}
           appearance={appearance}
           onAppearance={onAppearance}
+          mode={mode}
         />
-        <WaterHeroHandoff still={reducedMotion} progress={progress} override={override} sceneState={sceneState} />
+        {mode === 'landing'
+          ? <WaterHeroBrandHandoff still={reducedMotion} progress={progress} sceneState={sceneState} />
+          : <WaterHeroHandoff still={reducedMotion} progress={progress} override={override} sceneState={sceneState} />}
       </WaterHeroErrorBoundary>
     </div>
   )

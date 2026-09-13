@@ -16,8 +16,7 @@
     clamp(92px, 9.5vw, 136px);
 }
 
-/* Ember is the site's only chromatic accent, so the hero's single glow is
-   the same warmth used by the homepage media rather than a new color. */
+/* A single restrained ice glow connects the pricing page to the glass hero. */
 .pricing-hero::before {
   content: '';
   position: absolute;
@@ -27,15 +26,15 @@
   aspect-ratio: 1;
   background: radial-gradient(
     circle,
-    rgba(232, 84, 39, 0.13) 0%,
-    rgba(232, 84, 39, 0.05) 38%,
-    rgba(232, 84, 39, 0) 70%
+    rgb(var(--color-accent-rgb) / 0.13) 0%,
+    rgb(var(--color-accent-rgb) / 0.05) 38%,
+    rgb(var(--color-accent-rgb) / 0) 70%
   );
   pointer-events: none;
 }
 
-/* Bone wedge carrying the same lower-left-to-upper-right slope the
-   homepage uses between its dark and warm halves. */
+/* Pearl wedge carrying the same lower-left-to-upper-right slope the
+   homepage uses between its dark and light halves. */
 .pricing-hero::after {
   content: '';
   position: absolute;
@@ -100,7 +99,7 @@
 }
 
 .pricing-hero__index-row:last-child .pricing-hero__index-rule {
-  background: rgba(232, 84, 39, 0.55);
+  background: rgb(var(--color-accent-rgb) / 0.55);
 }
 
 .pricing-hero__index-name {

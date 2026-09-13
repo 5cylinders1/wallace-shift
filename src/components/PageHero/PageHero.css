@@ -13,7 +13,7 @@
     clamp(56px, 6vw, 84px);
 }
 
-/* The same single ember glow the pricing hero uses, in the same corner,
+/* The same single ice glow the pricing hero uses, in the same corner,
    so interior pages share one light source. */
 .page-hero::before {
   content: '';
@@ -24,9 +24,9 @@
   aspect-ratio: 1;
   background: radial-gradient(
     circle,
-    rgba(232, 84, 39, 0.13) 0%,
-    rgba(232, 84, 39, 0.05) 38%,
-    rgba(232, 84, 39, 0) 70%
+    rgb(var(--color-accent-rgb) / 0.13) 0%,
+    rgb(var(--color-accent-rgb) / 0.05) 38%,
+    rgb(var(--color-accent-rgb) / 0) 70%
   );
   pointer-events: none;
 }

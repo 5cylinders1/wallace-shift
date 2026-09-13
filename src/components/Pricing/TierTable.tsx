@@ -5,7 +5,8 @@ import { siteTiers } from '../../content/pricing'
 import { renderLines } from '../../lib/textLines'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { Reveal } from '../Reveal/Reveal'
-import { PageLink } from '../PageLink/PageLink'
+import { PricingPackage } from './PricingPackage'
+import { packageFromTier } from './pricingPackageData'
 import { WebsiteStandard } from './WebsiteStandard'
 import { WebsiteCare } from './WebsiteCare'
 import './TierTable.css'
@@ -68,78 +69,12 @@ export function TierTable() {
 
         <div className="tier-table__grid">
           {siteTiers.tiers.map((tier, index) => (
-            <Reveal
+            <PricingPackage
               key={tier.id}
-              y={REVEAL_Y}
+              data={packageFromTier(tier)}
               delay={index * 0.06}
-              className={`tier${tier.badge ? ' tier--recommended' : ''}`}
-            >
-              <span className="tier__bar" aria-hidden="true" />
-
-              {/* Rendered in every column whether or not it carries a
-                  label, so the rows below stay level across the table. */}
-              <p className="tier__badge">{tier.badge}</p>
-
-              <div className="tier__head">
-                <span className="tier__index">{tier.index}</span>
-                <h3 className="tier__name">{tier.name}</h3>
-                <p className="tier__category">{tier.category}</p>
-                <p className="tier__tagline">{tier.tagline}</p>
-              </div>
-
-              <div className="tier__proof">
-                {tier.proof ? <p>{tier.proof}</p> : null}
-              </div>
-
-              <p className="tier__price">
-                {tier.startsAt ? (
-                  <span className="tier__price-label">Starts at</span>
-                ) : null}
-                <span className="tier__price-value">
-                  <span className="tier__price-currency">$</span>
-                  {tier.price}
-                </span>
-              </p>
-
-              <ul className="tier__delivery">
-                {tier.delivery.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
-
-              <PageLink href="/contact" className="tier__cta">
-                {tier.ctaLabel}
-                <span className="tier__cta-arrow" aria-hidden="true">
-                  &#8599;
-                </span>
-              </PageLink>
-
-              <p className="tier__description">{tier.description}</p>
-
-              <div className="tier__best-for">
-                <span className="tier__best-for-label">Best for</span>
-                <p>{tier.bestFor}</p>
-              </div>
-
-              <ul className="tier__scope">
-                {tier.scope.map((line) => (
-                  <li
-                    key={line}
-                    className={
-                      line.startsWith('Everything in')
-                        ? 'tier__scope-item tier__scope-item--inherited'
-                        : 'tier__scope-item'
-                    }
-                  >
-                    {line}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="tier__scope-note">
-                {tier.scopeNote ? <p>{tier.scopeNote}</p> : null}
-              </div>
-            </Reveal>
+              revealY={REVEAL_Y}
+            />
           ))}
         </div>
 

@@ -27,7 +27,7 @@ export function useStarLook({ progress, override, reducedMotion }: {
       return !blocked() && window.scrollY <= 1 && progress.current <= .0001 && Math.abs(heroTop) <= 2
     }
     const interactive = (target: EventTarget | null) => target instanceof Element
-      && Boolean(target.closest('a, button, input, select, textarea, [contenteditable], .water-hero__debug'))
+      && Boolean(target.closest('a, button, input, select, textarea, [contenteditable], .water-hero__debug, .water-hero__landing-content'))
     const wheel = (event: WheelEvent) => {
       if (event.ctrlKey || event.metaKey || interactive(event.target)
         || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return

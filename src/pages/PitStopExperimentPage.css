@@ -1,0 +1,62 @@
+/* The original palette is scoped to this wrapper in the global token sheet. */
+.pit-stop-experiment {
+  --site-header-height: 0px;
+  background: var(--color-bone);
+  color: var(--color-ink);
+}
+
+.pit-stop-experiment__header,
+.pit-stop-experiment__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 56px) var(--gutter);
+}
+
+.pit-stop-experiment__header {
+  border-bottom: 1px solid rgba(6, 7, 8, 0.16);
+}
+
+.pit-stop-experiment__eyebrow {
+  margin: 0 0 12px;
+  color: var(--color-muted-on-bone);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.pit-stop-experiment__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  font-weight: 400;
+}
+
+.pit-stop-experiment__return {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  color: inherit;
+  font-size: 0.8125rem;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+.pit-stop-experiment__footer {
+  min-height: 24svh;
+  background: var(--color-ink);
+  color: var(--color-soft-white);
+}
+
+.pit-stop-experiment__footer p {
+  color: var(--color-muted);
+}
+
+.pit-stop-experiment :focus-visible {
+  outline: 2px solid var(--color-ember-deep);
+  outline-offset: 4px;
+}

@@ -118,7 +118,7 @@
   z-index: 1;
 }
 
-/* Ember fill sweeps in on hover — a diagonal wipe, echoing the site's
+/* Accent fill sweeps in on hover — a diagonal wipe, echoing the site's
    lower-left-to-upper-right divider language. Ink text stays put. */
 .hero__cta-primary::before {
   content: '';
@@ -135,7 +135,7 @@
 }
 
 .hero__cta-primary:hover {
-  box-shadow: 0 8px 30px rgba(232, 84, 39, 0.28);
+  box-shadow: 0 8px 30px rgb(var(--color-accent-rgb) / 0.28);
 }
 
 .hero__cta-secondary {

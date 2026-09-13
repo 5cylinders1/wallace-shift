@@ -16,13 +16,31 @@ const DECK_QUERY = '(min-width: 1024px)'
 const MAX_SETTLE_DRIFT = 32
 
 /**
- * Whether the track is actually laid out as a horizontal deck right now.
+ * Layered mode. The three areas are a stack, each above the one before it.
+ * An area to the right arrives from `OFF_STAGE`, travelling left across what
+ * is showing; an area to the left is reached by sending everything above it
+ * back out to `OFF_STAGE`, uncovering it. One edge, both directions — the
+ * stack's own order is what makes them read as opposites.
+ */
+const OFF_STAGE = 'translateX(100%)'
+const ON_STAGE = 'translateX(0)'
+const SLIDE_MS = 520
+
+/**
+ * Whether the three areas are laid out as the horizontal deck right now.
  * Observed from the DOM rather than taken from the media-query hook, so
  * behaviour stays correct on the frames around a breakpoint change, before
  * React has been told about it.
+ *
+ * Read from the track's own `display`, which only the stylesheet ever sets.
+ * Overflow is no good — the layered layout parks its inactive areas off to
+ * the right, so `scrollWidth > clientWidth` is true there too. Nor is a
+ * panel's position: an area held to the frame mid-slide is `fixed` rather
+ * than `absolute`, and a detector that reads one would call the layout a deck
+ * for exactly as long as a slide lasts, which is when it matters most.
  */
 function isHorizontal(track: HTMLElement): boolean {
-  return track.scrollWidth > track.clientWidth + 1
+  return getComputedStyle(track).display === 'grid'
 }
 
 interface PricingDeckProps {
@@ -47,6 +65,11 @@ export function PricingDeck({ panels }: PricingDeckProps) {
   /** Pending settle pass, so a second click cannot leave one behind. */
   const settleRef = useRef<{ handler: () => void; timer: number } | null>(null)
   const activeRef = useRef(0)
+  /** The panel currently crossing the frame, so a second tab cannot leave
+   *  one fixed and half-translated behind. */
+  const slideRef = useRef<{ panels: HTMLElement[]; timer: number } | null>(null)
+  /** Header plus bar: the top of the frame a package fills and holds in. */
+  const frameTopRef = useRef(0)
   const [active, setActive] = useState(0)
   const [hasMoved, setHasMoved] = useState(false)
   const isDeck = useMediaQuery(DECK_QUERY)
@@ -82,13 +105,140 @@ export function PricingDeck({ panels }: PricingDeckProps) {
     [applyHeight],
   )
 
+  /**
+   * The steady state of the layered areas: everything at or below the active
+   * one rests on stage, everything above it waits off stage, and only the
+   * active one is exposed. Both directions of travel end here, so neither has
+   * to unwind itself.
+   */
+  const settlePanels = useCallback(() => {
+    const track = trackRef.current
+    if (!track || isHorizontal(track)) return
+    const panels = Array.from(track.children) as HTMLElement[]
+    panels.forEach((panel, i) => {
+      panel.classList.remove(
+        'pricing-deck__panel--sliding',
+        'pricing-deck__panel--moving',
+        'pricing-deck__panel--frozen',
+      )
+      panel.style.removeProperty('--pricing-freeze-top')
+      panel.style.transform = i <= activeRef.current ? ON_STAGE : OFF_STAGE
+      panel.dataset.active = i === activeRef.current ? 'true' : 'false'
+    })
+    const active = panels[activeRef.current]
+    if (active) {
+      track.style.setProperty('--pricing-track-lock', `${active.offsetHeight}px`)
+    }
+  }, [])
+
+  /** Ends a slide early or on time; safe to call when none is running. */
+  const endSlide = useCallback(() => {
+    const pending = slideRef.current
+    if (pending) {
+      window.clearTimeout(pending.timer)
+      slideRef.current = null
+    }
+    settlePanels()
+  }, [settlePanels])
+
+  useEffect(() => endSlide, [endSlide])
+
+  /**
+   * The second half of a tab change. The slide has landed, so the page can
+   * now be taken to the top of the new area — instantly, and while that area
+   * is still held to the frame at exactly the geometry the scroll arrives at,
+   * so releasing it changes nothing on screen. The visitor sees one motion,
+   * the slide, and is at the top of the new area when it finishes.
+   */
+  const land = useCallback(
+    (destination: number) => {
+      window.scrollTo({ top: destination, behavior: 'instant' })
+      endSlide()
+    },
+    [endSlide],
+  )
+
+  /**
+   * Where an area's first package begins. Read with the package's hold
+   * neutralised: sticky is a form of relative positioning, so a held package
+   * reports its stuck position from a bounding rect and from `offsetTop`
+   * alike, and landing on one that was already holding drops the visitor into
+   * the middle of it rather than at its first line.
+   */
+  const firstPackageTop = (panel: HTMLElement) => {
+    const first = panel.querySelector<HTMLElement>('.tier')
+    const box = first ?? panel
+    const held = box.style.position
+    box.style.position = 'static'
+    const top = box.getBoundingClientRect().top + window.scrollY
+    box.style.position = held
+    return Math.max(0, top - frameTopRef.current)
+  }
+
+
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
 
+    // Layered mode. Areas change only by the bar, so there is no scroll to
+    // follow; what the page does need is the frame's top, which is where a
+    // package holds and how tall it has to be.
     if (!isDeck) {
       track.style.height = ''
-      return
+      const panels = Array.from(track.children) as HTMLElement[]
+      if (panels.length === 0) return
+
+      const measure = () => {
+        if (slideRef.current) return
+        const header =
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              '--site-header-height',
+            ),
+          ) || 0
+        const nav = deckRef.current?.querySelector<HTMLElement>('.pricing-nav')
+        frameTopRef.current = header + (nav?.offsetHeight ?? 0)
+        deckRef.current?.style.setProperty(
+          '--pricing-frame-top',
+          `${frameTopRef.current}px`,
+        )
+        // A package holds once its own end reaches the bottom of the frame,
+        // which is an offset only the package's own height can give. Read
+        // here rather than in CSS because no CSS length knows it.
+        for (const panel of panels) {
+          for (const tier of panel.querySelectorAll<HTMLElement>('.tier')) {
+            tier.style.setProperty(
+              '--pricing-package-height',
+              `${tier.offsetHeight}px`,
+            )
+          }
+        }
+        const active = panels[activeRef.current]
+        if (active) {
+          track.style.setProperty('--pricing-track-lock', `${active.offsetHeight}px`)
+        }
+      }
+
+      measure()
+      settlePanels()
+      // Heights move on their own — fonts landing, a scope line wrapping —
+      // and a stale height is a package that holds in the wrong place.
+      const observer = new ResizeObserver(measure)
+      for (const panel of panels) observer.observe(panel)
+      window.addEventListener('resize', measure)
+      return () => {
+        observer.disconnect()
+        window.removeEventListener('resize', measure)
+        for (const panel of panels) {
+          panel.style.transform = ''
+          panel.style.removeProperty('--pricing-freeze-top')
+          for (const tier of panel.querySelectorAll<HTMLElement>('.tier')) {
+            tier.style.removeProperty('--pricing-package-height')
+          }
+          delete panel.dataset.active
+        }
+        track.style.removeProperty('--pricing-track-lock')
+      }
     }
 
     const items = Array.from(track.children) as HTMLElement[]
@@ -134,7 +284,7 @@ export function PricingDeck({ panels }: PricingDeckProps) {
       track.removeEventListener('scroll', syncActive)
       observer.disconnect()
     }
-  }, [isDeck, panels.length, applyHeight, commit])
+  }, [isDeck, panels.length, applyHeight, commit, settlePanels])
 
   /**
    * Vertical offset at which the bar comes to rest against the site
@@ -177,7 +327,7 @@ export function PricingDeck({ panels }: PricingDeckProps) {
     }
   }
 
-  const goTo = (id: string, index: number) => {
+  const goTo = (_id: string, index: number) => {
     const deck = deckRef.current
     const track = trackRef.current
     if (!deck || !track) return
@@ -192,21 +342,77 @@ export function PricingDeck({ panels }: PricingDeckProps) {
         ),
       ) || 0
 
-    // Below the deck breakpoint the panels are simply stacked, so the bar
-    // falls back to being what it was: anchors down the page. The panel
-    // itself is what has to clear the header and the bar.
+    // Below the deck breakpoint the three areas are layered, and the bar
+    // slides one across the top of another. The page still has to arrive at
+    // the chosen area, but the travel is what the visitor sees.
     if (!isHorizontal(track)) {
-      const panel = document.getElementById(id)
-      if (!panel) return
-      const nav = deck.querySelector<HTMLElement>('.pricing-nav')
-      window.scrollTo({
-        top:
-          panel.getBoundingClientRect().top +
-          window.scrollY -
-          headerHeight -
-          (nav?.offsetHeight ?? 0),
-        behavior,
-      })
+      const panels = Array.from(track.children) as HTMLElement[]
+      const target = panels[index]
+      if (!target || index === activeRef.current) {
+        if (target) window.scrollTo({ top: firstPackageTop(target), behavior: 'auto' })
+        return
+      }
+      endSlide()
+      const from = activeRef.current
+      const forward = index > from
+      // Everything above the target has to leave; everything at or below it
+      // belongs at rest. This is the whole state, applied either way.
+      const leaving = forward ? [panels[from]] : panels.slice(index + 1, from + 1)
+
+      // Measured before anything is frozen: a fixed panel's box is the
+      // frame's, not its own.
+      const destination = firstPackageTop(target)
+
+      // The two motions are sequenced rather than run together, which is what
+      // made a tab change from halfway down an area look like several things
+      // happening at once. Nothing scrolls and no height changes while the
+      // slide runs, so the area being left stays exactly where the visitor
+      // left it rather than snapping to its own top underneath the incoming
+      // one.
+      //
+      // That leaves the arriving area showing whatever happens to be at the
+      // visitor's depth instead of its beginning, so it is held to the frame
+      // at the position the page is about to take. Same geometry, so the
+      // scroll that follows the slide is invisible and the release is silent.
+      const trackTop = track.getBoundingClientRect().top + window.scrollY
+      target.style.setProperty(
+        '--pricing-freeze-top',
+        `${trackTop - destination}px`,
+      )
+      target.classList.add('pricing-deck__panel--frozen')
+
+      deck.style.setProperty('--pricing-slide-duration', `${SLIDE_MS}ms`)
+      target.dataset.active = 'true'
+      target.classList.add('pricing-deck__panel--sliding')
+      target.style.transform = forward ? OFF_STAGE : ON_STAGE
+      for (const panel of leaving) {
+        panel.classList.add('pricing-deck__panel--sliding')
+        panel.style.transform = ON_STAGE
+      }
+      // Intermediates on the way forward are simply at rest behind the
+      // arriving area; they are never seen travelling.
+      for (const panel of panels.slice(0, index)) panel.style.transform = ON_STAGE
+
+      const moving = forward ? [target] : leaving
+      slideRef.current = {
+        panels: [target, ...leaving],
+        // A timer rather than `transitionend` alone: a transition that never
+        // starts would leave an area frozen to the frame for good.
+        timer: window.setTimeout(() => land(destination), SLIDE_MS + 80),
+      }
+
+      commit(index)
+      if (reducedMotion) {
+        land(destination)
+        return
+      }
+      // Commit the starting transform before the transition exists, or the
+      // browser animates from wherever the area already was.
+      void target.offsetWidth
+      for (const panel of moving) {
+        panel.classList.add('pricing-deck__panel--moving')
+        panel.style.transform = forward ? ON_STAGE : OFF_STAGE
+      }
       return
     }
 
@@ -258,13 +464,11 @@ export function PricingDeck({ panels }: PricingDeckProps) {
       {/* Moving the track changes what is on screen without moving focus,
           which a screen reader would otherwise report as nothing having
           happened. Empty until the deck has actually moved. */}
-      {isDeck ? (
-        <p className="visually-hidden" role="status" aria-live="polite">
-          {hasMoved && activeLabel
-            ? `${activeLabel}, ${active + 1} of ${panels.length}`
-            : ''}
-        </p>
-      ) : null}
+      <p className="visually-hidden" role="status" aria-live="polite">
+        {hasMoved && activeLabel
+          ? `${activeLabel}, ${active + 1} of ${panels.length}`
+          : ''}
+      </p>
 
       <div className="pricing-deck__track" ref={trackRef}>
         {panels.map((panel, index) => (
