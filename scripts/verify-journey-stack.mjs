@@ -11,6 +11,7 @@ const read = path => readFile(new URL(path, root), 'utf8')
 const css = await read('src/components/HomeJourney/HomeJourney.css')
 const journey = await read('src/components/HomeJourney/HomeJourney.tsx')
 const art = await read('src/components/HomeJourney/JourneyStageArt.tsx')
+const scene = await read('src/components/HomeJourney/LogoJourneyScene.tsx')
 
 const mobileBlock = (() => {
   const start = css.indexOf('@media (max-width: 1023px)')
@@ -123,4 +124,37 @@ await test('a panel holds only while something is coming up behind it', () => {
     assert.match(css.slice(at, css.indexOf('}', at)), /background: #[0-9a-f]{6}/,
       `${name} has an opaque ground to cover with`)
   }
+})
+
+await test('the scene covers its container, and the renderer keeps up with it', () => {
+  // The canvas is `width: 100%` of the layout viewport, and not everything that
+  // changes that box fires a window resize — the document's scrollbar arriving
+  // or leaving does not, and neither does a resize that happened while the tab
+  // was in the background, where no frames ran to deliver the observation.
+  // Left behind, the renderer keeps the older size and three writes it onto the
+  // element as inline pixels: the scene ends in a hard line partway across the
+  // section with the page's own ground beside it.
+
+  // Insurance first — the element always covers its box, so a renderer that is
+  // behind for a frame scales rather than exposing an edge. `!important` is
+  // what beats three's inline size; without it this rule does nothing.
+  assert.match(css,
+    /\.home-journey__visual canvas \{ width: 100% !important; height: 100% !important; \}/)
+
+  // And the renderer is kept in step, so that scaling is never actually seen.
+  const effect = scene.slice(scene.indexOf('const host = gl.domElement.parentElement'))
+  const body = effect.slice(0, effect.indexOf('window.addEventListener(\'scroll\''))
+  assert.match(body, /new ResizeObserver\(fit\)/, 'the container box is observed')
+  assert.match(body, /setSize\(width, height\)/, 'and applied to the renderer')
+  // `frameloop="never"`: nothing draws on its own, so a new buffer without a
+  // frame stays the colour it was cleared to.
+  assert.match(scene, /frameloop="never"/)
+  assert.match(body, /setSize\(width, height\)\s*\n\s*\/\/[\s\S]*?\n\s*wake\(\)/,
+    'and a frame is asked for')
+  // Measured against what was last applied, not against the canvas's own box:
+  // the stylesheet holds that box at 100% of the container, so it agrees with
+  // the container even while the renderer does not.
+  assert.match(body, /Math\.abs\(width - applied\.width\)/)
+  assert.ok(!/gl\.domElement\.(clientWidth|getBoundingClientRect)/.test(body))
+  assert.match(scene, /if \(boxes\) boxes\.disconnect\(\)/, 'and released on the way out')
 })

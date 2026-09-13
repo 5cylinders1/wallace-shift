@@ -19,6 +19,12 @@
   overflow: clip;
 }
 .home-journey__visual > div:not(.home-journey__grip) { width: 100%; height: 100%; }
+/* three writes the renderer's size onto the canvas as inline pixels, so a
+   canvas that is behind its container for even a frame would otherwise stop in
+   a hard line with the page's own ground beside it. `!important` is what beats
+   that inline size: covering the box scales the moment instead of exposing it.
+   The renderer is kept in step separately, so the scaling is never seen. */
+.home-journey__visual canvas { width: 100% !important; height: 100% !important; }
 .home-journey__loading-mark { position: absolute; left: var(--journey-x, 130%); top: var(--journey-y, 30%); width: var(--journey-width, 23%); height: auto; transform: translate(-50%, calc(-50% - 50% * var(--journey-anchor-ratio, 1))); filter: invert(calc(var(--journey-finish, 0) + var(--journey-services-surface, 1))); opacity: 0.6; }
 .home-journey__grip {
   position: absolute;

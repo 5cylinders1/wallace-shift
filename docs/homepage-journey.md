@@ -1003,3 +1003,79 @@ moment between panels 1 and 2 with them. What could not be checked here is the
 live path: the browser pane available is 400px wide, so the scene's own
 breakpoint cannot be reached. That rests on the scoping, which is asserted in
 `verify-journey-stack.mjs` line by line across the mobile block.
+
+## The canvas and its container — September 13
+
+A hard vertical line down the right of the lander was reported on desktop. The
+work below is a real defect found while chasing it and is worth keeping, but it
+was **not** the cause — the line was still there afterwards. What it is remains
+open; see "Still open" at the end.
+
+`.home-journey__visual` is `width: 100%` of the layout viewport and `100svh`
+tall. The canvas has to be the size of that box, and a window resize is not the
+only thing that changes it: the document's scrollbar arriving or leaving
+resizes it silently, and so does a resize that happened while the tab was in
+the background, where no frames ran to deliver the observation. `frameloop
+="never"` means nothing re-measures on its own either.
+
+Left behind, the renderer keeps the older size — and `WebGLRenderer.setSize`
+writes that size onto the element as inline pixels, which overrides the
+`width: 100%` the `<Canvas>` style prop asks for. Measured here at a 2000x1108
+container: the canvas carried `width: 1600px; height: 900px`, so the scene
+covered the top-left 80% of the section and the section's own gradient showed
+beside it, with a hard edge at both boundaries.
+
+Two changes, because one of them is insurance and the other is the fix.
+
+The stylesheet holds the canvas at 100% of its container with `!important`,
+which is what beats three's inline size. A renderer that is behind its box for
+a frame now scales instead of exposing an edge — the failure mode becomes
+invisible rather than obvious.
+
+The scene observes its container and applies the box to the renderer, then asks
+for a frame, since with `frameloop="never"` a new buffer that is never drawn
+stays the colour it was cleared to. The comparison is against the size last
+applied, not against the canvas's own box: the stylesheet now holds that box at
+100% of the container, so the canvas agrees with the container even while the
+renderer does not, and a check against it would never fire.
+
+### What was and was not verified
+
+The stylesheet rule was verified directly in the browser: a canvas carrying
+`width: 900px; height: 500px` inline, inside the real container, renders at
+1400x900 — the container's full box.
+
+The runtime half was not exercised. The scene mounts behind an
+IntersectionObserver, and the browser available here keeps its pane hidden, so
+no frames run, no observations are delivered and the scene never mounts. Both
+browser surfaces reachable from this session are also fixed at 400px wide, so
+the desktop rendering could not be looked at either; the geometry above was
+measured with an emulated viewport, where the same frozen frames are what left
+the canvas stale in the first place.
+
+### Still open: the reported edge
+
+The canvas work above did not resolve it. What has been ruled out, measured at
+a 2000x1118 viewport on the quiz section:
+
+- No DOM element makes the seam. Every painted box in that viewport — body,
+  `.home-journey`, `.shift-quiz`, `.home-journey__closing` — spans 0 to 2000.
+  Nothing in the journey, quiz or header stylesheets draws a vertical rule, and
+  there is no custom scrollbar styling anywhere in the project.
+- The scene's own full-screen quads cannot leave a strip. They are scaled
+  `2 * aspect` against an orthographic frustum of `+/-aspect`, and both take
+  that aspect from the same `size`, so they cover it exactly.
+- `body { overflow-x: hidden }` does make body a scroll container, which would
+  narrow every section inside it by the width of a space-taking scrollbar. In
+  this environment `innerWidth - documentElement.clientWidth` is 0 and every
+  section measures the full 2000, so it is not happening here — but it would on
+  a machine with classic scrollbars, and it would look exactly like the report.
+  That is the leading candidate and it is not reproducible from here.
+
+Why it could not be looked at: the browser pane in this session stays hidden,
+so no frames run — the scene mounts behind an IntersectionObserver that never
+fires, and screenshots come back blank. Both browser surfaces reachable from
+the session are also fixed at 400px wide. Headless Chrome renders the top of
+the page correctly, but the journey's on-demand render loop re-requests a frame
+for as long as the scene is on screen, so under `--virtual-time-budget` the
+page never goes idle and every capture below the hero came back unpainted.

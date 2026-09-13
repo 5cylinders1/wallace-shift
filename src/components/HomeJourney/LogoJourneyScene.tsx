@@ -62,6 +62,7 @@ function JourneyFrames({ frame, ready, report, reportReady }: {
   const advance = useThree(state => state.advance)
   const clock = useThree(state => state.clock)
   const gl = useThree(state => state.gl)
+  const setSize = useThree(state => state.setSize)
   useEffect(() => {
     let handle = 0
     let previous: number | null = null
@@ -98,18 +99,51 @@ function JourneyFrames({ frame, ready, report, reportReady }: {
         previous = null
       } else if (!handle && !stopped) handle = window.requestAnimationFrame(update)
     }
+    // The canvas has to be the size of the box it sits in, and a window
+    // resize is not the only thing that changes that box. It is `width: 100%`
+    // of the layout viewport, so the document's scrollbar arriving or leaving
+    // resizes it silently; so does a resize that happened while this tab was
+    // in the background, where no frames ran to deliver the observation.
+    // Left behind, the renderer keeps the older size and three writes it onto
+    // the element as inline pixels — and the scene ends in a hard line partway
+    // across the section, with the page's own ground beside it.
+    //
+    // Measured against what was last applied rather than against the canvas's
+    // own box: the stylesheet holds that box at 100% of the container so a
+    // canvas briefly behind its box scales rather than exposing an edge, which
+    // would make the canvas agree with the container even while the renderer
+    // did not.
+    const host = gl.domElement.parentElement
+    const applied = { width: 0, height: 0 }
+    const fit = () => {
+      if (!host) return
+      const { width, height } = host.getBoundingClientRect()
+      if (width < 1 || height < 1) return
+      if (Math.abs(width - applied.width) < .5 && Math.abs(height - applied.height) < .5) return
+      applied.width = width
+      applied.height = height
+      setSize(width, height)
+      // Nothing draws on its own here, so the new buffer needs a frame or it
+      // stays the colour it was cleared to.
+      wake()
+    }
+    const boxes = host && new ResizeObserver(fit)
+    if (host && boxes) boxes.observe(host)
+    fit()
+
     window.addEventListener('scroll', wake, { passive: true })
     window.addEventListener('resize', wake)
     document.addEventListener('visibilitychange', wake)
     wake()
     return () => {
       stopped = true
+      if (boxes) boxes.disconnect()
       window.cancelAnimationFrame(handle)
       window.removeEventListener('scroll', wake)
       window.removeEventListener('resize', wake)
       document.removeEventListener('visibilitychange', wake)
     }
-  }, [advance, clock, gl, frame, ready, report, reportReady])
+  }, [advance, clock, gl, setSize, frame, ready, report, reportReady])
   return null
 }
 

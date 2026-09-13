@@ -57,7 +57,10 @@ export function createJourneyPower() {
         // Each answer opens the backlight briefly, so the section flashes
         // behind the mark at the moment the reader commits.
         charge += uSurge * (.34 * core + .24 * bloom);
-        float alpha = clamp(charge * uPower * uVisible, 0.0, 1.0);
+        // Gaussian tails never reach zero on their own. Retire them before
+        // the plane boundary so brighter answers cannot expose its rectangle.
+        float falloff = 1.0 - smoothstep(.55, 1.0, radius);
+        float alpha = clamp(charge * falloff * uPower * uVisible, 0.0, 1.0);
         gl_FragColor = vec4(tint * alpha, alpha);
       }
     `,
