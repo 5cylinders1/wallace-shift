@@ -176,7 +176,7 @@ await test('an unanswered quiz is cold metal and each answer carries it further'
   const layout = {
     viewportHeight: 900, viewportWidth: 1440, headerOffset: 83,
     servicesTop: 4000, servicesRowsBottom: 6000, servicesHeaderHeight: 300,
-    servicesHeadingRight: 700, servicesHeadingBaseline: 200, entranceDistance: 600,
+    servicesHeadingRight: 700, servicesHeadingBaseline: 200,
     processTop: 7000, processHeight: 6500, processHeadingRight: 700,
     quizTop: 14000, closingTop: 15600, end: 18000,
   }

@@ -25,7 +25,6 @@ const layout = {
   servicesHeadingRight: 600,
   processHeadingRight: 680,
   servicesHeadingBaseline: 245,
-  entranceDistance: 560,
   processTop: 6500, processHeight,
   quizTop: 6500 + processHeight, closingTop: 7900 + processHeight, end: 9500 + processHeight,
 }
@@ -34,6 +33,9 @@ const close = (a, b, toleranceOrMessage = 1e-8) => assert.ok(
   `${typeof toleranceOrMessage === 'string' ? `${toleranceOrMessage}: ` : ''}${a} differs from ${b}`)
 const servicesWidth = Math.min(240, Math.max(160, layout.viewportWidth * .14))
 const servicesX = (layout.servicesHeadingRight + 75 + servicesWidth / 2) * 2 / layout.viewportWidth - 1
+const servicesOffscreenX = 1 + servicesWidth / layout.viewportWidth
+const servicesEntryStart = layout.servicesTop + layout.servicesHeaderHeight - layout.viewportHeight
+const servicesPinStart = layout.servicesTop - layout.headerOffset
 const processX = (layout.processHeadingRight + 100 + servicesWidth / 2) * 2 / layout.viewportWidth - 1
 
 await test('blueprint tracing waits until the dark header fully clears the logo plus a twelve-pixel gap', () => {
@@ -77,31 +79,31 @@ await test('blueprint tracing remains continuous, reversible, and safe for unava
   }
 })
 
-await test('logo stays fully offscreen until the services rule pins, then enters without fading', () => {
-  const pinStart = layout.servicesTop - layout.headerOffset
-  for (const scroll of [3300, 3500, pinStart - 1, pinStart]) {
+await test('logo enters as the services header bottom meets the viewport bottom and arrives by the header pin', () => {
+  for (const scroll of [3000, servicesEntryStart - 100, servicesEntryStart - 1, servicesEntryStart]) {
     const frame = sampleJourneyFrame(scroll, layout)
-    close(frame.x, 1.48)
+    close(frame.x, servicesOffscreenX)
     close(frame.yaw, 0)
-    close(frame.visible, 1)
-    // Conservative projected width of the full authored width/depth box.
-    assert.ok(frame.x - frame.scale * Math.hypot(1, .217) > 1)
+    close(frame.x - frame.scale, 1, 'the front-facing mark begins exactly beyond the viewport edge')
   }
-  const halfway = sampleJourneyFrame(pinStart + layout.entranceDistance / 2, layout)
-  close(halfway.x, (1.48 + servicesX) / 2)
+  const beginning = sampleJourneyFrame(servicesEntryStart + 1, layout)
+  assert.ok(beginning.x < servicesOffscreenX, 'the first scroll pixel after the boundary starts horizontal travel')
+  assert.ok(beginning.x - beginning.scale < 1, 'the entrance has no invisible horizontal runway')
+  const halfway = sampleJourneyFrame((servicesEntryStart + servicesPinStart) / 2, layout)
+  close(halfway.x, (servicesOffscreenX + servicesX) / 2)
   close(halfway.yaw, 0)
-  let previousX = 1.48
+  let previousX = servicesOffscreenX
   for (let i = 0; i <= 20; i++) {
-    const frame = sampleJourneyFrame(pinStart + layout.entranceDistance * i / 20, layout)
+    const frame = sampleJourneyFrame(servicesEntryStart + (servicesPinStart - servicesEntryStart) * i / 20, layout)
     assert.ok(frame.x <= previousX)
     assert.equal(frame.visible, 1, 'entry uses movement instead of an opacity reveal')
     previousX = frame.x
   }
-  close(sampleJourneyFrame(pinStart + layout.entranceDistance, layout).x, servicesX)
-  close(sampleJourneyFrame(pinStart + layout.entranceDistance + 100, layout).x, servicesX)
+  close(sampleJourneyFrame(servicesPinStart, layout).x, servicesX)
+  close(sampleJourneyFrame(servicesPinStart + 100, layout).x, servicesX)
   for (const viewportWidth of [1024, 1280, 1800, 2560]) {
     const measured = { ...layout, viewportWidth, servicesHeadingRight: viewportWidth * .35 }
-    const frame = sampleJourneyFrame(pinStart + layout.entranceDistance, measured)
+    const frame = sampleJourneyFrame(servicesPinStart, measured)
     const width = frame.scale * viewportWidth
     const left = (frame.x + 1) * viewportWidth / 2 - width / 2
     close(left - measured.servicesHeadingRight, 75)
@@ -121,9 +123,7 @@ await test('arriving and pinned logo bottom follows the headline baseline withou
     close(logoBottom, headingBaseline)
     close(frame.servicesSurface, 1)
   }
-  const pinStart = layout.servicesTop - layout.headerOffset
-  const pinEnd = pinStart + layout.entranceDistance
-  for (const scroll of [pinStart, (pinStart + pinEnd) / 2, pinEnd]) {
+  for (const scroll of [servicesPinStart, servicesPinStart + 100, servicesPinStart + 400]) {
     const frame = sampleJourneyFrame(scroll, layout)
     const visualTop = Math.max(0, layout.servicesTop - scroll)
     close(visualTop + (1 - frame.y) * layout.viewportHeight / 2,
@@ -131,15 +131,29 @@ await test('arriving and pinned logo bottom follows the headline baseline withou
   }
 })
 
-await test('entrance distance comes from measured runway and paused or reversed entry retains the same pose', () => {
-  const pinStart = layout.servicesTop - layout.headerOffset
-  const extended = { ...layout, entranceDistance: layout.entranceDistance * 2 }
-  close(sampleJourneyFrame(pinStart + layout.entranceDistance, extended).x, (1.48 + servicesX) / 2)
-  const positions = [pinStart - 1, pinStart, pinStart + 80, pinStart + 300, pinStart + layout.entranceDistance]
-  const frames = positions.map(scroll => sampleJourneyFrame(scroll, layout))
-  for (let i = positions.length - 1; i >= 0; i--) {
-    assert.deepEqual(sampleJourneyFrame(positions[i], layout), frames[i])
-    assert.deepEqual(sampleJourneyFrame(positions[i], layout), frames[i], 'holding scroll cannot advance the entrance')
+await test('entry follows viewport and header measurements, and paused or reversed scroll retains the same pose', () => {
+  for (const viewportHeight of [640, 720, 960, 1080]) {
+    for (const servicesHeaderHeight of [260, 300, 340]) {
+      const measured = { ...layout, viewportHeight, servicesHeaderHeight }
+      const start = measured.servicesTop + servicesHeaderHeight - viewportHeight
+      const end = measured.servicesTop - measured.headerOffset
+      const midpoint = (start + end) / 2
+      close(sampleJourneyFrame(start - 1, measured).x, servicesOffscreenX)
+      close(sampleJourneyFrame(start, measured).x, servicesOffscreenX)
+      assert.ok(sampleJourneyFrame(start + 1, measured).x < servicesOffscreenX)
+      close(sampleJourneyFrame(midpoint, measured).x, (servicesOffscreenX + servicesX) / 2)
+      close(sampleJourneyFrame(end, measured).x, servicesX)
+      const positions = [start - 1, start, start + 1, midpoint, end, end + 100]
+      const frames = positions.map(scroll => sampleJourneyFrame(scroll, measured))
+      for (let i = positions.length - 1; i >= 0; i--) {
+        assert.deepEqual(sampleJourneyFrame(positions[i], measured), frames[i])
+        assert.deepEqual(sampleJourneyFrame(positions[i], measured), frames[i], 'holding scroll cannot advance the entrance')
+        const visualTop = Math.max(0, measured.servicesTop - positions[i])
+        const logoBottom = visualTop + (1 - frames[i].y) * viewportHeight / 2
+        const headingBaseline = Math.max(measured.headerOffset, measured.servicesTop - positions[i]) + measured.servicesHeadingBaseline
+        close(logoBottom, headingBaseline, 'the entering mark follows the moving headline before it pins')
+      }
+    }
   }
 })
 
@@ -557,6 +571,8 @@ await test('static/mobile journey restores the three service media panels while 
   assert.ok(pinEnd > pinStart)
   const pinMarkup = html.slice(pinStart, pinEnd)
   assert.ok(pinMarkup.includes('id="journey-services-heading"'))
+  assert.match(pinMarkup, /<\/header>\s*<div class="journey-services__rows">/,
+    'the first service row immediately follows the heading with no empty entrance block')
   assert.equal((pinMarkup.match(/data-ambient-video="true"/g) ?? []).length, 3,
     'the heading pin lasts through all three service rows')
   assert.ok(html.indexOf('class="container journey-services__links"') > pinEnd,

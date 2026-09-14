@@ -1,5 +1,17 @@
+/* Frosted glass, over the one place on the site that earns it: the card sits
+   on the live hero, so there is something real behind it to blur.
+
+   The blur is what reads as glass; the tint is what keeps the type readable.
+   They are separate jobs, and only the blur was raised. The tint deepens
+   toward the bottom because that is where the hero's bright fog band passes
+   behind the card — it is never lighter than the flat 55% this replaced, so
+   legibility is at worst unchanged and better over the fog. */
 .hero-contact-card {
+  /* The lit edge, as a channel triple so a theme can re-tint it. */
+  --glass-edge: 255 255 255;
+
   display: none;
+  position: relative;
   flex-direction: column;
   gap: 18px;
   width: min(30vw, 440px);
@@ -7,9 +19,57 @@
   padding: clamp(24px, 2.2vw, 32px);
   border: 1px solid rgba(247, 247, 244, 0.14);
   border-radius: 18px;
-  background: rgba(16, 18, 20, 0.55);
-  backdrop-filter: blur(8px);
+  background:
+    /* the sheen: one soft light from the top left, as glass takes it */
+    linear-gradient(
+      148deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.03) 38%,
+      rgba(255, 255, 255, 0) 62%
+    ),
+    linear-gradient(180deg, rgba(14, 18, 22, 0.55), rgba(8, 11, 14, 0.7));
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  box-shadow:
+    /* the lit top edge and the shaded bottom one: thickness, not decoration */
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 30px 60px -24px rgba(0, 0, 0, 0.55);
   color: var(--color-soft-white);
+}
+
+/* The edge itself, brightest where the light falls. Drawn as a ring rather
+   than a border so it can carry a gradient; it sits on the padding edge, well
+   clear of any text, and takes no pointer events. */
+.hero-contact-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    148deg,
+    rgb(var(--glass-edge) / 0.36),
+    rgb(var(--glass-edge) / 0.06) 42%,
+    rgb(var(--glass-edge) / 0.16)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Where the backdrop cannot be blurred there is no glass to be had, and a
+   thin tint over the moving hero would be unreadable. Close it up instead. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hero-contact-card {
+    background: linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(8, 11, 14, 0.95));
+  }
 }
 
 .hero-contact-card__top {

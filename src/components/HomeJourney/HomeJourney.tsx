@@ -107,7 +107,6 @@ export function HomeJourney() {
     const heading = root.querySelector<HTMLElement>('.journey-services__header')!
     const headingText = root.querySelector<HTMLElement>('#journey-services-heading')!
     const baseline = root.querySelector<HTMLElement>('.journey-services__baseline')!
-    const entrance = root.querySelector<HTMLElement>('.journey-services__entrance')!
     const process = root.querySelector<HTMLElement>('.journey-process')!
     const rows = root.querySelector<HTMLElement>('.journey-services__rows')!
     const panels = Array.from(process.querySelectorAll<HTMLElement>('.journey-process__panel')).map(panel => ({
@@ -133,7 +132,6 @@ export function HomeJourney() {
         servicesHeaderHeight: heading.offsetHeight,
         servicesHeadingRight: headingText.getBoundingClientRect().right,
         servicesHeadingBaseline: baseline.getBoundingClientRect().top - heading.getBoundingClientRect().top,
-        entranceDistance: entrance.offsetHeight,
         processTop: top(process), processHeight: process.offsetHeight,
         processHeadingRight: Math.max(...panels.map(item => item.title.getBoundingClientRect().right)),
         quizTop: top(quiz), closingTop: top(closing), end: top(root) + root.offsetHeight,
@@ -205,7 +203,7 @@ export function HomeJourney() {
     measure()
     update()
     const observer = new ResizeObserver(refresh)
-    for (const element of [root, heading, headingText, entrance, rows, process,
+    for (const element of [root, heading, headingText, rows, process,
       ...panels.flatMap(item => [item.copy, item.title]), quiz, closing,
       closingContent, closingFooter, closingCard]) observer.observe(element)
     window.addEventListener('scroll', requestUpdate, { passive: true })
@@ -241,7 +239,6 @@ export function HomeJourney() {
               <img className="journey-static-mark" src="/brand/wallace-shift-logo-black.svg" alt="" width="180" height="105" />
             </div>
           </header>
-          <div className="journey-services__entrance" aria-hidden="true" />
           <JourneyServiceRows />
         </div>
         <div className="container journey-services__links">

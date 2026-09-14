@@ -48,7 +48,6 @@ export interface JourneyLayout {
   servicesHeaderHeight: number
   servicesHeadingRight: number
   servicesHeadingBaseline: number
-  entranceDistance: number
   processTop: number
   processHeight: number
   processHeadingRight: number
@@ -158,7 +157,10 @@ export function sampleJourneyFrame(scroll: number, layout: JourneyLayout,
   const h = Math.max(1, layout.viewportHeight)
   const w = Math.max(1, layout.viewportWidth)
   const stageHeight = Math.max(1, h - layout.headerOffset)
-  const entry = phase(scroll, layout.servicesTop - layout.headerOffset, layout.entranceDistance)
+  // Enter when the whole heading band first fits in the viewport, and dock
+  // as its top reaches navigation. The service rows follow the band directly.
+  const entryStart = layout.servicesTop + layout.servicesHeaderHeight - h
+  const entry = phase(scroll, entryStart, Math.max(1, stageHeight - layout.servicesHeaderHeight))
   const release = layout.servicesRowsBottom - layout.servicesHeaderHeight - layout.headerOffset
   const processPin = layout.processTop - layout.headerOffset
   const moveRight = phase(scroll, release, Math.max(stageHeight * .55, processPin - release))
@@ -224,7 +226,9 @@ export function sampleJourneyFrame(scroll: number, layout: JourneyLayout,
     frictionCopyBottom: layout.findCopyBottom ?? h * .55,
     frictionDock: phase(chapter, t.makeEnd, t.dockEnd - t.makeEnd),
     visible: scroll + h > layout.servicesTop && scroll < layout.end ? 1 : 0,
-    x: mix(mix(mix(1.48, mix(servicesX, processX, moveRight), entry), .61, quiz),
+    // At zero yaw, placing the left edge at the viewport boundary makes the
+    // first scroll movement visible without an empty offscreen approach.
+    x: mix(mix(mix(1 + servicesScale, mix(servicesX, processX, moveRight), entry), .61, quiz),
       cardCenterX / w * 2 - 1, closing),
     y: mix(mix(headingY, -.03, quiz), 1 - 2 * (cardCenterY - visualTop) / h, closing),
     scale: mix(mix(servicesScale * (1 + ASCENT_GROWTH * ascent), .21, quiz), closingScale, closing),

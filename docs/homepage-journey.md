@@ -10,9 +10,12 @@ Shared palette values and measured solid-color contrast are documented in
 - The original opening copy and enquiry card remain over the glass water
   hero. Touch-first/mobile visitors retain the existing MP4 hero.
 - The actual two-part `ws_logo.glb` enters from beyond the right edge alongside
-  the services heading. Its upper edge pins directly beneath navigation first;
-  the next 360–720px of scroll brings the model into place, with no timed entrance
-  or fade. Stopping or reversing scroll stops or reverses the same pose.
+  the services heading. Travel begins when the heading band's bottom edge meets
+  the viewport bottom and finishes as its upper edge pins beneath navigation.
+  The model follows the moving headline throughout that interval, with no timed
+  entrance or fade. The first service row sits directly against the heading;
+  there is no spacer reserved for the logo's entrance. Stopping or reversing
+  scroll stops or reverses the same pose.
   The services mark is 160–240px wide and rests 75px beyond the measured
   headline's right edge. Its bottom follows the last line's measured baseline,
   using the actual GLB height to position the model. The services pose faces
@@ -86,6 +89,27 @@ Mobile, coarse-pointer, reduced-motion and failed-WebGL modes retain all copy,
 quiz controls, enquiry fields and links without this Canvas. The process uses
 shorter ordinary-flow steps in those modes. No new logo export is required.
 
+## Services entrance revision — September 13
+
+The blank entrance block between the graphite heading and the first service
+row has been removed. The logo now travels while that heading moves from the
+viewport bottom toward its navigation pin. Its starting left edge sits at the
+right viewport edge, so there is no additional invisible horizontal travel.
+The measured headline baseline still anchors the mark throughout entry and
+pinning; the last service row still determines the heading's release.
+
+All 16 journey checks and 9 quiz-mark checks pass. The focused entry checks
+cover the boundary, the first pixel after it, arrival at the pin, changing
+viewport/header heights, paused and reversed scroll, baseline alignment, and
+adjacent heading/row markup. These checks establish scroll mathematics and
+markup structure; browser/GPU verification is separate.
+
+Local browser review at 1728×960 and 1280×720 confirmed the visible entrance,
+flush first row, and settled logo beside the pinned heading. Forward/reverse
+scrolling and the final service row's release were checked at 1728×960. The
+390×844 static fallback has a measured zero gap and no horizontal overflow.
+The production build passed; these checks do not establish deployed behavior.
+
 ## Preserved work
 
 - `/experiments/water-hero` retains all of its material options and original
@@ -112,7 +136,9 @@ reverse seeking, process phases, static/server markup, lazy dependencies,
 GLB vertices/normals/reassembly, disposal, and reflection renderer state.
 These checks and a production build do not establish browser/GPU appearance.
 
-Browser access was authorized again on September 10. The services correction
+Browser access was authorized again on September 10. The following records the
+earlier services behavior; the September 13 entrance revision supersedes its
+pin-first entry timing. The services correction
 was visually verified locally at 1280×720 and 1728×960: the GLB stays loaded,
 enters from offscreen right after the heading pins, rests when scrolling stops,
 and reverses with scrolling. The heading remains at the navigation's measured

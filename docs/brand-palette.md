@@ -41,6 +41,33 @@ new tokens: they exist to separate three adjacent planes in one component, not
 to extend the palette. Contrast for every role on its own surface is asserted
 in `scripts/verify-pricing-stack.mjs`; the tightest is 4.84:1.
 
+## The hero enquiry card
+
+The landing hero card uses translucent frosted glass so the live scene's mist
+and light remain visible through it. A thin cool tint and reflected sheen sit
+over `blur(30px) saturate(1.15)`, with prefixed and standard declarations. The
+24px corners and softly lit rim give the panel definition without closing off
+the scene. The stronger tint on the video fallback remains separate.
+
+The landing content's `will-change` hint includes only `transform`. An opacity
+hint would create a backdrop root even while the content is fully visible,
+preventing the card's blur from sampling the scene. The existing scroll fade
+still applies to the content group and retains entered fields on return.
+
+Labels, placeholders, the counter and the sending note use light cool text.
+Their contrast depends on the rendered scene behind the translucent panel;
+solid-colour calculations do not establish a contrast rating for this surface.
+Review readability over the moving mist, including its brightest frames, at
+wide, narrow and short desktop sizes. The card keeps its existing desktop-only
+visibility and keyboard controls.
+
+The lit edge is a gradient ring (`::after` with `mask-composite: exclude`) using
+the cool `--glass-edge: 226 238 245` tint. It takes no pointer events, so the
+fields and submit button remain reachable. When backdrop filtering is not
+supported, an `@supports not` block supplies a dark panel for readability.
+`scripts/verify-home-hero.mjs` checks these structural safeguards; browser
+review verifies the glass effect and text over the actual scene.
+
 ## Surface rules
 
 - On ink or graphite, use pearl/silver text and azure accents. Azure button fills take ink text.

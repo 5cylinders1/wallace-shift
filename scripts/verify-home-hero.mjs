@@ -184,3 +184,40 @@ await test('mobile, loading and unavailable-scene branches each keep their hero 
     }
   }
 })
+
+await test('the frosted enquiry card retains its backdrop, fallback and controls', async () => {
+  const card = await readFile(new URL('HeroContactCard.css', base), 'utf8')
+  const landing = await readFile(new URL('LandingHeroTheme.css', base), 'utf8')
+
+  // Both declarations support browsers that still require the prefix. These
+  // source checks do not establish the rendered effect or text contrast.
+  for (const sheet of [card, landing]) {
+    assert.match(sheet, /-webkit-backdrop-filter: blur\((\d+)px\)/)
+    assert.match(sheet, /[^-]backdrop-filter: blur\((\d+)px\)/)
+    const fallback = sheet.match(/@supports not \(\(backdrop-filter: blur\(1px\)\) or \(-webkit-backdrop-filter: blur\(1px\)\)\)\s*\{\s*[^{}]*\.hero-contact-card\s*\{([^{}]+)\}/)?.[1]
+    assert.ok(fallback, 'the card has a fallback when neither blur declaration is supported')
+    assert.match(fallback, /background(?:-color)?:\s*[^;]+;/,
+      'the unsupported-filter fallback supplies its own surface')
+  }
+
+  // This selector must outrank the shared reveal rule's will-change: opacity.
+  // A permanent opacity hint isolates the card from the canvas even at rest.
+  const content = landing.match(/\.water-hero-shell--landing\s+\.water-hero__landing-ui\s+\.water-hero__landing-content\s*\{([^{}]+)\}/)?.[1]
+  assert.ok(content, 'the landing content overrides the shared reveal hint')
+  const hints = content.match(/will-change:\s*([^;]+);/)?.[1]
+  assert.ok(hints, 'the landing content explicitly sets its compositing hint')
+  assert.doesNotMatch(hints, /\b(?:opacity|filter|backdrop-filter|mask|clip-path|mix-blend-mode)\b/,
+    'the resting content must not create a backdrop root')
+
+  // Decorative glass cannot cover the controls or shrink the submit target.
+  const rim = card.match(/\.hero-contact-card::after\s*\{([^{}]+)\}/)?.[1]
+  assert.ok(rim, 'the decorative rim remains separate from the fields')
+  assert.match(rim, /mask-composite:\s*exclude/)
+  assert.match(rim, /pointer-events:\s*none/)
+  const submit = card.match(/\.hero-contact-card__submit\s*\{([^{}]+)\}/)?.[1]
+  assert.ok(submit)
+  for (const dimension of ['width', 'height']) {
+    const pixels = Number(submit.match(new RegExp(`\\b${dimension}:\\s*(\\d+)px`))?.[1])
+    assert.ok(pixels >= 44, `the submit ${dimension} preserves a 44px hit target`)
+  }
+})
