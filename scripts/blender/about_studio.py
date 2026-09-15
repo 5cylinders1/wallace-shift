@@ -2,14 +2,17 @@
 
 Run with Blender, not the system Python::
 
-    blender --background --python scripts/blender/about_studio.py -- \
-        --output review-assets/about-studio --width 1920 --height 1080 \
-        --samples 48 --frames 144 --render-frame 1
+    blender --background --python-exit-code 1 --python scripts/blender/about_studio.py -- \
+        --output review-assets/about-identity-final --width 1920 --height 1080 \
+        --samples 32 --frames 240 --render-frames 1,54,120,173,240
 
 The default authors and saves the scene without rendering the animation.
-Use ``--render-frames 1,72,144`` for previews in one persistent render process,
+Use ``--render-frames 1,54,120,173,240`` for previews in one persistent render process,
 or ``--render-animation`` to render all frames immediately after authoring.
-To render the saved animation subsequently, use Blender's ``-b FILE -a``.
+For a later full render, rerun this script with the same scene options and
+``--render-animation``. It renders sequential stills in one persistent process.
+Blender's native ``-b FILE -a`` path has crashed during Metal compilation locally,
+so it is not the supported render route for this scene.
 All geometry, materials, lights and animation remain editable in the .blend.
 Existing scene objects are preserved; a new scene is made for this project.
 """
@@ -24,22 +27,24 @@ import sys
 
 import bpy
 from mathutils import Vector
+from mathutils.geometry import tessellate_polygon
 
 
 def arguments():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=Path("review-assets/about-studio"))
-    parser.add_argument("--samples", type=int, default=48)
+    parser.add_argument("--output", type=Path, default=Path("review-assets/about-identity-final"))
+    parser.add_argument("--samples", type=int, default=32)
     parser.add_argument("--width", type=int, default=1920)
     parser.add_argument("--height", type=int, default=1080)
-    parser.add_argument("--frames", type=int, default=144)
+    parser.add_argument("--frames", type=int, default=240)
     parser.add_argument("--render-frame", type=int)
     parser.add_argument("--render-frames", help="Comma-separated preview frames rendered in one process.")
     parser.add_argument("--render-animation", action="store_true", help="Render the complete animation after saving.")
     parser.add_argument("--save-only", action="store_true")
+    parser.add_argument("--render-step", type=int, default=1, help="Frame stride for a quick animation preview.")
     cli = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     args = parser.parse_args(cli)
-    if min(args.width, args.height, args.samples) < 1 or args.frames < 3:
+    if min(args.width, args.height, args.samples, args.render_step) < 1 or args.frames < 3:
         parser.error("Dimensions and samples must be positive; use at least three frames.")
     if args.render_frame is not None and not 1 <= args.render_frame <= args.frames:
         parser.error("--render-frame must be inside the animation range.")
@@ -161,21 +166,22 @@ def fine_brushed_aluminum():
 
 
 def optical_glass():
-    mat, bsdf = material("02 / blue optical glass · solid volume", (0.68, 0.87, 1.0), 0.0, 0.021)
+    mat, bsdf = material("02 / blue optical glass · solid volume", (0.87, 0.96, 1.0), 0.0, 0.021)
     bsdf.inputs["IOR"].default_value = 1.46
     bsdf.inputs["Transmission Weight"].default_value = 1.0
     bsdf.inputs["Coat Weight"].default_value = 0.10
     bsdf.inputs["Coat Roughness"].default_value = 0.025
     nodes, links = mat.node_tree.nodes, mat.node_tree.links
     absorption = nodes.new("ShaderNodeVolumeAbsorption")
-    absorption.inputs["Color"].default_value = (0.025, 0.22, 0.72, 1.0)
-    absorption.inputs["Density"].default_value = 1.8
+    absorption.inputs["Color"].default_value = (0.06, 0.34, 0.85, 1.0)
+    absorption.inputs["Density"].default_value = 0.055
     links.new(absorption.outputs["Volume"], nodes.get("Material Output").inputs["Volume"])
     return mat
 
 
 def graphite():
-    mat, bsdf = material("03 / polished graphite terrazzo", (0.008, 0.010, 0.013), 0.32, 0.22)
+    mat, bsdf = material("03 / honed graphite terrazzo", (0.008, 0.010, 0.013), 0.025, 0.33)
+    bsdf.inputs["Specular IOR Level"].default_value = 0.085
     nodes, links = mat.node_tree.nodes, mat.node_tree.links
     coord = nodes.new("ShaderNodeTexCoord")
     noise = nodes.new("ShaderNodeTexNoise")
@@ -188,110 +194,266 @@ def graphite():
     links.new(noise.outputs["Fac"], bump.inputs["Height"])
     links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
     rough = nodes.new("ShaderNodeMapRange")
-    rough.inputs["To Min"].default_value = 0.20
-    rough.inputs["To Max"].default_value = 0.24
+    rough.inputs["To Min"].default_value = 0.30
+    rough.inputs["To Max"].default_value = 0.36
     links.new(noise.outputs["Fac"], rough.inputs["Value"])
     links.new(rough.outputs["Result"], bsdf.inputs["Roughness"])
     return mat
 
 
-def fin(scene, name, mat, x, width, depth, height, lean, frames):
-    half = width / 2
-    y = depth / 2
-    # Both bases sit exactly on the floor; all eight vertices form a closed volume.
-    vertices = [(-half, -y, 0), (half, -y, 0), (half, y, 0), (-half, y, 0),
-                (-half + lean, -y, height), (half + lean, -y, height - 0.10),
-                (half + lean, y, height - 0.10), (-half + lean, y, height)]
-    faces = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4),
-             (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
+# These are the two literal closed SVG paths, rather than an approximation of W.
+# The visitor travels between their extruded walls, and the final crane reveals
+# that the architecture they crossed was the brand mark all along.
+LOGO_LEFT = [(124, 291), (322, 291), (516, 715), (582, 572),
+             (459, 457), (540, 291), (713, 291), (640, 447),
+             (772, 581), (645, 852), (396, 852)]
+LOGO_RIGHT = [(952, 291), (1149, 291), (877, 852), (693, 852)]
+LOGO_SCALE = 30.0 / 1025.0
+ARCHITECTURE_HEIGHT = 7.2
+
+
+def footprint(points):
+    result = [((x - 636.5) * LOGO_SCALE, (571.5 - y) * LOGO_SCALE) for x, y in points]
+    area2 = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(result, result[1:] + result[:1]))
+    return result if area2 > 0 else list(reversed(result))
+
+
+def extruded_mark(scene, name, points, mat):
+    outline = footprint(points)
+    count = len(outline)
+    vertices = [(x, y, z) for z in (0.008, ARCHITECTURE_HEIGHT) for x, y in outline]
+    vectors = [Vector((x, y, 0)) for x, y in outline]
+    triangles = tessellate_polygon([vectors])
+    faces = []
+    for triangle in triangles:
+        indices = [int(v) if isinstance(v, int) else
+                   next(i for i, vector in enumerate(vectors) if (vector - v).length < 1e-6)
+                   for v in triangle]
+        faces.extend([tuple(reversed(indices)), tuple(i + count for i in indices)])
+    faces.extend((i, (i + 1) % count, (i + 1) % count + count, i + count) for i in range(count))
     obj = mesh_object(scene, name, vertices, faces, mat)
-    obj.location = (x, 0, 0.004)
-    # These are rigid solids: their geometry never stretches or morphs. A short
-    # lateral move and restrained yaw bring their broad faces into alignment.
-    initial_yaw = -0.055 if x < 0 else 0.10
-    for progress, factor in [(0.0, 1.0), (0.53, 1.0), (0.90, 0.0), (1.0, 0.0)]:
-        obj.rotation_euler.z = initial_yaw * factor
-        obj.keyframe_insert("rotation_euler", frame=1 + round(progress * (frames - 1)))
-    for progress, offset in [(0.0, 0.0), (0.53, 0.0), (0.90, -math.copysign(0.10, x)), (1.0, -math.copysign(0.10, x))]:
-        obj.location.x = x + offset
-        obj.keyframe_insert("location", frame=1 + round(progress * (frames - 1)))
-    bevel_object(obj)
+    bevel_object(obj, 0.045)
+    obj["Source"] = "public/brand/wallace-shift-logo-white.svg"
+    obj["Physical dimensions"] = "Exact planar SVG outline extruded to 7.2 metres; no moving prop geometry."
     return obj
 
 
+def emission_material(name, color, strength):
+    mat, node = material(name, color, 0.1, 0.24)
+    node.inputs["Emission Color"].default_value = (*color, 1.0)
+    node.inputs["Emission Strength"].default_value = strength
+    return mat, node.inputs["Emission Strength"]
+
+
+def light_path(scene, name, coords, mat, radius=0.025, closed=False):
+    curve = bpy.data.curves.new(name + " · real luminous inlay", "CURVE")
+    curve.dimensions = "3D"
+    curve.resolution_u = 1
+    curve.bevel_depth = radius
+    curve.bevel_resolution = 3
+    spline = curve.splines.new("POLY")
+    spline.points.add(len(coords) - 1)
+    for point, xyz in zip(spline.points, coords):
+        point.co = (*xyz, 1.0)
+    spline.use_cyclic_u = closed
+    obj = bpy.data.objects.new(name, curve)
+    scene.collection.objects.link(obj)
+    curve.materials.append(mat)
+    return obj
+
+
+def smooth(value):
+    value = min(1.0, max(0.0, value))
+    return value * value * (3.0 - 2.0 * value)
+
+
+def reveal(value, start, end):
+    return smooth((value - start) / (end - start))
+
+
 def build_room(scene, floor_mat):
-    box(scene, "Floor / continuous polished graphite", (0, 0, -0.075), (100, 100, 0.15), floor_mat)
-    wall_mat, wall_bsdf = material("04 / charcoal acoustic walls", (0.0007, 0.0009, 0.0012), 0.0, 0.80)
+    box(scene, "Ground / continuous polished graphite", (0, 0, -0.12), (300, 300, 0.24), floor_mat)
+    wall_mat, wall_bsdf = material("04 / infinite charcoal cyclorama", (0.014, 0.019, 0.030), 0.0, 0.90)
     wall_bsdf.inputs["Specular IOR Level"].default_value = 0.12
-    # A real quarter-round cyclorama catches light softly without a horizon seam.
-    cross_section = [(4.0, 0.0)]
-    radius = 4.0
+    cross_section = [(60.0, 0.0)]
     for step in range(1, 41):
         theta = (math.pi / 2) * step / 40
-        cross_section.append((4.0 + radius * math.sin(theta), radius * (1 - math.cos(theta))))
-    cross_section.append((8.0, 14.0))
-    vertices = []
-    for y, z in cross_section:
-        vertices.extend([(-40, y, z), (40, y, z)])
+        cross_section.append((60.0 + 12.0 * math.sin(theta), 12.0 * (1 - math.cos(theta))))
+    cross_section.append((72.0, 70.0))
+    vertices = [(x, y, z) for y, z in cross_section for x in (-180, 180)]
     faces = [(2 * i, 2 * i + 1, 2 * i + 3, 2 * i + 2) for i in range(len(cross_section) - 1)]
-    backdrop = mesh_object(scene, "Room / curved charcoal cyclorama", vertices, faces, wall_mat)
+    backdrop = mesh_object(scene, "World / seamless charcoal horizon", vertices, faces, wall_mat)
     for face in backdrop.data.polygons:
         face.use_smooth = True
-    # The cyclorama spans the whole travelling-camera view. Side-wall ends would
-    # create visible vertical seams at these wide, off-center compositions.
 
 
-def build_lighting(scene):
-    # Physical sources remain visible in reflective and transmissive rays. They are
-    # overhead or outside the camera frame, rather than floating visible cards.
-    area(scene, "Key / tall neutral softbox", (-3.5, -4.0, 5.0), (-0.4, 0, 2.6),
-         720, (1.0, 0.95, 0.88), 2.4, 5.5)
-    area(scene, "Edge / narrow silver strip", (3.1, 1.3, 4.2), (0.3, 0, 2.4),
-         520, (0.77, 0.87, 1.0), 0.65, 5.4)
-    area(scene, "Top / large overhead diffusion", (0, -0.2, 7.0), (0, 0, 1.0),
-         420, (0.87, 0.93, 1.0), 4.0, 3.0)
-    area(scene, "Front / restrained broad fill", (0.4, -5.0, 3.0), (0, 0, 2.5),
-         45, (0.67, 0.80, 1.0), 4.0, 4.5)
-    area(scene, "Glass / cool rear reflection", (2.2, 3.0, 3.0), (0.65, 0, 2.6),
-         180, (0.07, 0.32, 1.0), 0.45, 5.0)
-    area(scene, "Slit / blue light on the polished floor", (0.12, 0.1, 0.38), (0.1, -0.9, 0),
-         3, (0.025, 0.23, 1.0), 0.22, 0.8)
-    glow, node = material("05 / blue architectural light", (0.025, 0.22, 0.9), 0.0, 0.25)
-    node.inputs["Emission Color"].default_value = (0.02, 0.25, 1.0, 1.0)
-    node.inputs["Emission Strength"].default_value = 4.0
-    box(scene, "Architecture / blue slit", (0.13, 0.16, 2.24), (0.018, 0.024, 4.48), glow, 0.004)
+def build_lighting(scene, frames):
+    # The opening is lit locally. The complete overhead architecture lights up
+    # during the crane, making the reveal a change in understanding and scale.
+    area(scene, "Entry / warm silver key", (-8.5, -14.0, 8.0), (-3.5, -7, 3.5),
+         1700, (1.0, 0.96, 0.9), 4.0, 9.0)
+    area(scene, "Entry / cool glass edge", (9.0, -9.0, 7.0), (3.0, -7, 3.2),
+         1800, (0.55, 0.76, 1.0), 2.5, 9.0)
+    area(scene, "Entry / controlled front fill", (-1.0, -19.0, 6.0), (0, -7, 3.5),
+         180, (0.7, 0.8, 1.0), 11.0, 7.0)
+    # Diffusion panels sit above the open channel. The camera sees the physical
+    # wall reflections, and the height of the sources preserves a dark ceiling.
+    area(scene, "Channel / long overhead silk", (3.2, -2.0, 11.0), (3.2, -2.0, 0),
+         2600, (0.88, 0.93, 1.0), 2.2, 14.0)
+    area(scene, "Channel / blue glass backlight", (13, 2.0, 6.0), (5.0, 1.0, 3.0),
+         2100, (0.12, 0.40, 1.0), 3.0, 12.0)
+    area(scene, "Threshold / far white opening", (5.5, 13, 8), (4, 3, 3),
+         2500, (0.8, 0.9, 1.0), 3.5, 7.0)
+    # A broad physical pool on the distant curved wall gives the shared space
+    # a visible horizon. It is part of the same world, with no inserted portal.
+    area(scene, "Horizon / blue diffusion on the distant cyclorama",
+         (5.0, 43.0, 9.0), (5.0, 67.0, 6.0),
+         18000, (0.08, 0.24, 0.60), 24.0, 12.0)
+    overhead = area(scene, "Reveal / immense overhead silk", (-2, 0, 24), (0, 0, 0),
+                     0, (0.85, 0.92, 1.0), 27, 20)
+    silver_rim = area(scene, "Reveal / silver rim", (-17, 10, 13), (-5, 1, 4),
+                      0, (1, 0.97, 0.92), 7, 19)
+    glass_rim = area(scene, "Reveal / glass reflection card", (19, 8, 15), (7, 1, 4),
+                     0, (0.44, 0.69, 1.0), 7, 21)
+    guide, _ = emission_material("05 / illuminated channel inlay", (0.028, 0.26, 1.0), 5.0)
+    # The lower narrow diagonal is the physical route; both strips terminate in
+    # the same open atrium created by the left path's original polygon cut.
+    left_channel = [((x - 636.5) * LOGO_SCALE + 0.072,
+                     (571.5 - y) * LOGO_SCALE, 0.045)
+                    for x, y in [LOGO_LEFT[i] for i in (9, 8, 7, 6)]]
+    right_channel = [((x - 636.5) * LOGO_SCALE - 0.072,
+                      (571.5 - y) * LOGO_SCALE, 0.045)
+                     for x, y in [LOGO_RIGHT[i] for i in (3, 0)]]
+    light_path(scene, "Light / silver wall foot", left_channel, guide, 0.032)
+    light_path(scene, "Light / glass wall foot", right_channel, guide, 0.032)
+    silver_trace, silver_strength = emission_material("06 / final silver outline", (0.65, 0.82, 1.0), 0.0)
+    glass_trace, glass_strength = emission_material("07 / final blue glass outline", (0.035, 0.25, 1.0), 0.0)
+    for name, points, mat in [("Silver", LOGO_LEFT, silver_trace), ("Glass", LOGO_RIGHT, glass_trace)]:
+        outline = footprint(points)
+        light_path(scene, "Reveal / " + name + " top edge", [(x, y, ARCHITECTURE_HEIGHT + 0.012) for x, y in outline], mat, 0.020, True)
+        light_path(scene, "Reveal / " + name + " foundation edge", [(x, y, 0.043) for x, y in outline], mat, 0.030, True)
+    for frame in range(1, frames + 1):
+        p = (frame - 1) / (frames - 1)
+        illumination = reveal(p, 0.60, 0.86)
+        for obj, energy in [(overhead, 12000), (silver_rim, 5700), (glass_rim, 6600)]:
+            obj.data.energy = energy * illumination
+            obj.data.keyframe_insert("energy", frame=frame)
+        silver_strength.default_value = 1.25 * illumination
+        glass_strength.default_value = 4.0 * illumination
+        silver_strength.keyframe_insert("default_value", frame=frame)
+        glass_strength.keyframe_insert("default_value", frame=frame)
+
+
+# Parameter, camera position, look target, focal length in millimetres.
+# Dense authored positions protect the narrow passage. The solids never move.
+CAMERA_POSES = [
+    (0.00, (-5.0, -30.0, 5.3), (-5.0, -3.0, 4.0), 30.0),
+    (0.10, (-1.5, -21.0, 4.1), (-0.6, -4.3, 3.3), 30.0),
+    (0.22, (0.92, -10.1, 2.7), (2.45, -5.0, 3.0), 23.0),
+    (0.34, (2.22, -5.5, 2.7), (3.80, -2.0, 3.0), 21.0),
+    (0.46, (4.16, -1.25, 2.75), (4.70, 2.80, 1.95), 22.0),
+    (0.54, (4.50, 1.6, 3.1), (5.30, 6.1, 1.8), 24.0),
+    (0.63, (5.25, 6.4, 9.2), (4.80, 10.0, 0.0), 26.0),
+    (0.72, (2.80, 1.0, 24.0), (1.80, 5.0, 0.0), 29.0),
+    (0.84, (-2.30, -11.0, 42.0), (-5.30, 1.0, 0.0), 33.0),
+    (0.96, (-10.2, -17.0, 59.0), (-10.2, 0.0, 0.0), 36.0),
+    (1.00, (-10.5, -17.5, 61.0), (-10.5, 0.0, 0.0), 36.0),
+]
+
+
+def sample_pose(progress):
+    # Cubic Hermite with central-difference tangents produces a continuous
+    # velocity path. Frame-by-frame quaternion keys prevent Euler wrap flips.
+    index = next((i for i in range(len(CAMERA_POSES) - 1) if progress <= CAMERA_POSES[i + 1][0]), len(CAMERA_POSES) - 2)
+    left, right = CAMERA_POSES[index:index + 2]
+    before = CAMERA_POSES[max(0, index - 1)]
+    after = CAMERA_POSES[min(len(CAMERA_POSES) - 1, index + 2)]
+    t = (progress - left[0]) / (right[0] - left[0])
+    duration = right[0] - left[0]
+    def interpolate(component, axis=None):
+        value = lambda pose: pose[component][axis] if axis is not None else pose[component]
+        a, b = value(left), value(right)
+        m0 = (value(right) - value(before)) / (right[0] - before[0]) * duration
+        m1 = (value(after) - value(left)) / (after[0] - left[0]) * duration
+        return ((2*t**3 - 3*t**2 + 1)*a + (t**3 - 2*t**2 + t)*m0
+                + (-2*t**3 + 3*t**2)*b + (t**3 - t**2)*m1)
+    return (tuple(interpolate(1, a) for a in range(3)),
+            tuple(interpolate(2, a) for a in range(3)), interpolate(3))
+
+
+def point_in_polygon(point, polygon):
+    x, y = point
+    inside = False
+    for (ax, ay), (bx, by) in zip(polygon, polygon[1:] + polygon[:1]):
+        if (ay > y) != (by > y) and x < (bx - ax) * (y - ay) / (by - ay) + ax:
+            inside = not inside
+    return inside
+
+
+def validate_camera_path(frames):
+    outlines = [footprint(LOGO_LEFT), footprint(LOGO_RIGHT)]
+    minimum_clearance = math.inf
+    for frame in range(1, frames + 1):
+        position, _, _ = sample_pose((frame - 1) / (frames - 1))
+        x, y, z = position
+        if z >= ARCHITECTURE_HEIGHT + 0.2:
+            continue
+        for polygon in outlines:
+            if point_in_polygon((x, y), polygon):
+                raise ValueError(f"Camera intersects brand architecture at frame {frame}: {position}")
+            for (ax, ay), (bx, by) in zip(polygon, polygon[1:] + polygon[:1]):
+                dx, dy = bx - ax, by - ay
+                t = min(1, max(0, ((x-ax)*dx + (y-ay)*dy)/(dx*dx + dy*dy)))
+                minimum_clearance = min(minimum_clearance, math.hypot(x-ax-t*dx, y-ay-t*dy))
+    if minimum_clearance < 0.18:
+        raise ValueError(f"Camera lacks safe optical clearance: {minimum_clearance:.3f} m")
+    return minimum_clearance
+
+
+def linear_keys(block):
+    if not block.animation_data or not block.animation_data.action:
+        return
+    action = block.animation_data.action
+    # Blender 4.4+ stores actions in slots; support both new and legacy forms.
+    curves = list(action.fcurves) if hasattr(action, "fcurves") else []
+    for layer in getattr(action, "layers", []):
+        for strip in layer.strips:
+            if hasattr(strip, "channelbags"):
+                for bag in strip.channelbags:
+                    curves.extend(bag.fcurves)
+    for curve in curves:
+        for key in curve.keyframe_points:
+            key.interpolation = "LINEAR"
 
 
 def build_camera(scene, frames):
-    data = bpy.data.cameras.new("About / travelling studio camera")
-    camera = bpy.data.objects.new("Camera / three connected compositions", data)
+    data = bpy.data.cameras.new("About / one unbroken architectural journey")
+    camera = bpy.data.objects.new("Camera / enter, cross, emerge, understand", data)
     scene.collection.objects.link(camera)
     scene.camera = camera
-    data.lens = 43.0
     data.sensor_width = 36.0
     data.clip_start = 0.08
-    data.clip_end = 200
-    data.dof.use_dof = False  # Crisp optical product work throughout the travelling shot.
-    # Authored as physical camera positions and targets. Rest frames make the
-    # text beats readable; the interpolated paths travel through the same room.
-    poses = [
-        (0.00, (3.8, -12.8, 2.9), (-2.7, 0.0, 2.48), 43.0),
-        (0.08, (3.72, -12.70, 2.94), (-2.66, 0.0, 2.48), 43.0),
-        (0.41, (-3.5, -10.0, 2.62), (2.35, 0.0, 2.55), 40.0),
-        (0.53, (-3.65, -9.9, 2.70), (2.30, 0.0, 2.56), 40.0),
-        (0.91, (3.2, -14.0, 4.0), (-2.65, 0.0, 2.32), 43.0),
-        (1.00, (3.05, -14.1, 4.10), (-2.65, 0.0, 2.32), 43.0),
-    ]
-    for progress, position, target, lens in poses:
-        frame = 1 + round(progress * (frames - 1))
+    data.clip_end = 300
+    data.dof.use_dof = False
+    camera.rotation_mode = "QUATERNION"
+    previous = None
+    for frame in range(1, frames + 1):
+        position, target, lens = sample_pose((frame - 1) / (frames - 1))
         camera.location = position
-        point_at(camera, target)
+        rotation = (Vector(target) - Vector(position)).to_track_quat("-Z", "Y")
+        if previous is not None and rotation.dot(previous) < 0:
+            rotation.negate()
+        camera.rotation_quaternion = rotation
+        previous = rotation.copy()
         data.lens = lens
         camera.keyframe_insert("location", frame=frame)
-        camera.keyframe_insert("rotation_euler", frame=frame)
+        camera.keyframe_insert("rotation_quaternion", frame=frame)
         data.keyframe_insert("lens", frame=frame)
-    for name, progress in [("01 / two people", 0.0), ("02 / complementary perspectives", 0.41),
-                           ("03 / one shared standard", 0.91)]:
+    linear_keys(camera)
+    linear_keys(data)
+    for name, progress in [("01 / two materials", 0.0), ("02 / enter the shared space", 0.22),
+                           ("03 / inside the work", 0.50), ("04 / a wider perspective", 0.72),
+                           ("05 / one Wallace Shift", 1.0)]:
         scene.timeline_markers.new(name, frame=1 + round(progress * (frames - 1)))
     return camera
 
@@ -362,19 +524,16 @@ def main():
     scene.frame_end = args.frames
     devices = configure_cycles(scene, args)
     build_room(scene, graphite())
-    fin(scene, "Object 01 / brushed aluminum", fine_brushed_aluminum(),
-        -0.68, 0.72, 0.34, 4.85, 0.30, args.frames)
-    fin(scene, "Object 02 / optical glass", optical_glass(),
-        0.68, 0.66, 0.40, 4.72, -0.12, args.frames)
-    build_lighting(scene)
+    clearance = validate_camera_path(args.frames)
+    extruded_mark(scene, "Architecture 01 / the silver brand outline", LOGO_LEFT, fine_brushed_aluminum())
+    extruded_mark(scene, "Architecture 02 / the glass brand outline", LOGO_RIGHT, optical_glass())
+    build_lighting(scene, args.frames)
     build_camera(scene, args.frames)
-    scene["Art direction"] = "Two complementary materials. One continuous studio. Physical travel, shared alignment."
-    scene["Scale"] = "Meters; tallest fin 4.85 m, optical glass thickness 0.40 m."
-    scene["Compositions"] = "Opening: pair right, copy left. Middle: pair left, copy right. Ending: pair right, copy left."
+    scene["Art direction"] = "The camera enters two materials, crosses their shared negative space, then cranes up to reveal the world was Wallace Shift."
+    scene["Scale"] = "Meters; exact brand outline 30 m wide and 16.42 m deep, extruded to 7.2 m."
+    scene["Compositions"] = "Opening: material architecture right. Journey: immersive full frame. Reveal: complete W right, copy left."
     scene.render.filepath = str(sequence / "frame_")
     scene.frame_set(args.preview_frames[0] if args.preview_frames else 1)
-    # Blender's default Bezier keys are auto-clamped. Keep their smooth motion
-    # while ensuring later interactive edits cannot overshoot material alignment.
     blend_path = output / "about-studio.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
     print("ABOUT_STUDIO_CONFIG " + json.dumps({
@@ -382,6 +541,7 @@ def main():
         "scene": scene.name, "engine": scene.render.engine,
         "devices": devices or ["CPU"], "samples": args.samples,
         "resolution": [args.width, args.height], "frames": args.frames,
+        "camera_minimum_wall_clearance_m": round(clearance, 4), "render_step": args.render_step,
         "preview_frames": args.preview_frames if not args.save_only else [],
         "render_animation": args.render_animation and not args.save_only,
     }), flush=True)
@@ -389,7 +549,7 @@ def main():
         # Render sequential stills in one process to retain Cycles caches. A
         # prior animation-operator run failed during Metal pipeline compilation;
         # the underlying cause has not been established.
-        render_frames = range(1, args.frames + 1) if args.render_animation else args.preview_frames
+        render_frames = range(1, args.frames + 1, args.render_step) if args.render_animation else args.preview_frames
         for frame in render_frames:
             scene.frame_set(frame)
             scene.render.filepath = str(sequence / f"frame_{frame:04d}.png")

@@ -74,12 +74,12 @@
 .about-close__aside .about-text-link { margin-top: 12px; }
 
 /* One physical studio and camera path, with three deliberate reading holds. */
-.about-journey { --studio-opening: 1; --studio-detail: 0; --studio-alignment: 0; --studio-progress: 0; position: relative; height: 100svh; min-height: 720px; background: #06090c; }
-.about-journey[data-cinematic='true'] { height: 400svh; min-height: 2600px; }
+.about-journey { --studio-opening: 1; --studio-detail: 0; --studio-alignment: 0; --studio-progress: 0; --studio-scale: 1; position: relative; height: 100svh; min-height: 720px; background: #06090c; }
+.about-journey[data-cinematic='true'] { height: 500svh; min-height: 3200px; }
 .about-journey__stage { position: sticky; top: 0; height: 100svh; min-height: 650px; isolation: isolate; overflow: hidden; }
 .about-journey__world { position: absolute; inset: 0; z-index: -3; pointer-events: none; background: #000; }
 .about-journey__world picture { position: absolute; inset: 0; }
-.about-journey__world img, .about-journey__world video { position: absolute; top: 50%; left: 50%; width: 100%; height: auto; max-height: 100%; object-fit: contain; transform: translate(-50%, -50%); mask-image: linear-gradient(0deg, transparent, #000 8%, #000 94%, transparent); }
+.about-journey__world img, .about-journey__world video { position: absolute; top: 50%; left: 50%; width: 100%; height: auto; max-height: 100%; object-fit: contain; transform: translate(-50%, -50%) scale(var(--studio-scale)); mask-image: linear-gradient(0deg, transparent, #000 8%, #000 94%, transparent); }
 .about-journey__world video { opacity: 0; transition: opacity 0.6s; }
 .about-journey[data-media-ready='true'] video { opacity: 1; }
 .about-journey__vignette { position: absolute; z-index: -2; inset: 0; pointer-events: none; background: linear-gradient(0deg, #06090ca6 0%, transparent 17%, transparent 85%, #06090c80), linear-gradient(90deg, #06090c33, transparent 50%); }
@@ -87,7 +87,7 @@
 .about-journey__chapter { position: absolute; top: 50%; transform: translateY(-43%); width: 43%; max-width: 640px; }
 .about-journey__chapter[aria-hidden='true'] { pointer-events: none; }
 .about-journey__chapter--opening { opacity: var(--studio-opening); }
-.about-journey__chapter--detail { opacity: var(--studio-detail); right: var(--gutter); width: 35%; }
+.about-journey__chapter--detail { opacity: var(--studio-detail); top: auto; bottom: 118px; left: 50%; width: 70%; max-width: 900px; transform: translateX(-50%); text-align: center; text-shadow: 0 2px 30px #000; }
 .about-journey__chapter--alignment { opacity: var(--studio-alignment); }
 .about-journey__eyebrow, .about-journey__chapter > .about-kicker { color: var(--color-silver); font-size: 0.625rem; letter-spacing: 0.16em; }
 .about-journey h1 { font-size: clamp(4rem, 6.5vw, 7rem); line-height: 1; font-weight: 500; letter-spacing: -0.065em; margin: 27px 0 30px; }
@@ -95,6 +95,10 @@
 .about-journey h1 .accent-serif, .about-journey h2 .accent-serif { color: #9dc9e9; font-weight: 400; letter-spacing: -0.04em; }
 .about-journey h2 { font-size: clamp(3.7rem, 6.4vw, 6.8rem); line-height: 1; font-weight: 500; letter-spacing: -0.06em; margin: 24px 0 28px; }
 .about-journey__lead { max-width: 40ch; font-size: clamp(.875rem, 1.05vw, 1rem); line-height: 1.8; color: #c1cbd1; }
+.about-journey__chapter--detail h2 { font-size: clamp(2.5rem, 4vw, 4.5rem); line-height: 1.05; margin: 17px 0; }
+.about-journey__chapter--detail h2 br { display: none; }
+.about-journey__chapter--detail h2 .accent-serif::before { content: ' '; }
+.about-journey__chapter--detail .about-journey__lead { margin-inline: auto; max-width: 50ch; color: #e3eaf0; text-shadow: 0 1px 8px #000; }
 .about-journey__chapter .about-text-link { margin-top: 24px; }
 .about-journey__note { padding-top: 25px; margin-top: 28px; border-top: 1px solid #ffffff29; color: #98afbd; font-size: .75rem; line-height: 1.6; max-width: 37ch; }
 .about-journey__rail { position: absolute; bottom: 30px; left: var(--gutter); right: var(--gutter); display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-top: 22px; border-top: 1px solid #ffffff25; font-size: .5625rem; letter-spacing: .12em; text-transform: uppercase; color: #a2b3be; }
@@ -114,6 +118,8 @@
   .about-journey__lead { font-size: .8125rem; line-height: 1.65; }
   .about-journey__chapter .about-text-link { margin-top: 14px; }
   .about-journey__note { margin-top: 18px; padding-top: 18px; }
+  .about-journey__chapter--detail { top: auto; bottom: 95px; transform: translateX(-50%); }
+  .about-journey__chapter--detail h2 { font-size: 2.7rem; }
 }
 
 @media (max-width: 1100px) {
@@ -126,12 +132,13 @@
   .about-close__inner { grid-template-columns: 1.3fr 1fr; gap: 32px; }
   .about-journey__chapter { width: 47%; }
   .about-journey h1 { font-size: clamp(3.1rem, 6.5vw, 4.5rem); }
+  .about-journey__chapter--detail { width: 85%; }
 }
 @media (max-width: 700px) {
   .about-journey { height: auto; min-height: 0; }
   .about-journey__stage { position: relative; min-height: 1000px; height: max(1000px, 100svh); }
-  .about-journey__world { top: 490px; }
-  .about-journey__world img { top: 0; left: 0; height: 100%; max-height: none; transform: none; mask-image: none; object-fit: cover; object-position: center 50%; }
+  .about-journey__world { top: 490px; bottom: 70px; }
+  .about-journey__world img { top: 0; left: 0; height: 100%; max-height: none; transform: none; mask-image: none; object-fit: contain; }
   .about-journey__vignette { background: linear-gradient(0deg, #06090c 0%, transparent 12%, transparent 43%, #06090c 52%); }
   .about-journey__content { padding-top: calc(var(--site-header-height) + 35px); }
   .about-journey__chapter { position: relative; top: auto; transform: none; width: 100%; max-width: none; }

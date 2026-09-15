@@ -3,11 +3,11 @@ import { getInteractiveHomeHeroSnapshot, getStaticHomeHeroSnapshot, subscribeInt
 import { aboutMeta } from '../../content/about'
 import { sampleStudioJourney } from './studioDirector'
 
-const CHAPTERS = ['Two people', 'A direct line', 'One shared standard']
+const CHAPTERS = ['A closer look', 'Inside the connection', 'The whole picture']
 
 /** The same physical scene is rendered in Blender from start to finish.
  * Scroll requests the latest frame; decoding finishes before another seek.
- * Mobile and reduced motion load only the opening still. */
+ * Static layouts load a still; mobile gets the complete mark from the final view. */
 export function AboutStudio() {
   const root = useRef<HTMLElement>(null)
   const video = useRef<HTMLVideoElement>(null)
@@ -26,6 +26,7 @@ export function AboutStudio() {
     let frame = 0
     let top = 0
     let distance = 1
+    let coverScale = 1
     let latestTime = 0
     let visible = true
     let stopped = false
@@ -66,6 +67,7 @@ export function AboutStudio() {
       element.style.setProperty('--studio-detail', String(state.detail))
       element.style.setProperty('--studio-alignment', String(state.alignment))
       element.style.setProperty('--studio-progress', String(progress))
+      element.style.setProperty('--studio-scale', String(1 + (coverScale - 1) * state.immersion))
       if (state.chapter !== previousChapter) {
         previousChapter = state.chapter
         setChapter(state.chapter)
@@ -84,6 +86,9 @@ export function AboutStudio() {
     const measure = () => {
       top = element.getBoundingClientRect().top + window.scrollY
       distance = Math.max(1, element.offsetHeight - window.innerHeight)
+      const stage = element.firstElementChild as HTMLElement
+      const aspect = stage.clientWidth / Math.max(1, stage.clientHeight)
+      coverScale = Math.max(aspect / (16 / 9), (16 / 9) / aspect)
       request()
     }
     const loaded = () => { window.clearTimeout(loadWatchdog); request() }
@@ -143,15 +148,14 @@ export function AboutStudio() {
           </div>
           {cinematic && <>
             <div className="about-journey__chapter about-journey__chapter--detail" aria-hidden={visibleChapter !== 1} inert={visibleChapter !== 1}>
-              <p className="about-kicker">The conversation & the craft</p>
-              <h2>A direct<br /><span className="accent-serif">line.</span></h2>
-              <p className="about-journey__lead">From the first conversation to the final detail, you work with the people responsible for the result.</p>
-              <p className="about-journey__note">Bella finds the need. Matthew brings it to life.</p>
+              <p className="about-kicker">Different perspectives. Shared direction.</p>
+              <h2>Connected<br /><span className="accent-serif">by the work.</span></h2>
+              <p className="about-journey__lead">The conversation and the craft. Always in direct contact.</p>
             </div>
             <div className="about-journey__chapter about-journey__chapter--alignment" aria-hidden={visibleChapter !== 2} inert={visibleChapter !== 2}>
-              <p className="about-kicker">Two disciplines. Working as one.</p>
-              <h2>Close to<br />the work.<br /><span className="accent-serif">Close to you.</span></h2>
-              <p className="about-journey__lead">A small studio, by design. Every conversation stays connected to what we build.</p>
+              <p className="about-kicker">Two people. One studio.</p>
+              <h2>One shared<br /><span className="accent-serif">standard.</span></h2>
+              <p className="about-journey__lead">Different strengths, working as one. Meet the people behind Wallace Shift.</p>
               <a className="about-text-link" href="#people">The people behind it <span aria-hidden="true">↓</span></a>
             </div>
           </>}
