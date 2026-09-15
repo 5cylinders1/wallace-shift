@@ -124,6 +124,11 @@ export function ApproachDetails() {
                     <p className="approach-details__eyebrow">{person.role}</p>
                     <h3>{person.name}</h3>
                     <p className="approach-details__person-bio">{person.body}</p>
+                    {person.email && (
+                      <a href={`mailto:${person.email}`} className="approach-details__text-link">
+                        {person.email}<span aria-hidden="true">↗</span>
+                      </a>
+                    )}
                   </div>
                 </Reveal>
               ))}

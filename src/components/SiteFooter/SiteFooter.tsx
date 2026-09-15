@@ -32,13 +32,16 @@ export function SiteFooter() {
               </p>
             )}
 
-            {business.email && (
-              <a
-                className="site-footer__email"
-                href={`mailto:${business.email}`}
-              >
-                {business.email}
-              </a>
+            {business.salesEmail && (
+              <>
+                <p className="site-footer__area">Sales and new projects · Bella Wallace</p>
+                <a
+                  className="site-footer__email"
+                  href={`mailto:${business.salesEmail}`}
+                >
+                  {business.salesEmail}
+                </a>
+              </>
             )}
           </div>
 

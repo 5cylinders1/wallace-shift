@@ -230,11 +230,11 @@ export function ContactForm({
         {status === 'not_configured' && (
           <>
             This form is not connected to an inbox yet, so nothing was sent.
-            {business.email ? (
+            {business.salesEmail ? (
               <>
                 {' '}
-                Please email{' '}
-                <a href={`mailto:${business.email}`}>{business.email}</a> instead.
+                Please email Bella in sales at{' '}
+                <a href={`mailto:${business.salesEmail}`}>{business.salesEmail}</a> instead.
               </>
             ) : (
               ' Please check back once a submission destination is set up.'

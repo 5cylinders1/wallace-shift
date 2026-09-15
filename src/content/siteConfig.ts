@@ -22,6 +22,9 @@ export const business = {
   /** The published address. Live and receiving as of 2026-09-02. */
   email: 'matthew@wallaceshift.com' as string | null,
 
+  /** Bella handles sales and new project enquiries. */
+  salesEmail: 'bella@wallaceshift.com' as string | null,
+
   /**
    * Where the studio works from — region only, never a street address.
    * Phrased to read correctly mid-sentence and at the start of one, and
@@ -168,10 +171,10 @@ export const contactCta = {
   /** Real alternatives for a reader who does not want to fill in a form.
    *  Both destinations already exist, and nothing here promises a response
    *  time or anything else that is not already true. The email link is
-   *  rendered only while `business.email` is set. */
+   *  rendered only while `business.salesEmail` is set. */
   alternatives: {
     eyebrow: 'Rather not fill in a form?',
-    emailLead: 'Email',
+    emailLead: 'Email Bella in sales:',
     pricingLabel: 'See what this costs',
     pricingHref: '/pricing',
   },

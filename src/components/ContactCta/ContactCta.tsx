@@ -32,10 +32,10 @@ export function ContactCta({ sceneBackground = false }: { sceneBackground?: bool
           <Reveal delay={0.2} xPercent={sceneBackground ? -125 : undefined}>
             <div className="contact-cta__alternatives">
               <p className="eyebrow">{contactCta.alternatives.eyebrow}</p>
-              {business.email && (
+              {business.salesEmail && (
                 <p className="contact-cta__email">
                   {contactCta.alternatives.emailLead}{' '}
-                  <a href={`mailto:${business.email}`}>{business.email}</a>
+                  <a href={`mailto:${business.salesEmail}`}>{business.salesEmail}</a>
                 </p>
               )}
               <PageLink href={contactCta.alternatives.pricingHref} className="contact-cta__pricing-link">

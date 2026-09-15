@@ -13,6 +13,8 @@
  * they are commercial commitments the site had not made before.
  */
 
+import { business } from './siteConfig'
+
 export interface StageField {
   label: string
   body: string
@@ -254,12 +256,14 @@ export const approachProof = {
     {
       name: 'Bella Wallace',
       role: 'Sales and first contact',
+      email: business.salesEmail,
       // Must never imply she scopes or answers technical questions.
       body: 'The first person you speak to. She handles enquiries and keeps things moving; anything technical goes straight to Matthew rather than through her.',
     },
     {
       name: 'Matthew Wallace',
       role: 'Engineer',
+      email: null,
       body: 'Designs and builds every project himself, and has been building production websites and web applications since 2009 — across product development, performance, search, and conversion.',
     },
   ],
