@@ -1,117 +1,110 @@
-import { PageHero } from '../components/PageHero/PageHero'
+import { AboutStudio } from '../components/AboutStudio/AboutStudio'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
-import { aboutFacts, aboutMeta, aboutPeople, aboutStory } from '../content/about'
+import { aboutFacts, aboutPeople, aboutStory } from '../content/about'
 import { business } from '../content/siteConfig'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
-import './InteriorPage.css'
+import './AboutPage.css'
 
 export function AboutPage() {
   useRouteMeta('/about')
 
   return (
-    <>
-      <PageHero
-        eyebrow={aboutMeta.eyebrow}
-        headlineLines={aboutMeta.headlineLines}
-        headlineAccent={aboutMeta.headlineAccent}
-        supporting={aboutMeta.supporting}
-      />
+    <div className="about-page">
+      <AboutStudio />
 
-      <section className="interior">
+      <section className="about-people" id="people" aria-labelledby="about-people-title">
         <div className="container">
-          <div className="people">
+          <Reveal className="about-section-head">
+            <p className="about-kicker">01 / Your people</p>
+            <h2 id="about-people-title">You know our names.<br /><span className="accent-serif">We know your project.</span></h2>
+            <p>From the first conversation to the final detail, you work directly with the people responsible for the result.</p>
+          </Reveal>
+          <div className="about-people__grid">
             {aboutPeople.map((person) => (
-              <Reveal className="person" key={person.role}>
-                <span className="person__role">{person.role}</span>
-                {/* A person with no name yet renders their role as the
-                    heading rather than a placeholder, so the page stays
-                    truthful until the name is supplied. */}
-                {person.name && (
-                  <h2 className="person__name">{person.name}</h2>
-                )}
-                <p className="person__bio">{person.bio}</p>
-                {/* Direct line to the right person, rather than routing
-                    everything through one shared inbox. Rendered only once
-                    that mailbox is live. */}
-                {person.email && (
-                  <a className="person__email" href={`mailto:${person.email}`}>
-                    {person.email}
-                  </a>
-                )}
-              </Reveal>
+              <article className="about-person" key={person.role}>
+                <Reveal className="about-person__copy" delay={0.06}>
+                  <p className="about-kicker">{person.role}</p>
+                  <h3>{person.name ?? person.role}</h3>
+                  <p className="about-person__bio">{person.bio}</p>
+                  {person.email && (
+                    <a className="about-text-link about-person__email" href={`mailto:${person.email}`}>
+                      {person.email}<span aria-hidden="true">↗</span>
+                    </a>
+                  )}
+                </Reveal>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="interior interior--tight">
+      <section className="about-story" aria-labelledby="about-story-title">
         <div className="container">
-          <div className="interior__head">
-            <h2 className="interior__heading">{aboutStory.heading}</h2>
+          <div className="about-story__topline">
+            <p className="about-kicker">02 / Small on purpose</p>
+            <span>Close to the work. Close to you.</span>
           </div>
-          <Reveal className="prose">
-            {aboutStory.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+          <div className="about-story__grid">
+            <Reveal className="about-story__statement">
+              <h2 id="about-story-title">The size is<br /><span className="accent-serif">the point.</span></h2>
+              <p>A direct line to the people<br />who care about the details.</p>
+              <div className="about-story__mark" aria-hidden="true"><span /><span /></div>
+            </Reveal>
+            <div className="about-story__prose">
+              <Reveal><h3>{aboutStory.heading}</h3></Reveal>
+              {aboutStory.paragraphs.map((paragraph, index) => (
+                <Reveal key={paragraph} delay={index * 0.04}><p>{paragraph}</p></Reveal>
+              ))}
+              <Reveal><PageLink href="/approach" className="about-text-link">See how a project runs <span aria-hidden="true">↗</span></PageLink></Reveal>
+            </div>
+          </div>
+          <Reveal className="about-story__principles">
+            <p><span>01</span>Direct conversations.</p>
+            <p><span>02</span>Careful, documented work.</p>
+            <p><span>03</span>Yours from the start.</p>
           </Reveal>
         </div>
       </section>
 
-      <section className="interior interior--tight">
-        <div className="container">
-          <div className="interior__head">
-            <h2 className="interior__heading">{aboutFacts.heading}</h2>
-          </div>
-
-          <div className="qa">
-            {aboutFacts.items.map((fact) => (
-              <Reveal className="qa__item" key={fact.question}>
-                <h3 className="qa__q">{fact.question}</h3>
-                <p className="qa__a">{fact.answer}</p>
-              </Reveal>
-            ))}
-
-            {/* Region only, and only once a real value exists. No street
-                address is published anywhere on this site. */}
+      <section className="about-details" aria-labelledby="about-details-title">
+        <div className="container about-details__grid">
+          <Reveal className="about-details__intro">
+            <p className="about-kicker">03 / Good to know</p>
+            <h2 id="about-details-title">The practical<br /><span className="accent-serif">answers.</span></h2>
             {business.serviceArea && (
-              <Reveal className="qa__item">
-                <h3 className="qa__q">Where are you based?</h3>
-                <p className="qa__a">
-                  We work from {business.serviceArea}. The work itself is
-                  remote, so where your business is has no bearing on what we
-                  can build — a site, an app, or an automation ships the same
-                  either way.
-                </p>
-              </Reveal>
+              <div className="about-details__location">
+                <span className="about-details__location-dot" aria-hidden="true" />
+                <p>{business.serviceArea}<span>Working remotely, wherever you are.</span></p>
+              </div>
             )}
+          </Reveal>
+          <div className="about-details__answers">
+            {aboutFacts.items.map((fact, index) => (
+              <Reveal key={fact.question}>
+                <details className="about-answer" open={index === 0}>
+                  <summary><span className="about-answer__number">0{index + 1}</span><h3>{fact.question}</h3><span className="about-answer__toggle" aria-hidden="true" /></summary>
+                  <p>{fact.answer}</p>
+                </details>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="interior interior--ink">
-        <div className="container closing">
+      <section className="about-close" aria-labelledby="about-close-title">
+        <div className="container about-close__inner">
           <Reveal>
-            <h2 className="closing__headline">
-              Now tell us about your business.
-            </h2>
+            <p className="about-kicker">Enough about us.</p>
+            <h2 id="about-close-title">What are you<br /><span className="accent-serif">working toward?</span></h2>
           </Reveal>
-          <Reveal delay={0.08}>
-            <p className="closing__supporting">
-              You know what is not working better than we do. Start there.
-            </p>
-          </Reveal>
-          <Reveal delay={0.14} className="closing__actions">
-            <PageLink href="/contact" className="button-primary">
-              Start a project
-              <span aria-hidden="true">&#8599;</span>
-            </PageLink>
-            <PageLink href="/services" className="button-secondary">
-              See what we do
-            </PageLink>
+          <Reveal className="about-close__aside" delay={0.1}>
+            <p>You know what is not working better than we do. Start there.</p>
+            <PageLink href="/contact" className="about-close__button">Start a conversation <span aria-hidden="true">↗</span></PageLink>
+            <PageLink href="/services" className="about-text-link">Explore what we do <span aria-hidden="true">↗</span></PageLink>
           </Reveal>
         </div>
       </section>
-    </>
+    </div>
   )
 }

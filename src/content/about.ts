@@ -20,9 +20,9 @@ export interface Person {
 }
 
 export const aboutMeta = {
-  eyebrow: 'About',
-  headlineLines: ['Two people,', 'and no'],
-  headlineAccent: 'handoffs.',
+  eyebrow: 'The studio / About Wallace Shift',
+  headlineLines: ['Two people.', 'One shared'],
+  headlineAccent: 'standard.',
   supporting:
     'Wallace Shift is a two-person studio. The person you talk to and the person who builds your project are the only two people involved.',
 }

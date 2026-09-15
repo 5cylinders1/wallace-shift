@@ -1,0 +1,152 @@
+/* Each service keeps the same palette on desktop and mobile. */
+.services-panels .service-detail {
+  --service-ground: var(--color-pearl);
+  --service-fg: var(--color-ink);
+  --service-muted: #43535e;
+  --service-accent: var(--color-accent-deep);
+  --service-rule: rgb(8 13 18 / 18%);
+  border-color: var(--service-rule);
+  background: var(--service-ground);
+  color: var(--service-fg);
+}
+
+.services-panels .service-detail--web-apps {
+  --service-ground: #175c99;
+  --service-fg: #f5f9ff;
+  --service-muted: #dcecff;
+  --service-accent: #f5f9ff;
+  --service-rule: rgb(245 249 255 / 27%);
+}
+
+.services-panels .service-detail--automation {
+  --service-ground: var(--color-ink);
+  --service-fg: var(--color-soft-white);
+  --service-muted: var(--color-silver);
+  --service-accent: var(--color-accent-hover);
+  --service-rule: rgb(237 241 242 / 22%);
+}
+
+.services-panels .service-detail__index {
+  color: var(--service-accent);
+}
+
+.services-panels .service-detail__summary,
+.services-panels .service-block__label,
+.services-panels .service-detail__note {
+  color: var(--service-muted);
+}
+
+.services-panels .service-detail__pricing {
+  color: var(--service-fg);
+  border-color: var(--service-accent);
+}
+
+.services-panels .service-detail__problem {
+  border-color: var(--service-accent);
+}
+
+.services-panels .service-list li {
+  border-color: var(--service-rule);
+}
+
+.services-panels .service-list li::before {
+  background: var(--service-accent);
+}
+
+.services-panels .service-detail :focus-visible {
+  outline-color: var(--service-accent);
+}
+
+@media (min-width: 768px) {
+  .services-panels .service-detail {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* Paint to the viewport edges without changing the content grid, spacing,
+     or the containing block used by the sticky introductions. */
+  .services-panels .service-detail::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset-block: -1px 0;
+    left: calc(50% - 50vw);
+    width: 100vw;
+    background: var(--service-ground);
+    pointer-events: none;
+  }
+
+  .services-panels .service-detail:first-of-type::before {
+    top: calc(-1 * var(--section-pad-y));
+  }
+
+  .services-panels .service-detail:last-of-type::before {
+    bottom: calc(-1 * var(--section-pad-y));
+  }
+}
+
+/* Mobile panels share one containing block so each surface can cover the
+   previous one. Desktop retains its editorial layout and sticky headings. */
+@media (max-width: 767px) {
+  .services-panels {
+    padding-block: 0;
+  }
+
+  .services-panels__inner {
+    padding-inline: 0;
+    isolation: isolate;
+  }
+
+  .services-panels .service-detail-anchor {
+    height: 0;
+    scroll-margin-top: var(--site-header-height);
+  }
+
+  .services-panels .service-detail {
+    position: relative;
+    z-index: 1;
+    min-height: calc(100svh - var(--site-header-height));
+    padding: 34px var(--gutter) 40px;
+    border-top: 1px solid var(--service-rule);
+  }
+
+  .services-panels .service-detail--web-apps {
+    z-index: 2;
+  }
+
+  .services-panels .service-detail--automation {
+    z-index: 3;
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .services-panels .service-detail {
+    position: sticky;
+    top: min(
+      var(--site-header-height),
+      calc(100svh - var(--service-panel-height, 100svh))
+    );
+  }
+
+  .services-panels .service-detail + .service-detail-anchor + .service-detail {
+    box-shadow: 0 -18px 44px rgb(8 13 18 / 20%);
+  }
+
+  /* The last service exits with the page into the closing call to action. */
+  .services-panels .service-detail:last-of-type {
+    position: relative;
+    top: auto;
+  }
+}
+
+@media print {
+  .services-panels .service-detail::before {
+    display: none;
+  }
+
+  .services-panels .service-detail {
+    position: static;
+    min-height: 0;
+    box-shadow: none;
+  }
+}

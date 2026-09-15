@@ -28,7 +28,16 @@
   line-height: 1.65;
   color: var(--color-muted-on-bone);
 }
-.journey-services__rows .outcome-field__word { color: var(--color-pearl); }
+/* Fit the outcome to its own diagonal panel, including short wide rows and
+   the full-width mobile panel. Its dimensions are already set by the row. */
+.journey-services__rows .outcome-field { container-type: size; }
+.journey-services__rows .outcome-field__word {
+  color: var(--color-pearl);
+  right: clamp(16px, 4cqw, 40px);
+  bottom: clamp(12px, 5cqh, 24px);
+  font-size: min(30cqw, 72cqh, 19rem);
+  line-height: 1;
+}
 .journey-services__rows .service-row:focus-visible {
   outline: 2px solid var(--color-accent-deep);
   outline-offset: -3px;
