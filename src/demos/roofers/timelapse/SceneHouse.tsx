@@ -61,6 +61,7 @@ const RAKE_STYLE = { stroke: 'var(--rf-rake, #8a867d)' }
 function Rake({ a, peak, b }: { a: Pt; peak: Pt; b: Pt }) {
   return (
     <g fill="none" strokeLinejoin="miter">
+      <path d={rakePath(a, peak, b, -7, -4)} stroke="#2b241c" strokeOpacity="0.13" strokeWidth="12" />
       <path d={rakePath(a, peak, b, 5, 6)} stroke="#f4f3ef" strokeWidth="10" />
       <path d={rakePath(a, peak, b, 14, 12)} style={RAKE_STYLE} strokeWidth="10" />
     </g>
@@ -220,6 +221,7 @@ function GarageWing() {
   return (
     <g id="rf-garage">
       <rect x={GARAGE.x0} y={GARAGE.eaveY} width={GARAGE.x1 - GARAGE.x0} height={GROUND_Y - GARAGE.eaveY} fill="url(#rf-siding)" />
+      <rect x={GARAGE.x0} y={GARAGE.eaveY} width={GARAGE.x1 - GARAGE.x0} height={GROUND_Y - GARAGE.eaveY} fill="#2b241c" opacity="0.07" />
       <rect x="1668" y="968" width="244" height="92" fill="#f4f3ef" />
       <rect x="1676" y="976" width="228" height="84" fill="#e9e8e2" />
       <path d={doorPanels.join('')} stroke="#d2d0c8" strokeWidth="2" />
@@ -248,6 +250,7 @@ function MainWalls() {
   return (
     <g>
       <rect x="760" y="866" width="880" height={GROUND_Y - 866} fill="url(#rf-siding)" />
+      <rect x="760" y="866" width="880" height={GROUND_Y - 866} fill="url(#rf-wall-shade)" />
       {/* porch recess */}
       <rect x="845" y="875" width="315" height={GROUND_Y - 875} fill="#2a2a24" opacity="0.06" />
       <rect x="845" y="875" width="315" height="34" fill="url(#rf-eave-shadow)" />
@@ -344,6 +347,14 @@ function MainRoof() {
           <rect x={ROOF_X0} y={RIDGE_Y - 6} width={ROOF_X1 - ROOF_X0} height="13" fill="#7a766e" />
         </g>
 
+        {/* Soft shadows the dormers and chimney throw across the slope. */}
+        <g fill="#14100c" opacity="0.16">
+          {DORMERS.map((d) => (
+            <polygon key={d.x} points={`${d.x + 46},${d.baseY - 150} ${d.x + 80},${d.baseY - 120} ${d.x + 80},${d.baseY + 2} ${d.x + 46},${d.baseY + 2}`} />
+          ))}
+          <polygon points={`${CHIMNEY.x1},${RIDGE_Y - 30} ${CHIMNEY.x1 + 34},${RIDGE_Y - 30} ${CHIMNEY.x1 + 34},${CHIMNEY.baseY - 6} ${CHIMNEY.x1},${CHIMNEY.baseY + 4}`} />
+        </g>
+
         <g id="rf-ridge-new" opacity="0">
           <rect x={ROOF_X0} y={RIDGE_Y - 7} width={ROOF_X1 - ROOF_X0} height="15" fill="#2f3237" />
           <path
@@ -410,6 +421,7 @@ function Dormer({ index }: { index: number }) {
   return (
     <g id={`rf-dormer-${index}`}>
       <rect x={x - 44} y={by - 118} width="88" height="122" fill="url(#rf-siding)" />
+      <rect x={x - 44} y={by - 118} width="88" height="122" fill="url(#rf-wall-shade)" />
       <rect x={x - 44} y={by - 118} width="6" height="122" fill="#f3f2ee" />
       <rect x={x + 38} y={by - 118} width="6" height="122" fill="#f3f2ee" />
       <rect x={x - 31} y={by - 108} width="62" height="92" fill="#f4f3ef" />
@@ -428,6 +440,9 @@ function LeftGable() {
   return (
     <g>
       <polygon points={`${x0},${GROUND_Y} ${x0},${eaveY} ${peakX},${peakY} ${x1},${eaveY} ${x1},${GROUND_Y}`} fill="url(#rf-siding)" />
+      <polygon points={`${x0},${GROUND_Y} ${x0},${eaveY} ${peakX},${peakY} ${x1},${eaveY} ${x1},${GROUND_Y}`} fill="url(#rf-wall-shade)" />
+      {/* the wing's right face turns slightly from the light */}
+      <rect x={x1 - 22} y={eaveY} width="22" height={GROUND_Y - eaveY} fill="#2b241c" opacity="0.06" />
       <rect x={x0} y={eaveY} width="8" height={GROUND_Y - eaveY - 14} fill="#f3f2ee" />
       <rect x={x1 - 8} y={eaveY} width="8" height={GROUND_Y - eaveY - 14} fill="#f3f2ee" />
       <rect x="660" y="896" width="100" height="120" fill="#f4f3ef" />
@@ -481,6 +496,7 @@ function StoneGable() {
   return (
     <g>
       <polygon points={`${x0},${GROUND_Y} ${x0},${eaveY} ${peakX},${peakY} ${x1},${eaveY} ${x1},${GROUND_Y}`} fill="url(#rf-stone)" />
+      <polygon points={`${x0},${GROUND_Y} ${x0},${eaveY} ${peakX},${peakY} ${x1},${eaveY} ${x1},${GROUND_Y}`} fill="url(#rf-wall-shade)" />
       <polygon points={`${x1 - 16},${GROUND_Y} ${x1 - 16},${eaveY - 6} ${x1},${eaveY} ${x1},${GROUND_Y}`} fill="#000" opacity="0.08" />
       <path d={`M${peakX - 14} 806V788A14 14 0 0 1 ${peakX + 14} 788V806Z`} fill="#8e8778" />
       <path d={`M${peakX - 18} 808V788A18 18 0 0 1 ${peakX + 18} 788`} fill="none" stroke="#7a5843" strokeWidth="5" />

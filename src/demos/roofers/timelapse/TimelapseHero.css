@@ -548,9 +548,52 @@
 }
 
 @media (max-aspect-ratio: 21/20) and (max-width: 420px) {
-  .rf-timelapse__intro .rf-actions .rf-button {
-    flex: 1 1 auto;
-    padding: 0 16px;
+  .rf-timelapse__intro .rf-actions,
+  .rf-timelapse__finale .rf-actions {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .rf-timelapse__intro .rf-actions .rf-button,
+  .rf-timelapse__finale .rf-actions .rf-button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 0.9375rem;
+  }
+  .rf-timelapse__intro .rf-button--primary::after,
+  .rf-timelapse__finale .rf-button--primary::after {
+    display: none;
+  }
+}
+
+/* Short phones: the house has to fit under the intro, and the caption
+   sheet must leave the roof in view. */
+@media (max-aspect-ratio: 21/20) and (max-height: 740px) {
+  .rf-timelapse__intro .rf-eyebrow,
+  .rf-timelapse__trust {
+    display: none;
+  }
+  .rf-timelapse__intro,
+  .rf-timelapse__finale {
+    gap: 12px;
+    padding-top: calc(var(--rf-header) + 14px);
+  }
+  .rf-timelapse__title,
+  .rf-timelapse__finale-title {
+    font-size: clamp(1.8rem, 8vw, 2.4rem);
+  }
+  .rf-timelapse__lede {
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .rf-step__note {
+    display: none;
+  }
+  .rf-step {
+    padding: 14px 16px;
+  }
+  .rf-step__body {
+    font-size: 0.875rem;
   }
 }
 

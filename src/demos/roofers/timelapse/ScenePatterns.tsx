@@ -161,6 +161,12 @@ export function ScenePatterns() {
         <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
       </linearGradient>
 
+      <linearGradient id="rf-wall-shade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#2b241c" stopOpacity="0.14" />
+        <stop offset="0.45" stopColor="#2b241c" stopOpacity="0.03" />
+        <stop offset="1" stopColor="#2b241c" stopOpacity="0.08" />
+      </linearGradient>
+
       <linearGradient id="rf-eave-shadow" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stopColor="#000" stopOpacity="0.28" />
         <stop offset="1" stopColor="#000" stopOpacity="0" />

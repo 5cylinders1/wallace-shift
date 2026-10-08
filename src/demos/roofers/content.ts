@@ -122,7 +122,7 @@ export const finale = {
   title: 'One new roof. No surprises.',
   body: 'Most homes take one to two days. Next come the real questions: will insurance pay, what will it cost, and how do you pay for it?',
   primary: 'Get my estimate',
-  secondary: 'Read the short answers',
+  secondary: 'The short answers',
 }
 
 export const quickAnswers = {
