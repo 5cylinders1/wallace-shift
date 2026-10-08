@@ -58,5 +58,6 @@ dist-ssr
 .vercel
 
 # Local review artifacts and temporary files.
+/output/
 /review-assets/
 /tmp/

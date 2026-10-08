@@ -1,0 +1,194 @@
+{
+  "trim_inches": [
+    3.5,
+    2
+  ],
+  "bleed_canvas_inches": [
+    3.625,
+    2.125
+  ],
+  "safe_area_inches": [
+    3.375,
+    1.875
+  ],
+  "upload_pixels": [
+    2175,
+    1275
+  ],
+  "export_dpi": 600,
+  "color_profile": "sRGB",
+  "master_pages": 3,
+  "art_native_pixels": [
+    1635,
+    962
+  ],
+  "art_effective_ppi": 451.0,
+  "minimum_text_size_pt": 7,
+  "contact_text_verified": true,
+  "text_within_safe_area": true,
+  "text_bounds": [
+    {
+      "text": "WALLACE SHIFT",
+      "font": "ManropeMedium",
+      "size_pt": 9.1,
+      "bbox_pt": [
+        18,
+        68.27,
+        95.7351,
+        80.7006
+      ]
+    },
+    {
+      "text": "Design. Technology. Momentum.",
+      "font": "InstrumentItalic",
+      "size_pt": 9.0,
+      "bbox_pt": [
+        18,
+        53.71,
+        122.89500000000001,
+        65.41
+      ]
+    },
+    {
+      "text": "Bella Wallace",
+      "font": "Instrument",
+      "size_pt": 22.5,
+      "bbox_pt": [
+        20,
+        106.025,
+        119.5625,
+        135.275
+      ]
+    },
+    {
+      "text": "Sales and first contact",
+      "font": "Manrope",
+      "size_pt": 8.7,
+      "bbox_pt": [
+        20,
+        96.39,
+        110.306,
+        108.2742
+      ]
+    },
+    {
+      "text": "(630) 803-4218",
+      "font": "Manrope",
+      "size_pt": 8.8,
+      "bbox_pt": [
+        20,
+        69.36,
+        82.7352,
+        81.3808
+      ]
+    },
+    {
+      "text": "bella@wallaceshift.com",
+      "font": "Manrope",
+      "size_pt": 8.8,
+      "bbox_pt": [
+        20,
+        55.36,
+        116.272,
+        67.3808
+      ]
+    },
+    {
+      "text": "wallaceshift.com",
+      "font": "Manrope",
+      "size_pt": 8.8,
+      "bbox_pt": [
+        20,
+        41.36,
+        88.97,
+        53.3808
+      ]
+    },
+    {
+      "text": "Websites \u00b7 Web apps \u00b7 Automation",
+      "font": "Manrope",
+      "size_pt": 7,
+      "bbox_pt": [
+        20,
+        15.9,
+        129.5675,
+        25.462
+      ]
+    },
+    {
+      "text": "Matthew Wallace",
+      "font": "Instrument",
+      "size_pt": 22.5,
+      "bbox_pt": [
+        20,
+        106.025,
+        149.5325,
+        135.275
+      ]
+    },
+    {
+      "text": "Engineering and design",
+      "font": "Manrope",
+      "size_pt": 8.7,
+      "bbox_pt": [
+        20,
+        96.39,
+        113.92519999999999,
+        108.2742
+      ]
+    },
+    {
+      "text": "(630) 235-2299",
+      "font": "Manrope",
+      "size_pt": 8.8,
+      "bbox_pt": [
+        20,
+        69.36,
+        84.5656,
+        81.3808
+      ]
+    },
+    {
+      "text": "matthew@wallaceshift.com",
+      "font": "Manrope",
+      "size_pt": 8.8,
+      "bbox_pt": [
+        20,
+        55.36,
+        133.4452,
+        67.3808
+      ]
+    },
+    {
+      "text": "wallaceshift.com",
+      "font": "Manrope",
+      "size_pt": 8.8,
+      "bbox_pt": [
+        20,
+        41.36,
+        88.97,
+        53.3808
+      ]
+    },
+    {
+      "text": "Websites \u00b7 Web apps \u00b7 Automation",
+      "font": "Manrope",
+      "size_pt": 7,
+      "bbox_pt": [
+        20,
+        15.9,
+        129.5675,
+        25.462
+      ]
+    }
+  ],
+  "walgreens_uploader_preview_verified": false,
+  "physical_print_verified": false,
+  "embedded_fonts": {
+    "/AAAAAA+Manrope-Medium": true,
+    "/AAAAAA+InstrumentSerif-Italic": true,
+    "/AAAAAA+InstrumentSerif-Regular": true,
+    "/AAAAAA+Manrope-Regular": true
+  },
+  "visual_review": "Final proof inspected after type and layout updates."
+}
