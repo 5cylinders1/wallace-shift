@@ -1,0 +1,654 @@
+/*
+ * The timelapse section. Two compositions share one breakpoint with the
+ * director's camera, `(min-aspect-ratio: 21/20)`:
+ *   wide — copy and captions in a left column, the house framed right;
+ *   tall — intro and finale above the house, captions in a bottom sheet.
+ */
+
+.rf-timelapse {
+  position: relative;
+  height: 640svh;
+  background: #cfdde8;
+}
+
+@media (max-aspect-ratio: 21/20) {
+  .rf-timelapse {
+    height: 560svh;
+  }
+}
+
+.rf-timelapse__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 520px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.rf-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.rf-timelapse__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* A whisper of shade at the bottom so the HUD and captions sit cleanly. */
+  background: linear-gradient(180deg, rgba(20, 24, 28, 0) 70%, rgba(20, 24, 28, 0.16) 100%);
+}
+
+/* ---------------------------------------------------------------- */
+/* Intro and finale                                                   */
+/* ---------------------------------------------------------------- */
+
+.rf-timelapse__intro,
+.rf-timelapse__finale {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  will-change: transform, opacity;
+}
+
+.rf-timelapse__intro {
+  inset: 0 auto 0 0;
+  width: min(54vw, 860px);
+  padding: calc(var(--rf-header) + 4vh) clamp(28px, 10vw, 220px) 6vh var(--rf-gutter);
+  padding-right: clamp(28px, 12vw, 260px);
+  background: linear-gradient(
+    90deg,
+    rgba(246, 243, 238, 0.97) 0%,
+    rgba(246, 243, 238, 0.93) 52%,
+    rgba(246, 243, 238, 0.6) 78%,
+    rgba(246, 243, 238, 0) 100%
+  );
+}
+
+.rf-timelapse__finale {
+  inset: 0 auto 0 0;
+  width: min(52vw, 820px);
+  padding: calc(var(--rf-header) + 4vh) clamp(28px, 12vw, 260px) 6vh var(--rf-gutter);
+  background: linear-gradient(
+    90deg,
+    rgba(246, 243, 238, 0.97) 0%,
+    rgba(246, 243, 238, 0.92) 52%,
+    rgba(246, 243, 238, 0.55) 78%,
+    rgba(246, 243, 238, 0) 100%
+  );
+  opacity: 0;
+  visibility: hidden;
+}
+
+.rf-timelapse__title {
+  max-width: 13.5em;
+  font-size: clamp(2.35rem, 4.4vw, 4.4rem);
+  font-stretch: 108%;
+  font-weight: 780;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.rf-timelapse__title em,
+.rf-timelapse__finale-title em {
+  font-style: italic;
+  font-weight: 620;
+  font-stretch: 100%;
+  color: var(--rf-copper-deep);
+}
+
+.rf-timelapse__finale-title {
+  max-width: 11em;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  font-stretch: 108%;
+  font-weight: 780;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.rf-timelapse__lede {
+  max-width: 34em;
+  font-size: clamp(1.03rem, 1.25vw, 1.15rem);
+  line-height: 1.55;
+  color: var(--rf-slate);
+  text-wrap: pretty;
+}
+
+.rf-timelapse__trust {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: 8px 22px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--rf-ink);
+}
+
+.rf-timelapse__trust li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.rf-timelapse__trust li::before {
+  content: '';
+  flex-shrink: 0;
+  width: 14px;
+  height: 8px;
+  margin-top: -3px;
+  border-left: 2.5px solid var(--rf-good);
+  border-bottom: 2.5px solid var(--rf-good);
+  transform: rotate(-45deg);
+}
+
+.rf-timelapse__cue {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rf-muted);
+}
+
+.rf-timelapse__cue span {
+  position: relative;
+  width: 2px;
+  height: 34px;
+  overflow: hidden;
+  background: var(--rf-line-strong);
+}
+
+.rf-timelapse__cue span::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -40%;
+  width: 100%;
+  height: 40%;
+  background: var(--rf-copper);
+  animation: rf-cue 1.8s var(--rf-ease) infinite;
+}
+
+@keyframes rf-cue {
+  to {
+    top: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* HUD                                                                */
+/* ---------------------------------------------------------------- */
+
+.rf-timelapse__hud {
+  --rf-job: 0;
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--rf-header) + 16px);
+  right: var(--rf-gutter);
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 8px 18px;
+  padding: 12px 16px 14px;
+  background: rgba(20, 24, 28, 0.86);
+  color: var(--rf-on-dark);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.rf-timelapse__rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-timelapse__rec::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e2552c;
+  animation: rf-rec 1.6s steps(2, jump-none) infinite;
+}
+
+@keyframes rf-rec {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.rf-timelapse__clock {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+.rf-timelapse__clock strong {
+  font-weight: 750;
+}
+
+.rf-timelapse__rail {
+  grid-column: 1 / -1;
+  position: relative;
+  height: 3px;
+  background: rgba(244, 241, 234, 0.2);
+}
+
+.rf-timelapse__rail span {
+  position: absolute;
+  inset: 0;
+  background: var(--rf-copper);
+  transform: scaleX(var(--rf-job));
+  transform-origin: left center;
+}
+
+/* ---------------------------------------------------------------- */
+/* Captions                                                           */
+/* ---------------------------------------------------------------- */
+
+.rf-timelapse__captions {
+  position: absolute;
+  z-index: 3;
+  left: var(--rf-gutter);
+  bottom: clamp(20px, 6vh, 64px);
+  width: min(31vw, 440px);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.rf-steps {
+  display: grid;
+}
+
+.rf-step {
+  grid-area: 1 / 1;
+  align-self: end;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 24px 26px 26px;
+  background: var(--rf-card);
+  border-top: 3px solid var(--rf-copper);
+  box-shadow: 0 18px 48px -24px rgba(20, 24, 28, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 0.4s var(--rf-ease),
+    transform 0.5s var(--rf-ease),
+    visibility 0s linear 0.4s;
+}
+
+.rf-step.is-past {
+  transform: translate3d(0, -14px, 0);
+}
+
+.rf-step.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.45s var(--rf-ease) 0.08s,
+    transform 0.55s var(--rf-ease) 0.08s,
+    visibility 0s;
+}
+
+.rf-step__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--rf-muted);
+}
+
+.rf-step__number {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--rf-copper-deep);
+}
+
+.rf-step__total {
+  font-weight: 600;
+  color: var(--rf-muted);
+}
+
+.rf-step__title {
+  font-size: clamp(1.35rem, 1.9vw, 1.75rem);
+  font-stretch: 106%;
+  font-weight: 760;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.rf-step__body {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--rf-slate);
+}
+
+.rf-step__note {
+  padding-top: 12px;
+  border-top: 1px solid var(--rf-line);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--rf-ink);
+}
+
+/* ---------------------------------------------------------------- */
+/* Callouts on the drawing                                            */
+/* ---------------------------------------------------------------- */
+
+.rf-timelapse__labels {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.rf-callout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.rf-callout__dot {
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--rf-copper);
+  box-shadow:
+    0 0 0 3px rgba(255, 253, 249, 0.95),
+    0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.rf-callout__text {
+  position: absolute;
+  top: -44px;
+  left: 18px;
+  padding: 7px 11px;
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 8px 22px -10px rgba(0, 0, 0, 0.5);
+}
+
+.rf-callout__text::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  bottom: -14px;
+  width: 20px;
+  height: 1.5px;
+  background: var(--rf-ink);
+  transform: rotate(-45deg);
+  transform-origin: right center;
+}
+
+.rf-callout[data-side='left'] .rf-callout__text {
+  left: auto;
+  right: 18px;
+}
+
+.rf-callout[data-side='left'] .rf-callout__text::before {
+  left: auto;
+  right: -14px;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
+
+/* ---------------------------------------------------------------- */
+/* Skip                                                               */
+/* ---------------------------------------------------------------- */
+
+.rf-timelapse__skip {
+  position: absolute;
+  z-index: 4;
+  right: var(--rf-gutter);
+  bottom: clamp(16px, 4vh, 36px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  background: rgba(255, 253, 249, 0.92);
+  border: 1px solid var(--rf-line);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--rf-ink);
+}
+
+.rf-timelapse__skip::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-top: -4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* ---------------------------------------------------------------- */
+/* Tall (portrait) composition                                        */
+/* ---------------------------------------------------------------- */
+
+@media (max-aspect-ratio: 21/20) {
+  .rf-timelapse__intro,
+  .rf-timelapse__finale {
+    inset: 0 0 auto 0;
+    width: auto;
+    justify-content: flex-start;
+    gap: 16px;
+    padding: calc(var(--rf-header) + 20px) var(--rf-gutter) 72px;
+    background: linear-gradient(
+      180deg,
+      rgba(246, 243, 238, 0.98) 0%,
+      rgba(246, 243, 238, 0.94) 70%,
+      rgba(246, 243, 238, 0) 100%
+    );
+  }
+
+  .rf-timelapse__title {
+    font-size: clamp(2.05rem, 8.6vw, 3.4rem);
+  }
+
+  .rf-timelapse__finale-title {
+    font-size: clamp(2rem, 8.4vw, 3.2rem);
+  }
+
+  .rf-timelapse__lede {
+    font-size: 1rem;
+  }
+
+  .rf-timelapse__trust {
+    font-size: 0.875rem;
+    gap: 6px 16px;
+  }
+
+  .rf-timelapse__cue {
+    display: none;
+  }
+
+  .rf-timelapse__hud {
+    top: calc(var(--rf-header) + 10px);
+    left: var(--rf-gutter);
+    right: var(--rf-gutter);
+    grid-template-columns: auto 1fr;
+    justify-items: start;
+    padding: 10px 14px 12px;
+  }
+
+  .rf-timelapse__clock {
+    justify-self: end;
+  }
+
+  .rf-timelapse__captions {
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+  }
+
+  .rf-step {
+    gap: 8px;
+    padding: 18px 18px 18px;
+  }
+
+  .rf-step__title {
+    font-size: 1.3rem;
+  }
+
+  .rf-step__body {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .rf-step__note {
+    padding-top: 8px;
+    font-size: 0.8125rem;
+  }
+
+  .rf-timelapse__skip {
+    display: none;
+  }
+
+  .rf-callout__text {
+    font-size: 0.75rem;
+    padding: 6px 9px;
+  }
+}
+
+@media (max-aspect-ratio: 21/20) and (max-width: 420px) {
+  .rf-timelapse__intro .rf-actions .rf-button {
+    flex: 1 1 auto;
+    padding: 0 16px;
+  }
+}
+
+/* Short landscape phones: keep the caption card compact. */
+@media (min-aspect-ratio: 21/20) and (max-height: 560px) {
+  .rf-timelapse__intro {
+    gap: 12px;
+  }
+  .rf-timelapse__title {
+    font-size: 2rem;
+  }
+  .rf-timelapse__trust,
+  .rf-timelapse__cue {
+    display: none;
+  }
+  .rf-step {
+    padding: 14px 16px;
+    gap: 6px;
+  }
+  .rf-step__note {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Reduced motion: intro, one finished frame, then the steps as a list */
+/* ---------------------------------------------------------------- */
+
+.rf-timelapse--static {
+  height: auto;
+  background: var(--rf-paper);
+}
+
+.rf-timelapse--static .rf-timelapse__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.rf-timelapse--static .rf-timelapse__intro {
+  order: 0;
+  position: relative;
+  inset: auto;
+  width: 100%;
+  max-width: calc(var(--rf-max) + var(--rf-gutter) * 2);
+  margin: 0 auto;
+  padding: calc(var(--rf-header) + 40px) var(--rf-gutter) 36px;
+  background: none;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+.rf-timelapse--static .rf-scene {
+  order: 1;
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: 72svh;
+}
+
+.rf-timelapse--static .rf-timelapse__finale,
+.rf-timelapse--static .rf-timelapse__hud,
+.rf-timelapse--static .rf-timelapse__labels,
+.rf-timelapse--static .rf-timelapse__skip,
+.rf-timelapse--static .rf-timelapse__scrim,
+.rf-timelapse--static .rf-timelapse__cue {
+  display: none;
+}
+
+.rf-timelapse--static .rf-timelapse__captions {
+  order: 2;
+  position: relative;
+  inset: auto;
+  width: 100%;
+  max-width: calc(var(--rf-max) + var(--rf-gutter) * 2);
+  margin: 0 auto;
+  padding: 40px var(--rf-gutter) 24px;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.rf-timelapse--static .rf-steps {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.rf-timelapse--static .rf-step {
+  grid-area: auto;
+  align-self: stretch;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  box-shadow: none;
+  border: 1px solid var(--rf-line);
+  border-top: 3px solid var(--rf-copper);
+}

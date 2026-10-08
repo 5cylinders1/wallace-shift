@@ -108,4 +108,17 @@ function escapeHtml(value: string): string {
 
 export default defineConfig({
   plugins: [react(), prerenderRoutes()],
+  build: {
+    rolldownOptions: {
+      // Sales demos are separate documents with their own bundle, so a
+      // prospect opening one never downloads the studio site (or its
+      // WebGL), and the studio site never ships demo code. Each is served
+      // at /demos/<vertical> and, on its own subdomain, by a host rewrite
+      // in vercel.json.
+      input: {
+        main: 'index.html',
+        roofers: 'demos/roofers/index.html',
+      },
+    },
+  },
 })

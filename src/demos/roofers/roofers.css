@@ -1,0 +1,346 @@
+/*
+ * Roofing demo — its own document and its own system. Nothing here is
+ * shared with the Wallace Shift site, and nothing from it is loaded.
+ *
+ * Slate and warm paper for trust; one copper accent, borrowed from
+ * flashing and chimney caps, for actions and emphasis.
+ */
+
+:root {
+  --rf-ink: #14181c;
+  --rf-ink-2: #22282e;
+  --rf-slate: #3a424a;
+  --rf-muted: #565f67;
+  --rf-paper: #f6f3ee;
+  --rf-paper-2: #ece6dc;
+  --rf-card: #fffdf9;
+  --rf-line: rgba(20, 24, 28, 0.13);
+  --rf-line-strong: rgba(20, 24, 28, 0.24);
+  --rf-copper: #b4582a;
+  --rf-copper-hover: #9c4820;
+  --rf-copper-deep: #8c4119;
+  --rf-copper-soft: #f2e1d3;
+  --rf-good: #2c6a43;
+  --rf-good-soft: #e3efe6;
+  --rf-bad: #9d3729;
+  --rf-bad-soft: #f5e3df;
+  --rf-on-dark: #f4f1ea;
+  --rf-on-dark-muted: #b9c0c6;
+
+  --rf-font: 'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --rf-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --rf-gutter: clamp(16px, 4.4vw, 64px);
+  --rf-max: 1280px;
+  --rf-header: 68px;
+  --rf-section-y: clamp(64px, 9vw, 128px);
+
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --rf-header: 58px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--rf-header) + 12px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background: var(--rf-paper);
+  color: var(--rf-ink);
+  font-family: var(--rf-font);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 3px solid var(--rf-copper);
+  outline-offset: 3px;
+}
+
+.rf-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.rf-skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 14px;
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform 0.2s var(--rf-ease);
+}
+
+.rf-skip-link:focus-visible {
+  transform: none;
+}
+
+/* ---------------------------------------------------------------- */
+/* Shared type                                                        */
+/* ---------------------------------------------------------------- */
+
+.rf-container {
+  width: 100%;
+  max-width: calc(var(--rf-max) + var(--rf-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--rf-gutter);
+}
+
+.rf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-copper-deep);
+}
+
+.rf-eyebrow::before {
+  content: '';
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  transform: skewX(-35deg);
+}
+
+.rf-display {
+  font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+  font-stretch: 110%;
+  font-weight: 760;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.rf-lede {
+  max-width: 62ch;
+  font-size: clamp(1.0625rem, 1.3vw, 1.1875rem);
+  line-height: 1.55;
+  color: var(--rf-muted);
+  text-wrap: pretty;
+}
+
+.rf-section {
+  padding-block: var(--rf-section-y);
+}
+
+.rf-section__head {
+  display: grid;
+  gap: 18px;
+  margin-bottom: clamp(36px, 5vw, 64px);
+}
+
+.rf-section__head--split {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .rf-section__head--split {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: end;
+    column-gap: 64px;
+  }
+}
+
+.rf-demo-note {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px dashed var(--rf-line-strong);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--rf-muted);
+}
+
+.rf-demo-note::before {
+  content: 'Demo';
+  flex-shrink: 0;
+  padding: 1px 6px;
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- */
+/* Buttons                                                            */
+/* ---------------------------------------------------------------- */
+
+.rf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.rf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 1.5px solid transparent;
+  border-radius: 2px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.25s var(--rf-ease),
+    border-color 0.25s var(--rf-ease),
+    color 0.25s var(--rf-ease),
+    transform 0.25s var(--rf-ease);
+}
+
+.rf-button--primary {
+  background: var(--rf-copper);
+  color: #fff;
+}
+
+.rf-button--primary::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, 1px);
+  transition: transform 0.25s var(--rf-ease);
+}
+
+.rf-button--primary:hover {
+  background: var(--rf-copper-hover);
+}
+
+.rf-button--primary:hover::after {
+  transform: rotate(45deg) translate(1px, -1px);
+}
+
+.rf-button--ghost {
+  border-color: var(--rf-line-strong);
+  background: rgba(255, 253, 249, 0.7);
+  color: var(--rf-ink);
+}
+
+.rf-button--ghost:hover {
+  border-color: var(--rf-ink);
+  background: var(--rf-card);
+}
+
+.rf-button--dark {
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+}
+
+.rf-button--dark:hover {
+  background: var(--rf-ink-2);
+}
+
+.rf-button--block {
+  width: 100%;
+}
+
+.rf-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--rf-copper-deep);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+.rf-text-link:hover {
+  color: var(--rf-ink);
+}
