@@ -345,7 +345,7 @@ export const roofTool = {
   locating: ['Finding the address', 'Pulling the building outline', 'Measuring the outline'],
   idle: 'Waiting for an address',
   confirm: 'Is this your house? Tap an outline to add or remove a building, like a detached garage.',
-  pickHouse: 'The address lands between buildings. Tap your house on the map, or tick it below.',
+  pickHouse: 'We couldn’t tell which building is yours. Tap your house on the map, or tick it below.',
   pickStreet: 'We could only match this address to the street. Tap your house on the map, or tick it below.',
   pickLocked: 'Select your house on the map to continue.',
   buildingsLegend: 'Buildings to include',
