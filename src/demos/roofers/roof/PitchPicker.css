@@ -9,7 +9,8 @@
 
 .rf-pitch__stage {
   position: relative;
-  touch-action: none;
+  /* A finger on the drawing still scrolls the page; only the handle drags (mouse and pen drag anywhere). */
+  touch-action: pan-y;
   cursor: ns-resize;
   user-select: none;
   -webkit-user-select: none;
@@ -143,6 +144,7 @@
     0 0 0 4px rgba(20, 24, 28, 0.9),
     0 10px 24px -8px rgba(0, 0, 0, 0.6);
   cursor: grab;
+  touch-action: none;
   transition: transform 0.2s var(--rf-ease), box-shadow 0.2s var(--rf-ease);
 }
 
@@ -386,5 +388,25 @@
   .rf-pitch__segment {
     font-size: 0.5625rem;
     letter-spacing: 0;
+  }
+}
+
+/* Small phones: a smaller handle clears the 12-and-rise labels, and the
+   scale names only the band you're in (the readout above names it too). */
+@container (max-width: 340px) {
+  .rf-pitch__handle {
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+  }
+  .rf-pitch__handle svg {
+    width: 18px;
+    height: 18px;
+  }
+  .rf-pitch__segment {
+    overflow: visible;
+  }
+  .rf-pitch__segment:not(.is-active) {
+    color: transparent;
   }
 }

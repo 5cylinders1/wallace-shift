@@ -36,14 +36,6 @@ interface RoofToolProps {
 
 type Phase = StageMode
 
-/** Within this of the address point, the nearest outline is taken to be the house. */
-const PRESELECT_M = 15
-
-const likelyHome = (result: RoofLookup) => {
-  const nearest = result.buildings[0]
-  return nearest && nearest.distanceM <= PRESELECT_M && result.precision !== 'street' ? nearest : null
-}
-
 /**
  * The roof estimator: find the house, set the pitch, see the price.
  *
@@ -65,6 +57,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const [homeSqft, setHomeSqft] = useState(2000)
   const [stories, setStories] = useState<Stories>('1.5')
   const [locatingStep, setLocatingStep] = useState(0)
+  const [failedImage, setFailedImage] = useState<string | null>(null)
   const requestRef = useRef<AbortController | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const helpId = useId()
@@ -73,7 +66,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
   useEffect(() => () => requestRef.current?.abort(), [])
 
-  // The loading copy walks through the real stages while the request runs.
+  // Timed, not reported by the server: the copy names what the lookup does, in order.
   useEffect(() => {
     if (phase !== 'locating') return
     const timer = window.setInterval(() => setLocatingStep((step) => Math.min(step + 1, roofTool.locating.length - 1)), 900)
@@ -82,16 +75,19 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
   const showLookup = (result: RoofLookup) => {
     setLookup(result)
-    // A street-level point can sit nearer a neighbour; then the homeowner picks.
-    const home = likelyHome(result)
-    setSelected(new Set(home ? [home.id] : []))
+    // The server only names a home when the address point is on a building;
+    // otherwise the homeowner picks theirs.
+    setSelected(new Set(result.home ? [result.home] : []))
     setShape(null)
     setError(null)
     setPhase('found')
     onAddress(result.source === 'sample' ? null : result.address)
   }
 
+  const busy = phase === 'locating'
+
   const find = async (target: LookupTarget) => {
+    if (busy) return
     requestRef.current?.abort()
     const controller = new AbortController()
     requestRef.current = controller
@@ -119,6 +115,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
   const onSubmit = (event?: FormEvent) => {
     event?.preventDefault()
+    if (busy) return
     const text = address.trim()
     if (text.length < 6) {
       setError('invalid')
@@ -215,12 +212,16 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
           ? 'Estimating by home size'
           : roofTool.idle
 
+  // Errors are spoken by their own role=alert line, so they're not repeated here.
   const announce =
     phase === 'found' && lookup
       ? `Found ${lookup.buildings.length} building${lookup.buildings.length === 1 ? '' : 's'} at ${lookup.address.formatted}. ${chosen.length} selected, ${footprint.toLocaleString('en-US')} square feet.`
-      : phase === 'error' && error
-        ? roofTool.errors[error]
+      : busy
+        ? roofTool.lookingUp
         : ''
+
+  const confirmCopy = !lookup || lookup.home ? roofTool.confirm : lookup.precision === 'street' ? roofTool.pickStreet : roofTool.pickHouse
+  const showsImage = Boolean(lookup?.imagery && lookup.imagery.src !== failedImage)
 
   return (
     <div ref={rootRef} className="rf-roof" data-reveal>
@@ -232,29 +233,20 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
       <div className="rf-roof__body">
         <div className="rf-roof__visual">
-          <RoofStage mode={phase} lookup={lookup} selected={selected} onToggle={toggle} blueprint={SAMPLE} status={status} />
+          <RoofStage
+            mode={phase}
+            lookup={lookup}
+            selected={selected}
+            onToggle={toggle}
+            blueprint={SAMPLE}
+            status={status}
+            loadingStatus={roofTool.loadingPhoto}
+            onImageryFail={setFailedImage}
+          />
 
           {phase === 'found' && lookup && (
             <>
-              <fieldset className="rf-roof__buildings">
-                <legend>{roofTool.buildingsLegend}</legend>
-                <p className="rf-roof__confirm">{likelyHome(lookup) ? roofTool.confirm : roofTool.pickHouse}</p>
-                <div className="rf-roof__building-list">
-                  {lookup.buildings.map((building, index) => (
-                    <label key={building.id} className={`rf-roof__building${selected.has(building.id) ? ' is-checked' : ''}`}>
-                      <input type="checkbox" checked={selected.has(building.id)} onChange={() => toggle(building.id)} />
-                      <span>
-                        <strong>{index === 0 && likelyHome(lookup) ? 'Main building' : `Building ${index + 1}`}</strong>
-                        <small>
-                          {building.areaSqFt.toLocaleString('en-US')} sq ft
-                          {building.distanceM > 2 ? ` · ${Math.round(building.distanceM * 3.28084)} ft from the pin` : ''}
-                        </small>
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-              <Credits className="rf-roof__credits" credits={[...(lookup.imagery?.credits ?? []), ...lookup.credits]} />
+              <Credits className="rf-roof__credits" credits={[...(showsImage && lookup.imagery ? lookup.imagery.credits : []), ...lookup.credits]} />
               {lookup.source === 'sample' && <p className="rf-roof__sample-note">{roofTool.sampleNote}</p>}
             </>
           )}
@@ -300,11 +292,12 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                     onChange={setAddress}
                     onPick={(suggestion) => void find({ kind: 'suggestion', id: suggestion.id })}
                     onSubmit={() => onSubmit()}
-                    disabled={phase === 'locating'}
+                    busy={busy}
                     describedBy={helpId}
                   />
-                  <button type="submit" className="rf-button rf-button--primary" disabled={phase === 'locating'}>
-                    {phase === 'locating' ? roofTool.finding : roofTool.find}
+                  {/* aria-disabled, not disabled, so focus stays put while the lookup runs. */}
+                  <button type="submit" className="rf-button rf-button--primary" aria-disabled={busy || undefined}>
+                    {busy ? roofTool.finding : roofTool.find}
                   </button>
                 </form>
                 <p id={helpId} className="rf-roof__help">
@@ -319,6 +312,30 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                   <p className="rf-roof__found">
                     <strong>{lookup.address.formatted}</strong>
                   </p>
+                )}
+                {phase === 'found' && lookup && (
+                  <fieldset className="rf-roof__buildings">
+                    <legend>{roofTool.buildingsLegend}</legend>
+                    <p className="rf-roof__confirm">{confirmCopy}</p>
+                    <div className="rf-roof__building-list">
+                      {lookup.buildings.map((building, index) => (
+                        <label key={building.id} className={`rf-roof__building${selected.has(building.id) ? ' is-checked' : ''}`}>
+                          <input type="checkbox" checked={selected.has(building.id)} onChange={() => toggle(building.id)} />
+                          <span className="rf-roof__building-number" aria-hidden="true">
+                            {index + 1}
+                          </span>
+                          <span>
+                            <strong>{building.id === lookup.home ? 'Main building' : `Building ${index + 1}`}</strong>
+                            <small>
+                              {building.areaSqFt.toLocaleString('en-US')} sq ft
+                              {building.distanceM > 2 ? ` · ${Math.round(building.distanceM * 3.28084)} ft from the pin` : ''}
+                              {building.capturedYear ? ` · outline from ${building.capturedYear} imagery` : ''}
+                            </small>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                 )}
                 <div className="rf-roof__alts">
                   <button type="button" className="rf-roof__link" onClick={useSample}>

@@ -47,14 +47,17 @@ export function EstimateForm({ context, prefill }: EstimateFormProps) {
   const movedRef = useRef(false)
   const ids = { name: useId(), phone: useId(), email: useId(), street: useId(), zip: useId(), best: useId(), notes: useId() }
 
-  // Fill the street and ZIP from the roof tool, never over what was typed.
+  // Fill the street and ZIP from the roof tool. A field still holding the
+  // last address the tool filled follows a new lookup; anything typed stays.
   const [prefilled, setPrefilled] = useState<RoofAddress | null>(null)
   if (prefill && prefill !== prefilled) {
     setPrefilled(prefill)
+    const follow = (current: string, previous: string | null | undefined, next: string | null) =>
+      !current || current === (previous ?? '') ? (next ?? '') : current
     setAnswers((current) => ({
       ...current,
-      street: current.street || prefill.street || '',
-      zip: current.zip || prefill.zip || '',
+      street: follow(current.street, prefilled?.street, prefill.street),
+      zip: follow(current.zip, prefilled?.zip, prefill.zip),
     }))
   }
 

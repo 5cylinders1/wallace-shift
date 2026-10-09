@@ -3,10 +3,11 @@
  * picks, as a point we can test against building outlines.
  *
  * Behind an interface so the provider can change without touching the
- * endpoints or the page. The default is Geoapify, chosen because its terms
- * let us keep a result (with its data credit), place it over another
- * provider's imagery, and use its coordinates against a third-party
- * footprint dataset. Mapbox and Google both restrict at least one of those.
+ * endpoints or the page. The default is Geoapify: its published FAQ says
+ * results may be kept with their data credit and used with other
+ * providers' maps and data, while Mapbox's and Google's terms restrict at
+ * least one of those. Its formal terms still need confirming before a
+ * contractor launches (see docs/roofing-demo.md).
  *
  *   GEOAPIFY_API_KEY   Server-side only; never give it a VITE_ prefix.
  *   ROOF_SEARCH_BIAS   Optional "lng,lat" of the contractor's service area.
@@ -14,7 +15,7 @@
  */
 
 import type { AddressSuggestion, Credit, LatLng, LocationPrecision, RoofAddress } from '../../../src/demos/roofers/roof/types.js'
-import { RoofError, fetchJson } from './http.js'
+import { RoofError, fetchJson, type Deadline } from './http.js'
 
 export interface GeocodedAddress {
   address: RoofAddress
@@ -28,7 +29,7 @@ export interface Geocoder {
   /** Turns a suggestion id back into a point; null when the id is not ours. */
   resolve(id: string): Promise<GeocodedAddress | null>
   /** Free-text search for when no suggestion was picked; null when nothing matches. */
-  search(text: string, bias: LatLng | null): Promise<GeocodedAddress | null>
+  search(text: string, bias: LatLng | null, deadline?: Deadline): Promise<GeocodedAddress | null>
 }
 
 const GEOAPIFY = 'https://api.geoapify.com/v1/geocode'
@@ -119,8 +120,11 @@ function toPacked(result: GeoapifyResult): Packed {
   }
 }
 
+/** Own keys only: an id can't reach `constructor` or `__proto__` through this. */
+const sourceCredit = (name: string | null) => (name && Object.hasOwn(SOURCE_CREDITS, name) ? SOURCE_CREDITS[name] : undefined)
+
 function fromPacked(packed: Packed): GeocodedAddress {
-  const source = packed.d ? SOURCE_CREDITS[packed.d] : undefined
+  const source = sourceCredit(packed.d)
   return {
     address: { formatted: packed.f, street: packed.s, city: packed.c, state: packed.t, zip: packed.z },
     location: { lat: packed.lat, lng: packed.lng },
@@ -134,12 +138,14 @@ const encode = (packed: Packed) => `g1.${Buffer.from(JSON.stringify(packed)).toS
 /** Ids round-trip through the browser, so everything in one is re-validated. */
 function decode(id: string): Packed | null {
   if (!id.startsWith('g1.') || id.length > 1200) return null
-  let raw: Partial<Packed>
+  let parsed: unknown
   try {
-    raw = JSON.parse(Buffer.from(id.slice(3), 'base64url').toString('utf8')) as Partial<Packed>
+    parsed = JSON.parse(Buffer.from(id.slice(3), 'base64url').toString('utf8'))
   } catch {
     return null
   }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null
+  const raw = parsed as Partial<Packed>
   const optional = (value: unknown) => (value === null ? null : text(value))
   const lat = raw.lat
   const lng = raw.lng
@@ -156,15 +162,15 @@ function decode(id: string): Packed | null {
     t: optional(raw.t),
     z: optional(raw.z),
     p: raw.p as LocationPrecision,
-    d: raw.d && typeof raw.d === 'string' && raw.d in SOURCE_CREDITS ? raw.d : null,
+    d: typeof raw.d === 'string' && sourceCredit(raw.d) ? raw.d : null,
   }
 }
 
 function geoapify(apiKey: string): Geocoder {
-  const call = async (path: 'autocomplete' | 'search', query: string, bias: LatLng | null, limit: number) => {
+  const call = async (path: 'autocomplete' | 'search', query: string, bias: LatLng | null, limit: number, deadline?: Deadline) => {
     const params = new URLSearchParams({ text: query, filter: 'countrycode:us', lang: 'en', limit: String(limit), format: 'json', apiKey })
     if (bias) params.set('bias', `proximity:${bias.lng.toFixed(4)},${bias.lat.toFixed(4)}`)
-    const body = (await fetchJson(`${GEOAPIFY}/${path}?${params}`, { timeoutMs: path === 'autocomplete' ? 4000 : 6000 })) as {
+    const body = (await fetchJson(`${GEOAPIFY}/${path}?${params}`, { timeoutMs: path === 'autocomplete' ? 4000 : 6000, deadline })) as {
       results?: GeoapifyResult[]
     }
     if (!body || !Array.isArray(body.results)) throw new RoofError('upstream', 'geoapify: no results array')
@@ -187,15 +193,15 @@ function geoapify(apiKey: string): Geocoder {
         suggestions.push({ id: encode(packed), primary, secondary })
         if (suggestions.length === 5) break
       }
-      const credits = [POWERED_BY, ...[...sources].map((source) => SOURCE_CREDITS[source]).filter((credit): credit is Credit => Boolean(credit))]
+      const credits = [POWERED_BY, ...[...sources].map(sourceCredit).filter((credit): credit is Credit => Boolean(credit))]
       return { suggestions, credits }
     },
     async resolve(id) {
       const packed = decode(id)
       return packed ? fromPacked(packed) : null
     },
-    async search(query, bias) {
-      const [first] = await call('search', query, bias, 1)
+    async search(query, bias, deadline) {
+      const [first] = await call('search', query, bias, 1, deadline)
       return first ? fromPacked(toPacked(first)) : null
     },
   }

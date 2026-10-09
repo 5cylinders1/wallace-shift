@@ -9,7 +9,8 @@ interface AddressComboboxProps {
   onPick: (suggestion: AddressSuggestion) => void
   /** Enter with no suggestion highlighted. */
   onSubmit: () => void
-  disabled?: boolean
+  /** A lookup is running: the field stays focusable but can't be edited. */
+  busy?: boolean
   describedBy?: string
 }
 
@@ -35,7 +36,7 @@ function highlight(text: string, query: string): ReactNode {
  * pattern). Suggestions come through /api/roof-suggest; if that is
  * unavailable the field quietly works as a plain text box.
  */
-export function AddressCombobox({ value, onChange, onPick, onSubmit, disabled, describedBy }: AddressComboboxProps) {
+export function AddressCombobox({ value, onChange, onPick, onSubmit, busy, describedBy }: AddressComboboxProps) {
   const inputId = useId()
   const listId = useId()
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
@@ -45,10 +46,11 @@ export function AddressCombobox({ value, onChange, onPick, onSubmit, disabled, d
   const [credits, setCredits] = useState<Credit[]>([])
   const requestRef = useRef<AbortController | null>(null)
   const pickedRef = useRef<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const query = value.trim()
-    if (unavailable || disabled || query.length < MIN_QUERY || pickedRef.current === value) {
+    if (unavailable || query.length < MIN_QUERY || pickedRef.current === value) {
       requestRef.current?.abort()
       return
     }
@@ -68,15 +70,24 @@ export function AddressCombobox({ value, onChange, onPick, onSubmit, disabled, d
         setSuggestions(result.suggestions)
         setCredits(result.credits)
         setActive(-1)
-        setOpen(result.suggestions.length > 0)
+        // Never pop open over the page for someone who has moved on.
+        setOpen(result.suggestions.length > 0 && document.activeElement === inputRef.current)
       } catch {
         // Aborted by a newer keystroke.
       }
     }, DEBOUNCE_MS)
     return () => window.clearTimeout(timer)
-  }, [value, unavailable, disabled])
+  }, [value, unavailable])
 
   useEffect(() => () => requestRef.current?.abort(), [])
+
+  const expanded = open && suggestions.length > 0
+  const optionId = (index: number) => `${listId}-option-${index}`
+
+  // Keep the highlighted address visible while arrowing through a long list.
+  useEffect(() => {
+    if (expanded && active >= 0) document.getElementById(optionId(active))?.scrollIntoView({ block: 'nearest' })
+  })
 
   const choose = (suggestion: AddressSuggestion) => {
     const text = `${suggestion.primary}, ${suggestion.secondary}`
@@ -113,9 +124,6 @@ export function AddressCombobox({ value, onChange, onPick, onSubmit, disabled, d
     }
   }
 
-  const expanded = open && suggestions.length > 0
-  const optionId = (index: number) => `${listId}-option-${index}`
-
   return (
     <div className={`rf-address${expanded ? ' is-open' : ''}`}>
       <label className="rf-address__label" htmlFor={inputId}>
@@ -139,9 +147,17 @@ export function AddressCombobox({ value, onChange, onPick, onSubmit, disabled, d
           spellCheck={false}
           placeholder="Start typing your street address"
           value={value}
-          disabled={disabled}
+          readOnly={busy}
+          aria-disabled={busy || undefined}
+          ref={inputRef}
           onChange={(event) => {
             pickedRef.current = null
+            setActive(-1)
+            // Suggestions for text that is no longer there must not be pickable.
+            if (event.target.value.trim().length < MIN_QUERY) {
+              setSuggestions([])
+              setOpen(false)
+            }
             onChange(event.target.value)
           }}
           onKeyDown={onKeyDown}

@@ -51,6 +51,8 @@ export interface FootprintBuilding {
   distanceM: number
   /** Corners after light simplification: a hint at roof complexity. */
   corners: number
+  /** Year of the imagery the outline was traced from, when the dataset says. */
+  capturedYear?: number | null
 }
 
 /** A Web-Mercator view: enough to place any lat/lng on screen. */
@@ -81,8 +83,14 @@ export interface RoofLookup {
   address: RoofAddress
   location: LatLng
   precision: LocationPrecision
-  /** Nearest first; buildings[0] is the likely home. */
+  /** Nearest first. */
   buildings: FootprintBuilding[]
+  /**
+   * The building we're confident is the house (the address point is on a
+   * building and in or right beside this outline), or null when the
+   * homeowner should pick it themselves.
+   */
+  home: string | null
   frame: MapFrame
   /** Null when no imagery provider is configured: outlines draw on a plan grid. */
   imagery: Imagery | null

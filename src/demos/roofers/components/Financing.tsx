@@ -81,7 +81,7 @@ export function Financing({ ballpark, onPayment }: FinancingProps) {
               }}
               style={{ '--rf-fill': `${((amount - MIN) / (MAX - MIN)) * 100}%` } as CSSProperties}
             />
-            {ballpark && !touched && <p className="rf-calc__hint">Set from your ballpark above.</p>}
+            {ballpark && !touched && <p className="rf-calc__hint">Set from your roof estimate above.</p>}
 
             <fieldset className="rf-plans">
               <legend className="rf-visually-hidden">Plan</legend>
@@ -111,7 +111,8 @@ export function Financing({ ballpark, onPayment }: FinancingProps) {
             </fieldset>
           </div>
 
-          <div className="rf-calc__result" aria-live="polite">
+          {/* Silent while it follows the roof estimate, so a pitch change isn't announced twice. */}
+          <div className="rf-calc__result" aria-live={touched ? 'polite' : 'off'}>
             <p className="rf-calc__label">Estimated payment</p>
             <p className="rf-calc__monthly">
               {money(monthly)}

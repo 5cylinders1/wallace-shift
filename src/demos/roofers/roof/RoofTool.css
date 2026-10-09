@@ -53,9 +53,19 @@
     grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
     gap: 40px;
   }
+}
+
+/* The map stays in view beside the steps. On shorter screens it shrinks so
+   the whole column (map, credits, sample note) still fits under the header. */
+@media (min-width: 1080px) and (min-height: 640px) {
   .rf-roof__visual {
     position: sticky;
     top: calc(var(--rf-header) + 20px);
+  }
+  .rf-roof__visual .rf-stage {
+    width: 100%;
+    max-width: calc(100svh - var(--rf-header) - 180px);
+    margin-inline: auto;
   }
 }
 
@@ -93,7 +103,7 @@
   -webkit-user-drag: none;
 }
 
-.rf-stage.is-loaded .rf-stage__image {
+.rf-stage.has-photo .rf-stage__image {
   opacity: 1;
 }
 
@@ -188,6 +198,24 @@
   pointer-events: none;
 }
 
+.rf-stage__badge {
+  pointer-events: none;
+}
+
+.rf-stage__badge circle {
+  fill: rgba(14, 17, 20, 0.82);
+  stroke: rgba(244, 241, 234, 0.7);
+  stroke-width: 1.5;
+}
+
+.rf-stage__badge text {
+  fill: #f4f1ea;
+  font-family: var(--rf-font);
+  font-size: 14px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
 .rf-stage__area {
   font-size: 22px;
   text-anchor: middle;
@@ -250,7 +278,8 @@
   transform: translateX(-50%);
 }
 
-.rf-stage--locating .rf-stage__status::before {
+.rf-stage--locating .rf-stage__status::before,
+.rf-stage--found .rf-stage__status::before {
   content: '';
   width: 7px;
   height: 7px;
@@ -259,7 +288,7 @@
   animation: rf-stage-pulse 1s steps(2, jump-none) infinite;
 }
 
-/* Buildings to include, under the stage */
+/* Buildings to include, in step one */
 
 .rf-roof__buildings {
   margin: 0;
@@ -305,6 +334,24 @@
 .rf-roof__building.is-checked {
   border-color: var(--rf-roof-copper);
   background: rgba(224, 136, 79, 0.14);
+}
+
+.rf-roof__building-number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid rgba(244, 241, 234, 0.5);
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-roof__building.is-checked .rf-roof__building-number {
+  border-color: var(--rf-roof-copper);
+  color: var(--rf-roof-copper-text);
 }
 
 .rf-roof__building input {

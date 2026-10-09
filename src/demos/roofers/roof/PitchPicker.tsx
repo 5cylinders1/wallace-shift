@@ -50,14 +50,16 @@ const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia('
  * gets a harness, then roof jacks, as it steepens) all follow live.
  *
  * The thumb is a real WAI-ARIA slider: arrows step one inch, Page keys
- * three, Home and End jump to the ends. Dragging works anywhere on the
- * drawing, with pointer capture so a finger can wander off it, and the
- * Flatter / Steeper buttons do the same without dragging at all.
+ * three, Home and End jump to the ends. A mouse or pen drags anywhere on
+ * the drawing; a finger drags the handle (so swiping past still scrolls),
+ * with pointer capture so it can wander off it. The Flatter / Steeper
+ * buttons do the same without dragging at all.
  */
 export function PitchPicker({ value, onChange, describedBy }: PitchPickerProps) {
   const [shown, setShown] = useState(value)
   const [dragging, setDragging] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
+  const handleRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const tweenRef = useRef<gsap.core.Tween | null>(null)
   const proxy = useRef({ v: value })
@@ -91,6 +93,8 @@ export function PitchPicker({ value, onChange, describedBy }: PitchPickerProps) 
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return
+    // On touch, only the handle drags, so a swipe across the drawing scrolls the page.
+    if (event.pointerType === 'touch' && !handleRef.current?.contains(event.target as Node)) return
     const next = pitchFromPointer(event.clientY)
     if (next === null) return
     event.currentTarget.setPointerCapture(event.pointerId)
@@ -146,8 +150,9 @@ export function PitchPicker({ value, onChange, describedBy }: PitchPickerProps) 
   const wallTop = (x: number) => slopeY(x, h) + ROOF_T
   const gable = `M${WALL_X0} ${GROUND}L${WALL_X0} ${wallTop(WALL_X0)}L${CENTER} ${EAVE_Y - h + ROOF_T}L${WALL_X1} ${wallTop(WALL_X1)}L${WALL_X1} ${GROUND}Z`
 
-  // The roofer's 12-and-rise triangle on the right-hand slope.
-  const ax = CENTER + 22
+  // The roofer's 12-and-rise triangle on the right-hand slope, far enough
+  // down it that the handle above the ridge never covers its labels.
+  const ax = CENTER + 58
   const ay = slopeY(ax, h)
   const run = 66
   const bx = ax + run
@@ -270,6 +275,7 @@ export function PitchPicker({ value, onChange, describedBy }: PitchPickerProps) 
         </svg>
 
         <div
+          ref={handleRef}
           className="rf-pitch__handle"
           role="slider"
           tabIndex={0}

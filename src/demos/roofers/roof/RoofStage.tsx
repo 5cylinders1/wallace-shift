@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { metersPerPixel, ringCentroid, toFrame } from './geo'
 import type { FootprintBuilding, MapFrame, RoofLookup } from './types'
 
@@ -12,12 +12,18 @@ interface RoofStageProps {
   /** Drawn faintly behind the idle and loading states. */
   blueprint: RoofLookup
   status: string
+  /** Shown while the photo loads, over the outlines already drawn. */
+  loadingStatus: string
+  /** The photo failed or never arrived; the plan view is showing instead. */
+  onImageryFail: (src: string) => void
 }
 
 const NICE_METERS = [2, 5, 10, 20, 50, 100]
 
 /** Height of the strip along the bottom where providers print their logo and credits. */
 const CREDIT_STRIP = 30
+/** A photo that hasn't arrived by then is treated as failed; the plan view stays. */
+const IMAGE_TIMEOUT_MS = 10_000
 
 function scaleBar(frame: MapFrame) {
   const mpp = metersPerPixel(frame)
@@ -73,10 +79,11 @@ function Blueprint({ lookup, scanning }: { lookup: RoofLookup; scanning: boolean
  * The aerial backdrop with our own outlines drawn on it. Outlines come from
  * open footprint data, never from the imagery: the photo is context only,
  * and without one the outlines are drawn on a plan grid at true scale.
- * Each outline is a tap target; the same choices are offered as checkboxes
- * beside the stage for keyboard and screen-reader users.
+ * The outlines appear as soon as the lookup answers; the photo fades in
+ * beneath them when it arrives. Each outline is a tap target; the same
+ * choices are offered as checkboxes for keyboard and screen-reader users.
  */
-export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status }: RoofStageProps) {
+export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status, loadingStatus, onImageryFail }: RoofStageProps) {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
   const [failedSrc, setFailedSrc] = useState<string | null>(null)
   const maskId = useId()
@@ -84,7 +91,24 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status 
   const view = mode === 'found' ? lookup : null
   const frame = view?.frame ?? null
   const imagery = view?.imagery && view.imagery.src !== failedSrc ? view.imagery : null
-  const ready = view !== null && (imagery === null || loadedSrc === imagery.src)
+  const photoShown = imagery !== null && loadedSrc === imagery.src
+  const photoPending = imagery !== null && !photoShown
+  const pendingSrc = photoPending ? imagery.src : null
+
+  const fail = (src: string) => {
+    setFailedSrc(src)
+    onImageryFail(src)
+  }
+
+  // A request that neither loads nor errors would otherwise leave the plan view waiting forever.
+  useEffect(() => {
+    if (!pendingSrc) return
+    const timer = window.setTimeout(() => {
+      setFailedSrc(pendingSrc)
+      onImageryFail(pendingSrc)
+    }, IMAGE_TIMEOUT_MS)
+    return () => window.clearTimeout(timer)
+  }, [pendingSrc, onImageryFail])
 
   const overlay = useMemo(() => {
     if (!frame || !view) return null
@@ -100,9 +124,9 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status 
   }, [frame, view])
 
   return (
-    <div className={`rf-stage rf-stage--${mode}${ready ? ' is-loaded' : ''}${view && !imagery ? ' is-plan' : ''}`}>
+    <div className={`rf-stage rf-stage--${mode}${view ? ' is-loaded' : ''}${photoShown ? ' has-photo' : view ? ' is-plan' : ''}`}>
       <div className="rf-stage__frame">
-        {!ready && <Blueprint lookup={blueprint} scanning={mode === 'locating' || mode === 'found'} />}
+        {!view && <Blueprint lookup={blueprint} scanning={mode === 'locating'} />}
 
         {imagery && frame && (
           <img
@@ -112,18 +136,18 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status 
             height={frame.height}
             alt={view?.source === 'sample' ? 'Illustrated aerial view of the sample house' : `Aerial view of ${view?.address.formatted ?? 'the property'}`}
             onLoad={() => setLoadedSrc(imagery.src)}
-            onError={() => setFailedSrc(imagery.src)}
+            onError={() => fail(imagery.src)}
             draggable={false}
           />
         )}
 
-        {frame && overlay && ready && (
+        {frame && overlay && (
           <svg className="rf-stage__overlay" viewBox={`0 0 ${frame.width} ${frame.height}`} aria-hidden="true" focusable="false">
-            {!imagery && <Grid frame={frame} />}
+            {!photoShown && <Grid frame={frame} />}
             <defs>
               {/* Nothing of ours, not even the dimming, covers the provider's marks. */}
               <clipPath id={clipId}>
-                <rect width={frame.width} height={frame.height - (imagery && imagery.provider !== 'sample' ? CREDIT_STRIP : 0)} />
+                <rect width={frame.width} height={frame.height - (photoShown && imagery.provider !== 'sample' ? CREDIT_STRIP : 0)} />
               </clipPath>
               <mask id={maskId}>
                 <rect width={frame.width} height={frame.height} fill="white" />
@@ -135,7 +159,7 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status 
               </mask>
             </defs>
             <g clipPath={`url(#${clipId})`}>
-              {imagery && <rect className="rf-stage__dim" width={frame.width} height={frame.height} mask={`url(#${maskId})`} />}
+              {photoShown && <rect className="rf-stage__dim" width={frame.width} height={frame.height} mask={`url(#${maskId})`} />}
               {overlay.buildings.map(({ building, d }) => (
                 <path
                   key={building.id}
@@ -144,13 +168,19 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status 
                   onClick={() => onToggle(building.id)}
                 />
               ))}
-              {overlay.buildings
-                .filter(({ building }) => selected.has(building.id))
-                .map(({ building, label }) => (
+              {/* Selected outlines show their area; the rest their number from the list. */}
+              {overlay.buildings.map(({ building, label }, index) =>
+                selected.has(building.id) ? (
                   <text key={building.id} x={label[0]} y={label[1]} className="rf-stage__area">
                     {building.areaSqFt.toLocaleString('en-US')} sq ft
                   </text>
-                ))}
+                ) : (
+                  <g key={building.id} className="rf-stage__badge" transform={`translate(${label[0].toFixed(1)} ${label[1].toFixed(1)})`}>
+                    <circle r="13" />
+                    <text y="5">{index + 1}</text>
+                  </g>
+                ),
+              )}
               <g className="rf-stage__pin" transform={`translate(${overlay.pin[0].toFixed(1)} ${overlay.pin[1].toFixed(1)})`}>
                 <path d="M0 0C-9 -14 -14 -20 -14 -28A14 14 0 0 1 14 -28C14 -20 9 -14 0 0Z" />
                 <circle cy="-28" r="5" />
@@ -171,9 +201,9 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status 
           </svg>
         )}
 
-        {mode !== 'found' && (
+        {(mode !== 'found' || photoPending) && (
           <p className="rf-stage__status" aria-hidden="true">
-            {status}
+            {mode === 'found' ? loadingStatus : status}
           </p>
         )}
       </div>

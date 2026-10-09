@@ -23,24 +23,34 @@
  */
 
 import type { Credit, LatLng } from '../../../src/demos/roofers/roof/types.js'
-import { RoofError, fetchJson } from './http.js'
+import { RoofError, fetchJson, type Deadline } from './http.js'
 
 export interface RawFootprint {
   id: string
   /** Outer ring first, then any holes; lat/lng, closing point optional. */
   rings: LatLng[][]
+  /** Year of the imagery the outline was traced from, when the dataset says. */
+  capturedYear?: number | null
 }
 
 export interface FootprintSource {
   id: string
   credit: Credit
-  near(point: LatLng, radiusM: number): Promise<RawFootprint[]>
+  near(point: LatLng, radiusM: number, deadline?: Deadline): Promise<RawFootprint[]>
 }
 
 type Position = [number, number]
 interface GeoJsonFeature {
   id?: string | number
   geometry?: { type?: string; coordinates?: unknown } | null
+  properties?: Record<string, unknown> | null
+}
+
+/** ArcGIS sends dates as epoch milliseconds; other sources may send ISO text. */
+function yearOf(value: unknown): number | null {
+  const date = typeof value === 'number' ? new Date(value) : typeof value === 'string' ? new Date(value) : null
+  const year = date && !Number.isNaN(date.getTime()) ? date.getUTCFullYear() : null
+  return year && year >= 1990 && year <= 2100 ? year : null
 }
 
 const isPosition = (value: unknown): value is Position =>
@@ -52,48 +62,69 @@ function toRing(value: unknown): LatLng[] | null {
 }
 
 /** One footprint per polygon part; a multipart building becomes several tappable parts. */
-export function parseGeoJson(body: unknown, prefix: string): RawFootprint[] {
+export function parseGeoJson(body: unknown, prefix: string, dateField?: string): RawFootprint[] {
   const features = (body as { features?: GeoJsonFeature[] } | null)?.features
   if (!Array.isArray(features)) throw new RoofError('upstream', `${prefix}: not a FeatureCollection`)
   const out: RawFootprint[] = []
   features.forEach((feature, index) => {
     const geometry = feature.geometry
     const id = `${prefix}-${feature.id ?? index}`
+    const capturedYear = dateField ? yearOf(feature.properties?.[dateField]) : null
     const polygons = geometry?.type === 'Polygon' ? [geometry.coordinates] : geometry?.type === 'MultiPolygon' ? (geometry.coordinates as unknown[]) : []
     polygons.forEach((polygon, part) => {
       if (!Array.isArray(polygon)) return
       const rings = polygon.map(toRing)
       if (!rings[0] || rings.some((ring) => ring === null)) return
-      out.push({ id: polygons.length > 1 ? `${id}.${part}` : id, rings: rings as LatLng[][] })
+      out.push({ id: polygons.length > 1 ? `${id}.${part}` : id, rings: rings as LatLng[][], capturedYear })
     })
   })
   return out
 }
 
-/** Feature-service point query: every polygon within `radiusM` of the point. */
-function arcgisSource(id: string, layerUrl: string, credit: Credit): FootprintSource {
+/** More than a 70 m circle holds even on 25-foot city lots; we keep the nearest few. */
+const MAX_RECORDS = 250
+
+/**
+ * Feature-service point query: every polygon within `radiusM` of the point.
+ * ArcGIS can't sort by distance, so a capped answer could leave out the
+ * very building the pin is in; when the service says it truncated, a
+ * second query asks for just the building under the pin.
+ */
+function arcgisSource(id: string, layerUrl: string, credit: Credit, dateField?: string): FootprintSource {
+  const query = async (point: LatLng, distance: number, deadline?: Deadline) => {
+    const params = new URLSearchParams({
+      geometry: `${point.lng.toFixed(7)},${point.lat.toFixed(7)}`,
+      geometryType: 'esriGeometryPoint',
+      inSR: '4326',
+      spatialRel: 'esriSpatialRelIntersects',
+      distance: String(distance),
+      units: 'esriSRUnit_Meter',
+      outFields: ['OBJECTID', dateField].filter(Boolean).join(','),
+      returnGeometry: 'true',
+      outSR: '4326',
+      resultRecordCount: String(MAX_RECORDS),
+      f: 'geojson',
+    })
+    const body = (await fetchJson(`${layerUrl}/query?${params}`, { deadline })) as {
+      error?: { code?: number; message?: string }
+      exceededTransferLimit?: boolean
+      properties?: { exceededTransferLimit?: boolean }
+    } | null
+    // ArcGIS reports failures as HTTP 200 with an `error` object.
+    const error = body?.error
+    if (error) throw new RoofError(error.code === 429 ? 'busy' : 'upstream', `${id}: ${error.code} ${error.message}`)
+    return { footprints: parseGeoJson(body, id, dateField), truncated: Boolean(body?.exceededTransferLimit || body?.properties?.exceededTransferLimit) }
+  }
+
   return {
     id,
     credit,
-    async near(point, radiusM) {
-      const params = new URLSearchParams({
-        geometry: `${point.lng.toFixed(7)},${point.lat.toFixed(7)}`,
-        geometryType: 'esriGeometryPoint',
-        inSR: '4326',
-        spatialRel: 'esriSpatialRelIntersects',
-        distance: String(radiusM),
-        units: 'esriSRUnit_Meter',
-        outFields: 'OBJECTID',
-        returnGeometry: 'true',
-        outSR: '4326',
-        resultRecordCount: '25',
-        f: 'geojson',
-      })
-      const body = await fetchJson(`${layerUrl}/query?${params}`)
-      // ArcGIS reports failures as HTTP 200 with an `error` object.
-      const error = (body as { error?: { code?: number; message?: string } } | null)?.error
-      if (error) throw new RoofError(error.code === 429 ? 'busy' : 'upstream', `${id}: ${error.code} ${error.message}`)
-      return parseGeoJson(body, id)
+    async near(point, radiusM, deadline) {
+      const around = await query(point, radiusM, deadline)
+      if (!around.truncated) return around.footprints
+      const under = await query(point, 0, deadline)
+      const seen = new Set(around.footprints.map((footprint) => footprint.id))
+      return [...around.footprints, ...under.footprints.filter((footprint) => !seen.has(footprint.id))]
     },
   }
 }
@@ -135,7 +166,7 @@ function overpassSource(endpoint: string): FootprintSource {
   return {
     id: 'osm',
     credit: { text: 'Building outlines © OpenStreetMap contributors', href: 'https://www.openstreetmap.org/copyright' },
-    async near(point, radiusM) {
+    async near(point, radiusM, deadline) {
       const lat = point.lat.toFixed(7)
       const lng = point.lng.toFixed(7)
       const query = `[out:json][timeout:8];(way["building"](around:${radiusM},${lat},${lng});relation["building"](around:${radiusM},${lat},${lng}););out geom;`
@@ -143,6 +174,7 @@ function overpassSource(endpoint: string): FootprintSource {
         method: 'POST',
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ data: query }).toString(),
+        deadline,
       })
       return parseOverpass(body)
     },
@@ -155,6 +187,7 @@ const SOURCES: Record<string, () => FootprintSource | null> = {
       'usa-structures',
       'https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/USA_Structures_View/FeatureServer/0',
       { text: 'Building outlines: USA Structures, FEMA & ORNL', href: 'https://gis-fema.hub.arcgis.com/pages/usa-structures' },
+      'IMAGE_DATE',
     ),
   microsoft: () =>
     arcgisSource('microsoft', 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/MSBFP2/FeatureServer/0', {

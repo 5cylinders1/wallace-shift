@@ -11,60 +11,90 @@
  *   ROOF_PROVIDER  Default "open-data".
  */
 
-import type { AddressSuggestion, Credit, LatLng, RoofLookup } from '../../../src/demos/roofers/roof/types.js'
+import type { AddressSuggestion, Credit, FootprintBuilding, LatLng, RoofLookup } from '../../../src/demos/roofers/roof/types.js'
 import { footprintSourcesFromEnv, type FootprintSource } from './footprints.js'
 import { geocoderFromEnv, parseBias, type Geocoder } from './geocoder.js'
-import { RoofError } from './http.js'
+import { RoofError, deadlineIn } from './http.js'
 import { frameFor, imageryFromEnv, type ImageryProvider } from './imagery.js'
 import { measureBuildings } from './measure.js'
 
 export type LookupTarget = { kind: 'suggestion'; id: string } | { kind: 'address'; address: string }
 
+export interface LookupResult {
+  lookup: RoofLookup
+  /** An earlier source failed, so this answer may not be the best one: cache it briefly. */
+  partial: boolean
+}
+
 export interface RoofDataProvider {
   suggest(text: string): Promise<{ suggestions: AddressSuggestion[]; credits: Credit[] }>
-  lookup(target: LookupTarget): Promise<RoofLookup>
+  lookup(target: LookupTarget): Promise<LookupResult>
 }
 
 /** How far from the address point to look, metres. A street-level point can sit mid-road. */
 const RADIUS_M = { near: 45, street: 70 }
+/** The whole lookup, all outbound calls together; well inside roof-lookup's maxDuration. */
+const LOOKUP_BUDGET_MS = 15_000
+/** A building-level point this close to an outline is on it (outlines and points are both a little off). */
+const AT_POINT_M = 2
+/** A building-level point within this of the nearest outline: that outline is taken to be the house. */
+const HOME_WITHIN_M = 15
 
 export function openDataProvider(geocoder: Geocoder, sources: FootprintSource[], imagery: ImageryProvider | null, bias: LatLng | null): RoofDataProvider {
   return {
     suggest: (text) => geocoder.suggest(text, bias),
 
     async lookup(target) {
-      const place = target.kind === 'suggestion' ? await geocoder.resolve(target.id) : await geocoder.search(target.address, bias)
+      const deadline = deadlineIn(LOOKUP_BUDGET_MS)
+      const place = target.kind === 'suggestion' ? await geocoder.resolve(target.id) : await geocoder.search(target.address, bias, deadline)
       if (!place) throw new RoofError(target.kind === 'suggestion' ? 'invalid' : 'address_not_found')
 
-      const radius = place.precision === 'rooftop' || place.precision === 'parcel' ? RADIUS_M.near : RADIUS_M.street
+      // Only a building-level point is trusted to say which outline is the house.
+      const onBuilding = place.precision === 'rooftop' || place.precision === 'parcel'
+      const radius = onBuilding ? RADIUS_M.near : RADIUS_M.street
       let failure: RoofError | null = null
+      let best: { source: FootprintSource; buildings: FootprintBuilding[] } | null = null
+
       for (const source of sources) {
         let raw
         try {
-          raw = await source.near(place.location, radius)
+          raw = await source.near(place.location, radius, deadline)
         } catch (error) {
           // One dataset being down shouldn't end the lookup while another can answer.
           failure = error instanceof RoofError ? error : new RoofError('upstream', String(error))
+          if (failure.code === 'busy' && Date.now() >= deadline) break
           continue
         }
         const buildings = measureBuildings(raw, place.location, radius)
         if (!buildings.length) continue
+        const atPoint = buildings[0].distanceM <= AT_POINT_M
+        if (!best || atPoint) best = { source, buildings }
+        // A building-level point with only neighbours around it: a later dataset may have the house.
+        if (!onBuilding || atPoint) break
+      }
+      if (!best) throw failure ?? new RoofError('no_footprint')
 
-        const frame = frameFor(place.location, buildings[0].ring, imagery)
-        return {
+      const { source, buildings } = best
+      const home = onBuilding && buildings[0].distanceM <= HOME_WITHIN_M ? buildings[0] : null
+      // Not sure which is theirs: show every candidate, so the one they tap is on screen.
+      const fit = home ? { points: home.ring, share: 'home' as const } : { points: buildings.flatMap((b) => b.ring), share: 'all' as const }
+      const frame = frameFor(place.location, fit, imagery)
+      return {
+        partial: failure !== null,
+        lookup: {
           ok: true,
           source: source.id,
           address: place.address,
           location: place.location,
           precision: place.precision,
           buildings,
+          home: home?.id ?? null,
           frame,
           imagery: imagery ? imagery.image(frame) : null,
           credits: [...place.credits, source.credit],
           measuredRoof: null,
-        }
+        },
       }
-      throw failure ?? new RoofError('no_footprint')
     },
   }
 }

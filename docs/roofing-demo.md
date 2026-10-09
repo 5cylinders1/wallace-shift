@@ -70,8 +70,17 @@ data, never from the photo. Its ground area is computed on our server
 (not from the map's Web Mercator pixels, which overstate area about 1.6×
 in the Midwest). Roof surface = outline area × √(1 + (pitch/12)²); the
 pitch band adds labor for steep roofs, and the outline's corner count
-suggests a waste allowance. Areas are shown to the nearest 50 sq ft, and
-the disclaimer says the final measurement happens at the inspection.
+suggests a waste allowance. Roof surface is shown to the nearest 50 sq ft,
+each outline lists the year of the imagery it was traced from when the
+dataset records it, and the disclaimer says the final measurement happens
+at the inspection.
+
+**Which building is the house.** Only when the address point is on a
+building (a rooftop or parcel match) and within 15 m of an outline does the
+tool pre-select that outline as the house. Otherwise the view widens to
+show every nearby outline and the homeowner taps theirs. If a dataset has
+only the neighbours around a building-level point, the next dataset is
+asked before settling.
 
 **Where the data comes from**, each behind a small adapter in
 `api/_lib/roof/` so a paid source can replace it without touching the page:
@@ -90,10 +99,16 @@ another provider in `api/_lib/roof/provider.ts`; the lookup already has a
 `measuredRoof` slot for it.
 
 **Endpoints** (Vercel functions, Node runtime): `GET /api/roof-suggest?q=`
-and `GET /api/roof-lookup?id=` or `?address=`. Successful answers are
-cached at Vercel's edge for a day; errors never are. Without a Geoapify
-key both answer `not_configured`, and the page says live lookup isn't
-connected and offers the sample house or the home-size estimate.
+and `GET /api/roof-lookup?id=` or `?address=`. A lookup's outbound calls
+share one 15-second budget, inside the function's 20-second limit, so the
+page always gets a real answer ("busy, try again" at worst). Successful
+answers are cached at Vercel's edge for a day, or five minutes when a
+fallback dataset answered because the first one failed; errors are never
+cached. Both endpoints answer `not_configured` until a Geoapify key is set,
+and also when no footprint source in `ROOF_FOOTPRINT_SOURCES` is usable
+(e.g. `osm` without `OVERPASS_URL`) or `ROOF_PROVIDER` isn't `open-data`.
+The page then says live lookup isn't connected and offers the sample house
+or the home-size estimate.
 
 **Environment variables** (Vercel → Settings → Environment Variables; for
 local dev put them in `.env.local`, which is git-ignored):
@@ -105,6 +120,7 @@ local dev put them in `.env.local`, which is git-ignored):
 | `ROOF_SEARCH_BIAS` | Optional | `lng,lat` of the contractor's service area, e.g. `-94.58,39.05`. Ranks nearby addresses first. |
 | `ROOF_IMAGERY` | Optional | `mapbox`, `naip` or `none`. |
 | `ROOF_FOOTPRINT_SOURCES` | Optional | Default `usa-structures,microsoft`; add `osm` with `OVERPASS_URL`. |
+| `ROOF_PROVIDER` | Optional | Default `open-data`, the only one implemented. Any other value turns lookup off until that provider exists. |
 | `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Optional | The same Upstash limiter as the site audit: 300 suggestions and 40 lookups per IP per hour. |
 
 **Credits the page shows**, linked, under the map and in the suggestion

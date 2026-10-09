@@ -24,6 +24,8 @@ const RATE_LIMIT = 40
 const RATE_WINDOW_S = 3600
 /** Outlines change on the scale of years; a day at the edge is safe. */
 const CACHE_S = 86_400
+/** An answer from a fallback dataset, after the first one failed: don't pin it for a day. */
+const PARTIAL_CACHE_S = 300
 
 function targetOf(query: URLSearchParams): LookupTarget | null {
   const id = query.get('id')
@@ -42,7 +44,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!provider) return sendError(res, 'not_configured')
     if (await isRateLimited(req, 'roof-lookup', RATE_LIMIT, RATE_WINDOW_S)) return sendError(res, 'rate_limited')
 
-    const lookup = await provider.lookup(target)
-    sendJson(res, lookup, 200, CACHE_S)
+    const { lookup, partial } = await provider.lookup(target)
+    sendJson(res, lookup, 200, partial ? PARTIAL_CACHE_S : CACHE_S)
   })
 }

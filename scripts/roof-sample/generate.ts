@@ -277,6 +277,7 @@ function lookup(): RoofLookup {
     location: toLatLng(pin),
     precision: 'rooftop',
     buildings,
+    home: 'sample-house',
     frame: FRAME,
     imagery: IMAGERY,
     credits: [],

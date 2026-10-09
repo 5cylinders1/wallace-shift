@@ -52,6 +52,7 @@ export function measureBuildings(raw: RawFootprint[], point: LatLng, radiusM: nu
       areaSqFt: Math.round(areaM2 * SQFT_PER_M2),
       distanceM: Math.round(distanceM * 10) / 10,
       corners,
+      capturedYear: footprint.capturedYear ?? null,
     })
   }
 

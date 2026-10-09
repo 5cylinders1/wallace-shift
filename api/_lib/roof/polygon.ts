@@ -31,9 +31,29 @@ function simplifyOpen(points: Point[], tolerance: number): Point[] {
   return [...left.slice(0, -1), ...right]
 }
 
-/** Douglas–Peucker for a closed ring, anchored at its two farthest-apart points. */
-export function simplifyRing(ring: Point[], tolerance: number): Point[] {
-  if (ring.length < 4) return ring.slice()
+const farthestFrom = (ring: Point[], from: Point) => {
+  let index = 0
+  let best = -1
+  ring.forEach(([x, y], i) => {
+    const distance = Math.hypot(x - from[0], y - from[1])
+    if (distance > best) {
+      best = distance
+      index = i
+    }
+  })
+  return index
+}
+
+/**
+ * Douglas–Peucker for a closed ring, anchored at two far-apart hull
+ * corners. Both anchors always survive, so neither may be a point partway
+ * along a wall (where a dataset's first vertex often sits): the ring is
+ * first rotated to start at the point farthest from where it began.
+ */
+export function simplifyRing(input: Point[], tolerance: number): Point[] {
+  if (input.length < 4) return input.slice()
+  const start = farthestFrom(input, input[0])
+  const ring = [...input.slice(start), ...input.slice(0, start)]
   let far = 0
   let farDistance = 0
   for (let i = 1; i < ring.length; i += 1) {

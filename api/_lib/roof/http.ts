@@ -90,29 +90,45 @@ export async function isRateLimited(req: IncomingMessage, scope: string, limit: 
 /** Identifies us to keyless public services, as their usage policies ask. */
 export const USER_AGENT = 'RoofEstimateDemo/1.0 (+https://roofers.wallaceshift.com)'
 
+/** Epoch ms by which a whole request must be answered; outbound calls share it. */
+export type Deadline = number
+
+/** Leaves time to answer in JSON before the platform cuts the function off. */
+export function deadlineIn(ms: number): Deadline {
+  return Date.now() + ms
+}
+
+const isTimeout = (error: unknown) => error instanceof DOMException && (error.name === 'TimeoutError' || error.name === 'AbortError')
+
 /**
- * One outbound JSON call with a hard timeout. Throttling becomes `busy`
- * (the visitor can retry); anything else unexpected becomes `upstream`.
+ * One outbound JSON call with a hard timeout: its own limit or whatever is
+ * left of the request's deadline, whichever is shorter. Throttling and
+ * running out of time become `busy` (the visitor can retry); anything else
+ * unexpected becomes `upstream`.
  */
-export async function fetchJson(url: string, init: RequestInit & { timeoutMs?: number } = {}): Promise<unknown> {
-  const { timeoutMs = 8000, ...rest } = init
+export async function fetchJson(url: string, init: RequestInit & { timeoutMs?: number; deadline?: Deadline } = {}): Promise<unknown> {
+  const { timeoutMs = 8000, deadline, ...rest } = init
+  const budget = deadline === undefined ? timeoutMs : Math.min(timeoutMs, deadline - Date.now())
+  if (budget < 250) throw new RoofError('busy', 'out of time before the call')
   let response: Response
+  const signal = AbortSignal.timeout(budget)
   try {
     response = await fetch(url, {
       ...rest,
       headers: { accept: 'application/json', 'user-agent': USER_AGENT, ...rest.headers },
-      signal: AbortSignal.timeout(timeoutMs),
+      signal,
     })
   } catch (error) {
-    const timedOut = error instanceof DOMException && error.name === 'TimeoutError'
-    throw new RoofError(timedOut ? 'busy' : 'upstream', `fetch failed: ${String(error)}`)
+    throw new RoofError(isTimeout(error) ? 'busy' : 'upstream', `fetch failed: ${String(error)}`)
   }
   if (response.status === 429 || response.status === 503) throw new RoofError('busy', `HTTP ${response.status}`)
   if (!response.ok) throw new RoofError('upstream', `HTTP ${response.status}`)
   try {
     return await response.json()
-  } catch {
-    throw new RoofError('upstream', 'response was not JSON')
+  } catch (error) {
+    // The timeout still runs while the body downloads.
+    const timedOut = isTimeout(error) || signal.aborted
+    throw new RoofError(timedOut ? 'busy' : 'upstream', timedOut ? 'body timed out' : 'response was not JSON')
   }
 }
 

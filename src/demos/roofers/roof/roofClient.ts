@@ -4,10 +4,11 @@ import type { LookupResponse, RoofErrorCode, SuggestResponse } from './types'
  * Browser half of the roof tool. Provider keys live only in the
  * serverless functions; these calls go to our own /api routes.
  *
- * Anything that is not our API's JSON is reported as `not_configured`: a
- * static preview (or the dev server before a key is set) answers /api/* with
- * an HTML page, and pretending that was a result would be worse than saying
- * plainly that live measurement is not connected.
+ * A page that isn't our API's JSON means one of two things. A static
+ * preview answers /api/* with an HTML page or a 404: that is
+ * `not_configured`, and the page says plainly that lookup isn't connected.
+ * A 5xx page comes from the platform (a function that ran out of time or
+ * crashed), so the honest answer is "busy, try again", not "not connected".
  */
 
 const SUGGEST_ENDPOINT = '/api/roof-suggest'
@@ -21,7 +22,7 @@ async function getJson<T extends { ok: boolean }>(url: string, signal?: AbortSig
   try {
     const response = await fetch(url, { signal, headers: { accept: 'application/json' } })
     const type = response.headers.get('content-type') ?? ''
-    if (!type.includes('application/json')) return { ok: false, error: 'not_configured' }
+    if (!type.includes('application/json')) return { ok: false, error: response.status >= 500 ? 'busy' : 'not_configured' }
     const body = (await response.json().catch(() => null)) as Body | null
     if (!body || typeof body.ok !== 'boolean') return { ok: false, error: 'not_configured' }
     if (body.ok) return body as unknown as T
