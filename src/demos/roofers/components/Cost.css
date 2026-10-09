@@ -4,189 +4,15 @@
 
 .rf-cost__layout {
   display: grid;
-  gap: clamp(32px, 4vw, 56px);
+  gap: 40px clamp(32px, 4vw, 64px);
   align-items: start;
+  margin-top: clamp(56px, 7vw, 96px);
 }
 
 @media (min-width: 1080px) {
   .rf-cost__layout {
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   }
-}
-
-/* Estimator */
-
-.rf-estimator {
-  display: grid;
-  gap: 22px;
-  padding: clamp(22px, 3vw, 36px);
-  background: var(--rf-ink);
-  color: var(--rf-on-dark);
-}
-
-@media (min-width: 1080px) {
-  .rf-estimator {
-    position: sticky;
-    top: calc(var(--rf-header) + 20px);
-  }
-}
-
-.rf-estimator__head {
-  display: grid;
-  gap: 6px;
-}
-
-.rf-estimator__head h3 {
-  font-size: 1.625rem;
-  font-stretch: 108%;
-  font-weight: 760;
-  letter-spacing: -0.02em;
-}
-
-.rf-estimator__head p,
-.rf-estimator__help {
-  color: var(--rf-on-dark-muted);
-  font-size: 0.9375rem;
-}
-
-.rf-estimator__size {
-  display: grid;
-  gap: 10px;
-}
-
-.rf-estimator__size-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.rf-estimator__size-row label {
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-
-.rf-estimator__size-row output {
-  font-size: 1.125rem;
-  font-weight: 760;
-  font-variant-numeric: tabular-nums;
-}
-
-.rf-estimator input[type='range'] {
-  --rf-fill: 25%;
-  width: 100%;
-  height: 32px;
-  margin: 0;
-  background: transparent;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-}
-
-.rf-estimator input[type='range']::-webkit-slider-runnable-track {
-  height: 4px;
-  background: linear-gradient(90deg, #e0884f var(--rf-fill), rgba(244, 241, 234, 0.22) var(--rf-fill));
-}
-
-.rf-estimator input[type='range']::-moz-range-track {
-  height: 4px;
-  background: linear-gradient(90deg, #e0884f var(--rf-fill), rgba(244, 241, 234, 0.22) var(--rf-fill));
-}
-
-.rf-estimator input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 26px;
-  height: 26px;
-  margin-top: -11px;
-  border: 3px solid var(--rf-ink);
-  border-radius: 50%;
-  background: #f4f1ea;
-  box-shadow: 0 0 0 2px #e0884f;
-}
-
-.rf-estimator input[type='range']::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border: 3px solid var(--rf-ink);
-  border-radius: 50%;
-  background: #f4f1ea;
-  box-shadow: 0 0 0 2px #e0884f;
-}
-
-.rf-estimator__pair {
-  display: grid;
-  gap: 22px;
-}
-
-@media (min-width: 640px) {
-  .rf-estimator__pair {
-    grid-template-columns: 0.7fr 1.3fr;
-  }
-}
-
-.rf-estimator__result {
-  display: grid;
-  gap: 10px;
-  margin-top: 4px;
-  padding-top: 22px;
-  border-top: 1px solid rgba(244, 241, 234, 0.18);
-}
-
-.rf-estimator__result-label {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--rf-on-dark-muted);
-}
-
-.rf-estimator__range {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 12px;
-  font-size: clamp(2rem, 4vw, 2.9rem);
-  font-stretch: 104%;
-  font-weight: 780;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-}
-
-.rf-estimator__range span[aria-hidden] {
-  color: #e0884f;
-}
-
-.rf-estimator__detail {
-  color: var(--rf-on-dark-muted);
-  font-size: 0.9375rem;
-}
-
-.rf-estimator__ways {
-  display: grid;
-  gap: 6px;
-  margin: 4px 0 10px;
-  font-size: 0.9375rem;
-}
-
-.rf-estimator__ways li {
-  position: relative;
-  padding-left: 18px;
-}
-
-.rf-estimator__ways li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10px;
-  width: 8px;
-  height: 2px;
-  background: #e0884f;
-}
-
-.rf-estimator__ways a {
-  color: #f0b58f;
-  font-weight: 700;
 }
 
 /* Price table */
@@ -223,10 +49,6 @@
   margin: 0;
   color: var(--rf-slate);
   font-size: 0.9375rem;
-}
-
-.rf-cost__included {
-  margin-top: 40px;
 }
 
 .rf-cost__included ul {

@@ -109,9 +109,21 @@ export const EMPTY_ANSWERS: LeadAnswers = {
   texts: true,
 }
 
+/** The roof the visitor priced, so the office knows its size before calling. */
+export interface LeadRoof {
+  /** 'outline' = public building outline at their address. */
+  source: 'outline' | 'sample' | 'home-size'
+  address: string | null
+  footprintSqFt: number
+  roofSqFt: number
+  squares: number
+  pitch: number
+  buildings: number
+}
+
 /** What the visitor already saw on the page, carried into the lead. */
 export interface LeadContext {
-  ballpark: { low: number; high: number; summary: string } | null
+  ballpark: { low: number; high: number; summary: string; roof?: LeadRoof | null } | null
   payment: { monthly: number; plan: string; amount: number } | null
 }
 
@@ -199,7 +211,8 @@ export function scoreLead(answers: LeadAnswers, context: LeadContext): LeadScore
   else if (answers.payment === 'finance' || answers.payment === 'insurance') add(1)
   if (answers.roofAge === 'over20') add(1, 'Roof over 20 years old')
   if (answers.property === 'commercial') add(1, 'Commercial property')
-  if (context.ballpark) add(1, 'Has already seen pricing')
+  if (context.ballpark?.roof?.source === 'outline') add(2, 'Priced their actual roof')
+  else if (context.ballpark) add(1, 'Has already seen pricing')
 
   const priority: Priority = score >= 9 ? 'hot' : score >= 5 ? 'warm' : 'nurture'
   const nextStep =

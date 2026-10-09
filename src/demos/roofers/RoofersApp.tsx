@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import type { LeadContext } from './lead'
+import type { RoofAddress } from './roof/types'
 import { useReveal } from './useReveal'
 import { SiteHeader } from './components/SiteHeader'
 import { QuickAnswers } from './components/QuickAnswers'
@@ -19,13 +20,15 @@ import { TimelapseHero } from './timelapse/TimelapseHero'
  * then each answer in depth in the order prospects ask — insurance, cost,
  * financing, living through it, warranty — and the qualifying form.
  *
- * The ballpark and payment a visitor works out are carried into their
- * lead, so the contractor knows what they have already seen.
+ * The roof a visitor prices (and the address it was found at) and the
+ * payment they work out are carried into their lead, so the contractor
+ * knows what they have already seen.
  */
 export function RoofersApp() {
   const mainRef = useRef<HTMLElement>(null)
   const [ballpark, setBallpark] = useState<LeadContext['ballpark']>(null)
   const [payment, setPayment] = useState<LeadContext['payment']>(null)
+  const [roofAddress, setRoofAddress] = useState<RoofAddress | null>(null)
   useReveal(mainRef)
 
   return (
@@ -39,11 +42,11 @@ export function RoofersApp() {
         <TimelapseHero />
         <QuickAnswers />
         <Insurance />
-        <Cost onBallpark={setBallpark} />
+        <Cost onBallpark={setBallpark} onAddress={setRoofAddress} />
         <Financing ballpark={ballpark} onPayment={setPayment} />
         <DuringTheJob />
         <Warranty />
-        <EstimateForm context={{ ballpark, payment }} />
+        <EstimateForm context={{ ballpark, payment }} prefill={roofAddress} />
         <Faq />
       </main>
       <SiteFooter />

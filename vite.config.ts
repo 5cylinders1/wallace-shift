@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -98,6 +98,57 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
   }
 }
 
+/**
+ * Runs the roofing demo's serverless functions inside `vite dev`.
+ *
+ * On Vercel each file in /api is its own function. Locally there is no
+ * function runtime, so without this the roof tool could only ever report
+ * "not connected". These handlers use the plain Node (req, res) signature,
+ * which is exactly what a Connect middleware receives, so they mount
+ * directly. Keys come from `.env.local` (never committed), e.g.
+ *
+ *   GEOAPIFY_API_KEY=...
+ *
+ * See docs/roofing-demo.md for the full list.
+ *
+ * Only these routes are mounted; the studio site's own endpoints keep
+ * their existing behaviour.
+ */
+const DEV_API_ROUTES: Record<string, string> = {
+  '/api/roof-suggest': '/api/roof-suggest.ts',
+  '/api/roof-lookup': '/api/roof-lookup.ts',
+}
+
+function devApiRoutes(): Plugin {
+  return {
+    name: 'wallace-shift-dev-api-routes',
+    apply: 'serve',
+    configureServer(server) {
+      const env = loadEnv(server.config.mode, server.config.root, '')
+      // Server-side settings only: never anything a VITE_ prefix would expose.
+      for (const [key, value] of Object.entries(env)) {
+        if (/^(ROOF_|GEOAPIFY_|MAPBOX_|ESRI_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_)/.test(key) && !process.env[key]) process.env[key] = value
+      }
+      server.middlewares.use(async (req, res, next) => {
+        const path = (req.url ?? '').split('?')[0]
+        const file = DEV_API_ROUTES[path]
+        if (!file) return next()
+        try {
+          const mod = await server.ssrLoadModule(file)
+          await mod.default(req, res)
+        } catch (error) {
+          server.config.logger.error(`[dev api] ${path}: ${String(error)}`)
+          if (!res.headersSent) {
+            res.statusCode = 502
+            res.setHeader('content-type', 'application/json')
+            res.end(JSON.stringify({ ok: false, error: 'upstream' }))
+          }
+        }
+      })
+    },
+  }
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -107,7 +158,7 @@ function escapeHtml(value: string): string {
 }
 
 export default defineConfig({
-  plugins: [react(), prerenderRoutes()],
+  plugins: [react(), prerenderRoutes(), devApiRoutes()],
   build: {
     rolldownOptions: {
       // Sales demos are separate documents with their own bundle, so a

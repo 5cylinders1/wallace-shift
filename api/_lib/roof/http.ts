@@ -1,0 +1,132 @@
+/**
+ * Plumbing shared by the roof endpoints: JSON responses with honest cache
+ * headers, an optional per-IP limit, and outbound calls that can't hang.
+ */
+
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import type { RoofErrorCode } from '../../../src/demos/roofers/roof/types.js'
+
+/** A failure we can name to the visitor. */
+export class RoofError extends Error {
+  readonly code: RoofErrorCode
+  constructor(code: RoofErrorCode, detail?: string) {
+    super(detail ?? code)
+    this.code = code
+  }
+}
+
+/**
+ * "Not connected yet", "no such address" and "no outline here" are answers,
+ * not failures: they come back as 200 so a visitor's ordinary dead end
+ * never shows up as a red network error. Bad input, throttling and
+ * provider faults keep their real statuses.
+ */
+const STATUS: Record<RoofErrorCode, number> = {
+  not_configured: 200,
+  invalid: 400,
+  address_not_found: 200,
+  no_footprint: 200,
+  rate_limited: 429,
+  busy: 503,
+  upstream: 502,
+}
+
+/**
+ * `cacheSeconds` > 0 lets Vercel's CDN answer repeat requests for the same
+ * URL without running the function (or spending provider quota). Errors
+ * are never cached, so a blip isn't pinned to an address for a day.
+ */
+export function sendJson(res: ServerResponse, body: unknown, status = 200, cacheSeconds = 0): void {
+  res.statusCode = status
+  res.setHeader('content-type', 'application/json')
+  res.setHeader('cache-control', cacheSeconds > 0 ? `public, s-maxage=${cacheSeconds}, stale-while-revalidate=${cacheSeconds}` : 'no-store')
+  res.end(JSON.stringify(body))
+}
+
+export function sendError(res: ServerResponse, code: RoofErrorCode): void {
+  sendJson(res, { ok: false, error: code }, STATUS[code])
+}
+
+/** Node lowercases header names but may hand back an array. */
+export function header(req: IncomingMessage, name: string): string | undefined {
+  const value = req.headers[name]
+  return Array.isArray(value) ? value[0] : value
+}
+
+export function queryOf(req: IncomingMessage): URLSearchParams {
+  return new URL(req.url ?? '/', 'http://localhost').searchParams
+}
+
+/**
+ * Fixed-window counter in Upstash over its REST API, as in /api/audit.
+ * Fails open: an unreachable or unconfigured limiter never breaks the tool.
+ */
+export async function isRateLimited(req: IncomingMessage, scope: string, limit: number, windowSeconds: number): Promise<boolean> {
+  const base = process.env.RATE_LIMIT_REDIS_URL
+  const token = process.env.RATE_LIMIT_REDIS_TOKEN
+  if (!base || !token) return false
+
+  const ip = header(req, 'x-real-ip') ?? header(req, 'x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const key = `${scope}:${ip}:${Math.floor(Date.now() / 1000 / windowSeconds)}`
+  try {
+    const response = await fetch(`${base}/pipeline`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify([
+        ['INCR', key],
+        ['EXPIRE', key, String(windowSeconds), 'NX'],
+      ]),
+      signal: AbortSignal.timeout(1500),
+    })
+    if (!response.ok) return false
+    const out = (await response.json()) as Array<{ result?: number }>
+    const count = out?.[0]?.result
+    return typeof count === 'number' && count > limit
+  } catch {
+    return false
+  }
+}
+
+/** Identifies us to keyless public services, as their usage policies ask. */
+export const USER_AGENT = 'RoofEstimateDemo/1.0 (+https://roofers.wallaceshift.com)'
+
+/**
+ * One outbound JSON call with a hard timeout. Throttling becomes `busy`
+ * (the visitor can retry); anything else unexpected becomes `upstream`.
+ */
+export async function fetchJson(url: string, init: RequestInit & { timeoutMs?: number } = {}): Promise<unknown> {
+  const { timeoutMs = 8000, ...rest } = init
+  let response: Response
+  try {
+    response = await fetch(url, {
+      ...rest,
+      headers: { accept: 'application/json', 'user-agent': USER_AGENT, ...rest.headers },
+      signal: AbortSignal.timeout(timeoutMs),
+    })
+  } catch (error) {
+    const timedOut = error instanceof DOMException && error.name === 'TimeoutError'
+    throw new RoofError(timedOut ? 'busy' : 'upstream', `fetch failed: ${String(error)}`)
+  }
+  if (response.status === 429 || response.status === 503) throw new RoofError('busy', `HTTP ${response.status}`)
+  if (!response.ok) throw new RoofError('upstream', `HTTP ${response.status}`)
+  try {
+    return await response.json()
+  } catch {
+    throw new RoofError('upstream', 'response was not JSON')
+  }
+}
+
+/** The handler body, with every throw turned into one of our error codes. */
+export async function handle(res: ServerResponse, label: string, run: () => Promise<void>): Promise<void> {
+  try {
+    await run()
+  } catch (error) {
+    if (error instanceof RoofError) {
+      if (error.code === 'upstream' || error.code === 'busy') console.error(`[${label}] ${error.code}: ${error.message}`)
+      if (!res.headersSent) sendError(res, error.code)
+      return
+    }
+    console.error(`[${label}] unexpected:`, error)
+    if (!res.headersSent) sendError(res, 'upstream')
+  }
+}

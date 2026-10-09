@@ -21,6 +21,7 @@ import {
   type LeadContext,
 } from '../lead'
 import { submitLead, type LeadResult, type LeadSubmission } from '../leadAdapter'
+import type { RoofAddress } from '../roof/types'
 import { LeadCard } from './LeadCard'
 import { Segmented } from './Segmented'
 import './EstimateForm.css'
@@ -31,9 +32,11 @@ type Status = 'editing' | 'sending' | { result: LeadResult; lead: LeadSubmission
 
 interface EstimateFormProps {
   context: LeadContext
+  /** The address the visitor priced their roof at, to save retyping it. */
+  prefill: RoofAddress | null
 }
 
-export function EstimateForm({ context }: EstimateFormProps) {
+export function EstimateForm({ context, prefill }: EstimateFormProps) {
   const [answers, setAnswers] = useState<LeadAnswers>(EMPTY_ANSWERS)
   const [step, setStep] = useState(0)
   const [showErrors, setShowErrors] = useState(false)
@@ -43,6 +46,17 @@ export function EstimateForm({ context }: EstimateFormProps) {
   const resultRef = useRef<HTMLDivElement>(null)
   const movedRef = useRef(false)
   const ids = { name: useId(), phone: useId(), email: useId(), street: useId(), zip: useId(), best: useId(), notes: useId() }
+
+  // Fill the street and ZIP from the roof tool, never over what was typed.
+  const [prefilled, setPrefilled] = useState<RoofAddress | null>(null)
+  if (prefill && prefill !== prefilled) {
+    setPrefilled(prefill)
+    setAnswers((current) => ({
+      ...current,
+      street: current.street || prefill.street || '',
+      zip: current.zip || prefill.zip || '',
+    }))
+  }
 
   const set = <K extends FieldName>(field: K, value: LeadAnswers[K]) =>
     setAnswers((current) => ({ ...current, [field]: value }))
