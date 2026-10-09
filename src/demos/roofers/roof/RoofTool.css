@@ -198,6 +198,24 @@
   pointer-events: none;
 }
 
+.rf-stage.is-picking .rf-stage__overlay {
+  cursor: crosshair;
+}
+
+.rf-stage__target {
+  pointer-events: none;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
+}
+
+.rf-stage__target-dot {
+  fill: var(--rf-roof-copper);
+  stroke: #fff;
+  stroke-width: 2;
+}
+
 .rf-stage__badge {
   pointer-events: none;
 }
@@ -279,7 +297,8 @@
 }
 
 .rf-stage--locating .rf-stage__status::before,
-.rf-stage--found .rf-stage__status::before {
+.rf-stage--found .rf-stage__status::before,
+.rf-stage__status.is-busy::before {
   content: '';
   width: 7px;
   height: 7px;
@@ -462,6 +481,102 @@
   background: rgba(157, 55, 41, 0.24);
   font-size: 0.9375rem;
   color: #f8ddd6;
+}
+
+/* Measuring */
+
+.rf-roof__measure {
+  display: grid;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.rf-roof__measure-button {
+  justify-self: start;
+}
+
+.rf-roof__measure-button[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.rf-roof__progress {
+  position: relative;
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(244, 241, 234, 0.12);
+}
+
+.rf-roof__progress::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: var(--rf-roof-copper);
+  animation: rf-roof-progress 1.6s var(--rf-ease) infinite;
+}
+
+@keyframes rf-roof-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(290%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rf-roof__progress::after {
+    width: 100%;
+    opacity: 0.6;
+    animation: none;
+  }
+}
+
+.rf-roof__measured {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--rf-roof-copper);
+  background: rgba(224, 136, 79, 0.1);
+}
+
+.rf-roof__measured-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-roof-copper-text);
+}
+
+.rf-roof__measured-value {
+  font-size: 1.25rem;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.rf-roof__measured-value span {
+  color: var(--rf-on-dark-muted);
+  font-weight: 500;
+}
+
+.rf-credits.rf-roof__measure-credit {
+  font-size: 0.75rem;
+}
+
+.rf-roof__fallback {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.rf-roof__rough {
+  padding: 8px 12px;
+  border-left: 3px solid rgba(244, 241, 234, 0.4);
+  font-size: 0.875rem;
+  color: var(--rf-on-dark-muted);
 }
 
 .rf-roof__found {

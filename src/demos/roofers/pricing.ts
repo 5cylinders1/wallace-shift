@@ -108,6 +108,14 @@ export function shapeFromCorners(corners: number): Shape {
   return 'complex'
 }
 
+/** A measuring service's complexity grade (0 low … 3 extreme) as a roof shape. */
+export function shapeFromComplexity(complexity: number | null): Shape {
+  if (complexity === null) return 'average'
+  if (complexity <= 0) return 'simple'
+  if (complexity === 1) return 'average'
+  return 'complex'
+}
+
 /** Living area → the ground the roof covers, for visitors with no address. */
 export function footprintFromHome(sqft: number, stories: Stories): number {
   return sqft * FOOTPRINT[stories] * 1.08

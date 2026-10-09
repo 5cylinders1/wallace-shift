@@ -17,6 +17,7 @@ import { geocoderFromEnv, parseBias, type Geocoder } from './geocoder.js'
 import { RoofError, deadlineIn } from './http.js'
 import { frameFor, imageryFromEnv, type ImageryProvider } from './imagery.js'
 import { measureBuildings } from './measure.js'
+import { measurementFromEnv, type MeasurementProvider } from './measurement.js'
 
 export type LookupTarget = { kind: 'suggestion'; id: string } | { kind: 'address'; address: string }
 
@@ -40,7 +41,13 @@ const AT_POINT_M = 2
 /** A building-level point within this of the nearest outline: that outline is taken to be the house. */
 const HOME_WITHIN_M = 15
 
-export function openDataProvider(geocoder: Geocoder, sources: FootprintSource[], imagery: ImageryProvider | null, bias: LatLng | null): RoofDataProvider {
+export function openDataProvider(
+  geocoder: Geocoder,
+  sources: FootprintSource[],
+  imagery: ImageryProvider | null,
+  bias: LatLng | null,
+  measurement: MeasurementProvider | null = null,
+): RoofDataProvider {
   return {
     suggest: (text) => geocoder.suggest(text, bias),
 
@@ -92,7 +99,7 @@ export function openDataProvider(geocoder: Geocoder, sources: FootprintSource[],
           frame,
           imagery: imagery ? imagery.image(frame) : null,
           credits: [...place.credits, source.credit],
-          measuredRoof: null,
+          measure: measurement ? { provider: measurement.id, credit: measurement.credit } : null,
         },
       }
     },
@@ -106,5 +113,5 @@ export function roofProviderFromEnv(): RoofDataProvider | null {
   const geocoder = geocoderFromEnv()
   const sources = footprintSourcesFromEnv()
   if (!geocoder || !sources.length) return null
-  return openDataProvider(geocoder, sources, imageryFromEnv(), parseBias(process.env.ROOF_SEARCH_BIAS))
+  return openDataProvider(geocoder, sources, imageryFromEnv(), parseBias(process.env.ROOF_SEARCH_BIAS), measurementFromEnv())
 }

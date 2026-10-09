@@ -1,6 +1,6 @@
-import { useEffect, useId, useMemo, useState } from 'react'
-import { metersPerPixel, ringCentroid, toFrame } from './geo'
-import type { FootprintBuilding, MapFrame, RoofLookup } from './types'
+import { useEffect, useId, useMemo, useRef, useState, type MouseEvent } from 'react'
+import { fromFrame, metersPerPixel, ringCentroid, toFrame } from './geo'
+import type { FootprintBuilding, LatLng, MapFrame, RoofLookup } from './types'
 
 export type StageMode = 'idle' | 'locating' | 'found' | 'error' | 'manual'
 
@@ -16,6 +16,12 @@ interface RoofStageProps {
   loadingStatus: string
   /** The photo failed or never arrived; the plan view is showing instead. */
   onImageryFail: (src: string) => void
+  /** Measuring mode: a tap anywhere on the map puts the roof pin there. */
+  onPick?: (point: LatLng) => void
+  /** The roof pin: the point that will be (or was) measured. */
+  target?: LatLng | null
+  /** Shown over the map while something is in progress, e.g. a measurement. */
+  busyStatus?: string | null
 }
 
 const NICE_METERS = [2, 5, 10, 20, 50, 100]
@@ -83,7 +89,8 @@ function Blueprint({ lookup, scanning }: { lookup: RoofLookup; scanning: boolean
  * beneath them when it arrives. Each outline is a tap target; the same
  * choices are offered as checkboxes for keyboard and screen-reader users.
  */
-export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status, loadingStatus, onImageryFail }: RoofStageProps) {
+export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status, loadingStatus, onImageryFail, onPick, target, busyStatus }: RoofStageProps) {
+  const svgRef = useRef<SVGSVGElement>(null)
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
   const [failedSrc, setFailedSrc] = useState<string | null>(null)
   const maskId = useId()
@@ -110,6 +117,16 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
     return () => window.clearTimeout(timer)
   }, [pendingSrc, onImageryFail])
 
+  // A tap on the map is a point on the ground: screen → frame pixels → lat/lng.
+  const pick = (event: MouseEvent<SVGSVGElement>) => {
+    const svg = svgRef.current
+    const matrix = svg?.getScreenCTM()
+    if (!onPick || !frame || !svg || !matrix) return
+    const local = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse())
+    onPick(fromFrame([local.x, local.y], frame))
+  }
+  const targetXY = frame && target ? toFrame(target, frame) : null
+
   const overlay = useMemo(() => {
     if (!frame || !view) return null
     const pin = toFrame(view.location, frame)
@@ -124,7 +141,9 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
   }, [frame, view])
 
   return (
-    <div className={`rf-stage rf-stage--${mode}${view ? ' is-loaded' : ''}${photoShown ? ' has-photo' : view ? ' is-plan' : ''}`}>
+    <div
+      className={`rf-stage rf-stage--${mode}${view ? ' is-loaded' : ''}${photoShown ? ' has-photo' : view ? ' is-plan' : ''}${onPick && view ? ' is-picking' : ''}`}
+    >
       <div className="rf-stage__frame">
         {!view && <Blueprint lookup={blueprint} scanning={mode === 'locating'} />}
 
@@ -142,7 +161,14 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
         )}
 
         {frame && overlay && (
-          <svg className="rf-stage__overlay" viewBox={`0 0 ${frame.width} ${frame.height}`} aria-hidden="true" focusable="false">
+          <svg
+            ref={svgRef}
+            className="rf-stage__overlay"
+            viewBox={`0 0 ${frame.width} ${frame.height}`}
+            aria-hidden="true"
+            focusable="false"
+            onClick={onPick ? pick : undefined}
+          >
             {!photoShown && <Grid frame={frame} />}
             <defs>
               {/* Nothing of ours, not even the dimming, covers the provider's marks. */}
@@ -165,12 +191,12 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
                   key={building.id}
                   d={d}
                   className={`rf-stage__ring${selected.has(building.id) ? ' is-selected' : ''}`}
-                  onClick={() => onToggle(building.id)}
+                  onClick={onPick ? undefined : () => onToggle(building.id)}
                 />
               ))}
-              {/* Selected outlines show their area; the rest their number from the list. */}
+              {/* Selected outlines show their area (unless a measurement supersedes it); the rest their number from the list. */}
               {overlay.buildings.map(({ building, label }, index) =>
-                selected.has(building.id) ? (
+                selected.has(building.id) && !onPick && !target ? (
                   <text key={building.id} x={label[0]} y={label[1]} className="rf-stage__area">
                     {building.areaSqFt.toLocaleString('en-US')} sq ft
                   </text>
@@ -185,6 +211,13 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
                 <path d="M0 0C-9 -14 -14 -20 -14 -28A14 14 0 0 1 14 -28C14 -20 9 -14 0 0Z" />
                 <circle cy="-28" r="5" />
               </g>
+              {targetXY && (
+                <g className="rf-stage__target" transform={`translate(${targetXY[0].toFixed(1)} ${targetXY[1].toFixed(1)})`}>
+                  <circle r="16" />
+                  <circle r="4" className="rf-stage__target-dot" />
+                  <path d="M-26 0H-18M18 0H26M0 -26V-18M0 18V26" />
+                </g>
+              )}
             </g>
             <g className="rf-stage__north" transform={`translate(${frame.width - 36} 40)`}>
               <circle r="20" />
@@ -201,9 +234,9 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
           </svg>
         )}
 
-        {(mode !== 'found' || photoPending) && (
-          <p className="rf-stage__status" aria-hidden="true">
-            {mode === 'found' ? loadingStatus : status}
+        {(mode !== 'found' || photoPending || busyStatus) && (
+          <p className={`rf-stage__status${busyStatus ? ' is-busy' : ''}`} aria-hidden="true">
+            {busyStatus ?? (mode === 'found' ? loadingStatus : status)}
           </p>
         )}
       </div>

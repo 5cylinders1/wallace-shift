@@ -9,9 +9,12 @@ import type { RoofErrorCode } from '../../../src/demos/roofers/roof/types.js'
 /** A failure we can name to the visitor. */
 export class RoofError extends Error {
   readonly code: RoofErrorCode
-  constructor(code: RoofErrorCode, detail?: string) {
+  /** The provider's HTTP status, when the failure was an HTTP answer. */
+  readonly status: number | null
+  constructor(code: RoofErrorCode, detail?: string, status: number | null = null) {
     super(detail ?? code)
     this.code = code
+    this.status = status
   }
 }
 
@@ -29,6 +32,9 @@ const STATUS: Record<RoofErrorCode, number> = {
   rate_limited: 429,
   busy: 503,
   upstream: 502,
+  roof_not_found: 200,
+  unmeasurable: 200,
+  limit_reached: 200,
 }
 
 /**
@@ -87,6 +93,38 @@ export async function isRateLimited(req: IncomingMessage, scope: string, limit: 
   }
 }
 
+/** Whether the shared Upstash store behind the limiters is configured. */
+export const hasLimiterStore = () => Boolean(process.env.RATE_LIMIT_REDIS_URL && process.env.RATE_LIMIT_REDIS_TOKEN)
+
+/**
+ * Counts one use of `scope` this calendar month (UTC) and returns the new
+ * total, or null when the store is unconfigured or unreachable. Unlike the
+ * per-IP limiter this does not fail open on its own: callers spending money
+ * decide what null means.
+ */
+export async function countThisMonth(scope: string): Promise<number | null> {
+  if (!hasLimiterStore()) return null
+  const month = new Date().toISOString().slice(0, 7)
+  const key = `${scope}:month:${month}`
+  try {
+    const response = await fetch(`${process.env.RATE_LIMIT_REDIS_URL}/pipeline`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${process.env.RATE_LIMIT_REDIS_TOKEN}`, 'content-type': 'application/json' },
+      body: JSON.stringify([
+        ['INCR', key],
+        ['EXPIRE', key, String(40 * 86_400), 'NX'],
+      ]),
+      signal: AbortSignal.timeout(1500),
+    })
+    if (!response.ok) return null
+    const out = (await response.json()) as Array<{ result?: number }>
+    const count = out?.[0]?.result
+    return typeof count === 'number' ? count : null
+  } catch {
+    return null
+  }
+}
+
 /** Identifies us to keyless public services, as their usage policies ask. */
 export const USER_AGENT = 'RoofEstimateDemo/1.0 (+https://roofers.wallaceshift.com)'
 
@@ -121,8 +159,8 @@ export async function fetchJson(url: string, init: RequestInit & { timeoutMs?: n
   } catch (error) {
     throw new RoofError(isTimeout(error) ? 'busy' : 'upstream', `fetch failed: ${String(error)}`)
   }
-  if (response.status === 429 || response.status === 503) throw new RoofError('busy', `HTTP ${response.status}`)
-  if (!response.ok) throw new RoofError('upstream', `HTTP ${response.status}`)
+  if (response.status === 429 || response.status === 503) throw new RoofError('busy', `HTTP ${response.status}`, response.status)
+  if (!response.ok) throw new RoofError('upstream', `HTTP ${response.status}`, response.status)
   try {
     return await response.json()
   } catch (error) {

@@ -1,4 +1,4 @@
-import type { LookupResponse, RoofErrorCode, SuggestResponse } from './types'
+import type { LatLng, LookupResponse, MeasureResponse, RoofErrorCode, SuggestResponse } from './types'
 
 /**
  * Browser half of the roof tool. Provider keys live only in the
@@ -13,10 +13,22 @@ import type { LookupResponse, RoofErrorCode, SuggestResponse } from './types'
 
 const SUGGEST_ENDPOINT = '/api/roof-suggest'
 const LOOKUP_ENDPOINT = '/api/roof-lookup'
+const MEASURE_ENDPOINT = '/api/roof-measure'
 
 type Body = { ok?: unknown; error?: unknown }
 
-const KNOWN_ERRORS: RoofErrorCode[] = ['not_configured', 'invalid', 'address_not_found', 'no_footprint', 'rate_limited', 'busy', 'upstream']
+const KNOWN_ERRORS: RoofErrorCode[] = [
+  'not_configured',
+  'invalid',
+  'address_not_found',
+  'no_footprint',
+  'rate_limited',
+  'busy',
+  'upstream',
+  'roof_not_found',
+  'unmeasurable',
+  'limit_reached',
+]
 
 async function getJson<T extends { ok: boolean }>(url: string, signal?: AbortSignal): Promise<T | { ok: false; error: RoofErrorCode }> {
   try {
@@ -44,4 +56,10 @@ export type LookupTarget = { kind: 'suggestion'; id: string } | { kind: 'address
 export function lookupRoof(target: LookupTarget, signal?: AbortSignal): Promise<LookupResponse> {
   const params = new URLSearchParams(target.kind === 'suggestion' ? { id: target.id } : { address: target.address })
   return getJson<Extract<LookupResponse, { ok: true }>>(`${LOOKUP_ENDPOINT}?${params}`, signal)
+}
+
+/** One billed measurement of the roof under `point`; the page only asks after the homeowner confirms it. */
+export function measureRoof(point: LatLng, signal?: AbortSignal): Promise<MeasureResponse> {
+  const params = new URLSearchParams({ lat: point.lat.toFixed(6), lng: point.lng.toFixed(6) })
+  return getJson<Extract<MeasureResponse, { ok: true }>>(`${MEASURE_ENDPOINT}?${params}`, signal)
 }

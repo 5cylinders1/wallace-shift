@@ -373,6 +373,27 @@ export const roofTool = {
     rate_limited: 'That’s a lot of lookups in a short time. Try again later, or estimate by home size.',
     busy: 'The map service is busy right now. Try again in a moment.',
     upstream: 'The lookup didn’t go through. Try again, or estimate by home size.',
+    roof_not_found: 'We couldn’t find a roof under the pin. Put it in the middle of your roof and try again.',
+    unmeasurable: 'This roof is too large or unusual to measure automatically. We’ll measure it at your free inspection; here’s a rough estimate meanwhile.',
+    limit_reached: 'Instant measuring is paused for now. Here’s a rough estimate from the building outline instead.',
+  },
+  measure: {
+    legend: 'Which building is your house?',
+    tapPrompt: 'Tap the middle of your roof on the map, or pick your house below. Then we’ll measure it.',
+    ready: 'Pin on your roof? Measure it.',
+    button: 'Measure my roof',
+    measuring: 'Measuring your roof…',
+    measuringNote: 'From aerial imagery and laser height data. This takes about 20 seconds.',
+    retry: 'Try measuring again',
+    measuredTitle: 'Your measured roof',
+    lowConfidence: 'Trees or a complex roof made this harder to measure, so we’ll confirm it at your free inspection.',
+    extraBuildings: 'Garage or shed too? We’ll add it at your free inspection.',
+    roughNote: 'Rough estimate from the public building outline. Your inspection gives the exact number.',
+    locked: 'Measure your roof to see the price.',
+    pitchMeasured: 'Measured from laser height data. Drag it only if you know your roof is steeper or flatter.',
+    shapeMeasured: 'Suggested from the measurement',
+    disclaimer:
+      'Your roof was measured from aerial imagery and laser height data; the price uses your contractor’s rates for that size, pitch and shape. Final measurements are confirmed at your free inspection.',
   },
 }
 

@@ -51,3 +51,37 @@ export function ringCentroid(ring: Array<[number, number]>): [number, number] {
   if (Math.abs(a) < 1e-9) return ring[0]
   return [cx / (3 * a), cy / (3 * a)]
 }
+
+export function pointInRing([x, y]: [number, number], ring: Array<[number, number]>): boolean {
+  let inside = false
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+    const [xi, yi] = ring[i]
+    const [xj, yj] = ring[j]
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside
+  }
+  return inside
+}
+
+/**
+ * A point inside a building outline, for a measuring pin: the centroid when
+ * it falls inside (most houses), otherwise the first point inside on the
+ * way from the centroid to a corner (an L- or U-shaped house).
+ */
+export function insidePoint(ring: LatLng[], frame: MapFrame): LatLng | null {
+  const points = ring.map((point) => toFrame(point, frame))
+  const [cx, cy] = ringCentroid(points)
+  if (pointInRing([cx, cy], points)) return fromFrame([cx, cy], frame)
+  for (const [vx, vy] of points) {
+    for (const t of [0.5, 0.75, 0.9]) {
+      const candidate: [number, number] = [cx + (vx - cx) * t, cy + (vy - cy) * t]
+      if (pointInRing(candidate, points)) return fromFrame(candidate, frame)
+    }
+  }
+  return null
+}
+
+/** The outline a point falls in, if any. */
+export function buildingAt<T extends { ring: LatLng[] }>(point: LatLng, buildings: T[], frame: MapFrame): T | null {
+  const xy = toFrame(point, frame)
+  return buildings.find((building) => pointInRing(xy, building.ring.map((p) => toFrame(p, frame)))) ?? null
+}

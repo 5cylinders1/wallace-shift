@@ -61,9 +61,53 @@ ways exactly. In dev, `?p=42` freezes it at a given progress for review.
 ## The roof estimator
 
 The visitor types an address, picks it from our own suggestion list, and
-sees their building's outline drawn over an aerial photo. They tap to add
-or remove buildings (a detached garage), drag the gable drawing until it
-matches their roof's pitch, and the price updates as they go.
+sees an aerial photo of the property with the nearby building outlines
+numbered on it. With a measuring service connected (below), they tap the
+middle of their roof (or pick their house from the list), press **Measure
+my roof**, and about 20 seconds later the price is built on their roof as
+measured: footprint, pitch and complexity. Without one, or when the service
+can't measure that roof, they choose buildings and set the pitch on the
+gable drawing, and the price comes from the public outline, labelled as a
+rough estimate.
+
+### Measured roofs (Instant Roofer)
+
+Free building outlines turned out too rough to price from: outlines several
+metres off the house, simplified shapes, and address points that land in
+the street. So the tool buys one measurement per roof from
+[Instant Roofer](https://www.instantroofer.com/instant-roofer-api/), the
+service a large regional contractor's own estimator appears to use. Its AI
+measures the roof from aerial imagery and lidar and returns the
+pitch-adjusted roof area, footprint, predominant pitch, complexity and a
+confidence score (`api/_lib/roof/measurement.ts`; endpoint
+`GET /api/roof-measure?lat=&lng=`).
+
+- **It needs a point on the roof**, not an address ("404 — Roof not
+  found"), which is why the homeowner places the pin. Nothing is bought
+  until they press Measure.
+- **Price:** $3 per measurement for the first 199 a month, $2 up to 999,
+  $1 beyond (vendor's published tiers); 10 free measurements on signup.
+  Account defaults: 5 requests a minute, 100 a day.
+- **Guards against a surprise bill:** 6 measurements per visitor per hour
+  (`ROOF_MEASURE_PER_HOUR`), a site-wide monthly cap (`ROOF_MEASURE_MONTHLY_CAP`,
+  default 300) after which the page falls back to the outline estimate, and
+  in production measuring stays off unless the Upstash limiter is
+  configured; if that store can't be reached, measurements are refused, not
+  waved through. The same roof is cached at the edge for a week, so it isn't
+  bought twice.
+- **Credit:** its terms require "Powered by Instant Roofer" wherever the
+  tool appears; the page shows it beside the Measure button and in the map
+  credits.
+- **Not used:** its outline picture (Google imagery) and raw lidar points.
+
+**Signing up** (for the key): create the API account at
+`api-dashboard.instantroofer.com` (not the contractor dashboard, which has no
+API key). It asks for a phone login, a service agreement and a card on
+file; regenerate the key before first use, then set `INSTANT_ROOFER_API_KEY`.
+Before launch, confirm with Instant Roofer in writing: that a custom page
+counts as permitted use (their terms forbid "rebranding"), the exact credit
+wording, whether failed "roof not found" calls are billed, and that results
+may be kept in lead records.
 
 **How the number is made.** The outline comes from open building-footprint
 data, never from the photo. Its ground area is computed on our server
@@ -121,7 +165,9 @@ local dev put them in `.env.local`, which is git-ignored):
 | `ROOF_IMAGERY` | Optional | `mapbox`, `naip` or `none`. |
 | `ROOF_FOOTPRINT_SOURCES` | Optional | Default `usa-structures,microsoft`; add `osm` with `OVERPASS_URL`. |
 | `ROOF_PROVIDER` | Optional | Default `open-data`, the only one implemented. Any other value turns lookup off until that provider exists. |
-| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Optional | The same Upstash limiter as the site audit: 300 suggestions and 40 lookups per IP per hour. |
+| `INSTANT_ROOFER_API_KEY` | For measured roofs | Server-side key from the Instant Roofer API dashboard. Without it, the outline estimate is used. |
+| `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Measurement limits per visitor per hour (default 6) and for the whole site per month (default 300). |
+| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring in production | The same Upstash limiter as the site audit: 300 suggestions, 40 lookups and 6 measurements per IP per hour, plus the monthly measurement count. |
 
 **Credits the page shows**, linked, under the map and in the suggestion
 list: "Powered by Geoapify" and its data source (© OpenStreetMap

@@ -96,9 +96,26 @@ export interface RoofLookup {
   imagery: Imagery | null
   /** Address and outline data credits, in display order. */
   credits: Credit[]
-  /** Reserved for a licensed source that measures the roof itself. */
-  measuredRoof?: { areaSqFt: number; pitchRise: number; planes: number } | null
+  /** Set when a measuring service is connected: the page may offer to measure the roof. */
+  measure: { provider: string; credit: Credit } | null
 }
+
+/** A roof measured by a licensed service from aerial imagery and lidar, for one building. */
+export interface MeasuredRoof {
+  /** Roof surface with the predominant pitch applied, no waste. */
+  roofSqFt: number
+  /** Ground area under the roof. */
+  footprintSqFt: number
+  /** Predominant pitch, rise per 12. */
+  pitchRise: number
+  /** 0 low, 1 moderate, 2 high, 3 extreme; null when not given. */
+  complexity: number | null
+  confidence: { score: number | null; label: 'High' | 'Medium' | 'Low' | null }
+  /** The point that was measured. */
+  point: LatLng
+}
+
+export type MeasureResponse = { ok: true; roof: MeasuredRoof; credits: Credit[] } | { ok: false; error: RoofErrorCode }
 
 export type RoofErrorCode =
   | 'not_configured'
@@ -108,5 +125,11 @@ export type RoofErrorCode =
   | 'rate_limited'
   | 'busy'
   | 'upstream'
+  /** Measuring: no roof at the pin (it has to sit on the building). */
+  | 'roof_not_found'
+  /** Measuring: the roof is too large or irregular to measure automatically. */
+  | 'unmeasurable'
+  /** Measuring: this month's measurement budget is spent. */
+  | 'limit_reached'
 
 export type LookupResponse = RoofLookup | { ok: false; error: RoofErrorCode }
