@@ -85,3 +85,38 @@ export function buildingAt<T extends { ring: LatLng[] }>(point: LatLng, building
   const xy = toFrame(point, frame)
   return buildings.find((building) => pointInRing(xy, building.ring.map((p) => toFrame(p, frame)))) ?? null
 }
+
+const EARTH_RADIUS_M = 6_378_137
+
+/** The point `meters` away from `from` on a compass heading (0 north, 90 east). */
+export function offsetPoint(from: LatLng, meters: number, headingDeg: number): LatLng {
+  const heading = (headingDeg * Math.PI) / 180
+  const north = meters * Math.cos(heading)
+  const east = meters * Math.sin(heading)
+  return {
+    lat: from.lat + (north / EARTH_RADIUS_M) * (180 / Math.PI),
+    lng: from.lng + (east / (EARTH_RADIUS_M * Math.cos((from.lat * Math.PI) / 180))) * (180 / Math.PI),
+  }
+}
+
+/**
+ * A solar panel's four corners on the ground, as Google's own Solar API
+ * sample draws them: the panel's half-width and half-height (portrait
+ * dimensions) turned by its orientation and the compass direction of the
+ * roof face it sits on.
+ */
+export function panelCorners(
+  panel: { center: LatLng; portrait: boolean; azimuth: number },
+  widthM: number,
+  heightM: number,
+): LatLng[] {
+  const w = widthM / 2
+  const h = heightM / 2
+  const turn = (panel.portrait ? 90 : 0) + panel.azimuth
+  return [
+    [w, h],
+    [w, -h],
+    [-w, -h],
+    [-w, h],
+  ].map(([x, y]) => offsetPoint(panel.center, Math.hypot(x, y), (Math.atan2(y, x) * 180) / Math.PI + turn))
+}

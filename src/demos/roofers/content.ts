@@ -335,7 +335,7 @@ export const roofTool = {
   lede: 'We pull your building’s outline from public map data, you match the roof’s steepness on the drawing, and the estimate updates as you go.',
   ledeMeasured: 'Find your house and we measure the roof itself from aerial imagery, then price it at your contractor’s rates. Adjust anything that looks off; the estimate updates as you go.',
   steps: ['Find the house', 'Set the pitch', 'Your estimate'],
-  addressHelp: 'We use it to find your building outline and fill in the form below. It only goes to the contractor if you send the form.',
+  addressHelp: 'We use it to find and measure your roof, and to fill in the form below. It only goes to the contractor if you send the form.',
   find: 'Find my roof',
   finding: 'Finding…',
   lookingUp: 'Looking up the address…',
@@ -383,6 +383,9 @@ export const roofTool = {
     legend: 'Which building is your house?',
     tapPrompt: 'Tap the middle of your roof on the photo, or pick your house below. Then we’ll measure it.',
     tapPromptPlan: 'Pick your house below, or tap its outline. Then we’ll measure it.',
+    tapPromptAuto: 'Tap the middle of your roof on the photo, or pick your house below, and we’ll measure it.',
+    doneAuto: 'Not your house? Tap your roof on the photo, or pick it below.',
+    doneAutoPlan: 'Not your house? Pick it below, or tap its outline.',
     ready: 'Crosshair on your roof? Measure it.',
     done: 'Measured. To price a different building, pick it below or choose “Measure a different building”.',
     notListed: 'House not listed? Tap your roof on the photo, or',
@@ -390,9 +393,12 @@ export const roofTool = {
     notListedAction: 'estimate by home size',
     button: 'Measure my roof',
     buttonNear: 'Measure this roof',
-    sends: 'Sends your roof’s location to Instant Roofer, who measure it for us.',
+    sends: (provider: string) => `Sends your roof’s location to ${provider}, who measure it for us.`,
+    sendsAuto: (provider: string) => `We send your roof’s location to ${provider}, who measure it from aerial imagery.`,
+    providers: { 'google-solar': 'Google', 'instant-roofer': 'Instant Roofer' },
     measuring: 'Measuring your roof…',
     measuringNote: 'From aerial imagery, and height data where it’s available. This takes about 20 seconds.',
+    measuringNoteAuto: 'This takes a moment.',
     retry: 'Try measuring again',
     measuredTitle: 'Your measured roof',
     another: 'Measure a different building',
@@ -421,6 +427,16 @@ export const roofTool = {
       roof_not_found: 'We couldn’t find a roof under the crosshair. Move it to the middle of your roof, then measure again.',
     },
   },
+  solar: {
+    title: 'Solar potential',
+    panels: (n: string) => `Room for ${n} panels`,
+    yearly: (kwh: string) => `about ${kwh} kWh a year`,
+    note: 'The dark panels on the photo show where solar fits best. Solar shingles are priced with your roof below.',
+    none: 'There isn’t enough open, sunny roof here for a useful solar array. Your roof is priced in standard materials below.',
+  },
+  googleNotice: 'This tool uses Google Maps features and content, which are subject to the',
+  googleTerms: { text: 'Google Maps Additional Terms of Service', href: 'https://maps.google.com/help/terms_maps/' },
+  googlePrivacy: { text: 'Google Privacy Policy', href: 'https://policies.google.com/privacy' },
 }
 
 export const financing = {
@@ -553,8 +569,8 @@ export const faq = {
 }
 
 export const estimate = {
-  eyebrow: 'Free inspection & estimate',
-  title: 'Get your estimate.',
+  eyebrow: 'Inspection & written estimate',
+  title: 'Get your free inspection.',
   lede: 'Two minutes. Tell us what’s going on and we’ll come prepared — with your insurance situation, timing and budget already understood.',
   promises: [
     'A real person calls you back, usually the same business day.',

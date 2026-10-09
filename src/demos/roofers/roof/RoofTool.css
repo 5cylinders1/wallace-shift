@@ -240,6 +240,17 @@
   dominant-baseline: middle;
 }
 
+/* Solar panels as the measuring service laid them out: dark cells, thin frames. */
+.rf-stage__panels {
+  pointer-events: none;
+}
+
+.rf-stage__panels path {
+  fill: rgba(16, 28, 48, 0.86);
+  stroke: rgba(214, 226, 240, 0.75);
+  stroke-width: 0.8;
+}
+
 .rf-stage__pin {
   pointer-events: none;
   transition: opacity 0.3s var(--rf-ease);
@@ -565,6 +576,46 @@
 .rf-roof__measured-value span {
   color: var(--rf-on-dark-muted);
   font-weight: 500;
+}
+
+.rf-roof__solar {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(244, 241, 234, 0.14);
+}
+
+.rf-roof__solar-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__solar-value {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+}
+
+.rf-roof__solar-value span {
+  color: var(--rf-on-dark-muted);
+  font-weight: 500;
+}
+
+.rf-roof__notice {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__notice a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .rf-credits.rf-roof__measure-credit {

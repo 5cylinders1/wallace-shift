@@ -27,7 +27,7 @@
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { countUse, deadlineIn, handle, hasLimiterStore, header, isRateLimited, queryOf, sendError, sendJson } from './_lib/roof/http.js'
-import { measureLimits, measurementFromEnv, measuringPaused, unmeteredAllowed } from './_lib/roof/measurement.js'
+import { measureLimits, measurementFromEnv, measuringPaused, pickMeasurement, unmeteredAllowed } from './_lib/roof/measurement.js'
 
 export const config = { maxDuration: 60 }
 
@@ -66,21 +66,26 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const point = pointOf(queryOf(req))
     if (!point) return sendError(res, 'invalid')
 
-    const limits = measureLimits()
-    const measurement = measurementFromEnv(limits)
-    if (!measurement) return sendError(res, measuringPaused(limits) ? 'limit_reached' : 'not_configured')
+    const chosen = pickMeasurement()
+    if (!chosen) return sendError(res, 'not_configured')
+    const limits = measureLimits(chosen.id)
+    if (measuringPaused(limits)) return sendError(res, 'limit_reached')
+    const measurement = measurementFromEnv()
+    if (!measurement) return sendError(res, 'not_configured')
 
     // measurementFromEnv only allows a missing store on a developer's machine, by request.
     if (hasLimiterStore()) {
-      if (await isRateLimited(req, 'roof-measure', limits.perHour, RATE_WINDOW_S)) return sendError(res, 'rate_limited')
+      // Each service has its own limits and counters, so switching mid-month starts fresh.
+      const scope = `roof-measure:${measurement.id}`
+      if (await isRateLimited(req, scope, limits.perHour, RATE_WINDOW_S)) return sendError(res, 'rate_limited')
       // Counted before the call, so a burst can't slip past a cap while
       // measurements are in flight. The month is only counted once the day
       // allows it, so a day's refused requests don't use up the month.
       const now = new Date().toISOString()
-      const today = await countUse(`roof-measure:day:${now.slice(0, 10)}`, 2 * 86_400)
+      const today = await countUse(`${scope}:day:${now.slice(0, 10)}`, 2 * 86_400)
       if (today === null) return sendError(res, 'busy')
       if (today > limits.perDay) return sendError(res, 'limit_reached')
-      const month = await countUse(`roof-measure:month:${now.slice(0, 7)}`, 40 * 86_400)
+      const month = await countUse(`${scope}:month:${now.slice(0, 7)}`, 40 * 86_400)
       if (month === null) return sendError(res, 'busy')
       if (month > limits.perMonth) return sendError(res, 'limit_reached')
     } else if (!unmeteredAllowed()) {

@@ -1,12 +1,21 @@
 /**
- * Measured roofs: area and pitch from a licensed service that measures the
- * roof itself (aerial imagery, plus height data where it has it), instead
- * of our estimate from an
- * open building outline and a pitch the homeowner picks.
+ * Measured roofs: area and pitch from a service that measures the roof
+ * itself (aerial imagery, plus height data where it has it), instead of our
+ * estimate from an open building outline and a pitch the homeowner picks.
  *
- * Behind an interface so the service can change (EagleView, Nearmap…)
- * without touching the endpoint or the page. The default is Instant Roofer's
- * AI measurement API:
+ * Behind an interface so the service can change without touching the
+ * endpoint or the page. Two are wired up; the first whose key is set wins,
+ * or ROOF_MEASURE_PROVIDER names one:
+ *
+ *   google-solar    Google Solar API (solar.ts). Cents a call, answers in a
+ *                   second or two, and also models solar panels, so the page
+ *                   measures as soon as it has a point and shows the roof's
+ *                   solar potential. Its terms limit it to solar uses; see
+ *                   solar.ts and docs/roofing-demo.md.
+ *   instant-roofer  Instant Roofer (below). Dollars a call and 10–20 s, so
+ *                   the page asks the homeowner to confirm the roof first.
+ *
+ * Instant Roofer's AI measurement API:
  *
  *   POST https://v5.instantroofer.com/v2
  *   Authorization: Bearer <key>, JSON { latitude, longitude, resultOptions }
@@ -21,11 +30,17 @@
  * prose. Its terms require "Powered by Instant Roofer" on any page that uses
  * it, so the credit travels with every result.
  *
+ *   GOOGLE_SOLAR_API_KEY      Server-side key restricted to the Solar API.
+ *                             Never the Static Maps browser key.
+ *   GOOGLE_SOLAR_QUALITY      Lowest imagery quality accepted: HIGH, MEDIUM or
+ *                             LOW (default LOW, which still returns HIGH where
+ *                             Google has it; lower quality lowers confidence).
  *   INSTANT_ROOFER_API_KEY    From api-dashboard.instantroofer.com. Server-side
- *                             only; never give it a VITE_ prefix.
- *   ROOF_MEASURE_PER_HOUR     Per visitor (default 6).
- *   ROOF_MEASURE_DAILY_CAP    Whole site, per UTC day (default 20).
- *   ROOF_MEASURE_MONTHLY_CAP  Whole site, per UTC month (default 300).
+ *                             only; never give either key a VITE_ prefix.
+ *   ROOF_MEASURE_PROVIDER     Optional: "google-solar" or "instant-roofer".
+ *   ROOF_MEASURE_PER_HOUR     Per visitor (default 30 Google, 6 Instant Roofer).
+ *   ROOF_MEASURE_DAILY_CAP    Whole site, per UTC day (default 400 / 20).
+ *   ROOF_MEASURE_MONTHLY_CAP  Whole site, per UTC month (default 4,000 / 300).
  *                             0 in any of the three pauses measuring.
  *   ROOF_MEASURE_UNMETERED    "1" lets local development measure without the
  *                             Upstash store; ignored on any Vercel deployment.
@@ -33,10 +48,18 @@
 
 import type { Credit, LatLng, MeasuredRoof } from '../../../src/demos/roofers/roof/types.js'
 import { RoofError, fetchJson, hasLimiterStore, type Deadline } from './http.js'
+import { findClosestBuilding, type SolarQuality } from './solar.js'
+
+export type MeasurementId = 'google-solar' | 'instant-roofer'
 
 export interface MeasurementProvider {
-  id: string
+  id: MeasurementId
   credit: Credit
+  /**
+   * 'auto': cheap and quick, so the page measures as soon as it has a point.
+   * 'confirm': each call is costly, so the homeowner confirms the roof first.
+   */
+  mode: 'auto' | 'confirm'
   measure(point: LatLng, deadline?: Deadline): Promise<MeasuredRoof>
 }
 
@@ -132,6 +155,7 @@ function classify(error: RoofError): RoofError {
 function instantRoofer(apiKey: string): MeasurementProvider {
   return {
     id: 'instant-roofer',
+    mode: 'confirm',
     credit: { text: 'Powered by Instant Roofer', href: 'https://www.instantroofer.com/' },
     async measure(point, deadline) {
       let body: unknown
@@ -158,6 +182,36 @@ function instantRoofer(apiKey: string): MeasurementProvider {
   }
 }
 
+/** Google answers in a second or two; anything slower is a fault worth retrying. */
+const SOLAR_TIMEOUT_MS = 12_000
+
+function googleSolar(apiKey: string, quality: SolarQuality): MeasurementProvider {
+  return {
+    id: 'google-solar',
+    mode: 'auto',
+    credit: { text: 'Roof measurements: Google', href: 'https://developers.google.com/maps/documentation/solar' },
+    measure: (point, deadline) => findClosestBuilding(apiKey, point, quality, deadline, SOLAR_TIMEOUT_MS),
+  }
+}
+
+const solarQuality = (): SolarQuality => {
+  const value = process.env.GOOGLE_SOLAR_QUALITY?.trim().toUpperCase()
+  return value === 'HIGH' || value === 'MEDIUM' ? value : 'LOW'
+}
+
+/** The provider whose key is set (or the one ROOF_MEASURE_PROVIDER names), before any spending checks. */
+export function pickMeasurement(): MeasurementProvider | null {
+  const google = process.env.GOOGLE_SOLAR_API_KEY?.trim()
+  const roofer = process.env.INSTANT_ROOFER_API_KEY?.trim()
+  const choice = process.env.ROOF_MEASURE_PROVIDER?.trim()
+  if (choice === 'google-solar') return google ? googleSolar(google, solarQuality()) : null
+  if (choice === 'instant-roofer') return roofer ? instantRoofer(roofer) : null
+  if (choice && choice !== 'auto') return null
+  if (google) return googleSolar(google, solarQuality())
+  if (roofer) return instantRoofer(roofer)
+  return null
+}
+
 export interface MeasureLimits {
   perHour: number
   perDay: number
@@ -174,11 +228,18 @@ function limit(name: string, fallback: number): number {
   return 0
 }
 
-export function measureLimits(): MeasureLimits {
+/** Defaults sized to each service's price: a bad month costs about the same either way. */
+const DEFAULT_LIMITS: Record<MeasurementId, MeasureLimits> = {
+  'google-solar': { perHour: 30, perDay: 400, perMonth: 4000 },
+  'instant-roofer': { perHour: 6, perDay: 20, perMonth: 300 },
+}
+
+export function measureLimits(id: MeasurementId = 'instant-roofer'): MeasureLimits {
+  const defaults = DEFAULT_LIMITS[id]
   return {
-    perHour: limit('ROOF_MEASURE_PER_HOUR', 6),
-    perDay: limit('ROOF_MEASURE_DAILY_CAP', 20),
-    perMonth: limit('ROOF_MEASURE_MONTHLY_CAP', 300),
+    perHour: limit('ROOF_MEASURE_PER_HOUR', defaults.perHour),
+    perDay: limit('ROOF_MEASURE_DAILY_CAP', defaults.perDay),
+    perMonth: limit('ROOF_MEASURE_MONTHLY_CAP', defaults.perMonth),
   }
 }
 
@@ -198,16 +259,16 @@ export const unmeteredAllowed = () =>
  * the per-visitor, daily and monthly limits; without it, measuring stays off
  * rather than running unmetered. Limits set to 0 turn it off too.
  */
-export function measurementFromEnv(limits: MeasureLimits = measureLimits()): MeasurementProvider | null {
-  const key = process.env.INSTANT_ROOFER_API_KEY?.trim()
-  if (!key) return null
+export function measurementFromEnv(): MeasurementProvider | null {
+  const provider = pickMeasurement()
+  if (!provider) return null
   if (!hasLimiterStore() && !unmeteredAllowed()) {
     console.error(
-      '[roof-measure] off: INSTANT_ROOFER_API_KEY is set but RATE_LIMIT_REDIS_URL/TOKEN are not, so measuring would be unmetered. ' +
+      `[roof-measure] off: a ${provider.id} key is set but RATE_LIMIT_REDIS_URL/TOKEN are not, so measuring would be unmetered. ` +
         'Add the store, or set ROOF_MEASURE_UNMETERED=1 for local development only.',
     )
     return null
   }
-  if (measuringPaused(limits)) return null
-  return instantRoofer(key)
+  if (measuringPaused(measureLimits(provider.id))) return null
+  return provider
 }

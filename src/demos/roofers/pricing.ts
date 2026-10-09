@@ -70,6 +70,8 @@ export const money = (value: number) => usd.format(value)
 export interface RoofQuoteInputs {
   /** Ground area under the roof, from the outline (or from home size). */
   footprintSqFt: number
+  /** Roof surface when it was measured; otherwise it's worked out from the footprint and pitch. */
+  roofSqFt?: number | null
   /** Rise per 12. */
   pitch: number
   material: Material
@@ -122,7 +124,7 @@ export function footprintFromHome(sqft: number, stories: Stories): number {
 }
 
 export function quoteRoof(inputs: RoofQuoteInputs): RoofQuote {
-  const roofSqFt = inputs.footprintSqFt * pitchFactor(inputs.pitch)
+  const roofSqFt = inputs.roofSqFt ?? inputs.footprintSqFt * pitchFactor(inputs.pitch)
   const squares = roofSqFt / 100
   const wastePct = QUOTE_RATES.waste[inputs.shape]
   const laborFactor = bandFor(inputs.pitch).labor

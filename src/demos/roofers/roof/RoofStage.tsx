@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState, type MouseEvent } from 'react'
-import { fromFrame, metersPerPixel, ringCentroid, toFrame } from './geo'
-import type { FootprintBuilding, LatLng, MapFrame, RoofLookup } from './types'
+import { fromFrame, metersPerPixel, panelCorners, ringCentroid, toFrame } from './geo'
+import type { FootprintBuilding, LatLng, MapFrame, RoofLookup, SolarPotential } from './types'
 
 export type StageMode = 'idle' | 'locating' | 'found' | 'error' | 'manual'
 
@@ -25,6 +25,8 @@ interface RoofStageProps {
   target?: LatLng | null
   /** Shown over the map while something is in progress, e.g. a measurement. */
   busyStatus?: string | null
+  /** The measured roof's solar layout, drawn on it as the service placed it. */
+  solar?: Pick<SolarPotential, 'panels' | 'panelWidthM' | 'panelHeightM'> | null
 }
 
 const NICE_METERS = [2, 5, 10, 20, 50, 100]
@@ -92,7 +94,7 @@ function Blueprint({ lookup, scanning }: { lookup: RoofLookup; scanning: boolean
  * beneath them when it arrives. Each outline is a tap target; the same
  * choices are offered as checkboxes for keyboard and screen-reader users.
  */
-export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status, loadingStatus, onImageryFail, onPick, target, busyStatus }: RoofStageProps) {
+export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status, loadingStatus, onImageryFail, onPick, target, busyStatus, solar }: RoofStageProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
   const [failedSrc, setFailedSrc] = useState<string | null>(null)
@@ -133,6 +135,17 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
     onPick(fromFrame([local.x, local.y], frame), photoShown)
   }
   const targetXY = frame && target ? toFrame(target, frame) : null
+  const panels = useMemo(
+    () =>
+      frame && solar
+        ? solar.panels.map((panel) =>
+            panelCorners(panel, solar.panelWidthM, solar.panelHeightM)
+              .map((corner, i) => `${i === 0 ? 'M' : 'L'}${toFrame(corner, frame).map((v) => v.toFixed(1)).join(' ')}`)
+              .join('') + 'Z',
+          )
+        : [],
+    [frame, solar],
+  )
 
   const overlay = useMemo(() => {
     if (!frame || !view) return null
@@ -215,6 +228,13 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
                 ),
               )}
               {/* The address point; once there's a crosshair, it steps back so the two aren't confused. */}
+              {panels.length > 0 && (
+                <g className="rf-stage__panels">
+                  {panels.map((d, i) => (
+                    <path key={i} d={d} />
+                  ))}
+                </g>
+              )}
               <g className={`rf-stage__pin${targetXY ? ' is-quiet' : ''}`} transform={`translate(${overlay.pin[0].toFixed(1)} ${overlay.pin[1].toFixed(1)})`}>
                 <path d="M0 0C-9 -14 -14 -20 -14 -28A14 14 0 0 1 14 -28C14 -20 9 -14 0 0Z" />
                 <circle cy="-28" r="5" />
