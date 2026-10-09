@@ -242,6 +242,11 @@
 
 .rf-stage__pin {
   pointer-events: none;
+  transition: opacity 0.3s var(--rf-ease);
+}
+
+.rf-stage__pin.is-quiet {
+  opacity: 0.4;
 }
 
 .rf-stage__pin path {
@@ -570,6 +575,56 @@
   display: grid;
   gap: 6px;
   justify-items: start;
+}
+
+.rf-roof__measured:focus,
+.rf-roof__fallback:focus {
+  outline: none;
+}
+
+.rf-roof__measured:focus-visible,
+.rf-roof__fallback:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 3px;
+}
+
+/* A second Measure button right under the photo, while the steps sit below it. */
+.rf-roof__measure-near {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.rf-roof__measure-near .rf-button[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (min-width: 1080px) {
+  .rf-roof__measure-near {
+    display: none;
+  }
+}
+
+.rf-roof__inline-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: var(--rf-roof-copper-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.rf-roof__inline-link:hover {
+  color: #fff;
+}
+
+.rf-roof__inline-link:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 2px;
 }
 
 .rf-roof__rough {

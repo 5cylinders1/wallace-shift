@@ -5,8 +5,9 @@
  *
  * The lookup returns building OUTLINES (footprints), not measured roof
  * planes: open footprint data says how much ground the roof covers, and
- * the homeowner supplies the pitch. A licensed measurement source can be
- * added behind the same shape later (see `measuredRoof`).
+ * the homeowner supplies the pitch. When a measuring service is connected
+ * (`RoofLookup.measure`), /api/roof-measure returns a `MeasuredRoof` for
+ * the point the homeowner confirms.
  */
 
 export interface LatLng {
@@ -100,7 +101,7 @@ export interface RoofLookup {
   measure: { provider: string; credit: Credit } | null
 }
 
-/** A roof measured by a licensed service from aerial imagery and lidar, for one building. */
+/** A roof measured by a licensed service from aerial imagery (and height data where it has it), for one building. */
 export interface MeasuredRoof {
   /** Roof surface with the predominant pitch applied, no waste. */
   roofSqFt: number
@@ -129,7 +130,12 @@ export type RoofErrorCode =
   | 'roof_not_found'
   /** Measuring: the roof is too large or irregular to measure automatically. */
   | 'unmeasurable'
-  /** Measuring: this month's measurement budget is spent. */
+  /** Measuring: today's or this month's measurement budget is spent, or measuring is paused. */
   | 'limit_reached'
+  /**
+   * Measuring: the service didn't answer in time. The request reached it and
+   * may have been billed, so the page doesn't offer to buy it again.
+   */
+  | 'timed_out'
 
 export type LookupResponse = RoofLookup | { ok: false; error: RoofErrorCode }

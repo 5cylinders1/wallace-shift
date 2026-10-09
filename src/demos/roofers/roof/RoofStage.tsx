@@ -16,9 +16,12 @@ interface RoofStageProps {
   loadingStatus: string
   /** The photo failed or never arrived; the plan view is showing instead. */
   onImageryFail: (src: string) => void
-  /** Measuring mode: a tap anywhere on the map puts the roof pin there. */
-  onPick?: (point: LatLng) => void
-  /** The roof pin: the point that will be (or was) measured. */
+  /**
+   * Measuring mode: a tap on the map puts the crosshair there. `onPhoto` says
+   * whether the homeowner could see the roof they tapped, or only the plan.
+   */
+  onPick?: (point: LatLng, onPhoto: boolean) => void
+  /** The crosshair: the point that will be (or was) measured. */
   target?: LatLng | null
   /** Shown over the map while something is in progress, e.g. a measurement. */
   busyStatus?: string | null
@@ -117,13 +120,17 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
     return () => window.clearTimeout(timer)
   }, [pendingSrc, onImageryFail])
 
+  const creditStrip = photoShown && imagery.provider !== 'sample' ? CREDIT_STRIP : 0
+
   // A tap on the map is a point on the ground: screen → frame pixels → lat/lng.
   const pick = (event: MouseEvent<SVGSVGElement>) => {
     const svg = svgRef.current
     const matrix = svg?.getScreenCTM()
     if (!onPick || !frame || !svg || !matrix) return
     const local = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse())
-    onPick(fromFrame([local.x, local.y], frame))
+    // The credit strip is the provider's; a crosshair there would be hidden under the clip.
+    if (local.y > frame.height - creditStrip) return
+    onPick(fromFrame([local.x, local.y], frame), photoShown)
   }
   const targetXY = frame && target ? toFrame(target, frame) : null
 
@@ -173,7 +180,7 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
             <defs>
               {/* Nothing of ours, not even the dimming, covers the provider's marks. */}
               <clipPath id={clipId}>
-                <rect width={frame.width} height={frame.height - (photoShown && imagery.provider !== 'sample' ? CREDIT_STRIP : 0)} />
+                <rect width={frame.width} height={frame.height - creditStrip} />
               </clipPath>
               <mask id={maskId}>
                 <rect width={frame.width} height={frame.height} fill="white" />
@@ -207,7 +214,8 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
                   </g>
                 ),
               )}
-              <g className="rf-stage__pin" transform={`translate(${overlay.pin[0].toFixed(1)} ${overlay.pin[1].toFixed(1)})`}>
+              {/* The address point; once there's a crosshair, it steps back so the two aren't confused. */}
+              <g className={`rf-stage__pin${targetXY ? ' is-quiet' : ''}`} transform={`translate(${overlay.pin[0].toFixed(1)} ${overlay.pin[1].toFixed(1)})`}>
                 <path d="M0 0C-9 -14 -14 -20 -14 -28A14 14 0 0 1 14 -28C14 -20 9 -14 0 0Z" />
                 <circle cy="-28" r="5" />
               </g>

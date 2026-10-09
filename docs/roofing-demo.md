@@ -77,27 +77,55 @@ metres off the house, simplified shapes, and address points that land in
 the street. So the tool buys one measurement per roof from
 [Instant Roofer](https://www.instantroofer.com/instant-roofer-api/), the
 service a large regional contractor's own estimator appears to use. Its AI
-measures the roof from aerial imagery and lidar and returns the
+measures the roof from aerial imagery (and height data where it has it)
+and returns the
 pitch-adjusted roof area, footprint, predominant pitch, complexity and a
 confidence score (`api/_lib/roof/measurement.ts`; endpoint
 `GET /api/roof-measure?lat=&lng=`).
 
 - **It needs a point on the roof**, not an address ("404 — Roof not
-  found"), which is why the homeowner places the pin. Nothing is bought
-  until they press Measure.
+  found"), which is why the homeowner places a crosshair on the photo (or
+  picks their house from the list). Nothing is bought until they press
+  Measure, and the page says the location goes to Instant Roofer.
+- **A roof is bought once per visit.** Once measured, the map stops taking
+  taps until the homeowner chooses "Measure a different building"; going
+  back to a building already measured shows its result again without a
+  call. A crosshair the service rejected ("no roof here") can't be sent
+  again until it moves. With no photo showing, only taps on an outline
+  count, so nobody pays to measure a spot they can't see.
 - **Price:** $3 per measurement for the first 199 a month, $2 up to 999,
   $1 beyond (vendor's published tiers); 10 free measurements on signup.
   Account defaults: 5 requests a minute, 100 a day.
-- **Guards against a surprise bill:** 6 measurements per visitor per hour
-  (`ROOF_MEASURE_PER_HOUR`), a site-wide monthly cap (`ROOF_MEASURE_MONTHLY_CAP`,
-  default 300) after which the page falls back to the outline estimate, and
-  in production measuring stays off unless the Upstash limiter is
-  configured; if that store can't be reached, measurements are refused, not
-  waved through. The same roof is cached at the edge for a week, so it isn't
-  bought twice.
-- **Credit:** its terms require "Powered by Instant Roofer" wherever the
-  tool appears; the page shows it beside the Measure button and in the map
-  credits.
+- **Guards against a surprise bill:**
+  - Only our own page can spend: a request from another site (an `<img>`
+    or cross-site fetch, which browsers mark with `Sec-Fetch-Site`) is
+    refused before anything is counted or bought.
+  - 6 measurements per visitor per hour (`ROOF_MEASURE_PER_HOUR`), 20 a day
+    for the whole site (`ROOF_MEASURE_DAILY_CAP`) and 300 a month
+    (`ROOF_MEASURE_MONTHLY_CAP`). Past a cap the page falls back to the
+    outline estimate. **Set any of them to `0` to pause measuring**; a
+    value that isn't a whole number also pauses it (and logs why), rather
+    than quietly using the default.
+  - Measuring stays off on every deployment, preview and production alike,
+    unless the Upstash store behind those limits is configured. If the
+    store can't be reached, measurements are refused, not waved through.
+    For local development only, `ROOF_MEASURE_UNMETERED=1` allows measuring
+    without the store; it is ignored on any Vercel deployment.
+  - The call gets the function's whole time budget (55 s). If it still
+    runs out, the page shows the outline estimate and doesn't offer an
+    instant retry, since the abandoned request may have been billed.
+    Instant Roofer's own "busy" answers can be retried.
+  - The page sends the point rounded to 5 decimals (about a metre), the same
+    point the server buys, and a success is cached at the edge for a week
+    with no background refresh. The same pin asked again is usually served
+    from that cache; it is not a guarantee per roof, so the caps above are
+    what bound spend.
+  - Before launch, also add a bot check (Vercel BotID or Cloudflare
+    Turnstile) on the Measure button: the per-visitor limit counts IP
+    addresses, and a determined scraper has many.
+- **Credit:** its terms require "Powered by Instant Roofer" on the page;
+  the page shows exactly that, linked, beside the Measure button and the
+  result (and with the fallback if measuring fails).
 - **Not used:** its outline picture (Google imagery) and raw lidar points.
 
 **Signing up** (for the key): create the API account at
@@ -106,8 +134,9 @@ API key). It asks for a phone login, a service agreement and a card on
 file; regenerate the key before first use, then set `INSTANT_ROOFER_API_KEY`.
 Before launch, confirm with Instant Roofer in writing: that a custom page
 counts as permitted use (their terms forbid "rebranding"), the exact credit
-wording, whether failed "roof not found" calls are billed, and that results
-may be kept in lead records.
+wording and whether it must show before a lookup, whether failed "roof not
+found" calls and requests we stopped waiting for are billed, and that
+results may be kept in lead records.
 
 **How the number is made.** The outline comes from open building-footprint
 data, never from the photo. Its ground area is computed on our server
@@ -137,10 +166,10 @@ asked before settling.
 
 Google is not used: its Solar API may only be used for solar projects, and
 its map terms restrict using Google imagery with or near non-Google map
-data, which open outlines drawn on top would put at risk. A paid
-measurement service (EagleView, Nearmap and the like) can be added as
-another provider in `api/_lib/roof/provider.ts`; the lookup already has a
-`measuredRoof` slot for it.
+data, which open outlines drawn on top would put at risk. Another
+measurement service (EagleView, Nearmap and the like) can replace Instant
+Roofer behind the `MeasurementProvider` interface in
+`api/_lib/roof/measurement.ts`.
 
 **Endpoints** (Vercel functions, Node runtime): `GET /api/roof-suggest?q=`
 and `GET /api/roof-lookup?id=` or `?address=`. A lookup's outbound calls
@@ -165,9 +194,10 @@ local dev put them in `.env.local`, which is git-ignored):
 | `ROOF_IMAGERY` | Optional | `mapbox`, `naip` or `none`. |
 | `ROOF_FOOTPRINT_SOURCES` | Optional | Default `usa-structures,microsoft`; add `osm` with `OVERPASS_URL`. |
 | `ROOF_PROVIDER` | Optional | Default `open-data`, the only one implemented. Any other value turns lookup off until that provider exists. |
-| `INSTANT_ROOFER_API_KEY` | For measured roofs | Server-side key from the Instant Roofer API dashboard. Without it, the outline estimate is used. |
-| `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Measurement limits per visitor per hour (default 6) and for the whole site per month (default 300). |
-| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring in production | The same Upstash limiter as the site audit: 300 suggestions, 40 lookups and 6 measurements per IP per hour, plus the monthly measurement count. |
+| `INSTANT_ROOFER_API_KEY` | For measured roofs | Server-side key from the Instant Roofer API dashboard. Without it, the outline estimate is used. Scope it to exactly the same environments as the two Upstash variables below (or to Production only). |
+| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring, everywhere | The same Upstash limiter as the site audit: 300 suggestions, 40 lookups and 6 measurements per IP per hour, plus the daily and monthly measurement counts. Without them measuring stays off. |
+| `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_DAILY_CAP`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Measurements per visitor per hour (default 6), and for the whole site per UTC day (default 20) and month (default 300). `0` pauses measuring. |
+| `ROOF_MEASURE_UNMETERED` | Local development only | `1` lets your own machine measure without Upstash. Ignored on Vercel deployments. Each measurement is still billed. |
 
 **Credits the page shows**, linked, under the map and in the suggestion
 list: "Powered by Geoapify" and its data source (© OpenStreetMap

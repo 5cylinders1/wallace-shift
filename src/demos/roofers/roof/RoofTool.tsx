@@ -21,7 +21,7 @@ import { AddressCombobox } from './AddressCombobox'
 import { Credits } from './Credits'
 import { PitchPicker } from './PitchPicker'
 import { buildingAt, insidePoint } from './geo'
-import { PITCH_DEFAULT, bandFor, clampPitch, pitchFactor } from './pitch'
+import { PITCH_DEFAULT, PITCH_MAX, PITCH_MIN, bandFor, clampPitch, pitchFactor } from './pitch'
 import { lookupRoof, measureRoof, type LookupTarget } from './roofClient'
 import { RoofStage, type StageMode } from './RoofStage'
 import type { Credit, LatLng, MeasuredRoof, RoofAddress, RoofErrorCode, RoofLookup } from './types'
@@ -44,18 +44,37 @@ type Measure =
   | { status: 'done'; roof: MeasuredRoof; credits: Credit[] }
   | { status: 'failed'; error: RoofErrorCode }
 
-/** Failures the homeowner can fix by moving the pin; anything else falls back to the outline estimate. */
+/** Failures the homeowner can fix by moving the crosshair; anything else falls back to the outline estimate. */
 const fixable = (error: RoofErrorCode) => error === 'roof_not_found' || error === 'invalid'
-/** Failures worth simply trying again. */
+/**
+ * Failures worth simply trying again. Not `timed_out`: that request reached
+ * the service and may have been billed, so the page doesn't buy it again.
+ */
 const retryable = (error: RoofErrorCode) => error === 'busy' || error === 'upstream'
+
+const MEASURE_ERRORS: Partial<Record<RoofErrorCode, string>> = roofTool.measure.errors
+const measureError = (code: RoofErrorCode) => MEASURE_ERRORS[code] ?? roofTool.errors[code]
+
+/** Five decimals, as the server measures it: one point, one purchase. */
+const roundPoint = (point: LatLng): LatLng => ({ lat: Number(point.lat.toFixed(5)), lng: Number(point.lng.toFixed(5)) })
+const samePoint = (a: LatLng, b: LatLng) => a.lat.toFixed(5) === b.lat.toFixed(5) && a.lng.toFixed(5) === b.lng.toFixed(5)
+
+/** A measurement bought on this visit, and the point it was bought for. */
+interface Paid {
+  at: LatLng
+  roof: MeasuredRoof
+  credits: Credit[]
+}
 
 /**
  * The roof estimator: find the house, set the pitch, see the price.
  *
- * With a measuring service connected, the homeowner puts a pin on their
- * roof (a tap on the map, or a pick from the list) and we buy one
+ * With a measuring service connected, the homeowner puts the crosshair on
+ * their roof (a tap on the photo, or a pick from the list) and we buy one
  * measurement of it: footprint, pitch and complexity, measured from aerial
- * imagery and lidar. Without one, or if it can't measure this roof, area
+ * imagery. A roof measured once on a visit is never bought again: going
+ * back to it shows the same result. Without a service, or if it can't
+ * measure this roof, area
  * comes from the building's outline in public footprint data (or from home
  * size, with no address) and the homeowner sets the pitch on the drawing.
  * `quoteRoof` turns either into a price that updates as the ridge is dragged.
@@ -78,7 +97,13 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const [measure, setMeasure] = useState<Measure>({ status: 'idle' })
   const requestRef = useRef<AbortController | null>(null)
   const measureRef = useRef<AbortController | null>(null)
+  const paidRef = useRef<Paid[]>([])
   const rootRef = useRef<HTMLDivElement>(null)
+  const measureButtonRef = useRef<HTMLButtonElement>(null)
+  const measuredBoxRef = useRef<HTMLDivElement>(null)
+  const fallbackRef = useRef<HTMLDivElement>(null)
+  /** Set when a measure control is pressed: that control is about to give way to its result. */
+  const followFocusRef = useRef(false)
   const helpId = useId()
   const pitchHelpId = useId()
   const sizeId = useId()
@@ -98,25 +123,51 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     return () => window.clearInterval(timer)
   }, [phase])
 
-  const showLookup = (result: RoofLookup) => {
+  /** A measurement already bought on this visit for this building, or at this point. */
+  const findPaid = (point: LatLng, buildingId: string | null, view: RoofLookup) =>
+    paidRef.current.find(
+      (paid) => samePoint(paid.at, point) || (buildingId !== null && buildingAt(paid.at, view.buildings, view.frame)?.id === buildingId),
+    )
+
+  const showMeasured = (paid: Paid, view: RoofLookup) => {
+    // The list follows what was measured, whatever was ticked while it ran.
+    const id = buildingAt(paid.at, view.buildings, view.frame)?.id
+    setTarget(paid.at)
+    setSelected(new Set(id ? [id] : []))
+    setMeasure({ status: 'done', roof: paid.roof, credits: paid.credits })
+    // Start from what was measured; the homeowner can still adjust it.
+    setPitch(clampPitch(Math.round(paid.roof.pitchRise)))
+    setShape(null)
+  }
+
+  /** Leaving the measured flow: stop a measurement in flight and forget the one shown. */
+  const stopMeasuring = () => {
     measureRef.current?.abort()
+    setMeasure({ status: 'idle' })
+  }
+
+  const showLookup = (result: RoofLookup) => {
+    stopMeasuring()
     setLookup(result)
     // The server only names a home when the address point is on a building;
     // otherwise the homeowner picks theirs.
     setSelected(new Set(result.home ? [result.home] : []))
     const home = result.measure && result.home ? result.buildings.find((building) => building.id === result.home) : undefined
-    setTarget(home ? insidePoint(home.ring, result.frame) : null)
-    setMeasure({ status: 'idle' })
+    const homePoint = home ? insidePoint(home.ring, result.frame) : null
+    setTarget(homePoint ? roundPoint(homePoint) : null)
     setShape(null)
     setError(null)
     setPhase('found')
     onAddress(result.source === 'sample' ? null : result.address)
+    const paid = home && homePoint ? findPaid(roundPoint(homePoint), home.id, result) : undefined
+    if (paid) showMeasured(paid, result)
   }
 
   const busy = phase === 'locating'
 
   const find = async (target: LookupTarget) => {
     if (busy) return
+    stopMeasuring()
     requestRef.current?.abort()
     const controller = new AbortController()
     requestRef.current = controller
@@ -161,6 +212,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
   const useManual = () => {
     requestRef.current?.abort()
+    stopMeasuring()
     setLookup(null)
     setError(null)
     setPhase('manual')
@@ -179,23 +231,30 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   /* Measuring                                                          */
   /* ---------------------------------------------------------------- */
 
+  // Measuring belongs to a found address; nothing of it reaches the other flows.
   const canMeasure = phase === 'found' && Boolean(lookup?.measure)
-  const measuring = measure.status === 'measuring'
-  const measured = measure.status === 'done' ? measure.roof : null
+  const measuring = phase === 'found' && measure.status === 'measuring'
+  const measured = phase === 'found' && measure.status === 'done' ? measure.roof : null
   // The outline estimate: no measuring service, or one that couldn't measure this roof.
   const outlineMode = !canMeasure || (measure.status === 'failed' && !fixable(measure.error))
+  // The service said no roof is under this crosshair; it stays no until the crosshair moves.
+  const pinRejected = measure.status === 'failed' && fixable(measure.error)
+  const measureBlocked = !target || measuring || pinRejected
 
-  /** A new pin means a new roof: forget any earlier measurement of a different spot. */
+  /**
+   * A new crosshair means a new roof: forget the earlier result shown, unless
+   * this roof was already measured on this visit.
+   */
   const placePin = (point: LatLng, buildingId: string | null) => {
-    if (measuring) return
-    setTarget(point)
+    if (measuring || !lookup) return
+    const at = roundPoint(point)
+    // Picking the same spot again (say, the same building from the list) doesn't un-reject it.
+    if (pinRejected && target && samePoint(at, target)) return
+    const paid = findPaid(at, buildingId, lookup)
+    if (paid) return showMeasured(paid, lookup)
+    setTarget(at)
     setSelected(new Set(buildingId ? [buildingId] : []))
     setMeasure({ status: 'idle' })
-  }
-
-  const pickOnMap = (point: LatLng) => {
-    if (!lookup) return
-    placePin(point, buildingAt(point, lookup.buildings, lookup.frame)?.id ?? null)
   }
 
   const pickBuilding = (id: string) => {
@@ -205,27 +264,62 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     if (point) placePin(point, id)
   }
 
+  const pickOnMap = (point: LatLng, onPhoto: boolean) => {
+    if (!lookup) return
+    const building = buildingAt(point, lookup.buildings, lookup.frame)
+    // On the plan there's no roof to see, only outlines: a tap off them would measure a guess.
+    if (!onPhoto) {
+      if (building) pickBuilding(building.id)
+      return
+    }
+    placePin(point, building?.id ?? null)
+  }
+
+  /** The measured result stays until the homeowner asks for another; the map is locked meanwhile. */
+  const measureAnother = () => {
+    followFocusRef.current = true
+    setMeasure({ status: 'idle' })
+    setTarget(null)
+    setSelected(new Set())
+  }
+
   const runMeasure = async () => {
-    if (!target || measuring) return
+    if (!target || !lookup || measuring || pinRejected) return
+    const view = lookup
+    const at = target
     measureRef.current?.abort()
     const controller = new AbortController()
     measureRef.current = controller
+    followFocusRef.current = true
     setMeasure({ status: 'measuring' })
     try {
-      const result = await measureRoof(target, controller.signal)
+      const result = await measureRoof(at, controller.signal)
       if (controller.signal.aborted) return
       if (!result.ok) {
         setMeasure({ status: 'failed', error: result.error })
         return
       }
-      setMeasure({ status: 'done', roof: result.roof, credits: result.credits })
-      // Start from what was measured; the homeowner can still adjust it.
-      setPitch(Math.round(clampPitch(result.roof.pitchRise)))
-      setShape(null)
+      const paid = { at, roof: result.roof, credits: result.credits }
+      paidRef.current = [...paidRef.current, paid]
+      showMeasured(paid, view)
     } catch {
       // Superseded by a new lookup.
     }
   }
+
+  // When the control the homeowner pressed goes away (the button turns into
+  // the result, or the measure step into the fallback), focus follows to what
+  // replaced it instead of dropping to the top of the page. Someone who moved
+  // on during the wait keeps their place, and taps on the map never move it.
+  useEffect(() => {
+    if (measure.status === 'measuring' || !followFocusRef.current) return
+    followFocusRef.current = false
+    const active = document.activeElement
+    if (active && active !== document.body) return
+    if (measure.status === 'done') measuredBoxRef.current?.focus()
+    else if (measure.status === 'failed') (fallbackRef.current ?? measureButtonRef.current)?.focus()
+    else measureButtonRef.current?.focus()
+  }, [measure.status])
 
   /* ---------------------------------------------------------------- */
   /* Numbers                                                            */
@@ -254,6 +348,20 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const monthly = quote ? monthlyPayment((quote.low + quote.high) / 2, LONG_PLAN) : 0
   const buildingCount = phase === 'found' && !measured ? chosen.length : 1
 
+  // The vendor's pitch as measured. The picker covers 2/12 to 16/12; outside
+  // that, the price uses the nearest end and says so, rather than calling the
+  // clamped value measured.
+  const measuredRise = measured ? Math.round(measured.pitchRise) : null
+  const measurePitch = measuredRise !== null && measuredRise >= PITCH_MIN && measuredRise <= PITCH_MAX ? measuredRise : null
+  const pricedRise = measuredRise !== null ? clampPitch(measuredRise) : null
+  const pitchNote =
+    measuredRise === null || measurePitch !== null
+      ? null
+      : measuredRise < PITCH_MIN
+        ? roofTool.measure.pitchLow(measuredRise, PITCH_MIN)
+        : roofTool.measure.pitchSteep(measuredRise, PITCH_MAX)
+  const ownPitch = measured !== null && pitch !== pricedRise
+
   const estimate = useMemo<LeadContext['ballpark']>(() => {
     if (!quote) return null
     const source: LeadRoof['source'] =
@@ -276,9 +384,10 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
         pitch,
         buildings: buildingCount,
         confidence: measured?.confidence.label ?? null,
+        measuredPitch: measuredRise !== null && measuredRise !== pitch ? measuredRise : null,
       },
     }
-  }, [quote, phase, lookup, measured, material, homeSqft, footprint, pitch, layers, buildingCount])
+  }, [quote, phase, lookup, measured, material, homeSqft, footprint, pitch, layers, buildingCount, measuredRise])
 
   useEffect(() => onEstimate(estimate), [estimate, onEstimate])
 
@@ -307,28 +416,31 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
           ? 'Estimating by home size'
           : roofTool.idle
 
+  const found = phase === 'found' && lookup ? `Found ${lookup.buildings.length} building${lookup.buildings.length === 1 ? '' : 's'} at ${lookup.address.formatted}.` : ''
   // Errors are spoken by their own role=alert line, so they're not repeated here.
   const announce = measuring
     ? `${roofTool.measure.measuring} ${roofTool.measure.measuringNote}`
     : measured
-      ? `Measured ${measured.roofSqFt.toLocaleString('en-US')} square feet of roof at ${Math.round(measured.pitchRise)} in 12${measured.confidence.label ? `, ${measured.confidence.label.toLowerCase()} confidence` : ''}.`
-      : phase === 'found' && lookup
-        ? `Found ${lookup.buildings.length} building${lookup.buildings.length === 1 ? '' : 's'} at ${lookup.address.formatted}. ${chosen.length} selected, ${footprint.toLocaleString('en-US')} square feet.`
-        : busy
-          ? roofTool.lookingUp
-          : ''
+      ? `Measured ${measured.roofSqFt.toLocaleString('en-US')} square feet of roof at ${measuredRise} in 12${measured.confidence.label ? `, ${measured.confidence.label.toLowerCase()} confidence` : ''}.`
+      : found && outlineMode
+        ? `${found} ${chosen.length} selected, ${footprint.toLocaleString('en-US')} square feet.`
+        : found
+          ? `${found}${pinRejected ? '' : target ? ' Crosshair placed: press Measure my roof.' : ' Pick your house or tap its roof, then measure it.'}`
+          : busy
+            ? roofTool.lookingUp
+            : ''
 
   const confirmCopy = !lookup || lookup.home ? roofTool.confirm : lookup.precision === 'street' ? roofTool.pickStreet : roofTool.pickHouse
   const showsImage = Boolean(lookup?.imagery && lookup.imagery.src !== failedImage)
-  const measurePitch = measured ? Math.round(clampPitch(measured.pitchRise)) : null
   const lockedCopy = phase === 'found' ? (outlineMode ? roofTool.pickLocked : roofTool.measure.locked) : null
+  const measureCopy = canMeasure && !outlineMode
 
   return (
     <div ref={rootRef} className="rf-roof" data-reveal>
       <div className="rf-roof__head">
         <p className="rf-roof__eyebrow">{roofTool.eyebrow}</p>
         <h3 className="rf-roof__title">{roofTool.title}</h3>
-        <p className="rf-roof__lede">{roofTool.lede}</p>
+        <p className="rf-roof__lede">{measureCopy ? roofTool.ledeMeasured : roofTool.lede}</p>
       </div>
 
       <div className="rf-roof__body">
@@ -342,17 +454,29 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
             status={status}
             loadingStatus={roofTool.loadingPhoto}
             onImageryFail={setFailedImage}
-            onPick={canMeasure && !outlineMode && !measuring ? pickOnMap : undefined}
-            target={canMeasure && !outlineMode ? target : null}
+            onPick={measureCopy && !measuring && !measured ? pickOnMap : undefined}
+            target={measureCopy ? target : null}
             busyStatus={measuring ? roofTool.measure.measuring : null}
           />
 
+          {/* Stacked layouts: the step-one button is a screen or more below the photo. */}
+          {measureCopy && target && !measured && (
+            <div className="rf-roof__measure-near">
+              <button type="button" className="rf-button rf-button--primary" aria-disabled={measureBlocked || undefined} onClick={() => void runMeasure()}>
+                {measuring ? roofTool.measure.measuring : roofTool.measure.buttonNear}
+              </button>
+              {/* Spoken once, by the alert in step one; repeated here for eyes only. */}
+              {pinRejected && measure.status === 'failed' && (
+                <p className="rf-roof__error" aria-hidden="true">
+                  {measureError(measure.error)}
+                </p>
+              )}
+            </div>
+          )}
+
           {phase === 'found' && lookup && (
             <>
-              <Credits
-                className="rf-roof__credits"
-                credits={[...(showsImage && lookup.imagery ? lookup.imagery.credits : []), ...lookup.credits, ...(lookup.measure ? [lookup.measure.credit] : [])]}
-              />
+              <Credits className="rf-roof__credits" credits={[...(showsImage && lookup.imagery ? lookup.imagery.credits : []), ...lookup.credits]} />
               {lookup.source === 'sample' && <p className="rf-roof__sample-note">{roofTool.sampleNote}</p>}
             </>
           )}
@@ -423,7 +547,15 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                   <>
                     <fieldset className="rf-roof__buildings">
                       <legend>{roofTool.measure.legend}</legend>
-                      <p className="rf-roof__confirm">{target ? roofTool.measure.ready : roofTool.measure.tapPrompt}</p>
+                      <p className="rf-roof__confirm">
+                        {measured
+                          ? roofTool.measure.done
+                          : target
+                            ? roofTool.measure.ready
+                            : showsImage
+                              ? roofTool.measure.tapPrompt
+                              : roofTool.measure.tapPromptPlan}
+                      </p>
                       <div className="rf-roof__building-list">
                         {lookup.buildings.map((building, index) => (
                           <label key={building.id} className={`rf-roof__building${selected.has(building.id) ? ' is-checked' : ''}`}>
@@ -446,14 +578,21 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                           </label>
                         ))}
                       </div>
+                      <p className="rf-roof__help">
+                        {showsImage ? roofTool.measure.notListed : roofTool.measure.notListedPlan}{' '}
+                        <button type="button" className="rf-roof__inline-link" onClick={useManual}>
+                          {roofTool.measure.notListedAction}
+                        </button>
+                        .
+                      </p>
                     </fieldset>
 
                     <div className="rf-roof__measure" aria-busy={measuring || undefined}>
                       {measured ? (
-                        <div className="rf-roof__measured">
+                        <div ref={measuredBoxRef} className="rf-roof__measured" tabIndex={-1}>
                           <p className="rf-roof__measured-title">{roofTool.measure.measuredTitle}</p>
                           <p className="rf-roof__measured-value">
-                            {measured.roofSqFt.toLocaleString('en-US')} sq ft <span>·</span> {measurePitch}/12 pitch
+                            {measured.roofSqFt.toLocaleString('en-US')} sq ft <span>·</span> {measuredRise}/12 pitch
                             {measured.confidence.label && (
                               <>
                                 {' '}
@@ -463,47 +602,54 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                           </p>
                           {measured.confidence.label === 'Low' && <p className="rf-roof__help">{roofTool.measure.lowConfidence}</p>}
                           <p className="rf-roof__help">{roofTool.measure.extraBuildings}</p>
+                          <button type="button" className="rf-roof__link" onClick={measureAnother}>
+                            {roofTool.measure.another}
+                          </button>
                         </div>
                       ) : (
                         <>
                           {/* aria-disabled, not disabled, so focus stays on the button while it measures. */}
                           <button
+                            ref={measureButtonRef}
                             type="button"
                             className="rf-button rf-button--primary rf-roof__measure-button"
-                            aria-disabled={!target || measuring || undefined}
+                            aria-disabled={measureBlocked || undefined}
                             onClick={() => void runMeasure()}
                           >
                             {measuring ? roofTool.measure.measuring : roofTool.measure.button}
                           </button>
-                          {measuring && (
+                          {measuring ? (
                             <>
                               <p className="rf-roof__help">{roofTool.measure.measuringNote}</p>
                               <span className="rf-roof__progress" aria-hidden="true" />
                             </>
+                          ) : (
+                            <p className="rf-roof__help">{roofTool.measure.sends}</p>
                           )}
                         </>
                       )}
                       {measure.status === 'failed' && (
                         <p className="rf-roof__error" role="alert">
-                          {roofTool.errors[measure.error]}
+                          {measureError(measure.error)}
                         </p>
                       )}
-                      <Credits className="rf-roof__measure-credit" credits={[lookup.measure.credit]} />
+                      <Credits className="rf-roof__measure-credit" label={roofTool.measure.credit} credits={[lookup.measure.credit]} />
                     </div>
                   </>
                 )}
                 {phase === 'found' && lookup && outlineMode && (
                   <>
                     {measure.status === 'failed' && (
-                      <div className="rf-roof__fallback">
+                      <div ref={fallbackRef} className="rf-roof__fallback" tabIndex={-1}>
                         <p className="rf-roof__error" role="alert">
-                          {roofTool.errors[measure.error]}
+                          {measureError(measure.error)}
                         </p>
                         {retryable(measure.error) && (
                           <button type="button" className="rf-roof__link" onClick={() => void runMeasure()}>
                             {roofTool.measure.retry}
                           </button>
                         )}
+                        {lookup.measure && <Credits className="rf-roof__measure-credit" label={roofTool.measure.credit} credits={[lookup.measure.credit]} />}
                       </div>
                     )}
                     <fieldset className="rf-roof__buildings">
@@ -550,7 +696,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
             {ready ? (
               <>
                 <p id={pitchHelpId} className="rf-roof__help">
-                  {measured ? roofTool.measure.pitchMeasured : roofTool.pitchHelp}
+                  {measured ? (pitchNote ?? roofTool.measure.pitchMeasured) : roofTool.pitchHelp}
                 </p>
                 <PitchPicker value={pitch} onChange={setPitch} describedBy={pitchHelpId} />
               </>
@@ -625,7 +771,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                 <a className="rf-button rf-button--primary rf-button--block" href="#estimate">
                   {roofTool.cta}
                 </a>
-                <p className="rf-roof__fine">{measured ? roofTool.measure.disclaimer : roofTool.disclaimer}</p>
+                <p className="rf-roof__fine">
+                  {measured ? (ownPitch ? roofTool.measure.disclaimerOwnPitch : roofTool.measure.disclaimer) : roofTool.disclaimer}
+                </p>
               </div>
             ) : (
               <p className="rf-roof__locked">{lockedCopy ?? roofTool.estimateLocked}</p>

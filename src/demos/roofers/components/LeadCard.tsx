@@ -72,7 +72,9 @@ export function LeadCard({ lead }: { lead: LeadSubmission }) {
             <li>
               {context.ballpark.roof.source === 'sample' ? 'Tried the sample house: ' : `Roof at ${context.ballpark.roof.address ?? 'their address'}: `}
               {context.ballpark.roof.footprintSqFt.toLocaleString('en-US')} sq ft {context.ballpark.roof.source === 'measured' ? 'measured footprint' : 'outline'} at{' '}
-              {context.ballpark.roof.pitch}/12 ≈ {context.ballpark.roof.roofSqFt.toLocaleString('en-US')} sq ft ({context.ballpark.roof.squares} squares)
+              {context.ballpark.roof.pitch}/12
+              {context.ballpark.roof.measuredPitch != null ? ` (measured ${context.ballpark.roof.measuredPitch}/12)` : ''} ≈{' '}
+              {context.ballpark.roof.roofSqFt.toLocaleString('en-US')} sq ft ({context.ballpark.roof.squares} squares)
               {context.ballpark.roof.buildings > 1 ? `, ${context.ballpark.roof.buildings} buildings` : ''}
               {context.ballpark.roof.confidence ? `, ${context.ballpark.roof.confidence.toLowerCase()} confidence` : ''}
             </li>

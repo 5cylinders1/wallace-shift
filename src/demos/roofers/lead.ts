@@ -121,6 +121,8 @@ export interface LeadRoof {
   buildings: number
   /** The measuring service's confidence, for measured roofs. */
   confidence?: string | null
+  /** The pitch the service measured, when it differs from the `pitch` the homeowner priced at. */
+  measuredPitch?: number | null
 }
 
 /** What the visitor already saw on the page, carried into the lead. */
