@@ -71,9 +71,19 @@ export function LeadCard({ lead }: { lead: LeadSubmission }) {
           {context.ballpark?.roof && context.ballpark.roof.source !== 'home-size' && (
             <li>
               {context.ballpark.roof.source === 'sample' ? 'Tried the sample house: ' : `Roof at ${context.ballpark.roof.address ?? 'their address'}: `}
-              {context.ballpark.roof.footprintSqFt.toLocaleString('en-US')} sq ft outline at {context.ballpark.roof.pitch}/12 ≈{' '}
+              {context.ballpark.roof.footprintSqFt.toLocaleString('en-US')} sq ft {context.ballpark.roof.source === 'measured' ? `footprint measured by ${context.ballpark.roof.measuredBy ?? 'a measuring service'}` : 'outline'} at{' '}
+              {context.ballpark.roof.pitch}/12
+              {context.ballpark.roof.measuredPitch != null ? ` (measured ${context.ballpark.roof.measuredPitch}/12)` : ''} ≈{' '}
               {context.ballpark.roof.roofSqFt.toLocaleString('en-US')} sq ft ({context.ballpark.roof.squares} squares)
               {context.ballpark.roof.buildings > 1 ? `, ${context.ballpark.roof.buildings} buildings` : ''}
+              {context.ballpark.roof.confidence ? `, ${context.ballpark.roof.confidence.toLowerCase()} confidence` : ''}
+            </li>
+          )}
+          {context.ballpark?.roof?.solar && (
+            <li>
+              Priced solar shingles: {context.ballpark.roof.solar.kw} kW
+              {context.ballpark.roof.solar.yearlyKwh ? `, about ${context.ballpark.roof.solar.yearlyKwh.toLocaleString('en-US')} kWh a year` : ''}. Ready
+              for a solar proposal.
             </li>
           )}
           <li>{context.ballpark ? `Estimate ${money(context.ballpark.low)}–${money(context.ballpark.high)} (${context.ballpark.summary})` : 'Did not use the roof estimator'}</li>

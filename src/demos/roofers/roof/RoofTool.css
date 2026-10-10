@@ -198,6 +198,24 @@
   pointer-events: none;
 }
 
+.rf-stage.is-picking .rf-stage__overlay {
+  cursor: crosshair;
+}
+
+.rf-stage__target {
+  pointer-events: none;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
+}
+
+.rf-stage__target-dot {
+  fill: var(--rf-roof-copper);
+  stroke: #fff;
+  stroke-width: 2;
+}
+
 .rf-stage__badge {
   pointer-events: none;
 }
@@ -222,8 +240,34 @@
   dominant-baseline: middle;
 }
 
+/* The building the service measured, as its own box: a quiet frame, not an outline of ours. */
+.rf-stage__measured {
+  pointer-events: none;
+  fill: none;
+  stroke: var(--rf-roof-copper);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+/* Solar panels as the measuring service laid them out: dark cells, thin frames. */
+.rf-stage__panels {
+  pointer-events: none;
+}
+
+.rf-stage__panels path {
+  fill: rgba(16, 28, 48, 0.86);
+  stroke: rgba(214, 226, 240, 0.75);
+  stroke-width: 0.8;
+}
+
 .rf-stage__pin {
   pointer-events: none;
+  transition: opacity 0.3s var(--rf-ease);
+}
+
+.rf-stage__pin.is-quiet {
+  opacity: 0.4;
 }
 
 .rf-stage__pin path {
@@ -279,7 +323,8 @@
 }
 
 .rf-stage--locating .rf-stage__status::before,
-.rf-stage--found .rf-stage__status::before {
+.rf-stage--found .rf-stage__status::before,
+.rf-stage__status.is-busy::before {
   content: '';
   width: 7px;
   height: 7px;
@@ -464,6 +509,206 @@
   color: #f8ddd6;
 }
 
+/* Measuring */
+
+.rf-roof__measure {
+  display: grid;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.rf-roof__measure-button {
+  justify-self: start;
+}
+
+.rf-roof__measure-button[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.rf-roof__progress {
+  position: relative;
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(244, 241, 234, 0.12);
+}
+
+.rf-roof__progress::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: var(--rf-roof-copper);
+  animation: rf-roof-progress 1.6s var(--rf-ease) infinite;
+}
+
+@keyframes rf-roof-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(290%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rf-roof__progress::after {
+    width: 100%;
+    opacity: 0.6;
+    animation: none;
+  }
+}
+
+.rf-roof__measured {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--rf-roof-copper);
+  background: rgba(224, 136, 79, 0.1);
+}
+
+.rf-roof__measured-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-roof-copper-text);
+}
+
+.rf-roof__measured-value {
+  font-size: 1.25rem;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.rf-roof__measured-value span {
+  color: var(--rf-on-dark-muted);
+  font-weight: 500;
+}
+
+/* Google's text attribution, as its guidelines ask: regular weight, plain white, unaltered. */
+.rf-roof__attribution {
+  justify-self: end;
+  margin-top: 4px;
+  font-family: Roboto, var(--rf-font), sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #fff;
+}
+
+.rf-roof__help--warn {
+  color: #f3d3a8;
+}
+
+.rf-roof__solar {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(244, 241, 234, 0.14);
+}
+
+.rf-roof__solar-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__solar-value {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+}
+
+.rf-roof__solar-value span {
+  color: var(--rf-on-dark-muted);
+  font-weight: 500;
+}
+
+.rf-roof__notice {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__notice a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rf-credits.rf-roof__measure-credit {
+  font-size: 0.75rem;
+}
+
+.rf-roof__fallback {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.rf-roof__measured:focus,
+.rf-roof__fallback:focus {
+  outline: none;
+}
+
+.rf-roof__measured:focus-visible,
+.rf-roof__fallback:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 3px;
+}
+
+/* A second Measure button right under the photo, while the steps sit below it. */
+.rf-roof__measure-near {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.rf-roof__measure-near .rf-button[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (min-width: 1080px) {
+  .rf-roof__measure-near {
+    display: none;
+  }
+}
+
+.rf-roof__inline-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: var(--rf-roof-copper-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.rf-roof__inline-link:hover {
+  color: #fff;
+}
+
+.rf-roof__inline-link:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 2px;
+}
+
+.rf-roof__rough {
+  padding: 8px 12px;
+  border-left: 3px solid rgba(244, 241, 234, 0.4);
+  font-size: 0.875rem;
+  color: var(--rf-on-dark-muted);
+}
+
 .rf-roof__found {
   font-size: 0.9375rem;
   color: var(--rf-on-dark-muted);
@@ -509,6 +754,15 @@
 
 .rf-roof__material .rf-seg__options {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rf-roof__material--four .rf-seg__options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rf-roof__solar-size {
+  display: grid;
+  gap: 8px;
 }
 
 @media (max-width: 519px) {

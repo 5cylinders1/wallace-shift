@@ -12,18 +12,29 @@
  * homeowner never draws on it: both Mapbox's and Google's terms forbid
  * deriving outlines from their imagery.
  *
- *   ROOF_IMAGERY          "mapbox", "naip" or "none". Unset: Mapbox when a
- *                         token is present, otherwise NAIP.
+ *   ROOF_IMAGERY          "mapbox", "naip", "google" or "none". Unset:
+ *                         Mapbox when a token is present, otherwise NAIP.
+ *                         Google Solar measurements always use "google"
+ *                         (see googleImageryFromEnv).
  *   MAPBOX_ACCESS_TOKEN   A public (pk.) token with the styles:tiles scope,
  *                         URL-restricted to the site's origins. It is meant
  *                         to be seen by browsers; the restriction is what
  *                         protects it.
+ *   GOOGLE_MAPS_STATIC_KEY     A browser key restricted to the Maps Static
+ *                              API and to the site's origins. It is in every
+ *                              image URL, so it must never be the Solar key.
+ *   GOOGLE_MAPS_STATIC_SECRET  The project's URL-signing secret. Server-side
+ *                              only: each URL is signed here, so Google can
+ *                              refuse unsigned requests made with the key.
  *
- * Google Static Maps is deliberately absent: its terms bar using Google
- * imagery "with or near a non-Google map", and open footprints drawn on
- * top would put us on the wrong side of that line.
+ * Google's terms bar using its services "with or near a non-Google map"
+ * (Maps Platform ToS 3.2.3(e)), so wherever Google Solar data is shown the
+ * photo is Google's too, and never Mapbox's. Our own overlay (outlines,
+ * crosshair, panel layout) may sit on a Google image; the image itself is
+ * never traced.
  */
 
+import { createHmac } from 'node:crypto'
 import type { Imagery, LatLng, MapFrame } from '../../../src/demos/roofers/roof/types.js'
 import { localMeters } from './polygon.js'
 
@@ -152,10 +163,61 @@ const naip: ImageryProvider = {
   },
 }
 
+/**
+ * Google's URL signature: HMAC-SHA1 of the path and query, keyed with the
+ * project's base64url signing secret, appended as `signature`.
+ */
+export function signGoogleUrl(pathAndQuery: string, secret: string): string {
+  const key = Buffer.from(secret.replace(/-/g, '+').replace(/_/g, '/'), 'base64')
+  const signature = createHmac('sha1', key).update(pathAndQuery).digest('base64').replace(/\+/g, '-').replace(/\//g, '_')
+  return `${pathAndQuery}&signature=${signature}`
+}
+
+/**
+ * Google Maps Static API, satellite. Whole zooms only, and 640 × 640 at 2×
+ * is the largest standard image; the frame model is the same 256-pixel
+ * Web Mercator grid, so outlines and panels land where Google draws the
+ * roof. Its logo and data credit are printed along the bottom and must stay
+ * visible, like Mapbox's (RoofStage keeps its marks out of that strip).
+ */
+function google(key: string, secret: string | null): ImageryProvider {
+  return {
+    id: 'google',
+    maxZoom: 20,
+    fractionalZoom: false,
+    image(frame) {
+      const params = new URLSearchParams({
+        center: `${frame.center.lat.toFixed(6)},${frame.center.lng.toFixed(6)}`,
+        zoom: String(Math.round(frame.zoom)),
+        size: `${frame.width}x${frame.height}`,
+        scale: '2',
+        maptype: 'satellite',
+        format: 'jpg',
+        key,
+      })
+      const path = `/maps/api/staticmap?${params}`
+      return {
+        src: `https://maps.googleapis.com${secret ? signGoogleUrl(path, secret) : path}`,
+        provider: 'google',
+        // Google prints its own logo and imagery credit into the photo.
+        credits: [],
+      }
+    },
+  }
+}
+
+/** Google's satellite photo, or null without its browser key. */
+export function googleImageryFromEnv(): ImageryProvider | null {
+  const key = process.env.GOOGLE_MAPS_STATIC_KEY?.trim()
+  if (!key) return null
+  return google(key, process.env.GOOGLE_MAPS_STATIC_SECRET?.trim() || null)
+}
+
 export function imageryFromEnv(): ImageryProvider | null {
   const token = process.env.MAPBOX_ACCESS_TOKEN?.trim()
   const choice = process.env.ROOF_IMAGERY?.trim() || (token ? 'mapbox' : 'naip')
   if (choice === 'mapbox') return token ? mapbox(token) : null
   if (choice === 'naip') return naip
+  if (choice === 'google') return googleImageryFromEnv()
   return null
 }

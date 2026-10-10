@@ -281,7 +281,7 @@ function lookup(): RoofLookup {
     frame: FRAME,
     imagery: IMAGERY,
     credits: [],
-    measuredRoof: null,
+    measure: null,
   }
 }
 

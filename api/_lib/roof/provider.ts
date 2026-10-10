@@ -15,8 +15,9 @@ import type { AddressSuggestion, Credit, FootprintBuilding, LatLng, RoofLookup }
 import { footprintSourcesFromEnv, type FootprintSource } from './footprints.js'
 import { geocoderFromEnv, parseBias, type Geocoder } from './geocoder.js'
 import { RoofError, deadlineIn } from './http.js'
-import { frameFor, imageryFromEnv, type ImageryProvider } from './imagery.js'
+import { frameFor, googleImageryFromEnv, imageryFromEnv, type ImageryProvider } from './imagery.js'
 import { measureBuildings } from './measure.js'
+import { measurementFromEnv, type MeasurementProvider } from './measurement.js'
 
 export type LookupTarget = { kind: 'suggestion'; id: string } | { kind: 'address'; address: string }
 
@@ -40,7 +41,13 @@ const AT_POINT_M = 2
 /** A building-level point within this of the nearest outline: that outline is taken to be the house. */
 const HOME_WITHIN_M = 15
 
-export function openDataProvider(geocoder: Geocoder, sources: FootprintSource[], imagery: ImageryProvider | null, bias: LatLng | null): RoofDataProvider {
+export function openDataProvider(
+  geocoder: Geocoder,
+  sources: FootprintSource[],
+  imagery: ImageryProvider | null,
+  bias: LatLng | null,
+  measurement: MeasurementProvider | null = null,
+): RoofDataProvider {
   return {
     suggest: (text) => geocoder.suggest(text, bias),
 
@@ -72,7 +79,30 @@ export function openDataProvider(geocoder: Geocoder, sources: FootprintSource[],
         // A building-level point with only neighbours around it: a later dataset may have the house.
         if (!onBuilding || atPoint) break
       }
-      if (!best) throw failure ?? new RoofError('no_footprint')
+      if (!best) {
+        // A service that measures from a point doesn't need an open outline: a
+        // point on the building is enough (a new house, say, not yet in the data).
+        if (measurement?.mode === 'auto' && onBuilding && !failure) {
+          const frame = frameFor(place.location, null, imagery)
+          return {
+            partial: false,
+            lookup: {
+              ok: true,
+              source: measurement.id,
+              address: place.address,
+              location: place.location,
+              precision: place.precision,
+              buildings: [],
+              home: null,
+              frame,
+              imagery: imagery ? imagery.image(frame) : null,
+              credits: place.credits,
+              measure: { provider: measurement.id, credit: measurement.credit, mode: measurement.mode },
+            },
+          }
+        }
+        throw failure ?? new RoofError('no_footprint')
+      }
 
       const { source, buildings } = best
       const home = onBuilding && buildings[0].distanceM <= HOME_WITHIN_M ? buildings[0] : null
@@ -92,7 +122,7 @@ export function openDataProvider(geocoder: Geocoder, sources: FootprintSource[],
           frame,
           imagery: imagery ? imagery.image(frame) : null,
           credits: [...place.credits, source.credit],
-          measuredRoof: null,
+          measure: measurement ? { provider: measurement.id, credit: measurement.credit, mode: measurement.mode } : null,
         },
       }
     },
@@ -106,5 +136,8 @@ export function roofProviderFromEnv(): RoofDataProvider | null {
   const geocoder = geocoderFromEnv()
   const sources = footprintSourcesFromEnv()
   if (!geocoder || !sources.length) return null
-  return openDataProvider(geocoder, sources, imageryFromEnv(), parseBias(process.env.ROOF_SEARCH_BIAS))
+  const measurement = measurementFromEnv()
+  // Google's data never sits on another company's map (Maps ToS 3.2.3(e)): its photo or none.
+  const imagery = measurement?.id === 'google-solar' ? googleImageryFromEnv() : imageryFromEnv()
+  return openDataProvider(geocoder, sources, imagery, parseBias(process.env.ROOF_SEARCH_BIAS), measurement)
 }

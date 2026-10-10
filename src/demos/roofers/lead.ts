@@ -111,14 +111,26 @@ export const EMPTY_ANSWERS: LeadAnswers = {
 
 /** The roof the visitor priced, so the office knows its size before calling. */
 export interface LeadRoof {
-  /** 'outline' = public building outline at their address. */
-  source: 'outline' | 'sample' | 'home-size'
+  /** 'measured' = measured by a roof-measuring service; 'outline' = public building outline at their address. */
+  source: 'measured' | 'outline' | 'sample' | 'home-size'
   address: string | null
   footprintSqFt: number
   roofSqFt: number
   squares: number
   pitch: number
   buildings: number
+  /** The measuring service's confidence, for measured roofs. */
+  confidence?: string | null
+  /** The pitch the service measured, when it differs from the `pitch` the homeowner priced at. */
+  measuredPitch?: number | null
+  /**
+   * Who measured it, for measured roofs. Google's Solar terms (§20.2) allow
+   * keeping its numbers for 30 days, longer only inside a solar proposal the
+   * homeowner asked for, so a live CRM needs to know which records to expire.
+   */
+  measuredBy?: string | null
+  /** Solar shingles the homeowner priced, if they chose them. */
+  solar?: { kw: number; yearlyKwh: number | null } | null
 }
 
 /** What the visitor already saw on the page, carried into the lead. */
@@ -211,7 +223,8 @@ export function scoreLead(answers: LeadAnswers, context: LeadContext): LeadScore
   else if (answers.payment === 'finance' || answers.payment === 'insurance') add(1)
   if (answers.roofAge === 'over20') add(1, 'Roof over 20 years old')
   if (answers.property === 'commercial') add(1, 'Commercial property')
-  if (context.ballpark?.roof?.source === 'outline') add(2, 'Priced their actual roof')
+  if (context.ballpark?.roof?.source === 'measured') add(2, 'Measured their roof')
+  else if (context.ballpark?.roof?.source === 'outline') add(2, 'Priced their actual roof')
   else if (context.ballpark) add(1, 'Has already seen pricing')
 
   const priority: Priority = score >= 9 ? 'hot' : score >= 5 ? 'warm' : 'nurture'

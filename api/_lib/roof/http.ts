@@ -9,9 +9,15 @@ import type { RoofErrorCode } from '../../../src/demos/roofers/roof/types.js'
 /** A failure we can name to the visitor. */
 export class RoofError extends Error {
   readonly code: RoofErrorCode
-  constructor(code: RoofErrorCode, detail?: string) {
+  /** The provider's HTTP status, when the failure was an HTTP answer. */
+  readonly status: number | null
+  /** The provider's error body, when it sent JSON: some say why in it (Google's ErrorInfo reasons). */
+  readonly body: unknown
+  constructor(code: RoofErrorCode, detail?: string, status: number | null = null, body: unknown = undefined) {
     super(detail ?? code)
     this.code = code
+    this.status = status
+    this.body = body
   }
 }
 
@@ -29,17 +35,24 @@ const STATUS: Record<RoofErrorCode, number> = {
   rate_limited: 429,
   busy: 503,
   upstream: 502,
+  roof_not_found: 200,
+  unmeasurable: 200,
+  limit_reached: 200,
+  timed_out: 504,
 }
 
 /**
  * `cacheSeconds` > 0 lets Vercel's CDN answer repeat requests for the same
  * URL without running the function (or spending provider quota). Errors
  * are never cached, so a blip isn't pinned to an address for a day.
+ * `staleSeconds` lets the CDN serve an expired answer while it refreshes
+ * it in the background; pass 0 where a refresh costs money.
  */
-export function sendJson(res: ServerResponse, body: unknown, status = 200, cacheSeconds = 0): void {
+export function sendJson(res: ServerResponse, body: unknown, status = 200, cacheSeconds = 0, staleSeconds = cacheSeconds): void {
   res.statusCode = status
   res.setHeader('content-type', 'application/json')
-  res.setHeader('cache-control', cacheSeconds > 0 ? `public, s-maxage=${cacheSeconds}, stale-while-revalidate=${cacheSeconds}` : 'no-store')
+  const stale = staleSeconds > 0 ? `, stale-while-revalidate=${staleSeconds}` : ''
+  res.setHeader('cache-control', cacheSeconds > 0 ? `public, s-maxage=${cacheSeconds}${stale}` : 'no-store')
   res.end(JSON.stringify(body))
 }
 
@@ -87,6 +100,36 @@ export async function isRateLimited(req: IncomingMessage, scope: string, limit: 
   }
 }
 
+/** Whether the shared Upstash store behind the limiters is configured. */
+export const hasLimiterStore = () => Boolean(process.env.RATE_LIMIT_REDIS_URL && process.env.RATE_LIMIT_REDIS_TOKEN)
+
+/**
+ * Counts one use against `key` (a fixed window the caller names, e.g. a
+ * day or a month) and returns the new total, or null when the store is
+ * unconfigured or unreachable. Unlike the per-IP limiter this does not
+ * fail open on its own: callers spending money decide what null means.
+ */
+export async function countUse(key: string, ttlSeconds: number): Promise<number | null> {
+  if (!hasLimiterStore()) return null
+  try {
+    const response = await fetch(`${process.env.RATE_LIMIT_REDIS_URL}/pipeline`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${process.env.RATE_LIMIT_REDIS_TOKEN}`, 'content-type': 'application/json' },
+      body: JSON.stringify([
+        ['INCR', key],
+        ['EXPIRE', key, String(ttlSeconds), 'NX'],
+      ]),
+      signal: AbortSignal.timeout(1500),
+    })
+    if (!response.ok) return null
+    const out = (await response.json()) as Array<{ result?: number }>
+    const count = out?.[0]?.result
+    return typeof count === 'number' ? count : null
+  } catch {
+    return null
+  }
+}
+
 /** Identifies us to keyless public services, as their usage policies ask. */
 export const USER_AGENT = 'RoofEstimateDemo/1.0 (+https://roofers.wallaceshift.com)'
 
@@ -121,8 +164,11 @@ export async function fetchJson(url: string, init: RequestInit & { timeoutMs?: n
   } catch (error) {
     throw new RoofError(isTimeout(error) ? 'busy' : 'upstream', `fetch failed: ${String(error)}`)
   }
-  if (response.status === 429 || response.status === 503) throw new RoofError('busy', `HTTP ${response.status}`)
-  if (!response.ok) throw new RoofError('upstream', `HTTP ${response.status}`)
+  if (!response.ok) {
+    const body = await response.json().catch(() => undefined)
+    const busy = response.status === 429 || response.status === 503
+    throw new RoofError(busy ? 'busy' : 'upstream', `HTTP ${response.status}`, response.status, body)
+  }
   try {
     return await response.json()
   } catch (error) {
