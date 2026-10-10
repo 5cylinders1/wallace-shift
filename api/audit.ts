@@ -64,10 +64,12 @@
  * Optional environment variables (rate limiting):
  *   RATE_LIMIT_REDIS_URL    Upstash Redis REST endpoint.
  *   RATE_LIMIT_REDIS_TOKEN  Its bearer token.
+ *   (or the KV_REST_API_URL / KV_REST_API_TOKEN pair Vercel's Upstash
+ *   integration adds; see api/_lib/limiter-store.ts)
  *
  * Upstash speaks HTTP, so this needs no client library — one fetch, in
- * keeping with the project's lean dependency rule. While either variable
- * is unset the endpoint still works but is UNTHROTTLED: the cache above is
+ * keeping with the project's lean dependency rule. While no store is
+ * configured the endpoint still works but is UNTHROTTLED: the cache above is
  * then the only thing standing between a bored person with a loop and your
  * daily PageSpeed quota.
  */
@@ -79,6 +81,7 @@
  * honestly instead of arriving after a long wait.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import { incrementWindow, limiterStore } from './_lib/limiter-store.js'
 
 export const config = { maxDuration: 60 }
 
@@ -137,36 +140,16 @@ function header(req: IncomingMessage, name: string): string | undefined {
  * briefly allowing extra requests through.
  */
 async function isRateLimited(req: IncomingMessage): Promise<boolean> {
-  const base = process.env.RATE_LIMIT_REDIS_URL
-  const token = process.env.RATE_LIMIT_REDIS_TOKEN
-  if (!base || !token) return false
+  const store = limiterStore()
+  if (!store) return false
 
   const ip =
     header(req, 'x-real-ip') ??
     header(req, 'x-forwarded-for')?.split(',')[0]?.trim() ??
     'unknown'
   const bucket = Math.floor(Date.now() / 1000 / RATE_WINDOW_S)
-  const key = `audit:${ip}:${bucket}`
-
-  try {
-    const res = await fetch(`${base}/pipeline`, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify([
-        ['INCR', key],
-        ['EXPIRE', key, String(RATE_WINDOW_S), 'NX'],
-      ]),
-    })
-    if (!res.ok) return false
-    const out = (await res.json()) as Array<{ result?: number }>
-    const count = out?.[0]?.result
-    return typeof count === 'number' && count > RATE_LIMIT
-  } catch {
-    return false
-  }
+  const count = await incrementWindow(store, `audit:${ip}:${bucket}`, RATE_WINDOW_S)
+  return count !== null && count > RATE_LIMIT
 }
 
 /**

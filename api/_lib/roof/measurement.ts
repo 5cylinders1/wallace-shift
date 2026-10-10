@@ -282,8 +282,8 @@ export function measurementFromEnv(): MeasurementProvider | null {
   if (!provider) return null
   if (!hasLimiterStore() && !unmeteredAllowed()) {
     console.error(
-      `[roof-measure] off: a ${provider.id} key is set but RATE_LIMIT_REDIS_URL/TOKEN are not, so measuring would be unmetered. ` +
-        'Add the store, or set ROOF_MEASURE_UNMETERED=1 for local development only.',
+      `[roof-measure] off: a ${provider.id} key is set but no Upstash store is (RATE_LIMIT_REDIS_URL/TOKEN, or the KV_REST_API_URL/TOKEN ` +
+        "Vercel's integration adds), so measuring would be unmetered. Add the store, or set ROOF_MEASURE_UNMETERED=1 for local development only.",
     )
     return null
   }

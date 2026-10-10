@@ -5,6 +5,7 @@
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { RoofErrorCode } from '../../../src/demos/roofers/roof/types.js'
+import { incrementWindow, limiterStore } from '../limiter-store.js'
 
 /** A failure we can name to the visitor. */
 export class RoofError extends Error {
@@ -71,37 +72,20 @@ export function queryOf(req: IncomingMessage): URLSearchParams {
 }
 
 /**
- * Fixed-window counter in Upstash over its REST API, as in /api/audit.
- * Fails open: an unreachable or unconfigured limiter never breaks the tool.
+ * Fixed-window counter per visitor in the Upstash store (limiter-store.ts),
+ * as in /api/audit. Fails open: an unreachable or unconfigured limiter never
+ * breaks the tool.
  */
 export async function isRateLimited(req: IncomingMessage, scope: string, limit: number, windowSeconds: number): Promise<boolean> {
-  const base = process.env.RATE_LIMIT_REDIS_URL
-  const token = process.env.RATE_LIMIT_REDIS_TOKEN
-  if (!base || !token) return false
-
+  const store = limiterStore()
+  if (!store) return false
   const ip = header(req, 'x-real-ip') ?? header(req, 'x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-  const key = `${scope}:${ip}:${Math.floor(Date.now() / 1000 / windowSeconds)}`
-  try {
-    const response = await fetch(`${base}/pipeline`, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-      body: JSON.stringify([
-        ['INCR', key],
-        ['EXPIRE', key, String(windowSeconds), 'NX'],
-      ]),
-      signal: AbortSignal.timeout(1500),
-    })
-    if (!response.ok) return false
-    const out = (await response.json()) as Array<{ result?: number }>
-    const count = out?.[0]?.result
-    return typeof count === 'number' && count > limit
-  } catch {
-    return false
-  }
+  const count = await incrementWindow(store, `${scope}:${ip}:${Math.floor(Date.now() / 1000 / windowSeconds)}`, windowSeconds)
+  return count !== null && count > limit
 }
 
 /** Whether the shared Upstash store behind the limiters is configured. */
-export const hasLimiterStore = () => Boolean(process.env.RATE_LIMIT_REDIS_URL && process.env.RATE_LIMIT_REDIS_TOKEN)
+export const hasLimiterStore = () => limiterStore() !== null
 
 /**
  * Counts one use against `key` (a fixed window the caller names, e.g. a
@@ -110,24 +94,8 @@ export const hasLimiterStore = () => Boolean(process.env.RATE_LIMIT_REDIS_URL &&
  * fail open on its own: callers spending money decide what null means.
  */
 export async function countUse(key: string, ttlSeconds: number): Promise<number | null> {
-  if (!hasLimiterStore()) return null
-  try {
-    const response = await fetch(`${process.env.RATE_LIMIT_REDIS_URL}/pipeline`, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${process.env.RATE_LIMIT_REDIS_TOKEN}`, 'content-type': 'application/json' },
-      body: JSON.stringify([
-        ['INCR', key],
-        ['EXPIRE', key, String(ttlSeconds), 'NX'],
-      ]),
-      signal: AbortSignal.timeout(1500),
-    })
-    if (!response.ok) return null
-    const out = (await response.json()) as Array<{ result?: number }>
-    const count = out?.[0]?.result
-    return typeof count === 'number' ? count : null
-  } catch {
-    return null
-  }
+  const store = limiterStore()
+  return store ? incrementWindow(store, key, ttlSeconds) : null
 }
 
 /** Identifies us to keyless public services, as their usage policies ask. */
