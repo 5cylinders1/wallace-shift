@@ -12,9 +12,9 @@ const InteractiveHero = lazy(() => import('../experiments/water-hero/WaterHeroEx
   .then(module => ({ default: module.WaterHeroExperiment })))
 
 // Keep the statement with its hero branch: desktop folds it into the logo
-// reveal, while mobile, loading and failure retain the original section.
+// reveal, while mobile, loading and failure use the About studio still.
 function VideoHeroSequence({ posterOnly = false }: { posterOnly?: boolean }) {
-  return <><Hero posterOnly={posterOnly} /><BrandStatement /></>
+  return <><Hero posterOnly={posterOnly} appearance="studio" /><BrandStatement /></>
 }
 
 export function HomeHero() {

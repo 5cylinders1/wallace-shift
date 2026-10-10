@@ -7,7 +7,7 @@ import { WaterHeroBrandHandoff } from '../../Hero/WaterHeroBrandHandoff'
 import { useQualityTier } from './useQualityTier'
 import { createSceneState } from './waterHeroTypes'
 import { readLogoAppearance, logoAppearanceUrl } from './logoAppearance'
-import { PREVIEW_LOGO_APPEARANCE, type LogoAppearance } from './waterHeroConfig'
+import { HOMEPAGE_LOGO_APPEARANCE, PREVIEW_LOGO_APPEARANCE, type LogoAppearance } from './waterHeroConfig'
 import type {
   DebugTelemetry,
   ProgressSource,
@@ -104,7 +104,7 @@ export function WaterHeroExperiment({ mode = 'experiment', fallback }: WaterHero
     },
   ] = useState<SearchOptions>(() => mode === 'landing' ? {
     debug: false, tier: undefined, progress: null, forceReducedMotion: false,
-    channel: 0, appearance: 'glass',
+    channel: 0, appearance: HOMEPAGE_LOGO_APPEARANCE,
   } : readSearch())
   const [appearance, setAppearance] = useState(initialAppearance)
   const onAppearance = useCallback((next: LogoAppearance) => {

@@ -284,10 +284,12 @@ export const GLASSMORPH_LOGO_MATERIAL = {
   dispersion: .065,
 } as const
 
-export type LogoAppearance = 'led' | 'electric' | 'glass' | 'chrome' | 'frosted' | 'pearl' | 'copper' | 'mercury' | 'cutlight'
+export type LogoAppearance = 'led' | 'electric' | 'glass' | 'chrome' | 'frosted' | 'pearl' | 'copper' | 'mercury' | 'cutlight' | 'studio'
 /** User-approved favorite. Selecting the comparison never rewrites this. */
 export const PREFERRED_LOGO_APPEARANCE: LogoAppearance = 'led'
 export const PREVIEW_LOGO_APPEARANCE: LogoAppearance = 'glass'
+/** About's silver-and-blue identity, independently selected for the landing. */
+export const HOMEPAGE_LOGO_APPEARANCE: LogoAppearance = 'studio'
 
 /** Saved top runner: full-glow opal LED, approved 2026-09-07.
  * Keep this profile and its full additive halo unchanged when trying variants. */

@@ -10,6 +10,7 @@ import { setFrostedGlowPass } from './logoFrosted'
 import { setPearlGlowPass } from './logoPearl'
 import { setMercuryGlowPass } from './logoMercury'
 import { setCutLightGlowPass } from './logoCutLight'
+import { setStudioGlowPass } from './logoStudio'
 import { setOpeningGlowPass } from './logoOpening'
 import type { LogoNodes } from './waterHeroTypes'
 
@@ -141,6 +142,7 @@ export function renderLEDGlow(
     setPearlGlowPass(materials, true)
     setMercuryGlowPass(materials, true)
     setCutLightGlowPass(materials, true)
+    setStudioGlowPass(materials, true)
     setOpeningGlowPass(materials, true)
     renderer.setRenderTarget(glow.maskTarget)
     renderer.render(scene, camera)
@@ -150,6 +152,7 @@ export function renderLEDGlow(
     setPearlGlowPass(materials, false)
     setMercuryGlowPass(materials, false)
     setCutLightGlowPass(materials, false)
+    setStudioGlowPass(materials, false)
     setOpeningGlowPass(materials, false)
 
     glow.quad.material = glow.blurMaterial
@@ -170,6 +173,7 @@ export function renderLEDGlow(
     setPearlGlowPass(materials, false)
     setMercuryGlowPass(materials, false)
     setCutLightGlowPass(materials, false)
+    setStudioGlowPass(materials, false)
     setOpeningGlowPass(materials, false)
     for (const { object, mask } of glow.layerNodes) object.layers.mask = mask
     glow.layerNodes.length = 0

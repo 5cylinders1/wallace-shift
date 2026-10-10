@@ -1,7 +1,9 @@
 # Roofing demo lander
 
-A sales demo for roofing contractors, served at **roofers.wallaceshift.com**
-(and at `wallaceshift.com/demos/roofers`). It is a separate Vite entry with
+A sales demo for roofing contractors, configured for **roofers.wallaceshift.com/northvane**
+(with the original `/demos/roofers` entry retained). The roofing subdomain root
+is the five-slot offer gallery; see [the offer routing notes](demos/roofing-offer.md).
+This demo is a separate Vite entry with
 its own bundle and styles: `demos/roofers/index.html` → `src/demos/roofers/`.
 Nothing from the studio site loads on it, and it ships nothing to the studio
 site.
@@ -30,7 +32,7 @@ site.
 Add the prospect's details to the URL:
 
 ```
-https://roofers.wallaceshift.com/?company=Acme%20Roofing&city=Overland%20Park&phone=9135550199
+https://roofers.wallaceshift.com/northvane?company=Acme%20Roofing&city=Overland%20Park&phone=9135550199
 ```
 
 `company` changes the header, truck door, yard sign, warranty and lead
@@ -365,14 +367,20 @@ any keys.
 
 ## Deploying the subdomain
 
-`vercel.json` rewrites `/` on host `roofers.wallaceshift.com` to
-`/demos/roofers`. To go live:
+`vercel.json` rewrites `/` on host `roofers.wallaceshift.com` to the offer
+gallery at `/demos/roofers-offer`. `/northvane` rewrites to this demo's
+`/demos/roofers` document, retaining query parameters for personalization.
+Branded demo paths also work on Vercel preview domains. To release:
 
-1. Merge this branch so production builds the demo entry.
+1. Build and review the offer gallery and both demo entries, then merge the
+   release branch so production includes them.
 2. In Vercel → the `wallace-shift` project → Settings → Domains, add
    `roofers.wallaceshift.com`.
 3. If `wallaceshift.com` DNS is not on Vercel, add the CNAME record Vercel
    shows for `roofers` (typically `cname.vercel-dns.com`).
 
-Local review: `npm run dev`, then open `http://localhost:5173/demos/roofers/`.
+4. Verify the roofing host root, `/northvane`, `/alder-stone` and its direct
+   guide URLs on the deployment. A local path check does not prove host routing.
+
+Local review: `npm run dev`, then open `/demos/roofers/` on the URL Vite reports.
 The roof endpoints run inside `vite dev` too, using keys from `.env.local`.

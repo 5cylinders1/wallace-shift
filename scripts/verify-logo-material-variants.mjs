@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
-import { Plane, Texture, Vector3 } from 'three'
+import { Plane, ShaderLib, Texture, Vector3 } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import ts from 'typescript'
 
@@ -39,6 +39,10 @@ const { logoMercuryUniforms, updateMercuryLighting } =
   await import(await sourceModule(new URL('logoMercury.ts', base)))
 const { logoCutLightUniforms } =
   await import(await sourceModule(new URL('logoCutLight.ts', base)))
+const { logoStudioFinish, setStudioGlowPass, STUDIO_BLUE_CRYSTAL_MATERIAL } =
+  await import(await sourceModule(new URL('logoStudio.ts', base)))
+const { updateLogoOpening, logoOpeningUniforms } =
+  await import(await sourceModule(new URL('logoOpening.ts', base)))
 const bytes = await readFile(new URL('../public/models/ws_logo.glb', import.meta.url))
 const { scene: source } = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
 const meshes = root => { const list = []; root.traverse(object => { if (object.isMesh) list.push(object) }); return list }
@@ -49,7 +53,7 @@ await test('nine styles reuse the same cloned meshes and return to the exact sav
   const transforms = originals.map(mesh => [mesh.position.toArray(), mesh.quaternion.toArray(), mesh.scale.toArray()])
   createLogoMaterialVariants(root, .432916)
   const led = logoMaterials(root), all = logoVariantMaterials(root)
-  assert.equal(all.length, 16)
+  assert.equal(all.length, 18)
   assert.equal(led.length, 2)
   const versions = all.map(material => material.version)
   let glassGeometry, chromeMaterials, frostedMaterials, pearlMaterials, copperMaterials, mercuryMaterials, cutLightMaterials
@@ -155,6 +159,61 @@ await test('glass binds only the beauty graph and can be unbound while the LED v
     assert.equal(logoGlassUniforms(material).uGlassReady.value, 0)
     assert.equal(logoGlassUniforms(material).uGlassScene.value, null, 'inactive glass cannot retain a disposed capture target')
   }
+  disposeLogoMaterialVariants(root); disposeLogoMaterialVariants(proxy); texture.dispose()
+})
+
+await test('Studio keeps a silver W and blue transmissive slash through opening, capture, and saved-Glass round trips', () => {
+  const root = source.clone(true), proxy = source.clone(true), texture = new Texture()
+  const before = source.toJSON()
+  createLogoMaterialVariants(root, .432916)
+  createLogoMaterialVariants(proxy, .432916, true)
+  selectLogoAppearance(root, 'glass')
+  const savedGlass = logoMaterials(root)
+  const savedSettings = savedGlass.map(material => material.toJSON())
+  const rounded = meshes(root).map(mesh => mesh.geometry)
+  selectLogoAppearance(root, 'studio'); selectLogoAppearance(proxy, 'studio')
+  const studio = logoMaterials(root), all = logoVariantMaterials(root)
+  assert.deepEqual(meshes(root).map(mesh => mesh.geometry), rounded)
+  for (const graph of [root, proxy]) for (const mesh of meshes(graph)) {
+    const right = mesh.name === 'WS_Right', material = mesh.material
+    assert.equal(logoStudioFinish(material), right ? 'crystal' : 'aluminum')
+    assert.equal(!!logoGlassUniforms(material), right, 'only the optical slash samples the captured background')
+    assert.equal(logoLEDUniforms(material), undefined)
+    assert.equal(material.emissive.getHex(), 0)
+    assert.equal(material.transmission, 0, 'avoids Three opaque-only native transmission pass')
+    assert.equal(material.depthWrite, true)
+    assert.equal(material.transparent, false)
+    if (right) {
+      assert.equal(material.iridescence, 0, 'About crystal does not inherit the saved Glass rainbow coating')
+      assert.deepEqual(logoGlassUniforms(material).uGlassAbsorption.value.toArray(), STUDIO_BLUE_CRYSTAL_MATERIAL.absorption)
+    } else assert.equal(material.metalness, 1)
+  }
+  bindGlassScene(studio, texture, 640, 360)
+  assert.equal(logoGlassUniforms(root.getObjectByName('WS_Right').material).uGlassScene.value, texture)
+  assert.equal(logoGlassUniforms(proxy.getObjectByName('WS_Right').material).uGlassScene.value, null)
+  for (const progress of [0, .025, .07, .12, .5, .8, 1, .07, 0]) {
+    updateLogoOpening(all, progress)
+    updateLEDLighting(all, 14, .8, 'studio')
+    assert.deepEqual(logoMaterials(root), studio, 'opening only updates uniforms, never assigns LED or Glass slots')
+  }
+  const aluminum = root.getObjectByName('WS_Left').material
+  const shader = { uniforms: {}, vertexShader: ShaderLib.physical.vertexShader, fragmentShader: ShaderLib.physical.fragmentShader }
+  aluminum.onBeforeCompile(shader, {})
+  assert.ok(shader.fragmentShader.includes('uniform float uStudioGlowPass;'), 'isolated glow control is declared in the consuming fragment shader')
+  assert.ok(shader.fragmentShader.indexOf('if (uStudioGlowPass > .5) outgoingLight') < shader.fragmentShader.indexOf('if (uOpeningGlowPass > .5'), 'clear reflected metal before adding the temporary opening charge')
+  setStudioGlowPass(studio, true)
+  assert.equal(shader.uniforms.uStudioGlowPass.value, 1)
+  setStudioGlowPass(studio, false)
+  assert.equal(shader.uniforms.uStudioGlowPass.value, 0)
+  assert.equal(logoOpeningUniforms(aluminum).uOpeningGlass.value, 0)
+  selectLogoAppearance(root, 'glass')
+  bindGlassScene(all, null)
+  assert.deepEqual(logoMaterials(root), savedGlass)
+  assert.deepEqual(savedGlass.map(material => material.toJSON()), savedSettings, 'the previous homepage material settings are unchanged')
+  selectLogoAppearance(root, 'studio')
+  assert.deepEqual(logoMaterials(root), studio)
+  assert.equal(logoGlassUniforms(root.getObjectByName('WS_Right').material).uGlassScene.value, null)
+  assert.deepEqual(source.toJSON(), before, 'no cached GLB material, geometry, or transform was mutated')
   disposeLogoMaterialVariants(root); disposeLogoMaterialVariants(proxy); texture.dispose()
 })
 

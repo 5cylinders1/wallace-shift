@@ -24,7 +24,7 @@ async function sourceModule(url) {
   return result
 }
 const baseUrl = new URL('../src/components/experiments/water-hero/', import.meta.url)
-const { CRYSTAL_REFLECTION_CARDS, SOFT_GLASS_REFLECTION_CARDS, CRYSTAL_ENVIRONMENT_SIZE, CRYSTAL_AMBIENT,
+const { CRYSTAL_REFLECTION_CARDS, SOFT_GLASS_REFLECTION_CARDS, STUDIO_CRYSTAL_REFLECTION_CARDS, CRYSTAL_ENVIRONMENT_SIZE, CRYSTAL_AMBIENT,
   crystalCardBasis, createCrystalEnvironmentMaterial, createCrystalEnvironment } = await import(
   await sourceModule(new URL('crystalEnvironment.ts', baseUrl)),
 )
@@ -205,7 +205,7 @@ function renderFixture(failAt = '', profile = 'original') {
     assert.equal(capturedCube.texture.generateMipmaps, false)
     assert.equal(scene.children.length, 1, 'only the owned photographic rig is captured')
     const mesh = scene.children[0]
-    const cards = profile === 'soft-glass' ? SOFT_GLASS_REFLECTION_CARDS : CRYSTAL_REFLECTION_CARDS
+    const cards = profile === 'soft-glass' ? SOFT_GLASS_REFLECTION_CARDS : profile === 'studio' ? STUDIO_CRYSTAL_REFLECTION_CARDS : CRYSTAL_REFLECTION_CARDS
     assert.deepEqual(mesh.material.uniforms.uIntensity.value, cards.map(card => card.intensity))
     assert.deepEqual(mesh.material.uniforms.uSoftOval.value, cards.map(card => card.softOval ? 1 : 0))
     capturedCube.addEventListener('dispose', () => disposed.cube++)
@@ -257,14 +257,14 @@ function renderFixture(failAt = '', profile = 'original') {
 }
 
 await test('crystal capture retains only its two textures and restores caller rendering state', () => {
-  for (const profile of ['original', 'soft-glass']) {
+  for (const profile of ['original', 'soft-glass', 'studio']) {
     const f = renderFixture('', profile)
     try { f.verify(f.run()) } finally { f.restore() }
   }
 })
 
 await test('failed cube or filtering work releases owned resources and restores renderer state', () => {
-  for (const profile of ['original', 'soft-glass']) for (const pass of ['cube', 'filter']) {
+  for (const profile of ['original', 'soft-glass', 'studio']) for (const pass of ['cube', 'filter']) {
     const f = renderFixture(pass, profile)
     try { assert.throws(f.run, /injected crystal/); f.verify() } finally { f.restore() }
   }
@@ -274,7 +274,7 @@ await test('glass reflection rig stays separate from sky, water and LED/Electric
   const base = '../src/components/experiments/water-hero/'
   const [scene, logo, probe] = await Promise.all(['WaterScene.tsx', 'WSLogo.tsx', 'LogoParticleReflection.tsx']
     .map(name => readFile(new URL(base + name, import.meta.url), 'utf8')))
-  assert.match(scene, /crystalProfile = appearance === 'glass' \? 'soft-glass' : 'original'/)
+  assert.match(scene, /crystalProfile = appearance === 'glass' \? 'soft-glass' : appearance === 'studio' \? 'studio' : 'original'/)
   assert.match(scene, /glassEnabled \? createCrystalEnvironment\(gl, crystalProfile\) : null/)
   assert.match(scene, /\[gl, glassEnabled, crystalProfile\]/, 'switching optical looks reallocates the matching source')
   assert.match(scene, /activeCrystalEnvironment = glassEnabled && crystalEnvironment\?\.profile === crystalProfile\s*\? crystalEnvironment : null/,

@@ -7,6 +7,7 @@ import { PEARL_CERAMIC_MATERIAL, createLogoPearlMaterial } from './logoPearl'
 import { SMOKED_COPPER_MATERIAL, createLogoCopperMaterial } from './logoCopper'
 import { LIQUID_MERCURY_MATERIAL, createLogoMercuryMaterial } from './logoMercury'
 import { CUT_LIGHT_MATERIAL, createLogoCutLightMaterial } from './logoCutLight'
+import { createLogoStudioAluminumMaterial, createLogoStudioCrystalMaterial } from './logoStudio'
 import { createLogoCrystalMaterial, createLogoLEDMaterial, logoLEDUniforms } from './logoMaterial'
 import { createOpeningFrame, installLogoOpening, logoOpeningUniforms } from './logoOpening'
 import { NODE_NAMES, type LogoAppearance } from './waterHeroConfig'
@@ -22,6 +23,7 @@ interface OwnedVariants {
   copper: MaterialSlot
   mercury: MaterialSlot
   cutlight: MaterialSlot
+  studio: MaterialSlot
   sourceGeometry: BufferGeometry
   glassGeometry: BufferGeometry
 }
@@ -48,6 +50,11 @@ export function createLogoMaterialVariants(root: Object3D, worldThickness: numbe
     const chrome = source.map(material => createLogoChromeMaterial(material, openingFrame, child.geometry, reflectionProxy))
     const mercury = source.map(material => createLogoMercuryMaterial(material, openingFrame, child.geometry, reflectionProxy))
     const cutlight = source.map(material => createLogoCutLightMaterial(material, openingFrame, child.geometry, reflectionProxy))
+    const studioGlass = child.name === NODE_NAMES.right
+    const studio = source.map(material => studioGlass
+      ? createLogoStudioCrystalMaterial(material, worldThickness)
+      : createLogoStudioAluminumMaterial(material))
+    studio.forEach(material => installLogoOpening(material, openingFrame, studioGlass, reflectionProxy))
     led.forEach(material => installLogoOpening(material, openingFrame, false, reflectionProxy))
     glass.forEach(material => installLogoOpening(material, openingFrame, true, reflectionProxy))
     frosted.forEach(material => {
@@ -102,6 +109,7 @@ export function createLogoMaterialVariants(root: Object3D, worldThickness: numbe
       copper: Array.isArray(child.material) ? copper : copper[0],
       mercury: Array.isArray(child.material) ? mercury : mercury[0],
       cutlight: Array.isArray(child.material) ? cutlight : cutlight[0],
+      studio: Array.isArray(child.material) ? studio : studio[0],
       sourceGeometry: child.geometry,
       glassGeometry: buildGlassGeometry(child.geometry),
     }
@@ -118,7 +126,7 @@ export function createLogoMaterialVariants(root: Object3D, worldThickness: numbe
 export function logoVariantMaterials(root: Object3D): MeshStandardMaterial[] {
   const materials = new Set<MeshStandardMaterial>()
   for (const entry of variants.get(root) ?? []) {
-    for (const material of [...slots(entry.led), ...slots(entry.glass), ...slots(entry.chrome), ...slots(entry.frosted), ...slots(entry.pearl), ...slots(entry.copper), ...slots(entry.mercury), ...slots(entry.cutlight)]) materials.add(material)
+    for (const material of [...slots(entry.led), ...slots(entry.glass), ...slots(entry.chrome), ...slots(entry.frosted), ...slots(entry.pearl), ...slots(entry.copper), ...slots(entry.mercury), ...slots(entry.cutlight), ...slots(entry.studio)]) materials.add(material)
   }
   return [...materials]
 }
@@ -129,8 +137,8 @@ export function selectLogoAppearance(root: Object3D, appearance: LogoAppearance)
     entry.mesh.material = appearance === 'glass' ? entry.glass : appearance === 'chrome' ? entry.chrome
       : appearance === 'frosted' ? entry.frosted : appearance === 'pearl' ? entry.pearl
         : appearance === 'copper' ? entry.copper : appearance === 'mercury' ? entry.mercury
-          : appearance === 'cutlight' ? entry.cutlight : entry.led
-    entry.mesh.geometry = appearance === 'glass' || appearance === 'frosted' || appearance === 'pearl' || appearance === 'copper'
+          : appearance === 'cutlight' ? entry.cutlight : appearance === 'studio' ? entry.studio : entry.led
+    entry.mesh.geometry = appearance === 'glass' || appearance === 'frosted' || appearance === 'pearl' || appearance === 'copper' || appearance === 'studio'
       ? entry.glassGeometry : entry.sourceGeometry
   }
   selected.set(root, appearance)

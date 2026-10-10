@@ -1,4 +1,4 @@
-/** Touch-first devices keep the existing video hero. The live scene is an
+/** Touch-first devices use the Studio still. The live scene is an
  * enhancement for larger screens with precise pointing and motion enabled. */
 export const HOME_HERO_DESKTOP_QUERY = '(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
 

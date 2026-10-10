@@ -8,6 +8,7 @@ import { PEARL_CERAMIC_MATERIAL, logoPearlUniforms } from './logoPearl'
 import { SMOKED_COPPER_MATERIAL, logoCopperUniforms } from './logoCopper'
 import { LIQUID_MERCURY_MATERIAL, logoMercuryUniforms } from './logoMercury'
 import { CUT_LIGHT_MATERIAL, logoCutLightUniforms } from './logoCutLight'
+import { STUDIO_ALUMINUM_MATERIAL, STUDIO_BLUE_CRYSTAL_MATERIAL, logoStudioFinish } from './logoStudio'
 import { logoVariantMaterials } from './logoMaterialVariants'
 import { captureParticleReflection, createParticleReflection, particleReflectionActive, particleReflectionDue } from './particleReflection'
 import { useDisposable } from './useDisposable'
@@ -42,7 +43,7 @@ export function LogoParticleReflection({ nodes, sceneState, environment, crystal
   useFrame(({ clock, scene }) => {
     const { progress, underwater, logoWorldY } = sceneState
     const active = probe && particleReflectionActive(progress, underwater, reducedMotion)
-    const glass = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper'
+    const glass = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper' || appearance === 'studio'
     const background = glass && crystalEnvironment ? crystalEnvironment.radiance : environment
     if (active && (capturedEnvironment.current !== background || particleReflectionDue(clock.elapsedTime, probe.lastCapture, tier))) {
       position.set(0, logoWorldY, 0)
@@ -63,11 +64,13 @@ export function LogoParticleReflection({ nodes, sceneState, environment, crystal
       const pearl = !!logoPearlUniforms(material)
       const mercury = !!logoMercuryUniforms(material)
       const cutlight = !!logoCutLightUniforms(material)
+      const studio = logoStudioFinish(material)
       // Explicit maps preserve the individual glass, metal and ceramic gains.
       // Three uses scene intensity when a material falls back to its map.
       const next = crystal
         ? glass ? reflected ?? crystalEnvironment?.environment ?? environment : environment
-        : chrome ? appearance === 'chrome' ? reflected ?? environment : environment
+        : studio === 'aluminum' ? environment
+          : chrome ? appearance === 'chrome' ? reflected ?? environment : environment
           : pearl ? appearance === 'pearl' ? reflected ?? environment : environment
             : mercury ? appearance === 'mercury' ? reflected ?? environment : environment
               : cutlight ? appearance === 'cutlight' ? reflected ?? environment : environment
@@ -78,9 +81,12 @@ export function LogoParticleReflection({ nodes, sceneState, environment, crystal
       }
       material.envMapIntensity = crystal
         ? ENVIRONMENT.environmentIntensity * (frosted ? FROSTED_CRYSTAL_MATERIAL.envMapIntensity
-          : copper ? SMOKED_COPPER_MATERIAL.envMapIntensity : GLASSMORPH_LOGO_MATERIAL.envMapIntensity)
+          : copper ? SMOKED_COPPER_MATERIAL.envMapIntensity
+            : studio === 'crystal' ? STUDIO_BLUE_CRYSTAL_MATERIAL.envMapIntensity : GLASSMORPH_LOGO_MATERIAL.envMapIntensity)
           * (1 + underwater * .10) * sceneState.lightLevel
-        : chrome ? ENVIRONMENT.environmentIntensity * BLACK_CHROME_MATERIAL.envMapIntensity
+        : studio === 'aluminum' ? ENVIRONMENT.environmentIntensity * STUDIO_ALUMINUM_MATERIAL.envMapIntensity
+          * (1 + underwater * .10) * sceneState.lightLevel
+          : chrome ? ENVIRONMENT.environmentIntensity * BLACK_CHROME_MATERIAL.envMapIntensity
           * (1 + underwater * .10) * sceneState.lightLevel
           : pearl ? ENVIRONMENT.environmentIntensity * PEARL_CERAMIC_MATERIAL.envMapIntensity
             * (1 + underwater * .10) * sceneState.lightLevel

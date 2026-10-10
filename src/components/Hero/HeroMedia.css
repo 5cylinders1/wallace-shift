@@ -13,6 +13,65 @@
   object-position: center center;
 }
 
+/* Reuse the About page's actual silver-and-blue mark for touch devices,
+   reduced motion and scene fallback. The square still contains the complete
+   mark; width-led framing keeps it between the homepage's copy and form. */
+.hero-media--studio {
+  background: radial-gradient(ellipse at 50% 52%, #111a22 0%, var(--color-ink) 65%);
+}
+
+.hero-media__studio {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  width: min(34vw, 68svh);
+  height: auto;
+  transform: translate(-50%, -50%);
+  mask-image:
+    linear-gradient(to right, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent);
+  mask-composite: intersect;
+}
+
+@media (min-width: 900px) and (max-width: 1119px) {
+  .hero-media__studio {
+    left: 66%;
+    width: min(50vw, 70svh);
+  }
+}
+
+@media (max-width: 899px) {
+  .hero-media__studio {
+    top: 55%;
+    width: min(82vw, 52svh);
+  }
+}
+
+.hero-original-experiment {
+  position: relative;
+}
+
+.hero-original-experiment__nav {
+  position: absolute;
+  inset: 24px var(--gutter) auto;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  color: var(--color-soft-white);
+  font-size: 13px;
+}
+
+.hero-original-experiment__nav a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.hero-original-experiment__nav a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 6px;
+}
+
 /* Mobile framing.
  *
  * The source is 1916x1080. Filling a tall portrait viewport with

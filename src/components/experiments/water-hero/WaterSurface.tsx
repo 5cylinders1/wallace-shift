@@ -163,9 +163,9 @@ export function WaterSurface({
     value.glow.dispose()
   }, [bufferSize, quality.reflectionSize, quality.refractionSize])
 
-  // Both crystal looks share a capture lifetime while retaining separate
+  // Crystal looks share a capture lifetime while retaining separate
   // material bindings. The established water/glow targets remain mounted.
-  const glassEnabled = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper'
+  const glassEnabled = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper' || appearance === 'studio'
   const glassCapture = useDisposable(() => {
     if (!glassEnabled) return null
     const scale = Math.min(1, quality.refractionSize / Math.max(bufferSize.width, bufferSize.height))

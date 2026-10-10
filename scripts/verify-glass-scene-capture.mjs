@@ -258,11 +258,11 @@ await test('glass routing uses a separate conditional lifetime, per-draw gates a
   assert.ok(captureExpression && glowExpression)
   const captureEnabled = new Function('appearance', `return ${captureExpression}`)
   const glowEnabled = new Function('appearance', 'openingGlow', `return ${glowExpression}`)
-  for (const appearance of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight']) {
-    assert.equal(captureEnabled(appearance), appearance === 'glass' || appearance === 'frosted' || appearance === 'copper',
+  for (const appearance of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight', 'studio']) {
+    assert.equal(captureEnabled(appearance), appearance === 'glass' || appearance === 'frosted' || appearance === 'copper' || appearance === 'studio',
       'opaque ceramic and mercury cannot allocate or render a glass background capture')
     assert.equal(glowEnabled(appearance, true), true, 'every look participates in the shared opening light')
-    assert.equal(glowEnabled(appearance, false), appearance !== 'glass' && appearance !== 'pearl' && appearance !== 'copper' && appearance !== 'mercury',
+    assert.equal(glowEnabled(appearance, false), appearance !== 'glass' && appearance !== 'pearl' && appearance !== 'copper' && appearance !== 'mercury' && appearance !== 'studio',
       'non-emissive glass, copper, ceramic and mercury skip the settled halo passes')
   }
   assert.match(water, /if \(glowEnabled && sceneState.progress < .98\) renderLEDGlow/)
@@ -279,7 +279,7 @@ await test('glass routing uses a separate conditional lifetime, per-draw gates a
   assert.match(flow, /if \(fragmentY >= -.008\) discard;/)
 })
 
-await test('Glass, Frosted and Copper reuse capture storage while releasing inactive bindings, including failed captures', async t => {
+await test('Glass, Frosted, Copper and Studio reuse capture storage while releasing inactive bindings, including failed captures', async t => {
   const water = await readFile(new URL('WaterSurface.tsx', sourceBase), 'utf8')
   const bindingBlock = water.match(/if \(glassEnabled && \(reducedMotion \|\| sceneState\.progress < \.98\)\) \{([\s\S]*?)\n    \}/)?.[1]
   assert.ok(bindingBlock, 'exercise the actual frame-loop rebinding block')
@@ -292,7 +292,7 @@ await test('Glass, Frosted and Copper reuse capture storage while releasing inac
   createLogoMaterialVariants(proxyRoot, .432916, true)
   const optical = logoVariantMaterials(sceneRoot).filter(material => logoGlassUniforms(material))
   const reflected = logoVariantMaterials(proxyRoot).filter(material => logoGlassUniforms(material))
-  assert.equal(optical.length, 6, 'each piece owns a clear, frosted and copper optical material')
+  assert.equal(optical.length, 7, 'clear, frosted and copper cover both pieces; Studio transmits only through its slash')
   const capture = { ...createGlassSceneCapture(640, 360), boundMaterials: [] }
   const originalTargets = [capture.depthTarget, capture.colorTarget]
   let draws = 0, failure = false
@@ -312,7 +312,7 @@ await test('Glass, Frosted and Copper reuse capture storage while releasing inac
     disposeLogoMaterialVariants(sceneRoot); disposeLogoMaterialVariants(proxyRoot)
   })
   const selected = new Map()
-  for (const look of ['glass', 'frosted', 'copper', 'glass', 'frosted', 'copper']) {
+  for (const look of ['glass', 'frosted', 'copper', 'studio', 'glass', 'frosted', 'copper', 'studio']) {
     selectLogoAppearance(sceneRoot, look); selectLogoAppearance(proxyRoot, look)
     const active = logoMaterials(sceneRoot)
     if (selected.has(look)) assert.deepEqual(active, selected.get(look))
@@ -327,8 +327,8 @@ await test('Glass, Frosted and Copper reuse capture storage while releasing inac
     for (const material of reflected) assert.equal(logoGlassUniforms(material).uGlassScene.value, null,
       'neither water proxy receives the beauty-camera background')
   }
-  assert.equal(draws, 6)
-  for (const look of ['glass', 'frosted', 'copper']) {
+  assert.equal(draws, 8)
+  for (const look of ['glass', 'frosted', 'copper', 'studio']) {
     selectLogoAppearance(sceneRoot, look)
     failure = true
     assert.throws(() => bindFrame(capture, nodes, {}, {}, {}, {}, logoMaterials, bindGlassScene, draw), /injected shared optical capture failure/)

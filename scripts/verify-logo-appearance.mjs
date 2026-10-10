@@ -14,7 +14,7 @@ async function sourceModule(file, replacements = []) {
 }
 
 const configUrl = await sourceModule('waterHeroConfig')
-const { PREFERRED_LOGO_APPEARANCE, PREVIEW_LOGO_APPEARANCE } = await import(configUrl)
+const { PREFERRED_LOGO_APPEARANCE, PREVIEW_LOGO_APPEARANCE, HOMEPAGE_LOGO_APPEARANCE } = await import(configUrl)
 const { readLogoAppearance, logoAppearanceUrl } = await import(await sourceModule('logoAppearance', [
   ["from './waterHeroConfig'", `from '${configUrl}'`],
 ]))
@@ -22,10 +22,11 @@ const { readLogoAppearance, logoAppearanceUrl } = await import(await sourceModul
 await test('LED remains preferred while absent and unsupported selections open the glass preview', () => {
   assert.equal(PREFERRED_LOGO_APPEARANCE, 'led')
   assert.equal(PREVIEW_LOGO_APPEARANCE, 'glass')
+  assert.equal(HOMEPAGE_LOGO_APPEARANCE, 'studio')
   for (const search of ['', '?quality=low', '?look=', '?look=unknown', '?look=GLASS']) {
     assert.equal(readLogoAppearance(search), 'glass', search)
   }
-  for (const look of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight']) {
+  for (const look of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight', 'studio']) {
     assert.equal(readLogoAppearance(`?progress=.68&look=${look}`), look)
   }
 })
@@ -34,7 +35,7 @@ await test('switching each look retains the current route, pinned pose, query va
   const original = new URL('https://example.test/experiments/water-hero?progress=0.68&quality=low&debug=1&channel=2&tag=a&tag=b&note=deep%20blue#held-pose')
   const preserved = [...original.searchParams]
   let current = original
-  for (const look of ['glass', 'led', 'electric', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight', 'glass', 'led']) {
+  for (const look of ['glass', 'led', 'electric', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight', 'studio', 'glass', 'led']) {
     const result = logoAppearanceUrl(current.href, look)
     assert.ok(result.startsWith('/experiments/water-hero?'), 'replaceState receives the current relative route')
     current = new URL(result, original.origin)
