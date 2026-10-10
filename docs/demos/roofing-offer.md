@@ -18,7 +18,10 @@ payment.
 | `https://roofers.wallaceshift.com/alder-stone/cost` | `/demos/roofers-2/cost/` |
 | `https://roofers.wallaceshift.com/alder-stone/estimate` | `/demos/roofers-2/estimate/` |
 
-Only the roofing hostname's root is rewritten to the gallery. The studio root
+Only the roofing hostname's root is rewritten to the gallery. Root-level Vercel
+Routing Middleware (`middleware.ts`, matched only to `/`) makes this selection
+before the static root HTML file is served. The host rewrite in `vercel.json`
+alone cannot override that file's filesystem precedence. The studio root
 continues serving Wallace Shift. Explicit branded demo rewrites also apply on
 preview domains. They retain query strings, including Northvane's `company`,
 `city` and `phone` personalization parameters. Existing local entries remain
