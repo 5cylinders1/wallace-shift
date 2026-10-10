@@ -756,6 +756,15 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.rf-roof__material--four .rf-seg__options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rf-roof__solar-size {
+  display: grid;
+  gap: 8px;
+}
+
 @media (max-width: 519px) {
   .rf-roof__material .rf-seg__options {
     grid-template-columns: 1fr;

@@ -439,6 +439,14 @@ export const roofTool = {
     yearly: (kwh: string) => `about ${kwh} kWh a year`,
     note: 'The dark panels on the photo show where solar fits best. Solar shingles are priced with your roof below.',
     none: 'There isn’t enough open, sunny roof here for a useful solar array. Your roof is priced in standard materials below.',
+    resultLabel: 'Estimated solar roof',
+    sizeLabel: 'Solar system size',
+    sizeHint: (kwh: string) => `About ${kwh} kWh a year`,
+    sizeHelp: (sqft: string) =>
+      `Active solar shingles on about ${sqft} sq ft of your sunniest roof; the rest gets matching standard shingles. A recent electric bill shows how many kWh you use a year.`,
+    priceIncludes: (kw: number, low: string, high: string) => `Includes ${low}–${high} for the ${kw} kW solar system, wiring and utility hookup.`,
+    taxNote:
+      'The federal residential solar tax credit ended for systems finished after 2025, so none is taken off. Net-metering credits depend on your utility. Your inspection confirms the layout and output.',
   },
   googleNotice: 'This tool uses Google Maps features and content, which are subject to the',
   googleTerms: { text: 'Google Maps Additional Terms of Service', href: 'https://maps.google.com/help/terms_maps/' },

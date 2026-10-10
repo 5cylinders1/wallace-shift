@@ -10,6 +10,7 @@ import {
   monthlyPayment,
   quoteRoof,
   shapeFromComplexity,
+  solarSizes,
   shapeFromCorners,
   type Layers,
   type Material,
@@ -88,6 +89,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set())
   const [pitch, setPitch] = useState(PITCH_DEFAULT)
   const [material, setMaterial] = useState<Material>('architectural')
+  const [solarKw, setSolarKw] = useState<number | null>(null)
   const [layers, setLayers] = useState<Layers>('1')
   const [shape, setShape] = useState<Shape | null>(null)
   const [homeSqft, setHomeSqft] = useState(2000)
@@ -381,10 +383,21 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const ownPitch = measured !== null && pitch !== pricedRise
   // Measured surface as measured; a pitch the homeowner changes scales it in proportion.
   const measuredSurface = measured && pricedRise !== null ? (measured.roofSqFt * pitchFactor(pitch)) / pitchFactor(pricedRise) : null
+
+  // Solar shingles are offered where the measurement says solar fits, on a roof
+  // they can go on (2/12 and up), sized from the service's own panel layouts.
+  const sizes = useMemo(() => (measured && measured.pitchRise >= 2 ? solarSizes(measured.solar) : []), [measured])
+  const materialOptions = sizes.length ? OPTIONS.material : OPTIONS.material.filter((option) => option.value !== 'solar')
+  const activeMaterial: Material = material === 'solar' && !sizes.length ? 'architectural' : material
+  const solarSize = activeMaterial === 'solar' ? (sizes.find((size) => size.kw === solarKw) ?? sizes.find((size) => size.kw === 7) ?? sizes[sizes.length - 1]) : null
+
   const ready = footprint > 0
   const quote = useMemo(
-    () => (ready ? quoteRoof({ footprintSqFt: footprint, roofSqFt: measuredSurface, pitch, material, layers, shape: activeShape }) : null),
-    [ready, footprint, measuredSurface, pitch, material, layers, activeShape],
+    () =>
+      ready
+        ? quoteRoof({ footprintSqFt: footprint, roofSqFt: measuredSurface, pitch, material: activeMaterial, solarKw: solarSize?.kw ?? null, layers, shape: activeShape })
+        : null,
+    [ready, footprint, measuredSurface, pitch, activeMaterial, solarSize, layers, activeShape],
   )
   const monthly = quote ? monthlyPayment((quote.low + quote.high) / 2, LONG_PLAN) : 0
   const buildingCount = phase === 'found' && !measured ? chosen.length : 1
@@ -394,7 +407,10 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     if (!quote) return null
     const source: LeadRoof['source'] =
       phase === 'manual' ? 'home-size' : lookup?.source === 'sample' ? 'sample' : measured ? 'measured' : 'outline'
-    const materialLabel = OPTIONS.material.find((option) => option.value === material)?.label.toLowerCase() ?? material
+    const materialLabel =
+      activeMaterial === 'solar' && solarSize
+        ? `solar shingles (${solarSize.kw} kW)`
+        : (OPTIONS.material.find((option) => option.value === activeMaterial)?.label.toLowerCase() ?? activeMaterial)
     const basis =
       source === 'home-size'
         ? `${homeSqft.toLocaleString('en-US')} sq ft home`
@@ -414,9 +430,11 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
         confidence: measured?.confidence.label ?? null,
         measuredPitch: measuredRise !== null && measuredRise !== pitch ? measuredRise : null,
         measuredBy: measured ? providerName : null,
+        // Asked for by the homeowner: what a solar proposal for this address starts from.
+        solar: solarSize ? { kw: solarSize.kw, yearlyKwh: solarSize.yearlyKwh } : null,
       },
     }
-  }, [quote, phase, lookup, measured, material, homeSqft, footprint, pitch, layers, buildingCount, measuredRise, providerName])
+  }, [quote, phase, lookup, measured, activeMaterial, solarSize, homeSqft, footprint, pitch, layers, buildingCount, measuredRise, providerName])
 
   useEffect(() => onEstimate(estimate), [estimate, onEstimate])
 
@@ -829,9 +847,27 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                   </div>
                 </dl>
 
-                <div className="rf-roof__material">
-                  <Segmented tone="dark" legend={roofTool.materialLabel} name="roof-material" options={OPTIONS.material} value={material} onChange={setMaterial} />
+                <div className={`rf-roof__material${materialOptions.length === 4 ? ' rf-roof__material--four' : ''}`}>
+                  <Segmented tone="dark" legend={roofTool.materialLabel} name="roof-material" options={materialOptions} value={activeMaterial} onChange={setMaterial} />
                 </div>
+                {solarSize && (
+                  <div className="rf-roof__solar-size">
+                    <Segmented
+                      tone="dark"
+                      legend={roofTool.solar.sizeLabel}
+                      name="roof-solar-size"
+                      options={sizes.map((size) => ({
+                        value: String(size.kw),
+                        label: `${size.kw} kW`,
+                        hint: size.yearlyKwh ? roofTool.solar.sizeHint(size.yearlyKwh.toLocaleString('en-US')) : undefined,
+                      }))}
+                      value={String(solarSize.kw)}
+                      onChange={(value) => setSolarKw(Number(value))}
+                      columns={sizes.length}
+                    />
+                    <p className="rf-roof__help">{roofTool.solar.sizeHelp(solarSize.activeSqFt.toLocaleString('en-US'))}</p>
+                  </div>
+                )}
                 <div className="rf-roof__pair">
                   <Segmented tone="dark" legend={roofTool.layersLabel} name="roof-layers" options={OPTIONS.layers} value={layers} onChange={setLayers} columns={2} />
                   <div>
@@ -844,7 +880,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
                 {canMeasure && outlineMode && <p className="rf-roof__rough">{roofTool.measure.roughNote}</p>}
                 <div className="rf-roof__price" aria-live="polite">
-                  <p className="rf-roof__price-label">{roofTool.resultLabel}</p>
+                  <p className="rf-roof__price-label">{quote.solar ? roofTool.solar.resultLabel : roofTool.resultLabel}</p>
                   <p className="rf-roof__range">
                     {money(quote.low)}
                     <span aria-hidden="true">–</span>
@@ -855,7 +891,13 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                     {quote.squares} squares · {Math.round(quote.wastePct * 100)}% waste allowance
                     {quote.laborFactor > 1 ? ` · ${bandFor(pitch).label.toLowerCase()} labor +${Math.round((quote.laborFactor - 1) * 100)}%` : ''}
                   </p>
+                  {quote.solar && (
+                    <p className="rf-roof__detail">
+                      {roofTool.solar.priceIncludes(quote.solar.kw, money(quote.solar.low), money(quote.solar.high))}
+                    </p>
+                  )}
                 </div>
+                {quote.solar && <p className="rf-roof__rough">{roofTool.solar.taxNote}</p>}
                 <ul className="rf-roof__ways">
                   <li>{roofTool.insuranceLine}</li>
                   <li>

@@ -61,20 +61,119 @@ ways exactly. In dev, `?p=42` freezes it at a given progress for review.
 ## The roof estimator
 
 The visitor types an address, picks it from our own suggestion list, and
-sees an aerial photo of the property with the nearby building outlines
-numbered on it. With a measuring service connected (below), they tap the
-middle of their roof (or pick their house from the list), press **Measure
-my roof**, and about 20 seconds later the price is built on their roof as
-measured: footprint, pitch and complexity. Without one, or when the service
-can't measure that roof, they choose buildings and set the pitch on the
-gable drawing, and the price comes from the public outline, labelled as a
-rough estimate.
+sees an aerial photo of the property. With the Google Solar API connected
+(the default, below), the roof is measured as soon as the house is found:
+area with the pitch applied, footprint, pitch and complexity, plus the
+roof's solar potential, and the price is built on that. If the wrong
+building came back, they tap their roof (or pick it from the list) and it
+is measured again. With Instant Roofer instead (the backup), they place the
+crosshair and press **Measure my roof**, and about 20 seconds later the
+price is built on the measurement. With neither, or when the service can't
+measure that roof, they choose buildings and set the pitch on the gable
+drawing, and the price comes from the public outline, labelled as a rough
+estimate.
 
-### Measured roofs (Instant Roofer)
+### Measured roofs (Google Solar API, the default)
 
-Free building outlines turned out too rough to price from: outlines several
-metres off the house, simplified shapes, and address points that land in
-the street. So the tool buys one measurement per roof from
+Free building outlines turned out too rough to price from, so the tool
+asks Google's Solar API (`buildingInsights:findClosest`) for the building
+at the homeowner's point (`api/_lib/roof/solar.ts`). Google measures every
+roof face from its own aerial imagery and elevation model; the page reads
+it as Google's API schema documents it:
+
+- **Roof area** is the sloped area of the faces Google assigned, scaled up
+  to the building's whole ground area, as Google itself advises (its
+  whole-building sloped figure is unreliable, its ground figure is not).
+- **Pitch** is the area-weighted median face, so a porch doesn't drag a
+  steep main roof down; **complexity** comes from the number of faces.
+- **Confidence** is Google's imagery quality: HIGH (aerial, 10 cm) or
+  MEDIUM (aerial, 25 cm). The page asks for MEDIUM or better, which still
+  returns HIGH wherever Google has it, and shows when the imagery was
+  taken. Satellite-only LOW/BASE data and every `experiments` flag are
+  Pre-GA in the US and aren't used.
+- **The right building.** Google returns the building whose centre is
+  nearest the point (none beyond about 50 m). When the point isn't inside
+  the building Google measured, the page says so and asks the homeowner to
+  tap their roof.
+- **Solar potential** (panels that fit, kW, yearly kWh at Google's 0.85
+  DC-to-AC derate) is shown with every measured roof, and the panel layout
+  is drawn on the photo.
+
+**What it costs.** Building Insights and Static Maps are both "Essentials"
+SKUs: 10,000 free calls a month each, then about $10 and $2 per 1,000.
+NOT_FOUND answers aren't billed. At a contractor's volumes (hundreds to a
+few thousand lookups a month) that is $0. Because it is cheap and answers
+in a second or two, the page measures straight away, with no button, and a
+building measured once on a visit is shown again from memory rather than
+asked for twice. The same spending guards as Instant Roofer apply, sized
+for Google (30 per visitor per hour, 400 a day, 4,000 a month), and the
+Upstash store is still required. Also set a daily quota cap on both APIs
+in the Cloud console and a billing budget alert.
+
+**Google's rules, and how the page keeps them** (Maps Platform Terms and
+Service Specific Terms, read June–August 2026 versions):
+
+- **Permitted use (§20.1).** The Solar API may only be used to judge
+  whether an energy system can go on a property, to design or install one,
+  or for a proposal or (opted-in) marketing for one the homeowner asked
+  for. The page therefore shows every homeowner their roof's solar
+  potential with the measurement, and prices solar shingles beside the
+  standard roof. Whether a roof-replacement estimate with a solar option
+  satisfies "only" is a reading of the contract, not a certainty: get
+  Google's written confirmation before a contractor launches (questions
+  below).
+- **Caching (§20.2).** Solar answers may be cached for at most 30 days; the
+  measure endpoint caches a week at the edge with no background refresh.
+  Leads record which service measured the roof (`measuredBy`), so a live
+  CRM can delete Google's figures after 30 days unless they went into a
+  solar proposal the homeowner asked for.
+- **Google's data only on Google's map (ToS 3.2.3(e), Solar API
+  policies).** Whenever Google measures, the photo is Google's (Maps Static
+  API, satellite) and never Mapbox's or NAIP's. Only Google's own output is
+  drawn on it: the box of the building it measured and its panel layout,
+  plus our crosshair and address pin. Open-data outlines are not drawn over
+  Google's photo (the building list says which way each lies instead), and
+  without Google's photo no Google data is drawn at all.
+- **Attribution (3.2.2(b)).** Google's logo and imagery credit are printed
+  in the photo, and nothing covers that strip. Next to the measured figures
+  the page shows the text attribution "Google Maps", unaltered and in
+  regular weight, as Google's attribution guidelines allow off a map.
+- **Notice (3.2.2(a)).** Under the photo the page says it uses Google Maps
+  features and content, linking the Google Maps Additional Terms of Service
+  and the Google Privacy Policy. A contractor's live site must also put
+  that notice in its own terms of service.
+- **The photo is never stored or proxied.** The server signs the Static
+  Maps URL; the browser loads it straight from Google.
+
+**Setting it up** (Google Cloud console, one project):
+
+1. Create a project and link a billing account. A free-trial account works
+   but closes after 90 days unless upgraded, which would stop the tool.
+2. Enable **Solar API** and **Maps Static API**.
+3. Create two API keys. The **server key** is restricted to the Solar API
+   (no website restriction: server calls send no referrer) and goes in
+   `GOOGLE_SOLAR_API_KEY`. The **browser key** is restricted to the Maps
+   Static API and to the site's websites (`roofers.wallaceshift.com/*`,
+   and `localhost:5182/*` for local testing) and goes in
+   `GOOGLE_MAPS_STATIC_KEY`. Never swap them: the browser key is in every
+   image URL.
+4. Under Google Maps Platform → Credentials, copy the **URL signing
+   secret** into `GOOGLE_MAPS_STATIC_SECRET`, then set the Maps Static API
+   quota "Unsigned requests per day" to 0 so the browser key only works on
+   URLs our server signed.
+5. Set daily quota caps on both APIs and a budget alert.
+
+**Questions for Google before launch**, in writing: whether a roof
+replacement estimate that shows solar potential and prices solar shingles
+for every homeowner is a permitted use under §20.1; whether a lead record
+holding the measured roof size counts as a "Downstream Transaction" or must
+be deleted after 30 days; and the exact attribution wording the Solar API
+policies page requires off a map.
+
+### Backup: Instant Roofer
+
+Set `INSTANT_ROOFER_API_KEY` instead (or `ROOF_MEASURE_PROVIDER=instant-roofer`)
+to buy one measurement per roof from
 [Instant Roofer](https://www.instantroofer.com/instant-roofer-api/), the
 service a large regional contractor's own estimator appears to use. Its AI
 measures the roof from aerial imagery (and height data where it has it)
@@ -164,12 +263,10 @@ asked before settling.
 | Building outlines | FEMA / ORNL USA Structures (keyless) | Microsoft footprints via Esri; OpenStreetMap via your own Overpass server |
 | Aerial photo | Mapbox satellite (needs a public token) | USDA NAIP via USGS (keyless, public domain, softer); or none, which draws the outlines on a plan grid |
 
-Google is not used: its Solar API may only be used for solar projects, and
-its map terms restrict using Google imagery with or near non-Google map
-data, which open outlines drawn on top would put at risk. Another
-measurement service (EagleView, Nearmap and the like) can replace Instant
-Roofer behind the `MeasurementProvider` interface in
-`api/_lib/roof/measurement.ts`.
+With Google measuring, the aerial photo is always Google's Static Maps
+satellite image (or none), never Mapbox or NAIP. Another measurement
+service (EagleView, Nearmap and the like) can be added behind the
+`MeasurementProvider` interface in `api/_lib/roof/measurement.ts`.
 
 **Endpoints** (Vercel functions, Node runtime): `GET /api/roof-suggest?q=`
 and `GET /api/roof-lookup?id=` or `?address=`. A lookup's outbound calls
@@ -194,9 +291,14 @@ local dev put them in `.env.local`, which is git-ignored):
 | `ROOF_IMAGERY` | Optional | `mapbox`, `naip` or `none`. |
 | `ROOF_FOOTPRINT_SOURCES` | Optional | Default `usa-structures,microsoft`; add `osm` with `OVERPASS_URL`. |
 | `ROOF_PROVIDER` | Optional | Default `open-data`, the only one implemented. Any other value turns lookup off until that provider exists. |
-| `INSTANT_ROOFER_API_KEY` | For measured roofs | Server-side key from the Instant Roofer API dashboard. Without it, the outline estimate is used. Scope it to exactly the same environments as the two Upstash variables below (or to Production only). |
-| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring, everywhere | The same Upstash limiter as the site audit: 300 suggestions, 40 lookups and 6 measurements per IP per hour, plus the daily and monthly measurement counts. Without them measuring stays off. |
-| `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_DAILY_CAP`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Measurements per visitor per hour (default 6), and for the whole site per UTC day (default 20) and month (default 300). `0` pauses measuring. |
+| `GOOGLE_SOLAR_API_KEY` | For measured roofs (default) | Server key restricted to the Solar API. Scope it to exactly the same environments as the two Upstash variables below. |
+| `GOOGLE_MAPS_STATIC_KEY` | With Google measuring | Browser key restricted to the Maps Static API and the site's websites. Without it there's no photo (the list still works). |
+| `GOOGLE_MAPS_STATIC_SECRET` | With Google measuring | The project's URL signing secret. Server-side only. |
+| `GOOGLE_SOLAR_QUALITY` | Optional | `MEDIUM` (default) or `HIGH`. |
+| `INSTANT_ROOFER_API_KEY` | Backup | Server-side key from the Instant Roofer API dashboard. Used when no Google key is set, or with `ROOF_MEASURE_PROVIDER=instant-roofer`. Same environment scoping as the Upstash variables. |
+| `ROOF_MEASURE_PROVIDER` | Optional | `google-solar` or `instant-roofer`; unset picks the first whose key is set. |
+| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring, everywhere | The same Upstash limiter as the site audit: 300 suggestions and 40 lookups per IP per hour, the per-visitor measurement limit, and the daily and monthly measurement counts (kept separately per service). Without them measuring stays off. |
+| `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_DAILY_CAP`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Measurements per visitor per hour, and for the whole site per UTC day and month. Defaults: 30 / 400 / 4,000 for Google, 6 / 20 / 300 for Instant Roofer. `0` pauses measuring. |
 | `ROOF_MEASURE_UNMETERED` | Local development only | `1` lets your own machine measure without Upstash. Ignored on Vercel deployments. Each measurement is still billed. |
 
 **Credits the page shows**, linked, under the map and in the suggestion

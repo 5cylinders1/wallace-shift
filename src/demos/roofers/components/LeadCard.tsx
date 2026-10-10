@@ -79,6 +79,13 @@ export function LeadCard({ lead }: { lead: LeadSubmission }) {
               {context.ballpark.roof.confidence ? `, ${context.ballpark.roof.confidence.toLowerCase()} confidence` : ''}
             </li>
           )}
+          {context.ballpark?.roof?.solar && (
+            <li>
+              Priced solar shingles: {context.ballpark.roof.solar.kw} kW
+              {context.ballpark.roof.solar.yearlyKwh ? `, about ${context.ballpark.roof.solar.yearlyKwh.toLocaleString('en-US')} kWh a year` : ''}. Ready
+              for a solar proposal.
+            </li>
+          )}
           <li>{context.ballpark ? `Estimate ${money(context.ballpark.low)}–${money(context.ballpark.high)} (${context.ballpark.summary})` : 'Did not use the roof estimator'}</li>
           <li>{context.payment ? `Payment ${money(context.payment.monthly)}/mo on ${money(context.payment.amount)} (${context.payment.plan})` : 'Did not open the payment calculator'}</li>
           <li>Insurance, process, warranty and FAQ answers</li>
