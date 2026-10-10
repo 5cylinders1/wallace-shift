@@ -63,18 +63,21 @@ ways exactly. In dev, `?p=42` freezes it at a given progress for review.
 ## The roof estimator
 
 The visitor types an address, picks it from our own suggestion list, and
-sees an aerial photo of the property with the nearby buildings numbered on
-it. With Instant Roofer connected (the default, below), they place the
-crosshair on their roof (or pick their house from the list), press
-**Measure my roof**, and about 20 seconds later the price is built on the
-roof as measured: area, footprint, pitch and complexity. This is the same
+sees an aerial photo of the property. With Instant Roofer connected (the
+default, below), that photo is all there is: a crosshair starts on the
+house, they tap their roof to move it if needed, press **Measure my
+roof**, and about 20 seconds later the price is built on the roof as
+measured: area, footprint, pitch and complexity. This is the same
 measuring service behind Weddle & Sons' estimator (their page embeds
 Instant Roofer's hosted calculator; ours calls its API from our own
-design). Without it, or when it can't measure that roof, they choose
-buildings and set the pitch on the gable drawing, and the price comes from
-the public outline, labelled as a rough estimate. A Google Solar API
-integration is also built but switched off; see the end of this section
-for why.
+design). No public building outline is drawn or needed in that flow, so
+houses missing from the open data (new builds above all) work too; if the
+service can't measure the roof, the page offers the home-size estimate.
+Without a measuring service, the nearby buildings are numbered on the
+photo, the homeowner chooses theirs and sets the pitch on the gable
+drawing, and the price comes from the public outline, labelled as a rough
+estimate. A Google Solar API integration is also built but switched off;
+see the end of this section for why.
 
 ### Measured roofs (Instant Roofer, the default)
 
@@ -95,15 +98,27 @@ that is the one switched on, so a page opened before a switch never shows
 one service's data on another's photo.
 
 - **It needs a point on the roof**, not an address ("404 — Roof not
-  found"), which is why the homeowner places a crosshair on the photo (or
-  picks their house from the list). Nothing is bought until they press
-  Measure, and the page says the location goes to Instant Roofer.
+  found"), which is why the homeowner places a crosshair on the photo.
+  It starts on the open-data outline at the address when there is one
+  (used only as a hint, never drawn: outlines are often a few metres off),
+  otherwise on the geocoded point when that is a rooftop or parcel match;
+  a street-level match starts with no crosshair and a wider photo. Taps
+  place it, and so do the arrow keys once the photo has focus (a metre a
+  press, five with Shift). Nothing is bought until they press Measure, and
+  the page says the location goes to Instant Roofer.
+- **The photo can be older than the house.** Instant Roofer measures from
+  its own imagery, not ours, so a homeowner whose new house isn't in the
+  photo can still tap where its roof is; the page says so.
 - **A roof is bought once per visit.** Once measured, the map stops taking
   taps until the homeowner chooses "Measure a different building"; going
   back to a building already measured shows its result again without a
   call. A crosshair the service rejected ("no roof here") can't be sent
   again until it moves. With no photo showing, only taps on an outline
-  count, so nobody pays to measure a spot they can't see.
+  count, so nobody pays to measure a spot they can't see; with neither a
+  photo nor an outline, the page offers the home-size estimate.
+- **When it can't measure** (too large or unusual, paused, timed out), the
+  page says why and offers the home-size estimate, plus a retry when the
+  service was only busy.
 - **Price:** $3 per measurement for the first 199 a month, $2 up to 999,
   $1 beyond (vendor's published tiers); 10 free measurements on signup.
   Account defaults: 5 requests a minute, 100 a day.
@@ -113,8 +128,9 @@ one service's data on another's photo.
     refused before anything is counted or bought.
   - 6 measurements per visitor per hour (`ROOF_MEASURE_PER_HOUR`), 20 a day
     for the whole site (`ROOF_MEASURE_DAILY_CAP`) and 300 a month
-    (`ROOF_MEASURE_MONTHLY_CAP`). Past a cap the page falls back to the
-    outline estimate. **Set any of them to `0` to pause measuring**; a
+    (`ROOF_MEASURE_MONTHLY_CAP`). Past a cap the page offers the
+    home-size estimate. **Set any of them to `0` to pause measuring**
+    (the page then works as it does without a measuring service); a
     value that isn't a whole number also pauses it (and logs why), rather
     than quietly using the default.
   - Measuring stays off on every deployment, preview and production alike,
@@ -123,7 +139,7 @@ one service's data on another's photo.
     For local development only, `ROOF_MEASURE_UNMETERED=1` allows measuring
     without the store; it is ignored on any Vercel deployment.
   - The call gets the function's whole time budget (55 s). If it still
-    runs out, the page shows the outline estimate and doesn't offer an
+    runs out, the page offers the home-size estimate and doesn't offer an
     instant retry, since the abandoned request may have been billed.
     Instant Roofer's own "busy" answers can be retried.
   - The page sends the point rounded to 5 decimals (about a metre), the same

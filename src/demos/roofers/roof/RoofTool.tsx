@@ -55,7 +55,9 @@ const fixable = (error: RoofErrorCode) => error === 'roof_not_found' || error ==
 const retryable = (error: RoofErrorCode) => error === 'busy' || error === 'upstream'
 
 const MEASURE_ERRORS: Partial<Record<RoofErrorCode, string>> = roofTool.measure.errors
-const measureError = (code: RoofErrorCode) => MEASURE_ERRORS[code] ?? roofTool.errors[code]
+const PHOTO_ERRORS: Partial<Record<RoofErrorCode, string>> = roofTool.measure.photoErrors
+/** With no outline to fall back on (the photo-first flow), the message leads to the home-size estimate. */
+const measureError = (code: RoofErrorCode, photoFirst = false) => (photoFirst ? PHOTO_ERRORS[code] : undefined) ?? MEASURE_ERRORS[code] ?? roofTool.errors[code]
 
 /** Five decimals, as the server measures it: one point, one purchase. */
 const roundPoint = (point: LatLng): LatLng => ({ lat: Number(point.lat.toFixed(5)), lng: Number(point.lng.toFixed(5)) })
@@ -215,11 +217,13 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     setSelected(new Set(result.home ? [result.home] : []))
     const home = result.measure && result.home ? result.buildings.find((building) => building.id === result.home) : undefined
     const homePoint = home ? insidePoint(home.ring, result.frame) : null
-    // A cheap service measures straight away: the likely home, or a point the
-    // geocoder put on a building even when no open outline is there.
+    // The crosshair starts on the likely home, or on a point the geocoder put
+    // on a building even when no open outline is there (a new house, say). A
+    // cheap service measures it straight away; otherwise the homeowner checks
+    // it on the photo first.
     const auto = result.measure?.mode === 'auto'
     const onBuilding = result.precision === 'rooftop' || result.precision === 'parcel'
-    const start = homePoint ? roundPoint(homePoint) : auto && onBuilding ? roundPoint(result.location) : null
+    const start = homePoint ? roundPoint(homePoint) : result.measure && onBuilding ? roundPoint(result.location) : null
     setTarget(start)
     setShape(null)
     setError(null)
@@ -249,8 +253,10 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
         setPhase('error')
         return
       }
-      // Measured as soon as it's found, a house needs no open outline, as long as the point is on it.
-      const measurable = result.measure?.mode === 'auto' && (result.precision === 'rooftop' || result.precision === 'parcel')
+      // With a measuring service, a house needs no open outline: the homeowner
+      // puts the crosshair on its roof in the photo. Without a photo, there's
+      // nothing to put it on.
+      const measurable = Boolean(result.measure && result.imagery)
       if (!result.buildings.length && !measurable) {
         setError('no_footprint')
         setPhase('error')
@@ -312,8 +318,18 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   // Google's figures are on screen: each place they show carries its attribution.
   const googleMeasured = measured !== null && measure.status === 'done' && measure.provider === 'google-solar'
   const googleCredit = googleMeasured && measure.status === 'done' ? measure.credits.map((credit) => credit.text).join(' · ') : null
-  // The outline estimate: no measuring service, or one that couldn't measure this roof.
-  const outlineMode = !canMeasure || (measure.status === 'failed' && !fixable(measure.error))
+  const showsImage = Boolean(lookup?.imagery && lookup.imagery.src !== failedImage)
+  // With a measuring service and a photo, the photo is the whole choice: no
+  // open outlines (often a few metres off, and missing for new houses) and
+  // no building list; the crosshair goes where the homeowner taps. (Google's
+  // flow keeps its list: its photo carries only Google's own data.)
+  const photoFirst = canMeasure && showsImage && !googleOnly
+  const measureFailed = measure.status === 'failed' && !fixable(measure.error)
+  // The outline estimate: no measuring service, or one that couldn't measure
+  // this roof. In the photo-first flow there's no outline to fall back on, so
+  // a failure leads to the home-size estimate instead.
+  const outlineMode = !canMeasure || (measureFailed && !photoFirst)
+  const photoFallback = photoFirst && measureFailed
   // The service said no roof is under this crosshair; it stays no until the crosshair moves.
   const pinRejected = measure.status === 'failed' && fixable(measure.error)
   const measureBlocked = !target || measuring || pinRejected
@@ -529,7 +545,12 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
           ? 'Estimating by home size'
           : roofTool.idle
 
-  const found = phase === 'found' && lookup ? `Found ${lookup.buildings.length} building${lookup.buildings.length === 1 ? '' : 's'} at ${lookup.address.formatted}.` : ''
+  const found =
+    phase === 'found' && lookup
+      ? photoFirst
+        ? `Found ${lookup.address.formatted}.`
+        : `Found ${lookup.buildings.length} building${lookup.buildings.length === 1 ? '' : 's'} at ${lookup.address.formatted}.`
+      : ''
   // Errors are spoken by their own role=alert line, so they're not repeated here.
   const announce = measuring
     ? `${roofTool.measure.measuring} ${auto ? roofTool.measure.measuringNoteAuto : roofTool.measure.measuringNote}`
@@ -538,7 +559,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
       : found && outlineMode
         ? `${found} ${chosen.length} selected, ${footprint.toLocaleString('en-US')} square feet.`
         : found
-          ? `${found}${pinRejected ? '' : auto ? (target ? '' : ' Pick your house or tap its roof, and we’ll measure it.') : target ? ' Crosshair placed: press Measure my roof.' : ' Pick your house or tap its roof, then measure it.'}`
+          ? `${found}${pinRejected || photoFallback ? '' : auto ? (target ? '' : ' Pick your house or tap its roof, and we’ll measure it.') : target ? ' Crosshair placed: press Measure my roof.' : photoFirst ? ' Tap your roof on the photo, then measure it.' : ' Pick your house or tap its roof, then measure it.'}`
           : busy
             ? roofTool.lookingUp
             : ''
@@ -551,8 +572,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
       : lookup.precision === 'street'
         ? roofTool.pickStreet
         : roofTool.pickHouse
-  const showsImage = Boolean(lookup?.imagery && lookup.imagery.src !== failedImage)
-  const lockedCopy = phase === 'found' ? (outlineMode ? roofTool.pickLocked : roofTool.measure.locked) : null
+  const lockedCopy = phase === 'found' ? (outlineMode ? roofTool.pickLocked : photoFallback ? roofTool.measure.lockedFallback : roofTool.measure.locked) : null
   const measureCopy = canMeasure && !outlineMode
 
   return (
@@ -574,7 +594,10 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
             status={status}
             loadingStatus={roofTool.loadingPhoto}
             onImageryFail={setFailedImage}
-            onPick={measureCopy && (auto || (!measuring && !measured)) ? pickOnMap : undefined}
+            onPick={measureCopy && !photoFallback && (auto || (!measuring && !measured)) ? pickOnMap : undefined}
+            outlines={!photoFirst}
+            keyboardPick={photoFirst && !auto}
+            pickHelp={roofTool.measure.keyboardHelp}
             target={measureCopy ? target : null}
             busyStatus={measuring ? roofTool.measure.measuring : null}
             solar={measured?.solar ?? null}
@@ -582,7 +605,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
           />
 
           {/* Stacked layouts: the step-one button is a screen or more below the photo. */}
-          {measureCopy && !auto && target && !measured && (
+          {measureCopy && !auto && target && !measured && !photoFallback && (
             <div className="rf-roof__measure-near">
               <button type="button" className="rf-button rf-button--primary" aria-disabled={measureBlocked || undefined} onClick={() => void runMeasure()}>
                 {measuring ? roofTool.measure.measuring : roofTool.measure.buttonNear}
@@ -692,9 +715,15 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                 {phase === 'found' && lookup && !outlineMode && lookup.measure && (
                   <>
                     <fieldset className="rf-roof__buildings">
-                      <legend>{roofTool.measure.legend}</legend>
+                      <legend>{photoFirst ? roofTool.measure.legendPhoto : roofTool.measure.legend}</legend>
                       <p className="rf-roof__confirm">
-                        {auto
+                        {photoFirst
+                          ? measured
+                            ? roofTool.measure.donePhoto
+                            : target
+                              ? roofTool.measure.readyPhoto
+                              : roofTool.measure.tapPromptPhoto
+                          : auto
                           ? measured
                             ? showsImage
                               ? roofTool.measure.doneAuto
@@ -714,37 +743,42 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                                 ? roofTool.measure.tapPrompt
                                 : roofTool.measure.tapPromptPlan}
                       </p>
-                      <div className="rf-roof__building-list">
-                        {lookup.buildings.map((building, index) => (
-                          <label key={building.id} className={`rf-roof__building${selected.has(building.id) ? ' is-checked' : ''}`}>
-                            <input
-                              type="radio"
-                              name="roof-home"
-                              checked={selected.size === 1 && selected.has(building.id)}
-                              disabled={measuring && !auto}
-                              onChange={() => pickBuilding(building.id)}
-                            />
-                            <span className="rf-roof__building-number" aria-hidden="true">
-                              {index + 1}
-                            </span>
-                            <span>
-                              <strong>{building.id === lookup.home ? 'Main building' : `Building ${index + 1}`}</strong>
-                              <small>
-                                {building.distanceM > 2
-                                  ? `${Math.round(building.distanceM * 3.28084)} ft ${compassFrom(lookup.location, ringMiddle(building.ring))} of the address`
-                                  : 'At the address'}
-                              </small>
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                      <p className="rf-roof__help">
-                        {showsImage ? roofTool.measure.notListed : roofTool.measure.notListedPlan}{' '}
-                        <button type="button" className="rf-roof__inline-link" onClick={useManual}>
-                          {roofTool.measure.notListedAction}
-                        </button>
-                        .
-                      </p>
+                      {!photoFirst && (
+                        <div className="rf-roof__building-list">
+                          {lookup.buildings.map((building, index) => (
+                            <label key={building.id} className={`rf-roof__building${selected.has(building.id) ? ' is-checked' : ''}`}>
+                              <input
+                                type="radio"
+                                name="roof-home"
+                                checked={selected.size === 1 && selected.has(building.id)}
+                                disabled={measuring && !auto}
+                                onChange={() => pickBuilding(building.id)}
+                              />
+                              <span className="rf-roof__building-number" aria-hidden="true">
+                                {index + 1}
+                              </span>
+                              <span>
+                                <strong>{building.id === lookup.home ? 'Main building' : `Building ${index + 1}`}</strong>
+                                <small>
+                                  {building.distanceM > 2
+                                    ? `${Math.round(building.distanceM * 3.28084)} ft ${compassFrom(lookup.location, ringMiddle(building.ring))} of the address`
+                                    : 'At the address'}
+                                </small>
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                      {/* Once measured, the house was found; only the other flows still need the way out. */}
+                      {!(photoFirst && measured) && (
+                        <p className="rf-roof__help">
+                          {photoFirst ? roofTool.measure.notInPhoto : showsImage ? roofTool.measure.notListed : roofTool.measure.notListedPlan}{' '}
+                          <button type="button" className="rf-roof__inline-link" onClick={useManual}>
+                            {roofTool.measure.notListedAction}
+                          </button>
+                          .
+                        </p>
+                      )}
                     </fieldset>
 
                     <div className="rf-roof__measure" aria-busy={measuring || undefined}>
@@ -770,6 +804,20 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                           {!auto && (
                             <button type="button" className="rf-roof__link" onClick={measureAnother}>
                               {roofTool.measure.another}
+                            </button>
+                          )}
+                        </div>
+                      ) : photoFallback ? (
+                        <div ref={fallbackRef} className="rf-roof__fallback" tabIndex={-1}>
+                          <p className="rf-roof__error" role="alert">
+                            {measureError(measure.error, true)}
+                          </p>
+                          <button type="button" className="rf-button rf-button--primary" onClick={useManual}>
+                            {roofTool.measure.photoFallbackAction}
+                          </button>
+                          {retryable(measure.error) && (
+                            <button type="button" className="rf-roof__link" onClick={() => void runMeasure()}>
+                              {roofTool.measure.retry}
                             </button>
                           )}
                         </div>
@@ -804,7 +852,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                           )}
                         </>
                       )}
-                      {measure.status === 'failed' && (
+                      {measure.status === 'failed' && !photoFallback && (
                         <p className="rf-roof__error" role="alert">
                           {measureError(measure.error)}
                         </p>

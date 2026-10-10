@@ -382,6 +382,13 @@ export const roofTool = {
   },
   measure: {
     legend: 'Which building is your house?',
+    /** The photo-first flow: a measuring service and a photo, no outlines or list. */
+    legendPhoto: 'Where is your roof?',
+    tapPromptPhoto: 'Tap the middle of your roof on the photo to put the crosshair there. Then we’ll measure it.',
+    readyPhoto: 'Is the crosshair on the middle of your roof? Measure it. If not, tap your roof to move it.',
+    donePhoto: 'Measured. To price a different building, choose “Measure a different building”.',
+    notInPhoto: 'Can’t see your house? Aerial photos can be a few years old, so tap where your roof is, or',
+    keyboardHelp: 'Roof photo. Use the arrow keys to move the crosshair; hold Shift to move it further.',
     tapPrompt: 'Tap the middle of your roof on the photo, or pick your house below. Then we’ll measure it.',
     tapPromptPlan: 'Pick your house below, or tap its outline. Then we’ll measure it.',
     tapPromptAuto: 'Tap the middle of your roof on the photo, or pick your house below, and we’ll measure it.',
@@ -415,6 +422,7 @@ export const roofTool = {
     extraBuildings: 'Garage or shed too? We’ll add it at your free inspection.',
     roughNote: 'Rough estimate from the public building outline. Your inspection gives the exact number.',
     locked: 'Measure your roof to see the price.',
+    lockedFallback: 'Estimate by home size to see a price.',
     pitchMeasured: 'Measured from aerial imagery and height data where available. Drag it only if you know your roof is steeper or flatter.',
     pitchLow: (rise: number, priced: number) =>
       `Measured as a low-slope roof (${rise}/12). This estimate prices it at ${priced}/12, the flattest it covers; low-slope roofing is quoted at your free inspection.`,
@@ -435,6 +443,17 @@ export const roofTool = {
       upstream: 'The measurement didn’t come through. Here’s a rough estimate from the building outline meanwhile.',
       roof_not_found: 'We couldn’t find a roof under the crosshair. Move it to the middle of your roof, then measure again.',
     },
+    /** The same failures in the photo-first flow, which has no outline to fall back on. */
+    photoErrors: {
+      not_configured: 'Instant measuring isn’t connected right now. You can still estimate by home size; it takes a moment.',
+      rate_limited: 'That’s a lot of measurements in a short time. You can still estimate by home size; it takes a moment.',
+      busy: 'The measuring service is busy right now. Try again in a moment, or estimate by home size.',
+      upstream: 'The measurement didn’t come through. Try again, or estimate by home size.',
+      unmeasurable: 'This roof is too large or unusual to measure automatically. We’ll measure it at your free inspection; estimate by home size meanwhile.',
+      limit_reached: 'Instant measuring is paused for now. You can still estimate by home size; it takes a moment.',
+      timed_out: 'Measuring took longer than it should, so we’ll measure your roof at your free inspection. Estimate by home size meanwhile.',
+    },
+    photoFallbackAction: 'Estimate by home size',
   },
   solar: {
     title: 'Solar potential',
