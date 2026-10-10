@@ -3,6 +3,11 @@
 node_modules
 dist
 
+# Local review exports and lossless video working files, not deploy assets.
+/output/
+/review-assets/
+/tmp/
+
 # Local source/reference assets. Optimized deploy copies live under public/.
 /PitStopFinal.mp4
 /PitStopFinalCompressed.mp4

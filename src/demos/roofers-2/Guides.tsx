@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from 'react'
+import { estatePath } from './routes'
 import './Guides.css'
 
 type Guide = 'process' | 'insurance' | 'cost'
-const ROOT = '/demos/roofers-2/'
 
 const guides = {
   process: {
@@ -247,7 +247,7 @@ export default function GuidePage({ page }: { page: Guide }) {
   const guide = guides[page]
   return <div className="er-guide">
     <header className="er-guide-intro">
-      <a className="er-guide-back" href={ROOT}><span aria-hidden="true">←</span> Back to the roof</a>
+      <a className="er-guide-back" href={estatePath()}><span aria-hidden="true">←</span> Back to the roof</a>
       <p className="er-guide-eyebrow">The roofing field guide <span>/ {guide.number}</span></p>
       <h1>{guide.title}</h1>
       <p className="er-guide-intro__lead">{guide.lead}</p>
@@ -263,7 +263,7 @@ export default function GuidePage({ page }: { page: Guide }) {
         <nav className="er-guide-related" aria-label="More roofing guides">
           <p className="er-guide-eyebrow">Continue reading</p>
           {(Object.keys(guides) as Guide[]).filter(key => key !== page).map(key =>
-            <a href={`${ROOT}${key}/`} key={key}>{guides[key].label} <span aria-hidden="true">↗</span></a>)}
+            <a href={estatePath(key)} key={key}>{guides[key].label} <span aria-hidden="true">↗</span></a>)}
         </nav>
       </aside>
       <article className="er-guide-article" aria-label={guide.label}>
@@ -272,7 +272,7 @@ export default function GuidePage({ page }: { page: Guide }) {
     </div>
     <section className="er-guide-next" aria-labelledby="er-guide-next-title">
       <div><p className="er-guide-eyebrow">Your roof. Your next step.</p><h2 id="er-guide-next-title">Bring the questions.<br /><em>Start with a plan.</em></h2></div>
-      <div><p>Share the property, the concern, and your timing. See what a well-prepared roofing enquiry looks like.</p><a href={`${ROOT}estimate/`}>Plan your project <span aria-hidden="true">↗</span></a></div>
+      <div><p>Share the property, the concern, and your timing. See what a well-prepared roofing enquiry looks like.</p><a href={estatePath('estimate')}>Plan your project <span aria-hidden="true">↗</span></a></div>
     </section>
   </div>
 }

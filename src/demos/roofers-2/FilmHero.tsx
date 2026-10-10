@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { estatePath } from './routes'
 
 const stages = [
   { name: 'Before the first shingle', short: 'Prepare', time: 'DAY 01 · MORNING', text: 'An agreed scope. A protected property. Every detail planned before work begins.' },
@@ -178,7 +179,7 @@ export default function FilmHero() {
         <p className="er-eyebrow"><span /> THOUGHTFULLY BUILT. CLEARLY EXPLAINED.</p>
         <h1>A stronger roof.<br /><em>A clearer path.</em></h1>
         <p className="er-film-deck">Protect what matters. Understand the work,<br className="er-desktop-break" /> the investment, and what happens next.</p>
-        <a className="er-button er-button-gold" href="/demos/roofers-2/estimate/">Plan my roofing project <span aria-hidden="true">↗</span></a>
+        <a className="er-button er-button-gold" href={estatePath('estimate')}>Plan my roofing project <span aria-hidden="true">↗</span></a>
       </div>
       <div className="er-film-tag"><span className="er-live-dot" /> THE MAKING OF A ROOF <span>48 HOUR CONCEPT FILM</span></div>
       <div className={`er-film-caption ${progress > .12 ? 'is-visible' : ''}`} aria-hidden={progress <= .12}>

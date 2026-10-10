@@ -2,7 +2,11 @@
 
 Local entry: http://127.0.0.1:5174/demos/roofers-2/
 
-This is a separate, fictional contractor concept. Demo 01 and the existing roofers.wallaceshift.com host rewrite are unchanged. No production deployment or demo-two domain has been configured.
+This is a separate, fictional contractor concept. Its configured public URL is
+`https://roofers.wallaceshift.com/alder-stone`, with the same four subpages below
+that path. The roofing subdomain root is the shared five-slot offer gallery;
+Northvane is at `/northvane`. See [the offer routing notes](roofing-offer.md).
+These describe the release configuration, not a record of deployment verification.
 
 ## Pages
 
@@ -12,7 +16,13 @@ This is a separate, fictional contractor concept. Demo 01 and the existing roofe
 - `cost/`: pricing factors, clearly illustrative $20,000 itemized budget and editable hypothetical payment calculator.
 - `estimate/`: four-step property/authority, issue/urgency, payment/claim/timing, contact/consent brief.
 
-Each route has a real HTML document, its own title, and noindex/nofollow. All five use the same independent React bundle. The Vite dev/preview middleware redirects only these exact slashless routes to their directory indexes. The main studio sitemap and production domain rules are unchanged.
+Each route has a real HTML document, its own title, public canonical/OG URL, and
+noindex/nofollow. All five use the same independent React bundle. Original local
+`/demos/roofers-2/` URLs remain usable. The shared `routes.ts` helper uses clean
+`/alder-stone` links on the roofing host or a branded path, including preview
+aliases. Media remains under `/demos/roofers-2/`; explicit page rewrites do not
+intercept video, poster, API or bundle requests. The main studio sitemap stays
+separate from the fictional demos.
 
 ## Lead behavior
 
@@ -36,7 +46,12 @@ Scroll seeks the film forward/backward. Chapter buttons provide direct keyboard/
 
 Guides link to checked primary sources from NAIC, Texas/Missouri insurance regulators, GAF, FTC and CFPB. Policy, state, roof system and written contract determine actual terms. The sample budget is invented solely as a labeled illustration, not a market-rate assertion or a quote for the large pictured house. Financing inputs are hypothetical, not an advertised lender program.
 
-Before adapting this claimed site for a real contractor, replace the fictional brand, sample budget with approved contractor pricing, warranty terms with actual written coverage, and connect the lead endpoint. No testimonials, licenses, insurance approvals or manufacturer certifications were invented. The five-versus-ten-site promotion and annual managed-automation terms are not implemented here; this deliverable is the second demo site.
+Before adapting this design for a real contractor, replace the fictional brand,
+sample budget with approved contractor pricing, warranty terms with actual
+written coverage, and connect the lead endpoint. No testimonials, licenses,
+insurance approvals or manufacturer certifications were invented. The five-place
+website and managed-automation offer belongs to the separate gallery; it does
+not turn this sample contractor's project form into a live lead submission.
 
 ## Verification on 2026-10-09
 

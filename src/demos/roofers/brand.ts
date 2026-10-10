@@ -6,7 +6,7 @@
  * business. For a cold-call follow-up, a link can carry the prospect's own
  * details, e.g.
  *
- *   https://roofers.wallaceshift.com/?company=Acme%20Roofing&city=Overland%20Park&phone=9135550199
+ *   https://roofers.wallaceshift.com/northvane?company=Acme%20Roofing&city=Overland%20Park&phone=9135550199
  *
  * which swaps the name on the header, truck, yard sign and lead preview.
  * Values are length-capped and rendered as text only.

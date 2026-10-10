@@ -40,9 +40,12 @@ export function SiteFooter() {
         <div className="rf-footer__demo">
           <p>
             <strong>{ribbon.lead}.</strong> {ribbon.detail} {footer.credit} Prices, terms and the phone number are
-            examples; no information you enter is sent anywhere.
+            examples; estimate enquiries stay in your browser. Address lookups use external map providers when configured.
           </p>
           <div className="rf-footer__demo-links">
+            <a href={window.location.hostname === 'roofers.wallaceshift.com' ? '/' : '/demos/roofers-offer/'}>
+              All roofing demos
+            </a>
             <a href={WALLACE_SHIFT_CONTACT_URL} target="_blank" rel="noopener">
               {footer.creditCta}
             </a>
