@@ -21,7 +21,7 @@ import { AddressCombobox } from './AddressCombobox'
 import { Credits } from './Credits'
 import { PitchPicker } from './PitchPicker'
 import { SolarPotential } from './SolarPotential'
-import { buildingAt, insidePoint } from './geo'
+import { buildingAt, compassFrom, insidePoint, ringMiddle } from './geo'
 import { PITCH_DEFAULT, PITCH_MAX, PITCH_MIN, bandFor, clampPitch, pitchFactor } from './pitch'
 import { lookupRoof, measureRoof, type LookupTarget } from './roofClient'
 import { RoofStage, type StageMode } from './RoofStage'
@@ -266,6 +266,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const canMeasure = phase === 'found' && Boolean(lookup?.measure)
   // Cheap and quick: measure on every new point, with no button to press.
   const auto = canMeasure && lookup?.measure?.mode === 'auto'
+  const providerName = lookup?.measure ? (roofTool.measure.providers[lookup.measure.provider as keyof typeof roofTool.measure.providers] ?? null) : null
+  // Google's data is only ever drawn on Google's photo; without it, the list is the way in.
+  const googleOnly = lookup?.measure?.provider === 'google-solar' || lookup?.imagery?.provider === 'google'
   const measuring = phase === 'found' && measure.status === 'measuring'
   const measured = phase === 'found' && measure.status === 'done' ? measure.roof : null
   // The outline estimate: no measuring service, or one that couldn't measure this roof.
@@ -306,7 +309,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     if (!lookup) return
     const building = buildingAt(point, lookup.buildings, lookup.frame)
     // On the plan there's no roof to see, only outlines: a tap off them would measure a guess.
+    // Google's measurements aren't drawn off its photo at all, so there's nothing to tap.
     if (!onPhoto) {
+      if (googleOnly) return
       if (building) pickBuilding(building.id)
       return
     }
@@ -408,9 +413,10 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
         buildings: buildingCount,
         confidence: measured?.confidence.label ?? null,
         measuredPitch: measuredRise !== null && measuredRise !== pitch ? measuredRise : null,
+        measuredBy: measured ? providerName : null,
       },
     }
-  }, [quote, phase, lookup, measured, material, homeSqft, footprint, pitch, layers, buildingCount, measuredRise])
+  }, [quote, phase, lookup, measured, material, homeSqft, footprint, pitch, layers, buildingCount, measuredRise, providerName])
 
   useEffect(() => onEstimate(estimate), [estimate, onEstimate])
 
@@ -453,11 +459,17 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
             ? roofTool.lookingUp
             : ''
 
-  const confirmCopy = !lookup || lookup.home ? roofTool.confirm : lookup.precision === 'street' ? roofTool.pickStreet : roofTool.pickHouse
+  // With Google's photo, open outlines aren't drawn on it, so the list is the only way to choose.
+  const confirmCopy = lookup?.measure?.provider === 'google-solar' || lookup?.imagery?.provider === 'google'
+    ? roofTool.confirmList
+    : !lookup || lookup.home
+      ? roofTool.confirm
+      : lookup.precision === 'street'
+        ? roofTool.pickStreet
+        : roofTool.pickHouse
   const showsImage = Boolean(lookup?.imagery && lookup.imagery.src !== failedImage)
   const lockedCopy = phase === 'found' ? (outlineMode ? roofTool.pickLocked : roofTool.measure.locked) : null
   const measureCopy = canMeasure && !outlineMode
-  const providerName = lookup?.measure ? (roofTool.measure.providers[lookup.measure.provider as keyof typeof roofTool.measure.providers] ?? null) : null
 
   return (
     <div ref={rootRef} className="rf-roof" data-reveal>
@@ -482,6 +494,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
             target={measureCopy ? target : null}
             busyStatus={measuring ? roofTool.measure.measuring : null}
             solar={measured?.solar ?? null}
+            measuredBounds={measured?.bounds ?? null}
           />
 
           {/* Stacked layouts: the step-one button is a screen or more below the photo. */}
@@ -597,10 +610,14 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                           ? measured
                             ? showsImage
                               ? roofTool.measure.doneAuto
-                              : roofTool.measure.doneAutoPlan
+                              : googleOnly
+                                ? roofTool.measure.doneAutoList
+                                : roofTool.measure.doneAutoPlan
                             : showsImage
                               ? roofTool.measure.tapPromptAuto
-                              : roofTool.measure.tapPromptPlan
+                              : googleOnly
+                                ? roofTool.measure.tapPromptList
+                                : roofTool.measure.tapPromptPlan
                           : measured
                             ? roofTool.measure.done
                             : target
@@ -625,7 +642,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                             <span>
                               <strong>{building.id === lookup.home ? 'Main building' : `Building ${index + 1}`}</strong>
                               <small>
-                                {building.distanceM > 2 ? `${Math.round(building.distanceM * 3.28084)} ft from the address` : 'At the address'}
+                                {building.distanceM > 2
+                                  ? `${Math.round(building.distanceM * 3.28084)} ft ${compassFrom(lookup.location, ringMiddle(building.ring))} of the address`
+                                  : 'At the address'}
                               </small>
                             </span>
                           </label>
@@ -653,9 +672,15 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                               </>
                             )}
                           </p>
+                          {measured.atPoint === false && <p className="rf-roof__help rf-roof__help--warn">{roofTool.measure.nearest}</p>}
                           {measured.confidence.label === 'Low' && <p className="rf-roof__help">{roofTool.measure.lowConfidence}</p>}
+                          {measured.capturedYear && <p className="rf-roof__help">{roofTool.measure.captured(measured.capturedYear, measured.capturedMonth ?? null)}</p>}
                           <p className="rf-roof__help">{roofTool.measure.extraBuildings}</p>
                           {measured.solar !== undefined && <SolarPotential solar={measured.solar} />}
+                          {/* Google's attribution sits with its data, inside the same box. */}
+                          {measure.status === 'done' && lookup.measure.provider === 'google-solar' && (
+                            <p className="rf-roof__attribution">{measure.credits.map((credit) => credit.text).join(' · ')}</p>
+                          )}
                           {!auto && (
                             <button type="button" className="rf-roof__link" onClick={measureAnother}>
                               {roofTool.measure.another}
@@ -699,7 +724,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                         </p>
                       )}
                       {auto && providerName && !measuring && <p className="rf-roof__help">{roofTool.measure.sendsAuto(providerName)}</p>}
-                      <Credits className="rf-roof__measure-credit" label={roofTool.measure.credit} credits={[lookup.measure.credit]} />
+                      {lookup.measure.provider !== 'google-solar' && (
+                        <Credits className="rf-roof__measure-credit" label={roofTool.measure.credit} credits={[lookup.measure.credit]} />
+                      )}
                     </div>
                   </>
                 )}
@@ -715,7 +742,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                             {roofTool.measure.retry}
                           </button>
                         )}
-                        {lookup.measure && <Credits className="rf-roof__measure-credit" label={roofTool.measure.credit} credits={[lookup.measure.credit]} />}
+                        {lookup.measure && lookup.measure.provider !== 'google-solar' && (
+                          <Credits className="rf-roof__measure-credit" label={roofTool.measure.credit} credits={[lookup.measure.credit]} />
+                        )}
                       </div>
                     )}
                     <fieldset className="rf-roof__buildings">
@@ -732,7 +761,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                               <strong>{building.id === lookup.home ? 'Main building' : `Building ${index + 1}`}</strong>
                               <small>
                                 {building.areaSqFt.toLocaleString('en-US')} sq ft
-                                {building.distanceM > 2 ? ` · ${Math.round(building.distanceM * 3.28084)} ft from the pin` : ''}
+                                {building.distanceM > 2 ? ` · ${Math.round(building.distanceM * 3.28084)} ft ${compassFrom(lookup.location, ringMiddle(building.ring))} of the pin` : ''}
                                 {building.capturedYear ? ` · outline from ${building.capturedYear} imagery` : ''}
                               </small>
                             </span>

@@ -11,10 +11,13 @@ export class RoofError extends Error {
   readonly code: RoofErrorCode
   /** The provider's HTTP status, when the failure was an HTTP answer. */
   readonly status: number | null
-  constructor(code: RoofErrorCode, detail?: string, status: number | null = null) {
+  /** The provider's error body, when it sent JSON: some say why in it (Google's ErrorInfo reasons). */
+  readonly body: unknown
+  constructor(code: RoofErrorCode, detail?: string, status: number | null = null, body: unknown = undefined) {
     super(detail ?? code)
     this.code = code
     this.status = status
+    this.body = body
   }
 }
 
@@ -161,8 +164,11 @@ export async function fetchJson(url: string, init: RequestInit & { timeoutMs?: n
   } catch (error) {
     throw new RoofError(isTimeout(error) ? 'busy' : 'upstream', `fetch failed: ${String(error)}`)
   }
-  if (response.status === 429 || response.status === 503) throw new RoofError('busy', `HTTP ${response.status}`, response.status)
-  if (!response.ok) throw new RoofError('upstream', `HTTP ${response.status}`, response.status)
+  if (!response.ok) {
+    const body = await response.json().catch(() => undefined)
+    const busy = response.status === 429 || response.status === 503
+    throw new RoofError(busy ? 'busy' : 'upstream', `HTTP ${response.status}`, response.status, body)
+  }
   try {
     return await response.json()
   } catch (error) {

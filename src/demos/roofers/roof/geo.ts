@@ -120,3 +120,18 @@ export function panelCorners(
     [-w, h],
   ].map(([x, y]) => offsetPoint(panel.center, Math.hypot(x, y), (Math.atan2(y, x) * 180) / Math.PI + turn))
 }
+
+const COMPASS = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west']
+
+/** Which way `to` lies from `from`, as one of eight compass words. */
+export function compassFrom(from: LatLng, to: LatLng): string {
+  const east = (to.lng - from.lng) * Math.cos((from.lat * Math.PI) / 180)
+  const north = to.lat - from.lat
+  const degrees = ((Math.atan2(east, north) * 180) / Math.PI + 360) % 360
+  return COMPASS[Math.round(degrees / 45) % 8]
+}
+
+/** The plain average of a ring's points: good enough to say which way a building lies. */
+export function ringMiddle(ring: LatLng[]): LatLng {
+  return { lat: ring.reduce((sum, p) => sum + p.lat, 0) / ring.length, lng: ring.reduce((sum, p) => sum + p.lng, 0) / ring.length }
+}

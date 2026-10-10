@@ -154,6 +154,8 @@ export interface MeasuredRoof {
   capturedMonth?: number | null
   /** The measured building's extent, for framing and drawing. */
   bounds?: { sw: LatLng; ne: LatLng } | null
+  /** Whether the point asked about is on the building measured; false when the service took the nearest one. */
+  atPoint?: boolean | null
   /** Set by services that model solar; null when the roof can't carry a useful array. */
   solar?: SolarPotential | null
 }

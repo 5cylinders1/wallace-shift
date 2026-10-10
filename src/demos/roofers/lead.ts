@@ -123,6 +123,12 @@ export interface LeadRoof {
   confidence?: string | null
   /** The pitch the service measured, when it differs from the `pitch` the homeowner priced at. */
   measuredPitch?: number | null
+  /**
+   * Who measured it, for measured roofs. Google's Solar terms (§20.2) allow
+   * keeping its numbers for 30 days, longer only inside a solar proposal the
+   * homeowner asked for, so a live CRM needs to know which records to expire.
+   */
+  measuredBy?: string | null
 }
 
 /** What the visitor already saw on the page, carried into the lead. */

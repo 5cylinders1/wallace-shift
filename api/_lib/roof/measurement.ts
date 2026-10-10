@@ -32,9 +32,9 @@
  *
  *   GOOGLE_SOLAR_API_KEY      Server-side key restricted to the Solar API.
  *                             Never the Static Maps browser key.
- *   GOOGLE_SOLAR_QUALITY      Lowest imagery quality accepted: HIGH, MEDIUM or
- *                             LOW (default LOW, which still returns HIGH where
- *                             Google has it; lower quality lowers confidence).
+ *   GOOGLE_SOLAR_QUALITY      Lowest imagery quality accepted: HIGH or MEDIUM
+ *                             (default MEDIUM, which still returns HIGH where
+ *                             Google has it; MEDIUM lowers the confidence shown).
  *   INSTANT_ROOFER_API_KEY    From api-dashboard.instantroofer.com. Server-side
  *                             only; never give either key a VITE_ prefix.
  *   ROOF_MEASURE_PROVIDER     Optional: "google-solar" or "instant-roofer".
@@ -189,15 +189,13 @@ function googleSolar(apiKey: string, quality: SolarQuality): MeasurementProvider
   return {
     id: 'google-solar',
     mode: 'auto',
-    credit: { text: 'Roof measurements: Google', href: 'https://developers.google.com/maps/documentation/solar' },
+    // Google's text attribution for its data shown off a map: exactly "Google Maps", unaltered.
+    credit: { text: 'Google Maps' },
     measure: (point, deadline) => findClosestBuilding(apiKey, point, quality, deadline, SOLAR_TIMEOUT_MS),
   }
 }
 
-const solarQuality = (): SolarQuality => {
-  const value = process.env.GOOGLE_SOLAR_QUALITY?.trim().toUpperCase()
-  return value === 'HIGH' || value === 'MEDIUM' ? value : 'LOW'
-}
+const solarQuality = (): SolarQuality => (process.env.GOOGLE_SOLAR_QUALITY?.trim().toUpperCase() === 'HIGH' ? 'HIGH' : 'MEDIUM')
 
 /** The provider whose key is set (or the one ROOF_MEASURE_PROVIDER names), before any spending checks. */
 export function pickMeasurement(): MeasurementProvider | null {

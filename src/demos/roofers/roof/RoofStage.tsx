@@ -27,6 +27,8 @@ interface RoofStageProps {
   busyStatus?: string | null
   /** The measured roof's solar layout, drawn on it as the service placed it. */
   solar?: Pick<SolarPotential, 'panels' | 'panelWidthM' | 'panelHeightM'> | null
+  /** The measured building's extent, as the service reported it. */
+  measuredBounds?: { sw: LatLng; ne: LatLng } | null
 }
 
 const NICE_METERS = [2, 5, 10, 20, 50, 100]
@@ -94,7 +96,21 @@ function Blueprint({ lookup, scanning }: { lookup: RoofLookup; scanning: boolean
  * beneath them when it arrives. Each outline is a tap target; the same
  * choices are offered as checkboxes for keyboard and screen-reader users.
  */
-export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status, loadingStatus, onImageryFail, onPick, target, busyStatus, solar }: RoofStageProps) {
+export function RoofStage({
+  mode,
+  lookup,
+  selected,
+  onToggle,
+  blueprint,
+  status,
+  loadingStatus,
+  onImageryFail,
+  onPick,
+  target,
+  busyStatus,
+  solar,
+  measuredBounds,
+}: RoofStageProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
   const [failedSrc, setFailedSrc] = useState<string | null>(null)
@@ -106,6 +122,14 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
   const photoShown = imagery !== null && loadedSrc === imagery.src
   const photoPending = imagery !== null && !photoShown
   const pendingSrc = photoPending ? imagery.src : null
+  // Google's data goes on Google's map and nowhere else (Maps ToS 3.2.3(e) and
+  // the Solar API policies): on its photo we draw only what Google measured,
+  // never other providers' outlines, and without its photo we draw no Google
+  // data at all.
+  const googleOnly = view?.measure?.provider === 'google-solar' || view?.imagery?.provider === 'google'
+  const onGooglePhoto = photoShown && imagery.provider === 'google'
+  const drawOutlines = !googleOnly
+  const drawGoogle = !googleOnly || onGooglePhoto
 
   const fail = (src: string) => {
     setFailedSrc(src)
@@ -137,15 +161,16 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
   const targetXY = frame && target ? toFrame(target, frame) : null
   const panels = useMemo(
     () =>
-      frame && solar
+      frame && solar && drawGoogle
         ? solar.panels.map((panel) =>
             panelCorners(panel, solar.panelWidthM, solar.panelHeightM)
               .map((corner, i) => `${i === 0 ? 'M' : 'L'}${toFrame(corner, frame).map((v) => v.toFixed(1)).join(' ')}`)
               .join('') + 'Z',
           )
         : [],
-    [frame, solar],
+    [frame, solar, drawGoogle],
   )
+  const box = frame && measuredBounds && drawGoogle ? [toFrame({ lat: measuredBounds.ne.lat, lng: measuredBounds.sw.lng }, frame), toFrame({ lat: measuredBounds.sw.lat, lng: measuredBounds.ne.lng }, frame)] : null
 
   const overlay = useMemo(() => {
     if (!frame || !view) return null
@@ -205,27 +230,38 @@ export function RoofStage({ mode, lookup, selected, onToggle, blueprint, status,
               </mask>
             </defs>
             <g clipPath={`url(#${clipId})`}>
-              {photoShown && <rect className="rf-stage__dim" width={frame.width} height={frame.height} mask={`url(#${maskId})`} />}
-              {overlay.buildings.map(({ building, d }) => (
-                <path
-                  key={building.id}
-                  d={d}
-                  className={`rf-stage__ring${selected.has(building.id) ? ' is-selected' : ''}`}
-                  onClick={onPick ? undefined : () => onToggle(building.id)}
-                />
-              ))}
+              {photoShown && drawOutlines && <rect className="rf-stage__dim" width={frame.width} height={frame.height} mask={`url(#${maskId})`} />}
+              {drawOutlines &&
+                overlay.buildings.map(({ building, d }) => (
+                  <path
+                    key={building.id}
+                    d={d}
+                    className={`rf-stage__ring${selected.has(building.id) ? ' is-selected' : ''}`}
+                    onClick={onPick ? undefined : () => onToggle(building.id)}
+                  />
+                ))}
               {/* Selected outlines show their area (unless a measurement supersedes it); the rest their number from the list. */}
-              {overlay.buildings.map(({ building, label }, index) =>
-                selected.has(building.id) && !onPick && !target ? (
-                  <text key={building.id} x={label[0]} y={label[1]} className="rf-stage__area">
-                    {building.areaSqFt.toLocaleString('en-US')} sq ft
-                  </text>
-                ) : (
-                  <g key={building.id} className="rf-stage__badge" transform={`translate(${label[0].toFixed(1)} ${label[1].toFixed(1)})`}>
-                    <circle r="13" />
-                    <text y="5">{index + 1}</text>
-                  </g>
-                ),
+              {drawOutlines &&
+                overlay.buildings.map(({ building, label }, index) =>
+                  selected.has(building.id) && !onPick && !target ? (
+                    <text key={building.id} x={label[0]} y={label[1]} className="rf-stage__area">
+                      {building.areaSqFt.toLocaleString('en-US')} sq ft
+                    </text>
+                  ) : (
+                    <g key={building.id} className="rf-stage__badge" transform={`translate(${label[0].toFixed(1)} ${label[1].toFixed(1)})`}>
+                      <circle r="13" />
+                      <text y="5">{index + 1}</text>
+                    </g>
+                  ),
+                )}
+              {box && (
+                <rect
+                  className="rf-stage__measured"
+                  x={Math.min(box[0][0], box[1][0]).toFixed(1)}
+                  y={Math.min(box[0][1], box[1][1]).toFixed(1)}
+                  width={Math.abs(box[1][0] - box[0][0]).toFixed(1)}
+                  height={Math.abs(box[1][1] - box[0][1]).toFixed(1)}
+                />
               )}
               {/* The address point; once there's a crosshair, it steps back so the two aren't confused. */}
               {panels.length > 0 && (

@@ -16,8 +16,12 @@
  *     own advice for the whole building is to scale its sloped area by the
  *     ratio of `buildingStats` to `wholeRoofStats` ground area, because
  *     `buildingStats` ground area is reliable and its sloped area is not.
- *   - `requiredQuality` defaults to HIGH only; asking for LOW also returns
- *     MEDIUM and HIGH, and the answer says which one it used.
+ *   - `requiredQuality` defaults to HIGH only, which fails wherever Google
+ *     has only MEDIUM; it is a minimum, so asking for MEDIUM still returns
+ *     HIGH where it exists, and the answer says which it used. LOW and BASE
+ *     are satellite-derived and, in the US, Pre-GA, so they aren't used.
+ *   - No `experiments`: anything sent with one is a Pre-GA offering, which
+ *     can change or vanish without notice and carries no SLA.
  *
  * Permitted use (Google Maps Platform Service Specific Terms §20.1): only
  * to judge whether an energy system can go on a property, to design or
@@ -36,7 +40,7 @@ const SQFT_PER_M2 = 10.763_910_4
 /** Enough to draw the layout on one roof; a warehouse can return thousands. */
 const MAX_PANELS_DRAWN = 160
 
-export type SolarQuality = 'HIGH' | 'MEDIUM' | 'LOW' | 'BASE'
+export type SolarQuality = 'HIGH' | 'MEDIUM'
 
 const num = (value: unknown): number | null => (typeof value === 'number' && Number.isFinite(value) ? value : null)
 
@@ -105,7 +109,19 @@ export function complexityFromFaces(faces: number): number {
   return 3
 }
 
-const QUALITY_LABEL: Record<SolarQuality, MeasuredRoof['confidence']['label']> = { HIGH: 'High', MEDIUM: 'Medium', LOW: 'Low', BASE: 'Low' }
+const QUALITY_LABEL: Record<string, MeasuredRoof['confidence']['label']> = { HIGH: 'High', MEDIUM: 'Medium', LOW: 'Low', BASE: 'Low' }
+
+/** About a metre of slack: the box is Google's, the point is the homeowner's tap. */
+const BOX_SLACK_DEG = 0.00001
+
+function inBox(point: LatLng, box: { sw: LatLng; ne: LatLng }): boolean {
+  return (
+    point.lat >= box.sw.lat - BOX_SLACK_DEG &&
+    point.lat <= box.ne.lat + BOX_SLACK_DEG &&
+    point.lng >= box.sw.lng - BOX_SLACK_DEG &&
+    point.lng <= box.ne.lng + BOX_SLACK_DEG
+  )
+}
 
 function solarOf(potential: NonNullable<Body['solarPotential']>, segments: Segment[]): SolarPotential | null {
   const maxPanels = num(potential.maxArrayPanelsCount)
@@ -155,7 +171,7 @@ export function readGoogleSolar(body: unknown, asked: LatLng): MeasuredRoof | nu
     .filter((f): f is { degrees: number; area: number } => f.degrees !== null && f.area !== null && f.degrees >= 0 && f.degrees < 80)
   const degrees = predominantPitch(faces) ?? Math.acos(Math.min(1, whole.ground / whole.sloped)) * (180 / Math.PI)
 
-  const quality = (['HIGH', 'MEDIUM', 'LOW', 'BASE'] as const).find((q) => q === data.imageryQuality) ?? null
+  const quality = typeof data.imageryQuality === 'string' && data.imageryQuality in QUALITY_LABEL ? data.imageryQuality : null
   const year = num(data.imageryDate?.year)
   const month = num(data.imageryDate?.month)
   const sw = latLng(data.boundingBox?.sw)
@@ -172,25 +188,36 @@ export function readGoogleSolar(body: unknown, asked: LatLng): MeasuredRoof | nu
     capturedYear: year && year > 1990 ? year : null,
     capturedMonth: month && month >= 1 && month <= 12 ? month : null,
     bounds: sw && ne ? { sw, ne } : null,
+    // findClosest takes the building whose centre is nearest, which on a
+    // tight lot can be the neighbour's; the page says so when it happens.
+    atPoint: sw && ne ? inBox(asked, { sw, ne }) : null,
     solar: solarOf(potential, segments),
   }
 }
 
 interface GoogleErrorBody {
-  error?: { status?: unknown; message?: unknown }
+  error?: { status?: unknown; message?: unknown; details?: Array<{ reason?: unknown }> }
 }
 
-/** Google's documented error statuses, as answers the page can explain. */
+/** Why Google refused, from its google.rpc.Status body: e.g. API_KEY_INVALID, SERVICE_DISABLED. */
+function reasonOf(body: unknown): string | null {
+  const error = (body as GoogleErrorBody | undefined)?.error
+  const reason = error?.details?.find((d) => typeof d?.reason === 'string')?.reason
+  return typeof reason === 'string' ? reason : typeof error?.status === 'string' ? error.status : null
+}
+
+/** Google's error statuses, as answers the page can explain. */
 function classify(error: RoofError): RoofError {
+  const reason = reasonOf(error.body)
+  // A missing, invalid, restricted or unenabled key (or billing) is ours to fix, not the visitor's.
+  if (error.status === 401 || error.status === 403 || (reason && /^(API_KEY|SERVICE_DISABLED|BILLING|ACCESS_TOKEN|CONSUMER)/.test(reason))) {
+    return new RoofError('upstream', `google solar refused our key (${error.status} ${reason ?? ''})`.trim(), error.status)
+  }
   switch (error.status) {
     case 404:
       return new RoofError('roof_not_found', error.message, 404)
     case 400:
-      return new RoofError('invalid', error.message, 400)
-    case 401:
-    case 403:
-      // A missing, restricted or unenabled key is ours to fix, not the visitor's.
-      return new RoofError('upstream', `google solar key rejected (${error.status})`, error.status)
+      return new RoofError('invalid', `${error.message} ${reason ?? ''}`.trim(), 400)
     default:
       return error
   }

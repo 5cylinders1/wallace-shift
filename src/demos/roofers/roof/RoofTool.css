@@ -240,6 +240,16 @@
   dominant-baseline: middle;
 }
 
+/* The building the service measured, as its own box: a quiet frame, not an outline of ours. */
+.rf-stage__measured {
+  pointer-events: none;
+  fill: none;
+  stroke: var(--rf-roof-copper);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
 /* Solar panels as the measuring service laid them out: dark cells, thin frames. */
 .rf-stage__panels {
   pointer-events: none;
@@ -576,6 +586,20 @@
 .rf-roof__measured-value span {
   color: var(--rf-on-dark-muted);
   font-weight: 500;
+}
+
+/* Google's text attribution, as its guidelines ask: regular weight, plain white, unaltered. */
+.rf-roof__attribution {
+  justify-self: end;
+  margin-top: 4px;
+  font-family: Roboto, var(--rf-font), sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #fff;
+}
+
+.rf-roof__help--warn {
+  color: #f3d3a8;
 }
 
 .rf-roof__solar {
