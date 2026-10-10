@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { HeroMedia } from './HeroMedia'
+import { HeroMedia, type HeroAppearance } from './HeroMedia'
 import { PointerLight } from './PointerLight'
 import { HeroRipples } from './HeroRipples'
 import { HeroContent } from './HeroContent'
@@ -18,7 +18,10 @@ const PARALLAX_CARD = 4
 const MAGNET_RADIUS = 110
 const MAGNET_PULL = 6
 
-export function Hero({ posterOnly = false }: { posterOnly?: boolean }) {
+export function Hero({ posterOnly = false, appearance = 'original' }: {
+  posterOnly?: boolean
+  appearance?: HeroAppearance
+}) {
   const sectionRef = useRef<HTMLElement>(null)
 
   useGSAP(
@@ -129,7 +132,7 @@ export function Hero({ posterOnly = false }: { posterOnly?: boolean }) {
 
   return (
     <section id="top" className="hero" ref={sectionRef}>
-      <HeroMedia posterOnly={posterOnly} />
+      <HeroMedia posterOnly={posterOnly} appearance={appearance} />
       {!posterOnly && <PointerLight />}
       {!posterOnly && <HeroRipples sectionRef={sectionRef} />}
 

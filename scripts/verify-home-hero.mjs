@@ -54,7 +54,7 @@ await test('homepage eligibility responds to screen, pointer and motion changes,
   }
 })
 
-await test('video media keeps its two formats while loading, failure and reduced motion can use only the poster', async () => {
+await test('original media remains intact while Studio uses the About still for every motion and fallback state', async () => {
   const hook = asModule('export function useReducedMotion() { return globalThis.__homeHeroReducedMotion ?? false }')
   let source = await readFile(new URL('HeroMedia.tsx', base), 'utf8')
   source = source.replace("from '../../hooks/useReducedMotion'", `from '${hook}'`).replace("import './HeroMedia.css'", '')
@@ -74,6 +74,15 @@ await test('video media keeps its two formats while loading, failure and reduced
     const reduced = renderToStaticMarkup(createElement(HeroMedia))
     assert.doesNotMatch(reduced, /<video|<source/)
     assert.match(reduced, /<img[^>]*wallace-shift-hero-poster\.webp/)
+    for (const reducedMotion of [false, true]) {
+      globalThis.__homeHeroReducedMotion = reducedMotion
+      for (const posterOnly of [false, true]) {
+        const studio = renderToStaticMarkup(createElement(HeroMedia, { appearance: 'studio', posterOnly }))
+        assert.match(studio, /hero-media--studio/)
+        assert.match(studio, /<img[^>]*src="\/media\/about\/studio-world-mobile\.webp"/)
+        assert.doesNotMatch(studio, /<video|<source|hero-loop|wallace-shift-hero-poster/)
+      }
+    }
   } finally {
     if (previousReducedMotion === undefined) delete globalThis.__homeHeroReducedMotion
     else globalThis.__homeHeroReducedMotion = previousReducedMotion
@@ -131,8 +140,8 @@ await test('mobile, loading and unavailable-scene branches each keep their hero 
       return createElement('div', {'data-interactive-scene':''});
     };`)
   const hero = asModule(`import {createElement} from '${react}';
-    export function Hero({posterOnly=false}) { return createElement('section',
-      {'data-original-hero': posterOnly ? 'poster' : 'video'}); }`)
+    export function Hero({posterOnly=false,appearance}) { return createElement('section',
+      {'data-original-hero': posterOnly ? 'poster' : 'video', 'data-appearance':appearance}); }`)
   const statement = asModule(`import {createElement} from '${react}';
     export function BrandStatement() { return createElement('section', {'data-original-statement':''}); }`)
   const provider = asModule('export function HeroContactProvider({children}) { return children }')
@@ -169,6 +178,7 @@ await test('mobile, loading and unavailable-scene branches each keep their hero 
       const markup = renderToStaticMarkup(createElement(HomeHero))
       assert.equal((markup.match(/data-original-hero=/g) ?? []).length, 1)
       assert.match(markup, new RegExp(`data-original-hero="${media}"`))
+      assert.match(markup, /data-appearance="studio"/)
       assert.equal((markup.match(/data-original-statement=/g) ?? []).length, 1)
       assert.ok(markup.indexOf('data-original-hero') < markup.indexOf('data-original-statement'))
     }
@@ -179,6 +189,53 @@ await test('mobile, loading and unavailable-scene branches each keep their hero 
     assert.doesNotMatch(ready, /data-original-statement|data-original-hero/)
   } finally {
     for (const [name, value] of Object.entries({ __homeBranchInteractive: previous.interactive, __homeBranchPhase: previous.phase })) {
+      if (value === undefined) delete globalThis[name]
+      else globalThis[name] = value
+    }
+  }
+})
+
+await test('the original-media experiment selects preserved media explicitly and leaves normal logo comparisons intact', async () => {
+  const react = import.meta.resolve('react')
+  const dependencies = {
+    react,
+    'react/jsx-runtime': import.meta.resolve('react/jsx-runtime'),
+    '../components/experiments/water-hero/WaterHeroExperiment': asModule(`import {createElement} from '${react}';
+      export function WaterHeroExperiment() { return createElement('div', {'data-logo-comparison':''}) }`),
+    '../components/Hero/Hero': asModule(`import {createElement} from '${react}';
+      export function Hero({appearance}) { return createElement('div', {'data-media-appearance':appearance}) }`),
+    '../components/Hero/HeroContactProvider': asModule(`import {createElement} from '${react}';
+      export function HeroContactProvider({children}) { return createElement('div', {'data-draft-provider':''}, children) }`),
+    '../hooks/useDocumentMeta': asModule(`export function useRouteMeta(path) { globalThis.__heroExperimentMeta = path }`),
+    '../content/routeMeta': asModule(`export const WATER_HERO_EXPERIMENT_PATH = '/experiments/water-hero'`),
+  }
+  let javascript = compile(await readFile(new URL('../../pages/WaterHeroExperimentPage.tsx', base), 'utf8'), true)
+  const imports = ts.createSourceFile('WaterHeroExperimentPage.js', javascript, ts.ScriptTarget.Latest, true).statements
+    .filter(node => ts.isImportDeclaration(node))
+  for (const node of imports.reverse()) {
+    const replacement = dependencies[node.moduleSpecifier.text]
+    assert.ok(replacement, `Provide experiment harness dependency ${node.moduleSpecifier.text}`)
+    javascript = javascript.slice(0, node.moduleSpecifier.getStart()) + JSON.stringify(replacement) + javascript.slice(node.moduleSpecifier.end)
+  }
+  const { WaterHeroExperimentPage } = await import(asModule(javascript))
+  const previous = { window: globalThis.window, meta: globalThis.__heroExperimentMeta }
+  try {
+    for (const search of ['', '?look=glass', '?presentation=unknown', '?presentation=original-media']) {
+      globalThis.window = { location: { search } }
+      const html = renderToStaticMarkup(createElement(WaterHeroExperimentPage))
+      assert.equal(globalThis.__heroExperimentMeta, '/experiments/water-hero')
+      if (search === '?presentation=original-media') {
+        assert.match(html, /data-media-appearance="original"/)
+        assert.match(html, /data-draft-provider/)
+        assert.match(html, /href="\/experiments\/water-hero\?look=glass"/)
+        assert.doesNotMatch(html, /data-logo-comparison/)
+      } else {
+        assert.match(html, /data-logo-comparison/)
+        assert.doesNotMatch(html, /data-media-appearance/)
+      }
+    }
+  } finally {
+    for (const [name, value] of Object.entries({ window: previous.window, __heroExperimentMeta: previous.meta })) {
       if (value === undefined) delete globalThis[name]
       else globalThis[name] = value
     }

@@ -15,7 +15,7 @@ export function LogoAppearanceSelector({ appearance, onChange }: LogoAppearanceS
         Electrified
       </button>
       <button type="button" aria-pressed={appearance === 'glass'} onClick={() => onChange('glass')}>
-        Glass
+        Glass · Previous homepage
       </button>
       <button type="button" aria-pressed={appearance === 'chrome'} onClick={() => onChange('chrome')}>
         Black Chrome
@@ -35,18 +35,22 @@ export function LogoAppearanceSelector({ appearance, onChange }: LogoAppearanceS
       <button type="button" aria-pressed={appearance === 'cutlight'} onClick={() => onChange('cutlight')}>
         Central Light
       </button>
+      <button type="button" aria-pressed={appearance === 'studio'} onClick={() => onChange('studio')}>
+        Studio · Silver & Blue
+      </button>
       <label className="water-hero__look-menu">
         <span>Style</span>
         <select value={appearance} onChange={event => onChange(event.target.value as LogoAppearance)}>
           <option value="led">LED · Top runner</option>
           <option value="electric">Electrified</option>
-          <option value="glass">Glass</option>
+          <option value="glass">Glass · Previous homepage</option>
           <option value="chrome">Black Chrome</option>
           <option value="frosted">Frosted Crystal</option>
           <option value="pearl">Pearl Ceramic</option>
           <option value="copper">Smoked Glass · Copper Edges</option>
           <option value="mercury">Liquid Mercury</option>
           <option value="cutlight">Central Light</option>
+          <option value="studio">Studio · Silver & Blue</option>
         </select>
       </label>
     </div>

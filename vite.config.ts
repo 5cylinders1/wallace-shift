@@ -157,8 +157,25 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;')
 }
 
+// Vite's directory-index fallback needs the trailing slash locally. Keep
+// demo-two links pasted without it from falling through to the studio SPA.
+function estateDemoRoutes(): Plugin {
+  const redirect = (req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse, next: () => void) => {
+      const url = new URL(req.url ?? '/', 'http://localhost')
+      if (!/^\/demos\/roofers-2(?:\/(?:process|insurance|cost|estimate))?$/.test(url.pathname)) return next()
+      res.statusCode = 302
+      res.setHeader('Location', `${url.pathname}/${url.search}`)
+      res.end()
+    }
+  return {
+    name: 'estate-demo-directory-routes',
+    configureServer(server) { server.middlewares.use(redirect) },
+    configurePreviewServer(server) { server.middlewares.use(redirect) },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), prerenderRoutes(), devApiRoutes()],
+  plugins: [react(), prerenderRoutes(), devApiRoutes(), estateDemoRoutes()],
   build: {
     rolldownOptions: {
       // Sales demos are separate documents with their own bundle, so a
@@ -169,6 +186,11 @@ export default defineConfig({
       input: {
         main: 'index.html',
         roofers: 'demos/roofers/index.html',
+        roofersEstate: 'demos/roofers-2/index.html',
+        roofersEstateProcess: 'demos/roofers-2/process/index.html',
+        roofersEstateInsurance: 'demos/roofers-2/insurance/index.html',
+        roofersEstateCost: 'demos/roofers-2/cost/index.html',
+        roofersEstateEstimate: 'demos/roofers-2/estimate/index.html',
       },
     },
   },

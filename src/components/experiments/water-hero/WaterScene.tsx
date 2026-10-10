@@ -39,8 +39,8 @@ export function WaterScene({ progress, override, sceneState, telemetry, tier, re
   const fogDepth = useMemo<SurfaceFogDepth>(() => ({ texture: null }), [])
   const fog = useMemo(() => new FogExp2(0x000000, 0), [])
   const environment = useDisposable(() => createStudioEnvironment(gl), value => value.dispose(), [gl])
-  const glassEnabled = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper'
-  const crystalProfile = appearance === 'glass' ? 'soft-glass' : 'original'
+  const glassEnabled = appearance === 'glass' || appearance === 'frosted' || appearance === 'copper' || appearance === 'studio'
+  const crystalProfile = appearance === 'glass' ? 'soft-glass' : appearance === 'studio' ? 'studio' : 'original'
   const crystalEnvironment = useDisposable(() => glassEnabled ? createCrystalEnvironment(gl, crystalProfile) : null,
     value => value?.dispose(), [gl, glassEnabled, crystalProfile])
   const activeCrystalEnvironment = glassEnabled && crystalEnvironment?.profile === crystalProfile
