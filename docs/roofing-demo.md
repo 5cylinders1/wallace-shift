@@ -163,6 +163,24 @@ Service Specific Terms, read June–August 2026 versions):
    URLs our server signed.
 5. Set daily quota caps on both APIs and a budget alert.
 
+**Solar shingles.** Wherever the measurement shows useful solar potential
+on a roof of 2/12 or steeper, "Solar shingles" joins the materials. The
+system sizes offered (4, 7 or 10 kW, as far as the roof allows) come from
+Google's own panel layouts: the same sunniest spots, at solar-shingle
+power density (GAF Timberline Solar ES 2: 57 W a shingle, about 30 a
+square, so 17.1 W per sq ft against about 18.9 for Google's 400 W model
+panel), and output at Google's 0.85 DC-to-AC derate. The price is a full
+re-roof in matching standard shingles plus a per-watt solar adder and an
+electrical allowance (inverter, rapid shutdown, permit, hookup); the
+breakdown is shown. These are the demo contractor's example rates in
+`pricing.ts`: published solar-shingle prices disagree widely (roughly
+$4–6/W bundled, $40k–$100k for a whole roof), so a live site uses the
+contractor's own. The page says the federal residential credit (25D) ended
+for systems finished after 2025 and takes nothing off. Tesla stopped
+selling Solar Roof in August 2026, so nothing names it; name a product
+only if the contractor is certified to install it. The lead records the
+system the homeowner priced, as the start of a solar proposal.
+
 **Questions for Google before launch**, in writing: whether a roof
 replacement estimate that shows solar potential and prices solar shingles
 for every homeowner is a permitted use under §20.1; whether a lead record
