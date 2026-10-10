@@ -4,16 +4,16 @@
  * estimate from an open building outline and a pitch the homeowner picks.
  *
  * Behind an interface so the service can change without touching the
- * endpoint or the page. Two are wired up; the first whose key is set wins,
- * or ROOF_MEASURE_PROVIDER names one:
+ * endpoint or the page. Two are wired up:
  *
- *   google-solar    Google Solar API (solar.ts). Cents a call, answers in a
- *                   second or two, and also models solar panels, so the page
- *                   measures as soon as it has a point and shows the roof's
- *                   solar potential. Its terms limit it to solar uses; see
- *                   solar.ts and docs/roofing-demo.md.
- *   instant-roofer  Instant Roofer (below). Dollars a call and 10–20 s, so
+ *   instant-roofer  Instant Roofer (below), the default whenever its key is
+ *                   set: licensed for roofing. Dollars a call and 10–20 s, so
  *                   the page asks the homeowner to confirm the roof first.
+ *   google-solar    Google Solar API (solar.ts). Off unless
+ *                   ROOF_MEASURE_PROVIDER=google-solar: its terms (§20.1)
+ *                   allow it only for solar energy systems, and pricing a
+ *                   standard re-roof from it was judged outside that. Kept
+ *                   for a possible solar-only option; see docs/roofing-demo.md.
  *
  * Instant Roofer's AI measurement API:
  *
@@ -37,7 +37,8 @@
  *                             Google has it; MEDIUM lowers the confidence shown).
  *   INSTANT_ROOFER_API_KEY    From api-dashboard.instantroofer.com. Server-side
  *                             only; never give either key a VITE_ prefix.
- *   ROOF_MEASURE_PROVIDER     Optional: "google-solar" or "instant-roofer".
+ *   ROOF_MEASURE_PROVIDER     Optional: "instant-roofer" (the default) or
+ *                             "google-solar", which must be named to run.
  *   ROOF_MEASURE_PER_HOUR     Per visitor (default 30 Google, 6 Instant Roofer).
  *   ROOF_MEASURE_DAILY_CAP    Whole site, per UTC day (default 400 / 20).
  *   ROOF_MEASURE_MONTHLY_CAP  Whole site, per UTC month (default 4,000 / 300).
@@ -197,16 +198,19 @@ function googleSolar(apiKey: string, quality: SolarQuality): MeasurementProvider
 
 const solarQuality = (): SolarQuality => (process.env.GOOGLE_SOLAR_QUALITY?.trim().toUpperCase() === 'HIGH' ? 'HIGH' : 'MEDIUM')
 
-/** The provider whose key is set (or the one ROOF_MEASURE_PROVIDER names), before any spending checks. */
+/**
+ * The measuring service, before any spending checks: Instant Roofer when its
+ * key is set. Google Solar runs only when ROOF_MEASURE_PROVIDER names it, so
+ * a Google key left in the environment never turns it on by itself.
+ */
 export function pickMeasurement(): MeasurementProvider | null {
-  const google = process.env.GOOGLE_SOLAR_API_KEY?.trim()
   const roofer = process.env.INSTANT_ROOFER_API_KEY?.trim()
-  const choice = process.env.ROOF_MEASURE_PROVIDER?.trim()
-  if (choice === 'google-solar') return google ? googleSolar(google, solarQuality()) : null
+  const choice = process.env.ROOF_MEASURE_PROVIDER?.trim() || 'instant-roofer'
   if (choice === 'instant-roofer') return roofer ? instantRoofer(roofer) : null
-  if (choice && choice !== 'auto') return null
-  if (google) return googleSolar(google, solarQuality())
-  if (roofer) return instantRoofer(roofer)
+  if (choice === 'google-solar') {
+    const google = process.env.GOOGLE_SOLAR_API_KEY?.trim()
+    return google ? googleSolar(google, solarQuality()) : null
+  }
   return null
 }
 

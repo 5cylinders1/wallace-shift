@@ -23,6 +23,10 @@
  *   - No `experiments`: anything sent with one is a Pre-GA offering, which
  *     can change or vanish without notice and carries no SLA.
  *
+ * Off by default: it runs only with ROOF_MEASURE_PROVIDER=google-solar (see
+ * measurement.ts), because pricing a standard re-roof from it was judged
+ * outside the permitted use below.
+ *
  * Permitted use (Google Maps Platform Service Specific Terms §20.1): only
  * to judge whether an energy system can go on a property, to design or
  * install one, or to prepare a design, proposal or opted-in marketing for
