@@ -129,6 +129,8 @@ export interface LeadRoof {
    * homeowner asked for, so a live CRM needs to know which records to expire.
    */
   measuredBy?: string | null
+  /** When it was measured (ISO), so that expiry can be timed. */
+  measuredAt?: string | null
   /** Solar shingles the homeowner priced, if they chose them. */
   solar?: { kw: number; yearlyKwh: number | null } | null
 }

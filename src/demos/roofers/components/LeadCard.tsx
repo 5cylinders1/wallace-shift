@@ -14,8 +14,13 @@ import {
   labelFor,
 } from '../lead'
 import type { LeadSubmission } from '../leadAdapter'
+import { roofTool } from '../content'
 import { money } from '../pricing'
 import './LeadCard.css'
+
+/** The measuring service's own credit, unaltered, for figures repeated here ("Google Maps" for Google's). */
+const measuredCredit = (id: string | null | undefined) =>
+  (id && roofTool.measure.credits[id as keyof typeof roofTool.measure.credits]) || 'a measuring service'
 
 const PRIORITY_LABEL = { hot: 'Hot lead', warm: 'Warm lead', nurture: 'Nurture' } as const
 
@@ -71,7 +76,7 @@ export function LeadCard({ lead }: { lead: LeadSubmission }) {
           {context.ballpark?.roof && context.ballpark.roof.source !== 'home-size' && (
             <li>
               {context.ballpark.roof.source === 'sample' ? 'Tried the sample house: ' : `Roof at ${context.ballpark.roof.address ?? 'their address'}: `}
-              {context.ballpark.roof.footprintSqFt.toLocaleString('en-US')} sq ft {context.ballpark.roof.source === 'measured' ? `footprint measured by ${context.ballpark.roof.measuredBy ?? 'a measuring service'}` : 'outline'} at{' '}
+              {context.ballpark.roof.footprintSqFt.toLocaleString('en-US')} sq ft {context.ballpark.roof.source === 'measured' ? `footprint measured (${measuredCredit(context.ballpark.roof.measuredBy)})` : 'outline'} at{' '}
               {context.ballpark.roof.pitch}/12
               {context.ballpark.roof.measuredPitch != null ? ` (measured ${context.ballpark.roof.measuredPitch}/12)` : ''} ≈{' '}
               {context.ballpark.roof.roofSqFt.toLocaleString('en-US')} sq ft ({context.ballpark.roof.squares} squares)

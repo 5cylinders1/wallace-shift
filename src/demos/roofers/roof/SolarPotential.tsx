@@ -16,7 +16,7 @@ const count = (value: number) => value.toLocaleString('en-US')
  * shown to every homeowner, because judging whether solar fits is what the
  * measuring service is for (see api/_lib/roof/solar.ts).
  */
-export function SolarPotential({ solar }: { solar: Potential | null | undefined }) {
+export function SolarPotential({ solar, shingles }: { solar: Potential | null | undefined; shingles: boolean }) {
   const copy = roofTool.solar
   if (!solar || solar.maxPanels < USEFUL_PANELS) {
     return (
@@ -39,7 +39,7 @@ export function SolarPotential({ solar }: { solar: Potential | null | undefined 
           </>
         )}
       </p>
-      <p className="rf-roof__help">{copy.note}</p>
+      <p className="rf-roof__help">{shingles ? copy.note : copy.noteNoShingles}</p>
     </div>
   )
 }

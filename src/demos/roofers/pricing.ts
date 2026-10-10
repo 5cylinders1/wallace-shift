@@ -166,15 +166,18 @@ export interface SolarSize {
 
 /**
  * The solar shingle systems this roof can hold, from the measuring
- * service's panel layouts (best spots first). A layout's output is scaled
- * to shingles by power density over the same roof area.
+ * service's panel layout (best spots first), counting only panels on faces
+ * of 2/12 and steeper. A layout's output is scaled to shingles by power
+ * density over the same roof area.
  */
 export function solarSizes(solar: SolarPotential | null | undefined): SolarSize[] {
-  if (!solar || solar.maxPanels < 4) return []
+  if (!solar || solar.slopedPanels < 4) return []
   const panelSqFt = solar.panelHeightM * solar.panelWidthM * SQFT_PER_M2
   const density = solar.panelWatts / panelSqFt
   const ratio = Math.min(1, SOLAR_SHINGLE_W_PER_SQFT / density)
-  const maxKw = (solar.maxPanels * solar.panelWatts * ratio) / 1000
+  const maxKw = (solar.slopedPanels * solar.panelWatts * ratio) / 1000
+  // Below a couple of kW there's nothing worth quoting as a solar roof.
+  if (maxKw < 2) return []
   const sizes = SOLAR_SIZES.filter((kw) => kw <= maxKw)
   if (!sizes.length) sizes.push(Math.floor(maxKw * 2) / 2)
   return sizes.map((kw) => {
@@ -183,9 +186,9 @@ export function solarSizes(solar: SolarPotential | null | undefined): SolarSize[
   })
 }
 
-/** Modelled output for `panels` panel spots, between the service's layouts, as shingles. */
+/** Modelled output for the best `panels` sloped spots, between the running totals, as shingles. */
 function yearlyFor(solar: SolarPotential, panels: number, ratio: number): number | null {
-  const configs = solar.configs
+  const configs = solar.slopedConfigs
   if (!configs.length) return null
   const above = configs.find((c) => c.panels >= panels) ?? configs[configs.length - 1]
   const below = [...configs].reverse().find((c) => c.panels <= panels)

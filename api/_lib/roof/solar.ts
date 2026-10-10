@@ -39,6 +39,10 @@ const FIND_CLOSEST = 'https://solar.googleapis.com/v1/buildingInsights:findClose
 const SQFT_PER_M2 = 10.763_910_4
 /** Enough to draw the layout on one roof; a warehouse can return thousands. */
 const MAX_PANELS_DRAWN = 160
+/** Solar shingles go on roof faces of 2/12 and steeper (GAF's minimum for Timberline Solar). */
+const SHINGLE_MIN_DEGREES = (Math.atan(2 / 12) * 180) / Math.PI
+/** Running totals kept for sizing; plenty for a house, sampled beyond that. */
+const MAX_SLOPED_STEPS = 300
 
 export type SolarQuality = 'HIGH' | 'MEDIUM'
 
@@ -78,7 +82,7 @@ interface Body {
     buildingStats?: SizeStats
     roofSegmentStats?: Segment[]
     solarPanelConfigs?: Array<{ panelsCount?: unknown; yearlyEnergyDcKwh?: unknown }>
-    solarPanels?: Array<{ center?: unknown; orientation?: unknown; segmentIndex?: unknown }>
+    solarPanels?: Array<{ center?: unknown; orientation?: unknown; segmentIndex?: unknown; yearlyEnergyDcKwh?: unknown }>
   }
 }
 
@@ -132,13 +136,27 @@ function solarOf(potential: NonNullable<Body['solarPotential']>, segments: Segme
     .filter((c): c is { panels: number; kwh: number } => c.panels !== null && c.kwh !== null && c.panels > 0)
   const largest = configs.length ? configs[configs.length - 1] : null
   const panels: SolarPanelSpot[] = []
+  // Google lists panels best first; the sloped ones, in the same order, are
+  // where solar shingles could go instead, so sizing uses only those.
+  const sloped: number[] = []
+  let slopedKwh = 0
   for (const panel of potential.solarPanels ?? []) {
-    if (panels.length >= MAX_PANELS_DRAWN) break
-    const center = latLng(panel.center)
     const index = num(panel.segmentIndex)
-    const azimuth = index !== null ? num(segments[index]?.azimuthDegrees) : null
-    if (center) panels.push({ center, portrait: panel.orientation === 'PORTRAIT', azimuth: azimuth ?? 180 })
+    const segment = index !== null ? segments[index] : undefined
+    const pitch = num(segment?.pitchDegrees)
+    const kwh = num(panel.yearlyEnergyDcKwh)
+    if (pitch !== null && pitch >= SHINGLE_MIN_DEGREES && kwh !== null && kwh >= 0) {
+      slopedKwh += kwh
+      sloped.push(slopedKwh)
+    }
+    if (panels.length >= MAX_PANELS_DRAWN) continue
+    const center = latLng(panel.center)
+    if (center) panels.push({ center, portrait: panel.orientation === 'PORTRAIT', azimuth: num(segment?.azimuthDegrees) ?? 180, pitch: pitch ?? 0 })
   }
+  const step = Math.max(1, Math.ceil(sloped.length / MAX_SLOPED_STEPS))
+  const slopedConfigs = sloped
+    .map((kwh, i) => ({ panels: i + 1, yearlyKwh: Math.round(kwh) }))
+    .filter((c) => c.panels % step === 0 || c.panels === sloped.length)
   return {
     maxPanels,
     panelWatts: watts,
@@ -149,6 +167,8 @@ function solarOf(potential: NonNullable<Body['solarPotential']>, segments: Segme
     panelWidthM: num(potential.panelWidthMeters) ?? 1.045,
     panels,
     configs: configs.map((c) => ({ panels: c.panels, yearlyKwh: Math.round(c.kwh) })),
+    slopedPanels: sloped.length,
+    slopedConfigs,
   }
 }
 

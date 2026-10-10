@@ -306,7 +306,8 @@
 .rf-stage__status {
   position: absolute;
   left: 50%;
-  bottom: 18px;
+  /* Above the bottom strip where imagery providers print their logo and credit (CREDIT_STRIP, 30 of 640). */
+  bottom: calc(30 / 640 * 100% + 10px);
   display: inline-flex;
   align-items: center;
   gap: 10px;

@@ -103,15 +103,18 @@ export function offsetPoint(from: LatLng, meters: number, headingDeg: number): L
  * A solar panel's four corners on the ground, as Google's own Solar API
  * sample draws them: the panel's half-width and half-height (portrait
  * dimensions) turned by its orientation and the compass direction of the
- * roof face it sits on.
+ * roof face it sits on, with the up-slope side shortened by the tilt.
  */
 export function panelCorners(
-  panel: { center: LatLng; portrait: boolean; azimuth: number },
+  panel: { center: LatLng; portrait: boolean; azimuth: number; pitch?: number },
   widthM: number,
   heightM: number,
 ): LatLng[] {
-  const w = widthM / 2
-  const h = heightM / 2
+  // Seen from above, the panel's run up the slope is foreshortened by the
+  // tilt: that's the width for a landscape panel, the height for a portrait one.
+  const foreshorten = Math.cos(((panel.pitch ?? 0) * Math.PI) / 180)
+  const w = (widthM / 2) * (panel.portrait ? 1 : foreshorten)
+  const h = (heightM / 2) * (panel.portrait ? foreshorten : 1)
   const turn = (panel.portrait ? 90 : 0) + panel.azimuth
   return [
     [w, h],

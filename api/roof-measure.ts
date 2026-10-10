@@ -63,7 +63,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   await handle(res, 'roof-measure', async () => {
     if (req.method !== 'GET') return sendError(res, 'invalid')
     if (fromAnotherSite(req)) return sendJson(res, { ok: false, error: 'invalid' }, 403)
-    const point = pointOf(queryOf(req))
+    const query = queryOf(req)
+    const point = pointOf(query)
     if (!point) return sendError(res, 'invalid')
 
     const chosen = pickMeasurement()
@@ -72,6 +73,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (measuringPaused(limits)) return sendError(res, 'limit_reached')
     const measurement = measurementFromEnv()
     if (!measurement) return sendError(res, 'not_configured')
+    // A page whose lookup named another service (open from before a switch,
+    // or an edge-cached lookup) mustn't get this one's data: Google's, say,
+    // would land on a Mapbox photo. It's also part of the cache key.
+    const asked = query.get('provider')
+    if (asked && asked !== measurement.id) return sendError(res, 'not_configured')
 
     // measurementFromEnv only allows a missing store on a developer's machine, by request.
     if (hasLimiterStore()) {
@@ -94,6 +100,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     const roof = await measurement.measure(point, deadline)
     // No stale-while-revalidate: a background refresh would buy the roof again.
-    sendJson(res, { ok: true, roof, credits: [measurement.credit] }, 200, CACHE_S, 0)
+    sendJson(res, { ok: true, provider: measurement.id, roof, credits: [measurement.credit] }, 200, CACHE_S, 0)
   })
 }
