@@ -353,10 +353,31 @@ local dev put them in `.env.local`, which is git-ignored):
 | `GOOGLE_MAPS_STATIC_KEY` | Only with Google measuring | Browser key restricted to the Maps Static API and the site's websites. |
 | `GOOGLE_MAPS_STATIC_SECRET` | Only with Google measuring | The project's URL signing secret. Server-side only. Required: without it Google measuring stays off, except on a developer's machine with `ROOF_MEASURE_UNMETERED=1`. |
 | `GOOGLE_SOLAR_QUALITY` | Optional | `MEDIUM` (default) or `HIGH`. |
-| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring, everywhere | The same Upstash limiter as the site audit: 300 suggestions and 40 lookups per IP per hour, the per-visitor measurement limit, and the daily and monthly measurement counts (kept separately per service). Without them measuring stays off. |
+| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring, everywhere | The same Upstash limiter as the site audit: 300 suggestions and 40 lookups per IP per hour, the per-visitor measurement limit, and the daily and monthly measurement counts (kept separately per service). Without them measuring stays off. The URL is the database's REST URL (`https://….upstash.io`, not the `rediss://` string) and the token its standard REST token, never the read-only one. Connecting an "Upstash for Redis" database to the project from Vercel's Storage tab adds `KV_REST_API_URL` and `KV_REST_API_TOKEN` instead, which are used when these two are unset (as are `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`); see `api/_lib/limiter-store.ts`. Store errors are logged as `[limiter]`. |
 | `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_DAILY_CAP`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Instant Roofer measurements per visitor per hour, and for the whole site per UTC day and month. Defaults 6 / 20 / 300. `0` pauses measuring. |
 | `GOOGLE_SOLAR_PER_HOUR`, `GOOGLE_SOLAR_DAILY_CAP`, `GOOGLE_SOLAR_MONTHLY_CAP` | Only with Google measuring | The same limits for Google Solar, counted separately. Defaults 30 / 400 / 4,000. `0` pauses it. |
 | `ROOF_MEASURE_UNMETERED` | Local development only | `1` lets your own machine measure without Upstash. Ignored on Vercel deployments. Each measurement is still billed. |
+
+**Setting up the Upstash store** (one free database covers the site audit
+and the roof tool; it holds only small counters that expire on their own):
+
+1. In Vercel, open the project's **Storage** tab, create an **Upstash for
+   Redis** database (Vercel can create the Upstash account for you), pick
+   the free plan and the region next to the functions (US East, N.
+   Virginia, unless the project's function region was changed), and add no
+   read regions.
+2. Connect it to this project for the environments that measure (at least
+   Production, the same ones as `INSTANT_ROOFER_API_KEY`), with no custom
+   prefix. That adds `KV_REST_API_URL` and `KV_REST_API_TOKEN`, which the
+   code reads directly; nothing needs copying.
+3. Redeploy. Environment changes only reach new deployments.
+
+Created at console.upstash.com instead, copy the database's REST URL and
+standard REST token into `RATE_LIMIT_REDIS_URL` and
+`RATE_LIMIT_REDIS_TOKEN` (or `UPSTASH_REDIS_REST_URL` / `_TOKEN`). If
+measuring then always answers "busy", the Vercel logs say why under
+`[limiter]` (a read-only token, say, or a `rediss://` string pasted as the
+URL).
 
 **Credits the page shows**, linked, under the map and in the suggestion
 list: "Powered by Geoapify" and its data source (© OpenStreetMap

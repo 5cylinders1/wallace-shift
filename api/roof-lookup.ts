@@ -9,8 +9,8 @@
  * on, and the credits each dataset requires. The roof's pitch is not
  * known here; the homeowner sets it on the page.
  *
- * Optional rate limiting uses the same Upstash variables as /api/audit:
- *   RATE_LIMIT_REDIS_URL, RATE_LIMIT_REDIS_TOKEN
+ * Optional rate limiting uses the same Upstash store as /api/audit
+ * (api/_lib/limiter-store.ts).
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
