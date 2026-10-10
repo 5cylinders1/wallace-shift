@@ -2,7 +2,7 @@
  * Measures one roof for the estimator, from the point the homeowner put on
  * their roof.
  *
- *   GET /api/roof-measure?lat=39.04530&lng=-94.58260
+ *   GET /api/roof-measure?lat=39.04530&lng=-94.58260&provider=instant-roofer
  *   → { ok: true, roof: MeasuredRoof, credits } or { ok: false, error }
  *
  * Every successful call is billed by the measuring service (see
@@ -73,16 +73,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (measuringPaused(limits)) return sendError(res, 'limit_reached')
     const measurement = measurementFromEnv()
     if (!measurement) return sendError(res, 'not_configured')
-    // A page whose lookup named another service (open from before a switch,
-    // or an edge-cached lookup) mustn't get this one's data: Google's, say,
-    // would land on a Mapbox photo. It's also part of the cache key.
-    const asked = query.get('provider')
-    if (asked && asked !== measurement.id) return sendError(res, 'not_configured')
+    // The page names the service its lookup was built for, and gets nothing
+    // from any other: Google's data, say, would land on a Mapbox photo. A page
+    // that names none predates the check (an old tab), so it gets nothing
+    // either. The name is also part of the cache key.
+    if (query.get('provider') !== measurement.id) return sendError(res, 'not_configured')
 
     // measurementFromEnv only allows a missing store on a developer's machine, by request.
     if (hasLimiterStore()) {
-      // Each service has its own limits and counters, so switching mid-month starts fresh.
-      const scope = `roof-measure:${measurement.id}`
+      // Each service has its own limits and counters. Instant Roofer keeps the
+      // keys it always had, so deploying this doesn't reset its caps.
+      const scope = measurement.id === 'instant-roofer' ? 'roof-measure' : `roof-measure:${measurement.id}`
       if (await isRateLimited(req, scope, limits.perHour, RATE_WINDOW_S)) return sendError(res, 'rate_limited')
       // Counted before the call, so a burst can't slip past a cap while
       // measurements are in flight. The month is only counted once the day

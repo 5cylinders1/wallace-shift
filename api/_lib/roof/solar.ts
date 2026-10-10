@@ -242,6 +242,9 @@ function classify(error: RoofError): RoofError {
       return new RoofError('roof_not_found', error.message, 404)
     case 400:
       return new RoofError('invalid', `${error.message} ${reason ?? ''}`.trim(), 400)
+    // RESOURCE_EXHAUSTED: our project's quota is spent, which a retry won't fix.
+    case 429:
+      return new RoofError('limit_reached', `google solar quota spent (${reason ?? '429'})`, 429)
     default:
       return error
   }

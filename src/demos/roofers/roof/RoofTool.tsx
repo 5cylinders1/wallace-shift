@@ -59,6 +59,8 @@ const measureError = (code: RoofErrorCode) => MEASURE_ERRORS[code] ?? roofTool.e
 
 /** Five decimals, as the server measures it: one point, one purchase. */
 const roundPoint = (point: LatLng): LatLng => ({ lat: Number(point.lat.toFixed(5)), lng: Number(point.lng.toFixed(5)) })
+/** How long a building picked from the list waits before it is measured. */
+const LIST_SETTLE_MS = 500
 const samePoint = (a: LatLng, b: LatLng) => a.lat.toFixed(5) === b.lat.toFixed(5) && a.lng.toFixed(5) === b.lng.toFixed(5)
 
 /** A measurement bought on this visit, the point it was bought for, and from whom. */
@@ -110,6 +112,8 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const fallbackRef = useRef<HTMLDivElement>(null)
   /** Set when a measure control is pressed: that control is about to give way to its result. */
   const followFocusRef = useRef(false)
+  /** A building picked from the list, waiting to be measured once the choice settles (see pickBuilding). */
+  const listPickRef = useRef<number | null>(null)
   const helpId = useId()
   const pitchHelpId = useId()
   const sizeId = useId()
@@ -118,6 +122,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     () => () => {
       requestRef.current?.abort()
       measureRef.current?.abort()
+      if (listPickRef.current !== null) window.clearTimeout(listPickRef.current)
     },
     [],
   )
@@ -129,13 +134,28 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     return () => window.clearInterval(timer)
   }, [phase])
 
-  /** A measurement already bought on this visit for this building, or at this point. */
-  const findPaid = (point: LatLng, buildingId: string | null, view: RoofLookup) =>
-    paidRef.current.find(
-      (paid) =>
-        paid.provider === view.measure?.provider &&
-        (samePoint(paid.at, point) || (buildingId !== null && buildingAt(paid.at, view.buildings, view.frame)?.id === buildingId)),
+  /**
+   * A measurement already bought on this visit for this building, or at this
+   * point, or (from a service that reports the roof's extent) for the roof
+   * this point is on: the smallest such roof, should two boxes overlap.
+   */
+  const findPaid = (point: LatLng, buildingId: string | null, view: RoofLookup) => {
+    const mine = paidRef.current.filter((paid) => paid.provider === view.measure?.provider)
+    const same = mine.find(
+      (paid) => samePoint(paid.at, point) || (buildingId !== null && buildingAt(paid.at, view.buildings, view.frame)?.id === buildingId),
     )
+    if (same) return same
+    const area = ({ sw, ne }: { sw: LatLng; ne: LatLng }) => (ne.lat - sw.lat) * (ne.lng - sw.lng)
+    let best: Paid | undefined
+    for (const paid of mine) {
+      const box = paid.roof.bounds
+      // A roof found away from the point it was asked for says nothing about that point.
+      if (!box || paid.roof.atPoint === false) continue
+      const inside = point.lat >= box.sw.lat && point.lat <= box.ne.lat && point.lng >= box.sw.lng && point.lng <= box.ne.lng
+      if (inside && (!best?.roof.bounds || area(box) < area(best.roof.bounds))) best = paid
+    }
+    return best
+  }
 
   const showMeasured = (paid: Paid, view: RoofLookup) => {
     // The list follows what was measured, whatever was ticked while it ran.
@@ -148,9 +168,16 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     setShape(null)
   }
 
+  const clearListPick = () => {
+    if (listPickRef.current === null) return
+    window.clearTimeout(listPickRef.current)
+    listPickRef.current = null
+  }
+
   /** Leaving the measured flow: stop a measurement in flight and forget the one shown. */
   const stopMeasuring = () => {
     measureRef.current?.abort()
+    clearListPick()
     setMeasure({ status: 'idle' })
   }
 
@@ -301,6 +328,8 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     const at = roundPoint(point)
     // Picking the same spot again (say, the same building from the list) doesn't un-reject it.
     if (pinRejected && target && samePoint(at, target)) return
+    // Nor does it buy the roof a second time while the first answer is on its way.
+    if (auto && measuring && target && samePoint(at, target)) return
     const paid = findPaid(at, buildingId, lookup)
     if (paid) {
       measureRef.current?.abort()
@@ -312,11 +341,27 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     setMeasure({ status: 'idle' })
   }
 
+  // The settled list pick runs the placePin of the render it lands in, not the one it was clicked in.
+  const placePinRef = useRef(placePin)
+  useEffect(() => {
+    placePinRef.current = placePin
+  })
+
   const pickBuilding = (id: string) => {
     const building = lookup?.buildings.find((candidate) => candidate.id === id)
     if (!lookup || !building) return
     const point = insidePoint(building.ring, lookup.frame)
-    if (point) placePin(point, id)
+    if (!point) return
+    clearListPick()
+    if (!auto) return placePin(point, id)
+    // Arrow keys move through the list one building at a time, and each step
+    // would buy a measurement. The ticked building is measured once the
+    // homeowner stops on it.
+    setSelected(new Set([id]))
+    listPickRef.current = window.setTimeout(() => {
+      listPickRef.current = null
+      placePinRef.current(point, id)
+    }, LIST_SETTLE_MS)
   }
 
   const pickOnMap = (point: LatLng, onPhoto: boolean) => {

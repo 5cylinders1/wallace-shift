@@ -39,10 +39,12 @@
  *                             only; never give either key a VITE_ prefix.
  *   ROOF_MEASURE_PROVIDER     Optional: "instant-roofer" (the default) or
  *                             "google-solar", which must be named to run.
- *   ROOF_MEASURE_PER_HOUR     Per visitor (default 30 Google, 6 Instant Roofer).
- *   ROOF_MEASURE_DAILY_CAP    Whole site, per UTC day (default 400 / 20).
- *   ROOF_MEASURE_MONTHLY_CAP  Whole site, per UTC month (default 4,000 / 300).
- *                             0 in any of the three pauses measuring.
+ *   ROOF_MEASURE_PER_HOUR     Instant Roofer, per visitor (default 6).
+ *   ROOF_MEASURE_DAILY_CAP    Instant Roofer, whole site, per UTC day (default 20).
+ *   ROOF_MEASURE_MONTHLY_CAP  Instant Roofer, whole site, per UTC month (default 300).
+ *   GOOGLE_SOLAR_PER_HOUR, GOOGLE_SOLAR_DAILY_CAP, GOOGLE_SOLAR_MONTHLY_CAP
+ *                             The same for Google (defaults 30 / 400 / 4,000).
+ *                             0 in any of a service's three pauses it.
  *   ROOF_MEASURE_UNMETERED    "1" lets local development measure without the
  *                             Upstash store; ignored on any Vercel deployment.
  */
@@ -205,12 +207,22 @@ const solarQuality = (): SolarQuality => (process.env.GOOGLE_SOLAR_QUALITY?.trim
  */
 export function pickMeasurement(): MeasurementProvider | null {
   const roofer = process.env.INSTANT_ROOFER_API_KEY?.trim()
-  const choice = process.env.ROOF_MEASURE_PROVIDER?.trim() || 'instant-roofer'
+  const choice = process.env.ROOF_MEASURE_PROVIDER?.trim().toLowerCase() || 'instant-roofer'
   if (choice === 'instant-roofer') return roofer ? instantRoofer(roofer) : null
   if (choice === 'google-solar') {
     const google = process.env.GOOGLE_SOLAR_API_KEY?.trim()
-    return google ? googleSolar(google, solarQuality()) : null
+    if (!google) {
+      console.error('[roof-measure] off: ROOF_MEASURE_PROVIDER=google-solar but GOOGLE_SOLAR_API_KEY is not set')
+      return null
+    }
+    // The Static Maps key is in every image URL; if it's the same key, the Solar key is public.
+    if (google === process.env.GOOGLE_MAPS_STATIC_KEY?.trim()) {
+      console.error('[roof-measure] off: GOOGLE_SOLAR_API_KEY is the same as GOOGLE_MAPS_STATIC_KEY, which every visitor can see. Use two keys.')
+      return null
+    }
+    return googleSolar(google, solarQuality())
   }
+  console.error(`[roof-measure] off: ROOF_MEASURE_PROVIDER=${JSON.stringify(choice)} isn't "instant-roofer" or "google-solar"`)
   return null
 }
 
@@ -230,18 +242,22 @@ function limit(name: string, fallback: number): number {
   return 0
 }
 
-/** Defaults sized to each service's price: a bad month costs about the same either way. */
-const DEFAULT_LIMITS: Record<MeasurementId, MeasureLimits> = {
-  'google-solar': { perHour: 30, perDay: 400, perMonth: 4000 },
-  'instant-roofer': { perHour: 6, perDay: 20, perMonth: 300 },
+/**
+ * Defaults sized to each service's price, and each service's own variables:
+ * Google-sized caps written for one must never carry over to Instant
+ * Roofer's dollars-a-call measurements.
+ */
+const LIMITS: Record<MeasurementId, { prefix: string; defaults: MeasureLimits }> = {
+  'instant-roofer': { prefix: 'ROOF_MEASURE', defaults: { perHour: 6, perDay: 20, perMonth: 300 } },
+  'google-solar': { prefix: 'GOOGLE_SOLAR', defaults: { perHour: 30, perDay: 400, perMonth: 4000 } },
 }
 
 export function measureLimits(id: MeasurementId = 'instant-roofer'): MeasureLimits {
-  const defaults = DEFAULT_LIMITS[id]
+  const { prefix, defaults } = LIMITS[id]
   return {
-    perHour: limit('ROOF_MEASURE_PER_HOUR', defaults.perHour),
-    perDay: limit('ROOF_MEASURE_DAILY_CAP', defaults.perDay),
-    perMonth: limit('ROOF_MEASURE_MONTHLY_CAP', defaults.perMonth),
+    perHour: limit(`${prefix}_PER_HOUR`, defaults.perHour),
+    perDay: limit(`${prefix}_DAILY_CAP`, defaults.perDay),
+    perMonth: limit(`${prefix}_MONTHLY_CAP`, defaults.perMonth),
   }
 }
 

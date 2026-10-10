@@ -89,7 +89,10 @@ measures the roof from aerial imagery (and height data where it has it)
 and returns the
 pitch-adjusted roof area, footprint, predominant pitch, complexity and a
 confidence score (`api/_lib/roof/measurement.ts`; endpoint
-`GET /api/roof-measure?lat=&lng=`).
+`GET /api/roof-measure?lat=&lng=&provider=instant-roofer`). The page names
+the service its lookup was built for, and the endpoint answers only if
+that is the one switched on, so a page opened before a switch never shows
+one service's data on another's photo.
 
 - **It needs a point on the roof**, not an address ("404 — Roof not
   found"), which is why the homeowner places a crosshair on the photo (or
@@ -213,11 +216,15 @@ SKUs: 10,000 free calls a month each, then about $10 and $2 per 1,000.
 NOT_FOUND answers aren't billed. At a contractor's volumes (hundreds to a
 few thousand lookups a month) that is $0. Because it is cheap and answers
 in a second or two, the page measures straight away, with no button, and a
-building measured once on a visit is shown again from memory rather than
-asked for twice. (A solar-only rework would instead measure only after a
+building measured once on a visit (or a tap inside the box of one) is
+shown again from memory rather than asked for twice. A building picked
+from the list is measured once the homeowner stops on it, half a second
+later, so arrowing through the list doesn't buy every roof it passes. (A solar-only rework would instead measure only after a
 "Price my roof with solar shingles" press, and keep standard prices on
 Instant Roofer or open data.) The same spending guards as Instant Roofer apply, sized
-for Google (30 per visitor per hour, 400 a day, 4,000 a month), and the
+for Google and counted separately (30 per visitor per hour, 400 a day,
+4,000 a month: `GOOGLE_SOLAR_PER_HOUR`, `GOOGLE_SOLAR_DAILY_CAP`,
+`GOOGLE_SOLAR_MONTHLY_CAP`), and the
 Upstash store is still required. Also set a daily quota cap on both APIs
 in the Cloud console and a billing budget alert.
 
@@ -315,7 +322,10 @@ service (EagleView, Nearmap and the like) can be added behind the
 `MeasurementProvider` interface in `api/_lib/roof/measurement.ts`.
 
 **Endpoints** (Vercel functions, Node runtime): `GET /api/roof-suggest?q=`
-and `GET /api/roof-lookup?id=` or `?address=`. A lookup's outbound calls
+and `GET /api/roof-lookup?id=` or `?address=`. A suggestion's `id` carries
+the geocoded point and is signed by the server (HMAC, keyed from the
+Geoapify key), so a lookup only accepts points our own suggestions gave
+out and refuses any other id as `invalid`. A lookup's outbound calls
 share one 15-second budget, inside the function's 20-second limit, so the
 page always gets a real answer ("busy, try again" at worst). Successful
 answers are cached at Vercel's edge for a day, or five minutes when a
@@ -334,17 +344,18 @@ local dev put them in `.env.local`, which is git-ignored):
 | `GEOAPIFY_API_KEY` | Yes | Server-side key from myprojects.geoapify.com. Never prefix it with `VITE_`. |
 | `MAPBOX_ACCESS_TOKEN` | For the sharp photo | A public `pk.` token with the `styles:tiles` scope, URL-restricted to `roofers.wallaceshift.com`, `wallaceshift.com` and any preview domains. Without it the keyless NAIP photo is used. |
 | `ROOF_SEARCH_BIAS` | Optional | `lng,lat` of the contractor's service area, e.g. `-94.58,39.05`. Ranks nearby addresses first. |
-| `ROOF_IMAGERY` | Optional | `mapbox`, `naip` or `none`. |
+| `ROOF_IMAGERY` | Optional | `mapbox`, `naip` or `none`. Google's photo can't be chosen here: it is used with Google measuring and only then. |
 | `ROOF_FOOTPRINT_SOURCES` | Optional | Default `usa-structures,microsoft`; add `osm` with `OVERPASS_URL`. |
 | `ROOF_PROVIDER` | Optional | Default `open-data`, the only one implemented. Any other value turns lookup off until that provider exists. |
 | `INSTANT_ROOFER_API_KEY` | For measured roofs | Server-side key from the Instant Roofer API dashboard. Scope it to exactly the same environments as the two Upstash variables below. Without it, the outline estimate is used. |
 | `ROOF_MEASURE_PROVIDER` | Optional | `instant-roofer` (the default) or `google-solar`, which must be named to run (see "Google Solar API (built, switched off)"). |
 | `GOOGLE_SOLAR_API_KEY` | Only with `ROOF_MEASURE_PROVIDER=google-solar` | Server key restricted to the Solar API. On its own it turns nothing on. |
 | `GOOGLE_MAPS_STATIC_KEY` | Only with Google measuring | Browser key restricted to the Maps Static API and the site's websites. |
-| `GOOGLE_MAPS_STATIC_SECRET` | Only with Google measuring | The project's URL signing secret. Server-side only. |
+| `GOOGLE_MAPS_STATIC_SECRET` | Only with Google measuring | The project's URL signing secret. Server-side only. Required: without it Google measuring stays off, except on a developer's machine with `ROOF_MEASURE_UNMETERED=1`. |
 | `GOOGLE_SOLAR_QUALITY` | Optional | `MEDIUM` (default) or `HIGH`. |
 | `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring, everywhere | The same Upstash limiter as the site audit: 300 suggestions and 40 lookups per IP per hour, the per-visitor measurement limit, and the daily and monthly measurement counts (kept separately per service). Without them measuring stays off. |
-| `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_DAILY_CAP`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Measurements per visitor per hour, and for the whole site per UTC day and month. Defaults: 30 / 400 / 4,000 for Google, 6 / 20 / 300 for Instant Roofer. `0` pauses measuring. |
+| `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_DAILY_CAP`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Instant Roofer measurements per visitor per hour, and for the whole site per UTC day and month. Defaults 6 / 20 / 300. `0` pauses measuring. |
+| `GOOGLE_SOLAR_PER_HOUR`, `GOOGLE_SOLAR_DAILY_CAP`, `GOOGLE_SOLAR_MONTHLY_CAP` | Only with Google measuring | The same limits for Google Solar, counted separately. Defaults 30 / 400 / 4,000. `0` pauses it. |
 | `ROOF_MEASURE_UNMETERED` | Local development only | `1` lets your own machine measure without Upstash. Ignored on Vercel deployments. Each measurement is still billed. |
 
 **Credits the page shows**, linked, under the map and in the suggestion
