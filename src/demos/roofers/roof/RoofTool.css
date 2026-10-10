@@ -1,0 +1,1107 @@
+/*
+ * The roof estimator: an ink panel inside the paper Cost section, with the
+ * aerial stage on the left (sticky on desktop) and three steps on the right.
+ */
+
+.rf-roof {
+  --rf-roof-line: rgba(244, 241, 234, 0.14);
+  --rf-roof-copper: #e0884f;
+  --rf-roof-copper-text: #f0b58f;
+  margin-bottom: clamp(48px, 6vw, 88px);
+  padding: clamp(22px, 3.2vw, 44px);
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+}
+
+.rf-roof__head {
+  display: grid;
+  gap: 10px;
+  max-width: 820px;
+  margin-bottom: clamp(24px, 3vw, 36px);
+}
+
+.rf-roof__eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e9a172;
+}
+
+.rf-roof__title {
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  font-stretch: 108%;
+  font-weight: 760;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.rf-roof__lede {
+  max-width: 60ch;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__body {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 1080px) {
+  .rf-roof__body {
+    grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+    gap: 40px;
+  }
+}
+
+/* The map stays in view beside the steps. On shorter screens it shrinks so
+   the whole column (map, credits, sample note) still fits under the header. */
+@media (min-width: 1080px) and (min-height: 640px) {
+  .rf-roof__visual {
+    position: sticky;
+    top: calc(var(--rf-header) + 20px);
+  }
+  .rf-roof__visual .rf-stage {
+    width: 100%;
+    max-width: calc(100svh - var(--rf-header) - 180px);
+    margin-inline: auto;
+  }
+}
+
+.rf-roof__visual {
+  display: grid;
+  gap: 14px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Stage                                                              */
+/* ---------------------------------------------------------------- */
+
+.rf-stage__frame {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #0e1114;
+  border: 1px solid var(--rf-roof-line);
+}
+
+.rf-stage__blueprint,
+.rf-stage__image,
+.rf-stage__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.rf-stage__image {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s var(--rf-ease);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.rf-stage.has-photo .rf-stage__image {
+  opacity: 1;
+}
+
+.rf-stage__blueprint-ring {
+  fill: rgba(244, 241, 234, 0.03);
+  stroke: rgba(244, 241, 234, 0.3);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 6;
+}
+
+.rf-stage__crosshair {
+  fill: none;
+  stroke: rgba(224, 136, 79, 0.75);
+  stroke-width: 2;
+}
+
+.rf-stage--locating .rf-stage__crosshair {
+  animation: rf-stage-pulse 1.4s var(--rf-ease) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes rf-stage-pulse {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+}
+
+.rf-stage__scan {
+  fill: rgba(224, 136, 79, 0.12);
+  stroke: rgba(224, 136, 79, 0.8);
+  stroke-width: 2;
+  animation: rf-stage-scan 1.6s linear infinite;
+}
+
+@keyframes rf-stage-scan {
+  from {
+    transform: translateY(-100px);
+  }
+  to {
+    transform: translateY(820px);
+  }
+}
+
+.rf-stage__dim {
+  fill: rgba(10, 13, 16, 0.45);
+  pointer-events: none;
+}
+
+.rf-stage__ring {
+  fill: rgba(255, 255, 255, 0);
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2;
+  stroke-dasharray: 7 6;
+  cursor: pointer;
+  pointer-events: all;
+  transition: fill 0.2s var(--rf-ease), stroke 0.2s var(--rf-ease);
+}
+
+.rf-stage__ring:hover {
+  fill: rgba(255, 255, 255, 0.12);
+}
+
+.rf-stage__ring.is-selected {
+  fill: rgba(224, 136, 79, 0.14);
+  stroke: var(--rf-roof-copper);
+  stroke-width: 3.5;
+  stroke-dasharray: 4000;
+  stroke-dashoffset: 0;
+  stroke-linejoin: round;
+  animation: rf-ring-draw 1.2s var(--rf-ease) both;
+}
+
+@keyframes rf-ring-draw {
+  from {
+    stroke-dashoffset: 4000;
+    fill: rgba(224, 136, 79, 0);
+  }
+}
+
+.rf-stage__area,
+.rf-stage__north text,
+.rf-stage__scale text {
+  fill: #fff;
+  font-family: var(--rf-font);
+  font-weight: 750;
+  paint-order: stroke;
+  stroke: rgba(14, 17, 20, 0.85);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.rf-stage.is-picking .rf-stage__overlay {
+  cursor: crosshair;
+}
+
+.rf-stage__target {
+  pointer-events: none;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
+}
+
+.rf-stage__target-dot {
+  fill: var(--rf-roof-copper);
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.rf-stage__badge {
+  pointer-events: none;
+}
+
+.rf-stage__badge circle {
+  fill: rgba(14, 17, 20, 0.82);
+  stroke: rgba(244, 241, 234, 0.7);
+  stroke-width: 1.5;
+}
+
+.rf-stage__badge text {
+  fill: #f4f1ea;
+  font-family: var(--rf-font);
+  font-size: 14px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.rf-stage__area {
+  font-size: 22px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+/* The building the service measured, as its own box: a quiet frame, not an outline of ours. */
+.rf-stage__measured {
+  pointer-events: none;
+  fill: none;
+  stroke: var(--rf-roof-copper);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+/* Solar panels as the measuring service laid them out: dark cells, thin frames. */
+.rf-stage__panels {
+  pointer-events: none;
+}
+
+.rf-stage__panels path {
+  fill: rgba(16, 28, 48, 0.86);
+  stroke: rgba(214, 226, 240, 0.75);
+  stroke-width: 0.8;
+}
+
+.rf-stage__pin {
+  pointer-events: none;
+  transition: opacity 0.3s var(--rf-ease);
+}
+
+.rf-stage__pin.is-quiet {
+  opacity: 0.4;
+}
+
+.rf-stage__pin path {
+  fill: var(--rf-roof-copper);
+  stroke: #14181c;
+  stroke-width: 2.5;
+}
+
+.rf-stage__pin circle {
+  fill: #14181c;
+}
+
+.rf-stage__north circle {
+  fill: rgba(14, 17, 20, 0.72);
+}
+
+.rf-stage__north path {
+  fill: #fff;
+}
+
+.rf-stage__north text {
+  font-size: 13px;
+  text-anchor: middle;
+}
+
+.rf-stage__scale path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+.rf-stage__scale text {
+  font-size: 15px;
+}
+
+.rf-stage__status {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: rgba(20, 24, 28, 0.86);
+  border: 1px solid var(--rf-roof-line);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--rf-on-dark-muted);
+  transform: translateX(-50%);
+}
+
+.rf-stage--locating .rf-stage__status::before,
+.rf-stage--found .rf-stage__status::before,
+.rf-stage__status.is-busy::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rf-roof-copper);
+  animation: rf-stage-pulse 1s steps(2, jump-none) infinite;
+}
+
+/* Buildings to include, in step one */
+
+.rf-roof__buildings {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rf-roof__buildings legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.rf-roof__confirm {
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__building-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 148px), 1fr));
+  gap: 8px;
+}
+
+.rf-roof__building {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border: 1.5px solid rgba(244, 241, 234, 0.22);
+  cursor: pointer;
+  transition: border-color 0.2s var(--rf-ease), background-color 0.2s var(--rf-ease);
+}
+
+.rf-roof__building:hover {
+  border-color: rgba(244, 241, 234, 0.6);
+}
+
+.rf-roof__building.is-checked {
+  border-color: var(--rf-roof-copper);
+  background: rgba(224, 136, 79, 0.14);
+}
+
+.rf-roof__building-number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid rgba(244, 241, 234, 0.5);
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-roof__building.is-checked .rf-roof__building-number {
+  border-color: var(--rf-roof-copper);
+  color: var(--rf-roof-copper-text);
+}
+
+.rf-roof__building input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--rf-roof-copper);
+}
+
+.rf-roof__building span {
+  display: grid;
+  line-height: 1.25;
+}
+
+.rf-roof__building strong {
+  font-size: 0.875rem;
+}
+
+.rf-roof__building small {
+  font-size: 0.75rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__sample-note {
+  padding: 8px 12px;
+  border: 1px dashed rgba(244, 241, 234, 0.3);
+  font-size: 0.8125rem;
+  color: var(--rf-on-dark-muted);
+}
+
+/* ---------------------------------------------------------------- */
+/* Steps                                                              */
+/* ---------------------------------------------------------------- */
+
+.rf-roof__steps {
+  display: grid;
+  gap: 14px;
+}
+
+.rf-roof__step {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 2.4vw, 26px);
+  border: 1px solid var(--rf-roof-line);
+  background: rgba(244, 241, 234, 0.025);
+}
+
+.rf-roof__step.is-locked {
+  gap: 6px;
+}
+
+.rf-roof__step-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 1.1875rem;
+  font-stretch: 106%;
+  font-weight: 760;
+}
+
+.rf-roof__step-title span {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--rf-roof-copper);
+}
+
+.rf-roof__locked {
+  font-size: 0.9375rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__help {
+  font-size: 0.875rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__help--tight {
+  margin-top: 6px;
+  font-size: 0.75rem;
+}
+
+.rf-roof__find {
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 560px) {
+  .rf-roof__find {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+}
+
+.rf-roof__find .rf-button {
+  min-height: 54px;
+}
+
+.rf-roof__find .rf-button[disabled] {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.rf-roof__error {
+  padding: 10px 14px;
+  border-left: 3px solid #d9654f;
+  background: rgba(157, 55, 41, 0.24);
+  font-size: 0.9375rem;
+  color: #f8ddd6;
+}
+
+/* Measuring */
+
+.rf-roof__measure {
+  display: grid;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.rf-roof__measure-button {
+  justify-self: start;
+}
+
+.rf-roof__measure-button[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.rf-roof__progress {
+  position: relative;
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(244, 241, 234, 0.12);
+}
+
+.rf-roof__progress::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: var(--rf-roof-copper);
+  animation: rf-roof-progress 1.6s var(--rf-ease) infinite;
+}
+
+@keyframes rf-roof-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(290%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rf-roof__progress::after {
+    width: 100%;
+    opacity: 0.6;
+    animation: none;
+  }
+}
+
+.rf-roof__measured {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--rf-roof-copper);
+  background: rgba(224, 136, 79, 0.1);
+}
+
+.rf-roof__measured-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-roof-copper-text);
+}
+
+.rf-roof__measured-value {
+  font-size: 1.25rem;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.rf-roof__measured-value span {
+  color: var(--rf-on-dark-muted);
+  font-weight: 500;
+}
+
+/* Google's text attribution, as its guidelines ask: regular weight, plain white, unaltered. */
+.rf-roof__attribution {
+  justify-self: end;
+  margin-top: 4px;
+  font-family: Roboto, var(--rf-font), sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #fff;
+}
+
+.rf-roof__help--warn {
+  color: #f3d3a8;
+}
+
+.rf-roof__solar {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(244, 241, 234, 0.14);
+}
+
+.rf-roof__solar-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__solar-value {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+}
+
+.rf-roof__solar-value span {
+  color: var(--rf-on-dark-muted);
+  font-weight: 500;
+}
+
+.rf-roof__notice {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__notice a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rf-credits.rf-roof__measure-credit {
+  font-size: 0.75rem;
+}
+
+.rf-roof__fallback {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.rf-roof__measured:focus,
+.rf-roof__fallback:focus {
+  outline: none;
+}
+
+.rf-roof__measured:focus-visible,
+.rf-roof__fallback:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 3px;
+}
+
+/* A second Measure button right under the photo, while the steps sit below it. */
+.rf-roof__measure-near {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.rf-roof__measure-near .rf-button[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (min-width: 1080px) {
+  .rf-roof__measure-near {
+    display: none;
+  }
+}
+
+.rf-roof__inline-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: var(--rf-roof-copper-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.rf-roof__inline-link:hover {
+  color: #fff;
+}
+
+.rf-roof__inline-link:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 2px;
+}
+
+.rf-roof__rough {
+  padding: 8px 12px;
+  border-left: 3px solid rgba(244, 241, 234, 0.4);
+  font-size: 0.875rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__found {
+  font-size: 0.9375rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__found strong {
+  color: var(--rf-on-dark);
+}
+
+.rf-roof__alts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+
+.rf-roof__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--rf-roof-copper-text);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+.rf-roof__link:hover {
+  color: #fff;
+}
+
+.rf-roof__link:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 3px;
+}
+
+/* Material: three across when there is room, a list when there isn't. */
+
+.rf-roof__material .rf-seg__options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rf-roof__material--four .rf-seg__options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rf-roof__solar-size {
+  display: grid;
+  gap: 8px;
+}
+
+@media (max-width: 519px) {
+  .rf-roof__material .rf-seg__options {
+    grid-template-columns: 1fr;
+  }
+  .rf-roof__material .rf-seg__option {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2px 12px;
+  }
+}
+
+/* Address field */
+
+.rf-address {
+  position: relative;
+  display: grid;
+  gap: 8px;
+}
+
+.rf-address__label {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.rf-address__field {
+  position: relative;
+}
+
+.rf-address__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  color: var(--rf-roof-copper);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.rf-address input {
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 14px 12px 44px;
+  border: 1.5px solid rgba(244, 241, 234, 0.28);
+  border-radius: 2px;
+  background: #0e1114;
+  color: var(--rf-on-dark);
+  font-size: 1rem;
+}
+
+.rf-address input::placeholder {
+  color: rgba(185, 192, 198, 0.75);
+}
+
+.rf-address input:hover {
+  border-color: rgba(244, 241, 234, 0.5);
+}
+
+.rf-address input:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 1px;
+  border-color: var(--rf-roof-copper);
+}
+
+.rf-address__popup {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #1b2025;
+  border: 1px solid rgba(244, 241, 234, 0.2);
+  box-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.7);
+}
+
+.rf-address__popup[hidden] {
+  display: none;
+}
+
+.rf-address__list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.rf-address__option {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(244, 241, 234, 0.08);
+  cursor: pointer;
+}
+
+.rf-address__option.is-active {
+  background: rgba(224, 136, 79, 0.18);
+}
+
+.rf-address__primary {
+  font-weight: 650;
+}
+
+.rf-address__primary mark {
+  background: none;
+  color: var(--rf-roof-copper-text);
+  font-weight: 800;
+}
+
+.rf-address__secondary {
+  font-size: 0.8125rem;
+  color: var(--rf-on-dark-muted);
+}
+
+/* Data credits, wherever they appear */
+
+.rf-credits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-credits a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(185, 192, 198, 0.4);
+  text-underline-offset: 2px;
+}
+
+.rf-credits a:hover {
+  color: var(--rf-on-dark);
+}
+
+.rf-credits.rf-address__credit {
+  justify-content: flex-end;
+  padding: 8px 14px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+}
+
+
+/* Home-size fallback */
+
+.rf-roof__manual {
+  display: grid;
+  gap: 18px;
+}
+
+.rf-roof__size {
+  display: grid;
+  gap: 10px;
+}
+
+.rf-roof__size-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.rf-roof__size-row label {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.rf-roof__size-row output {
+  font-size: 1.125rem;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-roof input[type='range'] {
+  --rf-fill: 25%;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.rf-roof input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(90deg, var(--rf-roof-copper) var(--rf-fill), rgba(244, 241, 234, 0.22) var(--rf-fill));
+}
+
+.rf-roof input[type='range']::-moz-range-track {
+  height: 4px;
+  background: linear-gradient(90deg, var(--rf-roof-copper) var(--rf-fill), rgba(244, 241, 234, 0.22) var(--rf-fill));
+}
+
+.rf-roof input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -11px;
+  border: 3px solid var(--rf-ink);
+  border-radius: 50%;
+  background: #f4f1ea;
+  box-shadow: 0 0 0 2px var(--rf-roof-copper);
+}
+
+.rf-roof input[type='range']::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--rf-ink);
+  border-radius: 50%;
+  background: #f4f1ea;
+  box-shadow: 0 0 0 2px var(--rf-roof-copper);
+}
+
+/* ---------------------------------------------------------------- */
+/* Estimate                                                           */
+/* ---------------------------------------------------------------- */
+
+.rf-roof__estimate {
+  display: grid;
+  gap: 20px;
+}
+
+.rf-roof__math {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rf-roof-line);
+  border: 1px solid var(--rf-roof-line);
+}
+
+@media (min-width: 640px) {
+  .rf-roof__math {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.rf-roof__math div {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--rf-ink);
+}
+
+.rf-roof__math dt {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__math dd {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-roof__pair {
+  display: grid;
+  gap: 18px;
+}
+
+@media (min-width: 560px) {
+  .rf-roof__pair {
+    grid-template-columns: 0.7fr 1.3fr;
+  }
+}
+
+.rf-roof__price {
+  display: grid;
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(244, 241, 234, 0.18);
+}
+
+.rf-roof__price-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 12px;
+  font-size: clamp(2.1rem, 4vw, 3rem);
+  font-stretch: 104%;
+  font-weight: 780;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-roof__range span[aria-hidden] {
+  color: var(--rf-roof-copper);
+}
+
+.rf-roof__detail {
+  font-size: 0.9375rem;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-roof__ways {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9375rem;
+}
+
+.rf-roof__ways li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.rf-roof__ways li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 8px;
+  height: 2px;
+  background: var(--rf-roof-copper);
+}
+
+.rf-roof__ways a {
+  font-weight: 700;
+  color: var(--rf-roof-copper-text);
+}
+
+.rf-roof__fine {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--rf-on-dark-muted);
+}

@@ -13,6 +13,7 @@ interface CrystalCard {
   color: readonly [number, number, number]
   /** Smooth finite oval reflection, fading continuously from the center. */
   softOval?: boolean
+  roll?: number
 }
 
 /** Reflection-only photographic cards. Bright shoulder cards describe the
@@ -39,14 +40,24 @@ export const SOFT_GLASS_REFLECTION_CARDS: readonly CrystalCard[] = CRYSTAL_REFLE
   intensity: card.softOval ? card.intensity : card.intensity * .20,
   softOval: true,
 }))
-export type CrystalEnvironmentProfile = 'original' | 'soft-glass'
+/** About's blue slash reflects broad diagonal photographic cards through
+ * its front and rear interfaces. These sources belong only to Studio. */
+export const STUDIO_CRYSTAL_REFLECTION_CARDS: readonly CrystalCard[] = [
+  ...CRYSTAL_REFLECTION_CARDS,
+  { azimuth: .01, elevation: .025, half: [.044, .25], intensity: 18, color: [.72, .91, 1.12], roll: -.62 },
+  { azimuth: -.095, elevation: -.11, half: [.060, .15], intensity: 11, color: [.12, .46, 1.0], roll: .48 },
+  { azimuth: Math.PI + .01, elevation: .025, half: [.044, .25], intensity: 18, color: [.72, .91, 1.12], roll: .62 },
+  { azimuth: Math.PI - .095, elevation: -.11, half: [.060, .15], intensity: 11, color: [.12, .46, 1.0], roll: -.48 },
+]
+export type CrystalEnvironmentProfile = 'original' | 'soft-glass' | 'studio'
 export const CRYSTAL_ENVIRONMENT_SIZE = 256
 export const CRYSTAL_AMBIENT = [.0008, .0010, .0014] as const
 
-export function crystalCardBasis(card: Pick<CrystalCard, 'azimuth' | 'elevation'>) {
+export function crystalCardBasis(card: Pick<CrystalCard, 'azimuth' | 'elevation' | 'roll'>) {
   const forward = new Vector3(Math.cos(card.elevation) * Math.sin(card.azimuth),
     Math.sin(card.elevation), Math.cos(card.elevation) * Math.cos(card.azimuth)).normalize()
   const right = new Vector3(0, 1, 0).cross(forward).normalize()
+  if (card.roll) right.applyAxisAngle(forward, card.roll)
   return { forward, right, up: forward.clone().cross(right).normalize() }
 }
 
@@ -90,7 +101,8 @@ void main() {
 /** Exposed separately so its linear-HDR source contract can be tested without
  * pretending a mocked renderer verifies the resulting glass appearance. */
 export function createCrystalEnvironmentMaterial(profile: CrystalEnvironmentProfile = 'original') {
-  const cards = profile === 'soft-glass' ? SOFT_GLASS_REFLECTION_CARDS : CRYSTAL_REFLECTION_CARDS
+  const cards = profile === 'soft-glass' ? SOFT_GLASS_REFLECTION_CARDS
+    : profile === 'studio' ? STUDIO_CRYSTAL_REFLECTION_CARDS : CRYSTAL_REFLECTION_CARDS
   const bases = cards.map(crystalCardBasis)
   return new ShaderMaterial({
     side: BackSide, depthWrite: false, depthTest: false, toneMapped: false,

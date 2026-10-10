@@ -2,9 +2,21 @@ import { useReducedMotion } from '../../hooks/useReducedMotion'
 import './HeroMedia.css'
 
 const POSTER = '/media/wallace-shift-hero-poster.webp'
+const STUDIO_POSTER = '/media/about/studio-world-mobile.webp'
 
-export function HeroMedia({ posterOnly = false }: { posterOnly?: boolean }) {
+export type HeroAppearance = 'original' | 'studio'
+
+export function HeroMedia({ posterOnly = false, appearance = 'original' }: {
+  posterOnly?: boolean
+  appearance?: HeroAppearance
+}) {
   const reducedMotion = useReducedMotion()
+
+  if (appearance === 'studio') return (
+    <div className="hero-media hero-media--studio" aria-hidden="true">
+      <img src={STUDIO_POSTER} className="hero-media__studio" width="720" height="720" alt="" fetchPriority="high" />
+    </div>
+  )
 
   return (
     <div className="hero-media" aria-hidden="true">

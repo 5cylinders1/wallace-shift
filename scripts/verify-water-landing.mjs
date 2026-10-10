@@ -132,15 +132,15 @@ function browserState(search, webgl, run) {
   }
 }
 
-await test('landing ignores review parameters and pins Glass; the default experiment keeps all nine looks and inspection', () => {
-  for (const look of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight']) {
+await test('landing pins the Studio finish; the experiment preserves Glass and all comparison looks', () => {
+  for (const look of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight', 'studio']) {
     const search = `?look=${look}&progress=.68&quality=low&debug=1&reduced=1&channel=2`
     browserState(search, true, writes => {
       const landingMarkup = renderToStaticMarkup(createElement(WaterHeroExperiment, { mode: 'landing' }))
       assert.match(landingMarkup, /water-hero-brand/)
       assert.doesNotMatch(landingMarkup, /A Different|Perspective|water-hero-handoff__title/)
       const landing = globalThis.__waterStage
-      assert.equal(landing.appearance, 'glass')
+      assert.equal(landing.appearance, 'studio')
       assert.equal(landing.mode, 'landing')
       assert.equal(landing.tier, 'medium')
       assert.equal(landing.progress.current, 0)

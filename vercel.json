@@ -1,5 +1,36 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "roofers.wallaceshift.com" }],
+      "destination": "/demos/roofers-offer"
+    },
+    {
+      "source": "/northvane",
+      "destination": "/demos/roofers"
+    },
+    {
+      "source": "/alder-stone",
+      "destination": "/demos/roofers-2"
+    },
+    {
+      "source": "/alder-stone/process",
+      "destination": "/demos/roofers-2/process"
+    },
+    {
+      "source": "/alder-stone/insurance",
+      "destination": "/demos/roofers-2/insurance"
+    },
+    {
+      "source": "/alder-stone/cost",
+      "destination": "/demos/roofers-2/cost"
+    },
+    {
+      "source": "/alder-stone/estimate",
+      "destination": "/demos/roofers-2/estimate"
+    }
+  ]
 }

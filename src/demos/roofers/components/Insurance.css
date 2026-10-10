@@ -1,0 +1,403 @@
+.rf-insurance {
+  background: var(--rf-card);
+  border-top: 1px solid var(--rf-line);
+}
+
+.rf-subhead {
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  font-stretch: 106%;
+  font-weight: 760;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+/* Covered / not covered */
+
+.rf-coverage {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 860px) {
+  .rf-coverage {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+}
+
+.rf-coverage__col {
+  padding: clamp(22px, 3vw, 36px);
+}
+
+.rf-coverage__col--yes {
+  background: var(--rf-good-soft);
+}
+
+.rf-coverage__col--no {
+  background: var(--rf-bad-soft);
+}
+
+.rf-coverage__col h3 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  font-size: 1.375rem;
+  font-stretch: 106%;
+  font-weight: 760;
+}
+
+.rf-coverage__col h3::before {
+  content: '';
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.rf-coverage__col--yes h3::before {
+  background-color: var(--rf-good);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E");
+  background-size: 16px;
+}
+
+.rf-coverage__col--no h3::before {
+  background-color: var(--rf-bad);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 4l8 8M12 4l-8 8' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E");
+  background-size: 14px;
+}
+
+.rf-coverage__col li {
+  position: relative;
+  padding: 12px 0 12px 22px;
+  border-top: 1px solid rgba(20, 24, 28, 0.1);
+  line-height: 1.45;
+}
+
+.rf-coverage__col li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 21px;
+  width: 8px;
+  height: 2px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+/* Deductible band */
+
+.rf-deductible {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  padding: clamp(26px, 4vw, 48px);
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+}
+
+@media (min-width: 960px) {
+  .rf-deductible {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 48px;
+    align-items: center;
+  }
+}
+
+.rf-deductible h3 {
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-stretch: 108%;
+  font-weight: 760;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.rf-deductible p {
+  color: var(--rf-on-dark-muted);
+  font-size: 1.0625rem;
+}
+
+/* Policy types */
+
+.rf-policies {
+  margin-top: clamp(48px, 6vw, 80px);
+}
+
+.rf-policies ol {
+  display: grid;
+  gap: 0;
+  margin-top: 22px;
+  border-top: 1px solid var(--rf-line-strong);
+}
+
+@media (min-width: 860px) {
+  .rf-policies ol {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.rf-policies li {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 22px 24px 24px 0;
+  border-bottom: 1px solid var(--rf-line);
+}
+
+@media (min-width: 860px) {
+  .rf-policies li + li {
+    padding-left: 24px;
+    border-left: 1px solid var(--rf-line);
+  }
+}
+
+.rf-policies li span {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--rf-copper-deep);
+}
+
+.rf-policies h4 {
+  font-size: 1.125rem;
+  font-weight: 760;
+}
+
+.rf-policies p {
+  color: var(--rf-slate);
+}
+
+/* Money example */
+
+.rf-money {
+  margin-top: clamp(48px, 6vw, 80px);
+  padding: clamp(22px, 3vw, 36px);
+  background: var(--rf-paper);
+}
+
+.rf-money figcaption {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+
+.rf-money figcaption p {
+  color: var(--rf-muted);
+}
+
+.rf-money__bar {
+  display: flex;
+  height: 58px;
+  gap: 3px;
+}
+
+.rf-money__part {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0 14px;
+  overflow: hidden;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rf-money__part--insurer,
+.rf-money__key--insurer::before {
+  background: var(--rf-slate);
+  color: var(--rf-on-dark);
+}
+
+.rf-money__part--held,
+.rf-money__key--held::before {
+  background: repeating-linear-gradient(135deg, #7d8790 0 8px, #6d7781 8px 16px);
+  color: #fff;
+}
+
+.rf-money__part--you,
+.rf-money__key--you::before {
+  background: var(--rf-copper);
+  color: #fff;
+}
+
+.rf-money__legend {
+  display: grid;
+  gap: 12px 24px;
+  margin-top: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.rf-money__key {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding-left: 22px;
+  font-size: 0.9375rem;
+  color: var(--rf-slate);
+}
+
+.rf-money__key::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+}
+
+.rf-money__key strong {
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--rf-ink);
+}
+
+.rf-money__key--total::before {
+  background: transparent;
+  border: 2px solid var(--rf-ink);
+}
+
+@media (max-width: 520px) {
+  .rf-money__part {
+    padding: 0 8px;
+    font-size: 0.8125rem;
+  }
+  .rf-money__part--you {
+    font-size: 0;
+  }
+}
+
+/* Claim timeline */
+
+.rf-claim {
+  margin-top: clamp(48px, 6vw, 80px);
+}
+
+.rf-claim__steps {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin-top: 28px;
+}
+
+.rf-claim__step {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 0 0 28px 54px;
+}
+
+.rf-claim__step::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 36px;
+  bottom: 0;
+  width: 2px;
+  background: var(--rf-line-strong);
+}
+
+.rf-claim__step:last-child::before {
+  display: none;
+}
+
+.rf-claim__node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+  font-size: 0.9375rem;
+  font-weight: 800;
+}
+
+.rf-claim__when {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--rf-copper-deep);
+}
+
+.rf-claim__step h4 {
+  font-size: 1.125rem;
+  font-weight: 760;
+}
+
+.rf-claim__body {
+  color: var(--rf-slate);
+  font-size: 0.9375rem;
+}
+
+@media (min-width: 1024px) {
+  .rf-claim__steps {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+  }
+  .rf-claim__step {
+    padding: 54px 0 0;
+    align-content: start;
+  }
+  .rf-claim__step::before {
+    left: 40px;
+    right: -20px;
+    top: 17px;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+  }
+}
+
+.rf-claim__summary {
+  max-width: 70ch;
+  margin-top: 12px;
+  padding: 18px 20px;
+  border-left: 3px solid var(--rf-copper);
+  background: var(--rf-paper);
+  font-weight: 600;
+}
+
+/* Deadline + note */
+
+.rf-insurance__foot {
+  display: grid;
+  gap: 18px;
+  margin-top: clamp(40px, 5vw, 64px);
+}
+
+.rf-deadline {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  padding: clamp(22px, 3vw, 36px);
+  border: 1.5px solid var(--rf-ink);
+}
+
+@media (min-width: 960px) {
+  .rf-deadline {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr) auto;
+    align-items: center;
+    gap: 32px;
+  }
+}
+
+.rf-deadline h3 {
+  font-size: 1.5rem;
+  font-stretch: 106%;
+  font-weight: 760;
+  line-height: 1.1;
+}
+
+.rf-deadline p {
+  color: var(--rf-slate);
+}
+
+.rf-insurance__note {
+  font-size: 0.875rem;
+  color: var(--rf-muted);
+}

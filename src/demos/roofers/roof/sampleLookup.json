@@ -1,0 +1,179 @@
+{
+  "ok": true,
+  "source": "sample",
+  "address": {
+    "formatted": "Sample house (illustration)",
+    "street": null,
+    "city": null,
+    "state": null,
+    "zip": null
+  },
+  "location": {
+    "lat": -0.000052911,
+    "lng": -0.000020077
+  },
+  "precision": "rooftop",
+  "buildings": [
+    {
+      "id": "sample-house",
+      "ring": [
+        {
+          "lat": -0.000023356,
+          "lng": 0.0001069
+        },
+        {
+          "lat": -0.00002156,
+          "lng": 0.000049407
+        },
+        {
+          "lat": -0.000019763,
+          "lng": 0.000026051
+        },
+        {
+          "lat": -0.000045814,
+          "lng": 0.000026051
+        },
+        {
+          "lat": -0.000045814,
+          "lng": -0.000011678
+        },
+        {
+          "lat": -0.000019763,
+          "lng": -0.000011678
+        },
+        {
+          "lat": -0.000019763,
+          "lng": -0.000030543
+        },
+        {
+          "lat": -0.000061085,
+          "lng": -0.000030543
+        },
+        {
+          "lat": -0.000061085,
+          "lng": -0.000076357
+        },
+        {
+          "lat": -0.000019763,
+          "lng": -0.000076357
+        },
+        {
+          "lat": -0.000019763,
+          "lng": -0.000088035
+        },
+        {
+          "lat": 0.000049407,
+          "lng": -0.000088035
+        },
+        {
+          "lat": 0.000049407,
+          "lng": 0.000049407
+        },
+        {
+          "lat": 0.000042221,
+          "lng": 0.000049407
+        },
+        {
+          "lat": 0.000042221,
+          "lng": 0.0001069
+        }
+      ],
+      "areaSqFt": 2151,
+      "distanceM": 1.2,
+      "corners": 15
+    },
+    {
+      "id": "sample-neighbour-1",
+      "ring": [
+        {
+          "lat": 0.000071865,
+          "lng": -0.000220087
+        },
+        {
+          "lat": 0.000071865,
+          "lng": -0.000139239
+        },
+        {
+          "lat": -0.000044916,
+          "lng": -0.000139239
+        },
+        {
+          "lat": -0.000044916,
+          "lng": -0.000220087
+        }
+      ],
+      "areaSqFt": 1259,
+      "distanceM": 13.3,
+      "corners": 4
+    },
+    {
+      "id": "sample-neighbour-2",
+      "ring": [
+        {
+          "lat": 0.000062882,
+          "lng": 0.000145527
+        },
+        {
+          "lat": 0.000062882,
+          "lng": 0.000226375
+        },
+        {
+          "lat": -0.000044916,
+          "lng": 0.000226375
+        },
+        {
+          "lat": -0.000044916,
+          "lng": 0.000145527
+        }
+      ],
+      "areaSqFt": 1163,
+      "distanceM": 18.5,
+      "corners": 4
+    },
+    {
+      "id": "sample-shed",
+      "ring": [
+        {
+          "lat": 0.000128459,
+          "lng": 0.000037729
+        },
+        {
+          "lat": 0.000128459,
+          "lng": 0.000070069
+        },
+        {
+          "lat": 0.000104205,
+          "lng": 0.000070069
+        },
+        {
+          "lat": 0.000104205,
+          "lng": 0.000037729
+        }
+      ],
+      "areaSqFt": 105,
+      "distanceM": 18.6,
+      "corners": 4
+    }
+  ],
+  "home": "sample-house",
+  "frame": {
+    "width": 800,
+    "height": 800,
+    "center": {
+      "lat": 0,
+      "lng": 0
+    },
+    "zoom": 21.812593133720274
+  },
+  "imagery": {
+    "src": "/demos/roofers/sample-roof.svg",
+    "provider": "sample",
+    "credits": [
+      {
+        "text": "Illustration · not a real property"
+      }
+    ]
+  },
+  "credits": [],
+  "measure": null
+}

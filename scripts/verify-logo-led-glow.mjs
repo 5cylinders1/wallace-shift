@@ -6,7 +6,7 @@ import test from 'node:test'
 import {
   ACESFilmicToneMapping, AddEquation, BoxGeometry, Color, CustomBlending, FogExp2, Group,
   HalfFloatType, LinearFilter, LinearSRGBColorSpace, Matrix4, Mesh, MeshBasicMaterial,
-  MeshStandardMaterial, NoToneMapping, OneFactor, PerspectiveCamera, Scene,
+  MeshStandardMaterial, NoToneMapping, OneFactor, PerspectiveCamera, Scene, ShaderLib,
   WebGLRenderTarget, ZeroFactor,
 } from 'three'
 import { transpileModule } from 'typescript'
@@ -36,6 +36,7 @@ const { createLogoPearlMaterial, logoPearlUniforms, updatePearlLighting } = awai
 const { createLogoCopperMaterial } = await load('logoCopper')
 const { createLogoMercuryMaterial, logoMercuryUniforms, updateMercuryLighting } = await load('logoMercury')
 const { createLogoCutLightMaterial, logoCutLightUniforms } = await load('logoCutLight')
+const { createLogoStudioAluminumMaterial } = await load('logoStudio')
 const { NODE_NAMES } = await load('waterHeroConfig')
 const { createLEDGlow, renderLEDGlow, LED_GLOW_LAYER, LED_GLOW_GAIN, LED_GLOW_RADIUS_CSS, ledGlowBlurShader } =
   await load('logoLEDGlow')
@@ -55,13 +56,19 @@ function fixture({ failAt = 0, offscreen = false, waterVisible = true, proxyVisi
   const pearl = appearance === 'pearl'
   const mercury = appearance === 'mercury'
   const cutlight = appearance === 'cutlight'
+  const studio = appearance === 'studio'
   const geometry = chrome || mercury || cutlight ? sourceLeft.geometry.clone() : new BoxGeometry(), source = new MeshStandardMaterial()
-  const led = cutlight ? createLogoCutLightMaterial(source, chromeFrame, geometry) : mercury ? createLogoMercuryMaterial(source, chromeFrame, geometry) : copper ? createLogoCopperMaterial(source, .43) : pearl ? createLogoPearlMaterial(source) : frosted ? createLogoFrostedMaterial(source, .43) : glass ? createLogoCrystalMaterial(source, .43)
+  const led = studio ? createLogoStudioAluminumMaterial(source) : cutlight ? createLogoCutLightMaterial(source, chromeFrame, geometry) : mercury ? createLogoMercuryMaterial(source, chromeFrame, geometry) : copper ? createLogoCopperMaterial(source, .43) : pearl ? createLogoPearlMaterial(source) : frosted ? createLogoFrostedMaterial(source, .43) : glass ? createLogoCrystalMaterial(source, .43)
     : chrome ? createLogoChromeMaterial(source, chromeFrame, geometry) : createLogoLEDMaterial(source)
-  const proxyMaterial = cutlight ? createLogoCutLightMaterial(source, chromeFrame, geometry, true) : mercury ? createLogoMercuryMaterial(source, chromeFrame, geometry, true) : copper ? createLogoCopperMaterial(source, .43, true) : pearl ? createLogoPearlMaterial(source) : frosted ? createLogoFrostedMaterial(source, .43, true) : glass ? createLogoCrystalMaterial(source, .43)
+  const proxyMaterial = studio ? createLogoStudioAluminumMaterial(source) : cutlight ? createLogoCutLightMaterial(source, chromeFrame, geometry, true) : mercury ? createLogoMercuryMaterial(source, chromeFrame, geometry, true) : copper ? createLogoCopperMaterial(source, .43, true) : pearl ? createLogoPearlMaterial(source) : frosted ? createLogoFrostedMaterial(source, .43, true) : glass ? createLogoCrystalMaterial(source, .43)
     : chrome ? createLogoChromeMaterial(source, chromeFrame, geometry, true) : createLogoLEDMaterial(source, true)
   installLogoOpening(led, new Matrix4(), glass)
   installLogoOpening(proxyMaterial, new Matrix4(), glass, true)
+  const studioShaders = studio ? [led, proxyMaterial].map(material => {
+    const shader = { uniforms: {}, vertexShader: ShaderLib.physical.vertexShader, fragmentShader: ShaderLib.physical.fragmentShader }
+    material.onBeforeCompile(shader, {})
+    return shader
+  }) : []
   if (frosted) {
     logoOpeningUniforms(led).uOpeningEmissiveGlass.value = 1
     logoOpeningUniforms(proxyMaterial).uOpeningEmissiveGlass.value = 1
@@ -112,7 +119,10 @@ function fixture({ failAt = 0, offscreen = false, waterVisible = true, proxyVisi
         assert.equal(scene.background, null); assert.equal(scene.fog, null); assert.equal(scene.overrideMaterial, null)
         assert.deepEqual(clear.toArray(), [0, 0, 0]); assert.equal(alpha, 0)
         assert.equal(renderer.toneMapping, NoToneMapping); assert.equal(renderer.autoClear, true)
-        if (cutlight) {
+        if (studio) {
+          assert.equal(studioShaders[0].uniforms.uStudioGlowPass.value, 1)
+          assert.equal(studioShaders[1].uniforms.uStudioGlowPass.value, 0)
+        } else if (cutlight) {
           assert.equal(logoCutLightUniforms(led).uCutGlowPass.value, 1)
           assert.equal(logoCutLightUniforms(proxyMaterial).uCutGlowPass.value, 0)
         } else if (mercury) {
@@ -140,7 +150,8 @@ function fixture({ failAt = 0, offscreen = false, waterVisible = true, proxyVisi
         assert.deepEqual(visible, ['logo'], 'no particles, sky, fog, proxy, water or unrelated layer-4 mesh enters the mask')
       } else {
         assert.equal(actualScene, glow.quadScene); assert.equal(actualCamera, glow.quadCamera)
-        if (cutlight) assert.equal(logoCutLightUniforms(led).uCutGlowPass.value, 0)
+        if (studio) assert.equal(studioShaders[0].uniforms.uStudioGlowPass.value, 0)
+        else if (cutlight) assert.equal(logoCutLightUniforms(led).uCutGlowPass.value, 0)
         else if (mercury) assert.equal(logoMercuryUniforms(led).uMercuryGlowPass.value, 0)
         else if (pearl) assert.equal(logoPearlUniforms(led).uPearlGlowPass.value, 0)
         else if (frosted) assert.equal(logoFrostedUniforms(led).uFrostedGlowPass.value, 0)
@@ -190,7 +201,10 @@ function fixture({ failAt = 0, offscreen = false, waterVisible = true, proxyVisi
     assert.equal(renderer.autoClear, false); assert.equal(renderer.autoClearColor, false)
     assert.equal(renderer.autoClearDepth, false); assert.equal(renderer.autoClearStencil, true)
     assert.deepEqual(clear.toArray(), [.1, .2, .3]); assert.equal(alpha, .4)
-    if (cutlight) {
+    if (studio) {
+      assert.equal(studioShaders[0].uniforms.uStudioGlowPass.value, 0)
+      assert.equal(studioShaders[1].uniforms.uStudioGlowPass.value, 0)
+    } else if (cutlight) {
       assert.equal(logoCutLightUniforms(led).uCutGlowPass.value, 0)
       assert.equal(logoCutLightUniforms(proxyMaterial).uCutGlowPass.value, 0)
     } else if (mercury) {
@@ -233,7 +247,7 @@ await test('only authored LED emission is blurred, then added to untouched beaut
 })
 
 await test('mask, both blur passes and overlay failures always restore state and reset actual LED uniforms', () => {
-  for (const appearance of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight']) for (const failAt of [1, 2, 3, 4]) {
+  for (const appearance of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight', 'studio']) for (const failAt of [1, 2, 3, 4]) {
     const f = fixture({ failAt, waterVisible: false, proxyVisible: false, appearance })
     assert.throws(f.run, /injected LED draw failure/)
     assert.equal(f.getDraws(), failAt)
@@ -242,7 +256,7 @@ await test('mask, both blur passes and overlay failures always restore state and
 })
 
 await test('every appearance captures the shared opening charge without leaking its glow flag into beauty or the proxy', () => {
-  for (const appearance of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight']) {
+  for (const appearance of ['led', 'electric', 'glass', 'chrome', 'frosted', 'pearl', 'copper', 'mercury', 'cutlight', 'studio']) {
     const f = fixture({ appearance })
     f.run(); f.restored(); assert.equal(f.getDraws(), 4)
     f.dispose()

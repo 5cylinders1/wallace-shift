@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -98,6 +98,58 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
   }
 }
 
+/**
+ * Runs the roofing demo's serverless functions inside `vite dev`.
+ *
+ * On Vercel each file in /api is its own function. Locally there is no
+ * function runtime, so without this the roof tool could only ever report
+ * "not connected". These handlers use the plain Node (req, res) signature,
+ * which is exactly what a Connect middleware receives, so they mount
+ * directly. Keys come from `.env.local` (never committed), e.g.
+ *
+ *   GEOAPIFY_API_KEY=...
+ *
+ * See docs/roofing-demo.md for the full list.
+ *
+ * Only these routes are mounted; the studio site's own endpoints keep
+ * their existing behaviour.
+ */
+const DEV_API_ROUTES: Record<string, string> = {
+  '/api/roof-suggest': '/api/roof-suggest.ts',
+  '/api/roof-lookup': '/api/roof-lookup.ts',
+  '/api/roof-measure': '/api/roof-measure.ts',
+}
+
+function devApiRoutes(): Plugin {
+  return {
+    name: 'wallace-shift-dev-api-routes',
+    apply: 'serve',
+    configureServer(server) {
+      const env = loadEnv(server.config.mode, server.config.root, '')
+      // Server-side settings only: never anything a VITE_ prefix would expose.
+      for (const [key, value] of Object.entries(env)) {
+        if (/^(ROOF_|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_)/.test(key) && !process.env[key]) process.env[key] = value
+      }
+      server.middlewares.use(async (req, res, next) => {
+        const path = (req.url ?? '').split('?')[0]
+        const file = DEV_API_ROUTES[path]
+        if (!file) return next()
+        try {
+          const mod = await server.ssrLoadModule(file)
+          await mod.default(req, res)
+        } catch (error) {
+          server.config.logger.error(`[dev api] ${path}: ${String(error)}`)
+          if (!res.headersSent) {
+            res.statusCode = 502
+            res.setHeader('content-type', 'application/json')
+            res.end(JSON.stringify({ ok: false, error: 'upstream' }))
+          }
+        }
+      })
+    },
+  }
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -106,6 +158,53 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;')
 }
 
+// Mirror the public aliases in dev/preview without changing the browser URL.
+// Legacy directory entries still accept pasted links without their slash.
+function roofingDemoRoutes(): Plugin {
+  const route = (req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse, next: () => void) => {
+      const url = new URL(req.url ?? '/', 'http://localhost')
+      const alias = url.pathname.replace(/\/$/, '')
+      const destinations: Record<string, string> = {
+        '/northvane': '/demos/roofers/index.html',
+        '/alder-stone': '/demos/roofers-2/index.html',
+        ...Object.fromEntries(['process', 'insurance', 'cost', 'estimate'].map(page =>
+          [`/alder-stone/${page}`, `/demos/roofers-2/${page}/index.html`])),
+      }
+      if (destinations[alias]) {
+        req.url = `${destinations[alias]}${url.search}`
+        return next()
+      }
+      if (!/^\/demos\/(?:roofers|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?)$/.test(url.pathname)) return next()
+      res.statusCode = 302
+      res.setHeader('Location', `${url.pathname}/${url.search}`)
+      res.end()
+    }
+  return {
+    name: 'roofing-demo-routes',
+    configureServer(server) { server.middlewares.use(route) },
+    configurePreviewServer(server) { server.middlewares.use(route) },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), prerenderRoutes()],
+  plugins: [react(), prerenderRoutes(), devApiRoutes(), roofingDemoRoutes()],
+  build: {
+    rolldownOptions: {
+      // Sales demos are separate documents with their own bundle, so a
+      // prospect opening one never downloads the studio site (or its
+      // WebGL), and the studio site never ships demo code. Each is served
+      // at /demos/<vertical> and, on its own subdomain, by a host rewrite
+      // in vercel.json.
+      input: {
+        main: 'index.html',
+        roofers: 'demos/roofers/index.html',
+        roofersOffer: 'demos/roofers-offer/index.html',
+        roofersEstate: 'demos/roofers-2/index.html',
+        roofersEstateProcess: 'demos/roofers-2/process/index.html',
+        roofersEstateInsurance: 'demos/roofers-2/insurance/index.html',
+        roofersEstateCost: 'demos/roofers-2/cost/index.html',
+        roofersEstateEstimate: 'demos/roofers-2/estimate/index.html',
+      },
+    },
+  },
 })

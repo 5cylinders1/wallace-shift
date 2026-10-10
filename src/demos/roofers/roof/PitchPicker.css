@@ -1,0 +1,412 @@
+/* The pitch picker sits on the roof tool's ink panel. */
+
+.rf-pitch {
+  container-type: inline-size;
+  display: grid;
+  gap: 16px;
+  color: var(--rf-on-dark);
+}
+
+.rf-pitch__stage {
+  position: relative;
+  /* A finger on the drawing still scrolls the page; only the handle drags (mouse and pen drag anywhere). */
+  touch-action: pan-y;
+  cursor: ns-resize;
+  user-select: none;
+  -webkit-user-select: none;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(244, 241, 234, 0.06), transparent 70%),
+    rgba(244, 241, 234, 0.02);
+  border: 1px solid rgba(244, 241, 234, 0.12);
+}
+
+.rf-pitch__svg {
+  width: 100%;
+  height: auto;
+}
+
+.rf-pitch__guide {
+  stroke: rgba(244, 241, 234, 0.22);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 6;
+  stroke-linecap: round;
+}
+
+.rf-pitch__ground {
+  fill: rgba(244, 241, 234, 0.06);
+}
+
+.rf-pitch__window {
+  fill: #3e4b57;
+  stroke: #f4f1ea;
+  stroke-width: 3;
+}
+
+.rf-pitch__mullion {
+  stroke: #f4f1ea;
+  stroke-width: 2;
+}
+
+.rf-pitch__vent {
+  fill: #cfc8bb;
+  stroke: #f4f1ea;
+  stroke-width: 2.5;
+}
+
+.rf-pitch__drip {
+  fill: none;
+  stroke: #e0884f;
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.rf-pitch__rake {
+  fill: none;
+  stroke: #f4f1ea;
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+
+.rf-pitch__ref {
+  stroke: rgba(244, 241, 234, 0.5);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.rf-pitch__arc {
+  fill: none;
+  stroke: #e0884f;
+  stroke-width: 2.5;
+}
+
+.rf-pitch__deg,
+.rf-pitch__tri-label {
+  fill: #f4f1ea;
+  paint-order: stroke;
+  stroke: #14181c;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+  font-family: var(--rf-font);
+  font-size: 17px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-pitch__tri-label {
+  text-anchor: middle;
+}
+
+.rf-pitch__tri-label--rise {
+  text-anchor: start;
+  fill: #f0b58f;
+}
+
+.rf-pitch__triangle {
+  fill: none;
+  stroke: #f0b58f;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+}
+
+.rf-pitch__rope {
+  fill: none;
+  stroke: #e7b93a;
+  stroke-width: 2;
+}
+
+.rf-pitch__plank {
+  stroke: #b98f5c;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.rf-pitch__bracket {
+  stroke: #9aa1a7;
+  stroke-width: 2.5;
+}
+
+.rf-pitch__stem {
+  stroke: #e0884f;
+  stroke-width: 2;
+}
+
+.rf-pitch__handle {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-radius: 50%;
+  background: #e0884f;
+  color: #14181c;
+  box-shadow:
+    0 0 0 4px rgba(20, 24, 28, 0.9),
+    0 10px 24px -8px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  touch-action: none;
+  transition: transform 0.2s var(--rf-ease), box-shadow 0.2s var(--rf-ease);
+}
+
+.rf-pitch__handle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.rf-pitch__handle:hover,
+.rf-pitch.is-dragging .rf-pitch__handle {
+  transform: scale(1.08);
+}
+
+.rf-pitch.is-dragging .rf-pitch__handle {
+  cursor: grabbing;
+  box-shadow:
+    0 0 0 4px rgba(20, 24, 28, 0.9),
+    0 0 0 10px rgba(224, 136, 79, 0.25);
+}
+
+.rf-pitch__handle:focus-visible {
+  outline: 3px solid #f4f1ea;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rf-pitch__handle::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid rgba(224, 136, 79, 0.6);
+    animation: rf-pitch-ping 2.4s var(--rf-ease) infinite;
+    pointer-events: none;
+  }
+  .rf-pitch.is-dragging .rf-pitch__handle::after,
+  .rf-pitch__handle:focus-visible::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+@keyframes rf-pitch-ping {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  70%,
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+.rf-pitch__readout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 2px 18px;
+}
+
+/* Narrow: value and buttons share a row, the degrees sit beneath. */
+.rf-pitch__meta {
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+
+@container (min-width: 440px) {
+  .rf-pitch__readout {
+    grid-template-columns: auto 1fr auto;
+  }
+  .rf-pitch__meta {
+    grid-row: auto;
+    grid-column: auto;
+  }
+}
+
+.rf-pitch__label {
+  grid-column: 1 / -1;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-pitch__value {
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  font-stretch: 104%;
+  font-weight: 780;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-pitch__value span {
+  color: #e0884f;
+}
+
+.rf-pitch__meta {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-pitch__steppers {
+  display: flex;
+  gap: 6px;
+  align-self: center;
+}
+
+.rf-pitch__step {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid rgba(244, 241, 234, 0.28);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--rf-on-dark);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.rf-pitch__step svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.rf-pitch__step:hover:not(:disabled) {
+  border-color: #e0884f;
+  background: rgba(224, 136, 79, 0.12);
+}
+
+.rf-pitch__step:focus-visible {
+  outline: 3px solid #e0884f;
+  outline-offset: 2px;
+}
+
+.rf-pitch__step:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.rf-pitch__band {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-pitch__band strong {
+  color: var(--rf-on-dark);
+}
+
+.rf-pitch__scale {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  padding-top: 10px;
+}
+
+.rf-pitch__segment {
+  flex-basis: 0;
+  min-width: 0;
+  padding-top: 8px;
+  border-top: 3px solid rgba(244, 241, 234, 0.18);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  color: var(--rf-on-dark-muted);
+  transition: border-color 0.25s var(--rf-ease), color 0.25s var(--rf-ease);
+}
+
+.rf-pitch__segment.is-active {
+  border-top-color: #e0884f;
+  color: var(--rf-on-dark);
+}
+
+.rf-pitch__marker {
+  position: absolute;
+  top: 4px;
+  width: 3px;
+  height: 15px;
+  margin-left: -1.5px;
+  background: #f4f1ea;
+}
+
+.rf-pitch__styles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.rf-pitch__style {
+  display: grid;
+  gap: 1px;
+  min-height: 48px;
+  padding: 8px 10px;
+  border: 1.5px solid rgba(244, 241, 234, 0.22);
+  background: transparent;
+  color: var(--rf-on-dark);
+  text-align: left;
+  transition: border-color 0.2s var(--rf-ease), background-color 0.2s var(--rf-ease);
+}
+
+.rf-pitch__style span {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.rf-pitch__style small {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-pitch__style:hover {
+  border-color: rgba(244, 241, 234, 0.6);
+}
+
+.rf-pitch__style[aria-pressed='true'] {
+  border-color: #e0884f;
+  background: rgba(224, 136, 79, 0.16);
+}
+
+@media (max-width: 479px) {
+  .rf-pitch__styles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rf-pitch__segment {
+    font-size: 0.5625rem;
+    letter-spacing: 0;
+  }
+}
+
+/* Small phones: a smaller handle clears the 12-and-rise labels, and the
+   scale names only the band you're in (the readout above names it too). */
+@container (max-width: 340px) {
+  .rf-pitch__handle {
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+  }
+  .rf-pitch__handle svg {
+    width: 18px;
+    height: 18px;
+  }
+  .rf-pitch__segment {
+    overflow: visible;
+  }
+  .rf-pitch__segment:not(.is-active) {
+    color: transparent;
+  }
+}
