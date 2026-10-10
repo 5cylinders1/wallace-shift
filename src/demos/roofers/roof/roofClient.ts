@@ -71,7 +71,8 @@ export function lookupRoof(target: LookupTarget, signal?: AbortSignal): Promise<
  * the homeowner confirms it. Sent at the 5 decimals the server measures, so
  * the URL the edge caches is the point that was bought.
  */
-export function measureRoof(point: LatLng, signal?: AbortSignal): Promise<MeasureResponse> {
-  const params = new URLSearchParams({ lat: point.lat.toFixed(5), lng: point.lng.toFixed(5) })
+export function measureRoof(point: LatLng, provider: string, signal?: AbortSignal): Promise<MeasureResponse> {
+  // The provider the lookup named: the server refuses another one's data.
+  const params = new URLSearchParams({ lat: point.lat.toFixed(5), lng: point.lng.toFixed(5), provider })
   return getJson<Extract<MeasureResponse, { ok: true }>>(`${MEASURE_ENDPOINT}?${params}`, signal, 'timed_out')
 }

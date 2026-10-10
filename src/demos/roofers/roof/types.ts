@@ -112,6 +112,8 @@ export interface SolarPanelSpot {
   portrait: boolean
   /** Compass direction the roof face under it points: 0 north, 90 east, 180 south. */
   azimuth: number
+  /** Tilt of that face, degrees: the panel's run up the slope looks shorter from above. */
+  pitch: number
 }
 
 /** What a roof could carry in solar, as the measuring service models it. */
@@ -132,6 +134,10 @@ export interface SolarPotential {
   panels: SolarPanelSpot[]
   /** Layouts of increasing size: the first N panels of `panels` (before the cap). */
   configs: Array<{ panels: number; yearlyKwh: number }>
+  /** Panels on faces of 2/12 and steeper, where solar shingles can go. */
+  slopedPanels: number
+  /** Running DC kWh a year of the first N of those panels, best first. */
+  slopedConfigs: Array<{ panels: number; yearlyKwh: number }>
 }
 
 /** A roof measured by a licensed service from aerial imagery (and height data where it has it), for one building. */
@@ -160,7 +166,7 @@ export interface MeasuredRoof {
   solar?: SolarPotential | null
 }
 
-export type MeasureResponse = { ok: true; roof: MeasuredRoof; credits: Credit[] } | { ok: false; error: RoofErrorCode }
+export type MeasureResponse = { ok: true; provider: string; roof: MeasuredRoof; credits: Credit[] } | { ok: false; error: RoofErrorCode }
 
 export type RoofErrorCode =
   | 'not_configured'

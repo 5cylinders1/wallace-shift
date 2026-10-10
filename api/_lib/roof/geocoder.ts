@@ -14,6 +14,7 @@
  *                      Ranks nearby addresses first; it never filters.
  */
 
+import { createHmac, timingSafeEqual } from 'node:crypto'
 import type { AddressSuggestion, Credit, LatLng, LocationPrecision, RoofAddress } from '../../../src/demos/roofers/roof/types.js'
 import { RoofError, fetchJson, type Deadline } from './http.js'
 
@@ -133,14 +134,30 @@ function fromPacked(packed: Packed): GeocodedAddress {
   }
 }
 
-const encode = (packed: Packed) => `g1.${Buffer.from(JSON.stringify(packed)).toString('base64url')}`
+/**
+ * Ids are signed with a key only the server has (derived from the Geoapify
+ * key), so a lookup by id is always for an address Geoapify actually gave
+ * us: nobody can mint one for an arbitrary point and have us frame, photograph
+ * or measure it.
+ */
+const signatureOf = (secret: Buffer, payload: string) => createHmac('sha256', secret).update(payload).digest().subarray(0, 16)
 
-/** Ids round-trip through the browser, so everything in one is re-validated. */
-function decode(id: string): Packed | null {
-  if (!id.startsWith('g1.') || id.length > 1200) return null
+const encode = (packed: Packed, secret: Buffer) => {
+  const payload = Buffer.from(JSON.stringify(packed)).toString('base64url')
+  return `g2.${payload}.${signatureOf(secret, payload).toString('base64url')}`
+}
+
+/** Ids round-trip through the browser, so the signature is checked and everything in one is re-validated. */
+function decode(id: string, secret: Buffer): Packed | null {
+  if (!id.startsWith('g2.') || id.length > 1200) return null
+  const [payload, signature, extra] = id.slice(3).split('.')
+  if (!payload || !signature || extra !== undefined) return null
+  const given = Buffer.from(signature, 'base64url')
+  const expected = signatureOf(secret, payload)
+  if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null
   let parsed: unknown
   try {
-    parsed = JSON.parse(Buffer.from(id.slice(3), 'base64url').toString('utf8'))
+    parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'))
   } catch {
     return null
   }
@@ -167,6 +184,7 @@ function decode(id: string): Packed | null {
 }
 
 function geoapify(apiKey: string): Geocoder {
+  const secret = createHmac('sha256', apiKey).update('roof-suggestion-id/v2').digest()
   const call = async (path: 'autocomplete' | 'search', query: string, bias: LatLng | null, limit: number, deadline?: Deadline) => {
     const params = new URLSearchParams({ text: query, filter: 'countrycode:us', lang: 'en', limit: String(limit), format: 'json', apiKey })
     if (bias) params.set('bias', `proximity:${bias.lng.toFixed(4)},${bias.lat.toFixed(4)}`)
@@ -190,14 +208,14 @@ function geoapify(apiKey: string): Geocoder {
         if (packed.d) sources.add(packed.d)
         const primary = packed.s ?? packed.f
         const secondary = [packed.c, [packed.t, packed.z].filter(Boolean).join(' ')].filter(Boolean).join(', ')
-        suggestions.push({ id: encode(packed), primary, secondary })
+        suggestions.push({ id: encode(packed, secret), primary, secondary })
         if (suggestions.length === 5) break
       }
       const credits = [POWERED_BY, ...[...sources].map(sourceCredit).filter((credit): credit is Credit => Boolean(credit))]
       return { suggestions, credits }
     },
     async resolve(id) {
-      const packed = decode(id)
+      const packed = decode(id, secret)
       return packed ? fromPacked(packed) : null
     },
     async search(query, bias, deadline) {

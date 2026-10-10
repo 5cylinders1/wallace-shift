@@ -43,7 +43,7 @@ type Phase = StageMode
 type Measure =
   | { status: 'idle' }
   | { status: 'measuring' }
-  | { status: 'done'; roof: MeasuredRoof; credits: Credit[] }
+  | { status: 'done'; roof: MeasuredRoof; credits: Credit[]; provider: string; measuredAt: string }
   | { status: 'failed'; error: RoofErrorCode }
 
 /** Failures the homeowner can fix by moving the crosshair; anything else falls back to the outline estimate. */
@@ -59,13 +59,18 @@ const measureError = (code: RoofErrorCode) => MEASURE_ERRORS[code] ?? roofTool.e
 
 /** Five decimals, as the server measures it: one point, one purchase. */
 const roundPoint = (point: LatLng): LatLng => ({ lat: Number(point.lat.toFixed(5)), lng: Number(point.lng.toFixed(5)) })
+/** How long a building picked from the list waits before it is measured. */
+const LIST_SETTLE_MS = 500
 const samePoint = (a: LatLng, b: LatLng) => a.lat.toFixed(5) === b.lat.toFixed(5) && a.lng.toFixed(5) === b.lng.toFixed(5)
 
-/** A measurement bought on this visit, and the point it was bought for. */
+/** A measurement bought on this visit, the point it was bought for, and from whom. */
 interface Paid {
   at: LatLng
+  provider: string
   roof: MeasuredRoof
   credits: Credit[]
+  /** When it was measured (ISO): Google's terms limit how long its numbers may be kept. */
+  measuredAt: string
 }
 
 /**
@@ -107,6 +112,8 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const fallbackRef = useRef<HTMLDivElement>(null)
   /** Set when a measure control is pressed: that control is about to give way to its result. */
   const followFocusRef = useRef(false)
+  /** A building picked from the list, waiting to be measured once the choice settles (see pickBuilding). */
+  const listPickRef = useRef<number | null>(null)
   const helpId = useId()
   const pitchHelpId = useId()
   const sizeId = useId()
@@ -115,6 +122,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     () => () => {
       requestRef.current?.abort()
       measureRef.current?.abort()
+      if (listPickRef.current !== null) window.clearTimeout(listPickRef.current)
     },
     [],
   )
@@ -126,44 +134,72 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     return () => window.clearInterval(timer)
   }, [phase])
 
-  /** A measurement already bought on this visit for this building, or at this point. */
-  const findPaid = (point: LatLng, buildingId: string | null, view: RoofLookup) =>
-    paidRef.current.find(
+  /**
+   * A measurement already bought on this visit for this building, or at this
+   * point, or (from a service that reports the roof's extent) for the roof
+   * this point is on: the smallest such roof, should two boxes overlap.
+   */
+  const findPaid = (point: LatLng, buildingId: string | null, view: RoofLookup) => {
+    const mine = paidRef.current.filter((paid) => paid.provider === view.measure?.provider)
+    const same = mine.find(
       (paid) => samePoint(paid.at, point) || (buildingId !== null && buildingAt(paid.at, view.buildings, view.frame)?.id === buildingId),
     )
+    if (same) return same
+    const area = ({ sw, ne }: { sw: LatLng; ne: LatLng }) => (ne.lat - sw.lat) * (ne.lng - sw.lng)
+    let best: Paid | undefined
+    for (const paid of mine) {
+      const box = paid.roof.bounds
+      // A roof found away from the point it was asked for says nothing about that point.
+      if (!box || paid.roof.atPoint === false) continue
+      const inside = point.lat >= box.sw.lat && point.lat <= box.ne.lat && point.lng >= box.sw.lng && point.lng <= box.ne.lng
+      if (inside && (!best?.roof.bounds || area(box) < area(best.roof.bounds))) best = paid
+    }
+    return best
+  }
 
   const showMeasured = (paid: Paid, view: RoofLookup) => {
     // The list follows what was measured, whatever was ticked while it ran.
     const id = buildingAt(paid.at, view.buildings, view.frame)?.id
     setTarget(paid.at)
     setSelected(new Set(id ? [id] : []))
-    setMeasure({ status: 'done', roof: paid.roof, credits: paid.credits })
+    setMeasure({ status: 'done', roof: paid.roof, credits: paid.credits, provider: paid.provider, measuredAt: paid.measuredAt })
     // Start from what was measured; the homeowner can still adjust it.
     setPitch(clampPitch(Math.round(paid.roof.pitchRise)))
     setShape(null)
   }
 
+  const clearListPick = () => {
+    if (listPickRef.current === null) return
+    window.clearTimeout(listPickRef.current)
+    listPickRef.current = null
+  }
+
   /** Leaving the measured flow: stop a measurement in flight and forget the one shown. */
   const stopMeasuring = () => {
     measureRef.current?.abort()
+    clearListPick()
     setMeasure({ status: 'idle' })
   }
 
   /** Measures `at` now; callers decide when that's wanted (a button press, or a cheap automatic measurement). */
   const startMeasure = async (at: LatLng, view: RoofLookup) => {
+    const provider = view.measure?.provider
+    if (!provider) return
     measureRef.current?.abort()
     const controller = new AbortController()
     measureRef.current = controller
     setTarget(at)
     setMeasure({ status: 'measuring' })
     try {
-      const result = await measureRoof(at, controller.signal)
+      const result = await measureRoof(at, provider, controller.signal)
       if (controller.signal.aborted) return
-      if (!result.ok) {
-        setMeasure({ status: 'failed', error: result.error })
+      // Data from a service other than the one this view was built for (its
+      // photo, credits and drawing rules) is never shown on it.
+      if (!result.ok || result.provider !== provider) {
+        setMeasure({ status: 'failed', error: result.ok ? 'not_configured' : result.error })
         return
       }
-      const paid = { at, roof: result.roof, credits: result.credits }
+      const paid = { at, provider, roof: result.roof, credits: result.credits, measuredAt: new Date().toISOString() }
       paidRef.current = [...paidRef.current, paid]
       showMeasured(paid, view)
     } catch {
@@ -273,6 +309,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const googleOnly = lookup?.measure?.provider === 'google-solar' || lookup?.imagery?.provider === 'google'
   const measuring = phase === 'found' && measure.status === 'measuring'
   const measured = phase === 'found' && measure.status === 'done' ? measure.roof : null
+  // Google's figures are on screen: each place they show carries its attribution.
+  const googleMeasured = measured !== null && measure.status === 'done' && measure.provider === 'google-solar'
+  const googleCredit = googleMeasured && measure.status === 'done' ? measure.credits.map((credit) => credit.text).join(' · ') : null
   // The outline estimate: no measuring service, or one that couldn't measure this roof.
   const outlineMode = !canMeasure || (measure.status === 'failed' && !fixable(measure.error))
   // The service said no roof is under this crosshair; it stays no until the crosshair moves.
@@ -289,6 +328,8 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     const at = roundPoint(point)
     // Picking the same spot again (say, the same building from the list) doesn't un-reject it.
     if (pinRejected && target && samePoint(at, target)) return
+    // Nor does it buy the roof a second time while the first answer is on its way.
+    if (auto && measuring && target && samePoint(at, target)) return
     const paid = findPaid(at, buildingId, lookup)
     if (paid) {
       measureRef.current?.abort()
@@ -300,11 +341,27 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     setMeasure({ status: 'idle' })
   }
 
+  // The settled list pick runs the placePin of the render it lands in, not the one it was clicked in.
+  const placePinRef = useRef(placePin)
+  useEffect(() => {
+    placePinRef.current = placePin
+  })
+
   const pickBuilding = (id: string) => {
     const building = lookup?.buildings.find((candidate) => candidate.id === id)
     if (!lookup || !building) return
     const point = insidePoint(building.ring, lookup.frame)
-    if (point) placePin(point, id)
+    if (!point) return
+    clearListPick()
+    if (!auto) return placePin(point, id)
+    // Arrow keys move through the list one building at a time, and each step
+    // would buy a measurement. The ticked building is measured once the
+    // homeowner stops on it.
+    setSelected(new Set([id]))
+    listPickRef.current = window.setTimeout(() => {
+      listPickRef.current = null
+      placePinRef.current(point, id)
+    }, LIST_SETTLE_MS)
   }
 
   const pickOnMap = (point: LatLng, onPhoto: boolean) => {
@@ -371,9 +428,12 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   // The vendor's pitch as measured. The picker covers 2/12 to 16/12; outside
   // that, the price uses the nearest end and says so, rather than calling the
   // clamped value measured.
-  const measuredRise = measured ? Math.round(measured.pitchRise) : null
-  const measurePitch = measuredRise !== null && measuredRise >= PITCH_MIN && measuredRise <= PITCH_MAX ? measuredRise : null
-  const pricedRise = measuredRise !== null ? clampPitch(measuredRise) : null
+  // Below 2/12 is low-slope roofing, not shingles, however close it rounds;
+  // it's shown to a decimal and never labelled as the measured shingle pitch.
+  const lowSlope = measured !== null && measured.pitchRise < PITCH_MIN
+  const measuredRise = measured ? (lowSlope ? Math.round(measured.pitchRise * 10) / 10 : Math.round(measured.pitchRise)) : null
+  const measurePitch = measuredRise !== null && !lowSlope && measuredRise <= PITCH_MAX ? measuredRise : null
+  const pricedRise = measuredRise !== null ? clampPitch(Math.round(measuredRise)) : null
   const pitchNote =
     measuredRise === null || measurePitch !== null
       ? null
@@ -386,7 +446,8 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
   // Solar shingles are offered where the measurement says solar fits, on a roof
   // they can go on (2/12 and up), sized from the service's own panel layouts.
-  const sizes = useMemo(() => (measured && measured.pitchRise >= 2 ? solarSizes(measured.solar) : []), [measured])
+  // (solarSizes counts only panels on faces of 2/12 and steeper.)
+  const sizes = useMemo(() => (measured ? solarSizes(measured.solar) : []), [measured])
   const materialOptions = sizes.length ? OPTIONS.material : OPTIONS.material.filter((option) => option.value !== 'solar')
   const activeMaterial: Material = material === 'solar' && !sizes.length ? 'architectural' : material
   const solarSize = activeMaterial === 'solar' ? (sizes.find((size) => size.kw === solarKw) ?? sizes.find((size) => size.kw === 7) ?? sizes[sizes.length - 1]) : null
@@ -418,7 +479,11 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
     return {
       low: quote.low,
       high: quote.high,
-      summary: `${basis}, ${pitch}/12 pitch, ${quote.squares} squares, ${materialLabel}, ${layers === '2' ? 'two layers' : 'one layer'}`,
+      // Google's figures live only in the structured roof fields, which a CRM
+      // can expire after 30 days; the free-text summary doesn't repeat them.
+      summary: googleMeasured
+        ? `${roofTool.measure.summaryGoogle}, ${materialLabel}, ${layers === '2' ? 'two layers' : 'one layer'}`
+        : `${basis}, ${pitch}/12 pitch, ${quote.squares} squares, ${materialLabel}, ${layers === '2' ? 'two layers' : 'one layer'}`,
       roof: {
         source,
         address: source === 'outline' || source === 'measured' ? (lookup?.address.formatted ?? null) : null,
@@ -429,12 +494,13 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
         buildings: buildingCount,
         confidence: measured?.confidence.label ?? null,
         measuredPitch: measuredRise !== null && measuredRise !== pitch ? measuredRise : null,
-        measuredBy: measured ? providerName : null,
+        measuredBy: measure.status === 'done' && measured ? measure.provider : null,
+        measuredAt: measure.status === 'done' && measured ? measure.measuredAt : null,
         // Asked for by the homeowner: what a solar proposal for this address starts from.
         solar: solarSize ? { kw: solarSize.kw, yearlyKwh: solarSize.yearlyKwh } : null,
       },
     }
-  }, [quote, phase, lookup, measured, activeMaterial, solarSize, homeSqft, footprint, pitch, layers, buildingCount, measuredRise, providerName])
+  }, [quote, phase, lookup, measured, measure, googleMeasured, activeMaterial, solarSize, homeSqft, footprint, pitch, layers, buildingCount, measuredRise])
 
   useEffect(() => onEstimate(estimate), [estimate, onEstimate])
 
@@ -468,7 +534,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const announce = measuring
     ? `${roofTool.measure.measuring} ${auto ? roofTool.measure.measuringNoteAuto : roofTool.measure.measuringNote}`
     : measured
-      ? `Measured ${measured.roofSqFt.toLocaleString('en-US')} square feet of roof at ${measuredRise} in 12${measured.confidence.label ? `, ${measured.confidence.label.toLowerCase()} confidence` : ''}.`
+      ? `Measured ${measured.roofSqFt.toLocaleString('en-US')} square feet of roof at ${measuredRise} in 12${measured.confidence.label ? `, ${measured.confidence.label.toLowerCase()} confidence` : ''}.${googleCredit ? ` Source: ${googleCredit}.` : ''}`
       : found && outlineMode
         ? `${found} ${chosen.length} selected, ${footprint.toLocaleString('en-US')} square feet.`
         : found
@@ -532,9 +598,11 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
           {phase === 'found' && lookup && (
             <>
-              <Credits className="rf-roof__credits" credits={[...(showsImage && lookup.imagery ? lookup.imagery.credits : []), ...lookup.credits]} />
+              {!googleOnly && (
+                <Credits className="rf-roof__credits" credits={[...(showsImage && lookup.imagery ? lookup.imagery.credits : []), ...lookup.credits]} />
+              )}
               {/* Maps ToS 3.2.2(a): users are told the tool includes Google Maps content, and under which terms. */}
-              {(lookup.measure?.provider === 'google-solar' || lookup.imagery?.provider === 'google') && (
+              {googleOnly && (
                 <p className="rf-roof__notice">
                   {roofTool.googleNotice}{' '}
                   <a href={roofTool.googleTerms.href} target="_blank" rel="noopener noreferrer">
@@ -547,6 +615,8 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                   .
                 </p>
               )}
+              {/* Under Google's photo, the other sources are named for what they gave: the address and the building list, not the map. */}
+              {googleOnly && <Credits className="rf-roof__credits" label={roofTool.otherCredits} credits={lookup.credits} />}
               {lookup.source === 'sample' && <p className="rf-roof__sample-note">{roofTool.sampleNote}</p>}
             </>
           )}
@@ -694,11 +764,9 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                           {measured.confidence.label === 'Low' && <p className="rf-roof__help">{roofTool.measure.lowConfidence}</p>}
                           {measured.capturedYear && <p className="rf-roof__help">{roofTool.measure.captured(measured.capturedYear, measured.capturedMonth ?? null)}</p>}
                           <p className="rf-roof__help">{roofTool.measure.extraBuildings}</p>
-                          {measured.solar !== undefined && <SolarPotential solar={measured.solar} />}
+                          {measured.solar !== undefined && <SolarPotential solar={measured.solar} shingles={sizes.length > 0} />}
                           {/* Google's attribution sits with its data, inside the same box. */}
-                          {measure.status === 'done' && lookup.measure.provider === 'google-solar' && (
-                            <p className="rf-roof__attribution">{measure.credits.map((credit) => credit.text).join(' · ')}</p>
-                          )}
+                          {googleCredit && <p className="rf-roof__attribution">{googleCredit}</p>}
                           {!auto && (
                             <button type="button" className="rf-roof__link" onClick={measureAnother}>
                               {roofTool.measure.another}
@@ -812,6 +880,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                   {measured ? (pitchNote ?? roofTool.measure.pitchMeasured) : roofTool.pitchHelp}
                 </p>
                 <PitchPicker value={pitch} onChange={setPitch} describedBy={pitchHelpId} />
+                {googleCredit && <p className="rf-roof__attribution">{googleCredit}</p>}
               </>
             ) : (
               <p className="rf-roof__locked">{lockedCopy ?? roofTool.pitchLocked}</p>
@@ -834,7 +903,8 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                     <dt>
                       {pitch}/12 pitch{pitch === measurePitch ? ' · measured' : ''}
                     </dt>
-                    <dd>×{pitchFactor(pitch).toFixed(2)}</dd>
+                    {/* A measured roof's faces have their own pitches: the factor is what was measured, not the main pitch's. */}
+                    <dd>×{(measuredSurface && footprint ? measuredSurface / footprint : pitchFactor(pitch)).toFixed(2)}</dd>
                   </div>
                   <div>
                     <dt>Roof surface</dt>
@@ -911,6 +981,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                 <p className="rf-roof__fine">
                   {measured ? (ownPitch ? roofTool.measure.disclaimerOwnPitch : roofTool.measure.disclaimer) : roofTool.disclaimer}
                 </p>
+                {googleCredit && <p className="rf-roof__attribution">{googleCredit}</p>}
               </div>
             ) : (
               <p className="rf-roof__locked">{lockedCopy ?? roofTool.estimateLocked}</p>

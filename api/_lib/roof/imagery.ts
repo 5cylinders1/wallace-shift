@@ -12,10 +12,11 @@
  * homeowner never draws on it: both Mapbox's and Google's terms forbid
  * deriving outlines from their imagery.
  *
- *   ROOF_IMAGERY          "mapbox", "naip", "google" or "none". Unset:
- *                         Mapbox when a token is present, otherwise NAIP.
- *                         Google Solar measurements always use "google"
- *                         (see googleImageryFromEnv).
+ *   ROOF_IMAGERY          "mapbox", "naip" or "none". Unset: Mapbox when a
+ *                         token is present, otherwise NAIP. Google's photo
+ *                         is used with Google Solar measuring and only then
+ *                         (see googleImageryFromEnv), so its rules about
+ *                         what may be drawn on it never touch the other modes.
  *   MAPBOX_ACCESS_TOKEN   A public (pk.) token with the styles:tiles scope,
  *                         URL-restricted to the site's origins. It is meant
  *                         to be seen by browsers; the restriction is what
@@ -26,12 +27,14 @@
  *   GOOGLE_MAPS_STATIC_SECRET  The project's URL-signing secret. Server-side
  *                              only: each URL is signed here, so Google can
  *                              refuse unsigned requests made with the key.
+ *                              Required except on a developer's machine.
  *
  * Google's terms bar using its services "with or near a non-Google map"
  * (Maps Platform ToS 3.2.3(e)), so wherever Google Solar data is shown the
- * photo is Google's too, and never Mapbox's. Our own overlay (outlines,
- * crosshair, panel layout) may sit on a Google image; the image itself is
- * never traced.
+ * photo is Google's too, and never Mapbox's. On a Google photo the page
+ * hides the open-data outlines and draws only Google's own answer (the
+ * measured roof's box and panel layout) and the homeowner's pin; the image
+ * itself is never traced.
  */
 
 import { createHmac } from 'node:crypto'
@@ -206,11 +209,21 @@ function google(key: string, secret: string | null): ImageryProvider {
   }
 }
 
-/** Google's satellite photo, or null without its browser key. */
+/**
+ * Google's satellite photo, or null without its browser key. Unsigned URLs
+ * would let anyone reuse the public key for any map, so a deployment without
+ * the signing secret shows no photo (and says why) rather than unsigned ones.
+ */
 export function googleImageryFromEnv(): ImageryProvider | null {
   const key = process.env.GOOGLE_MAPS_STATIC_KEY?.trim()
   if (!key) return null
-  return google(key, process.env.GOOGLE_MAPS_STATIC_SECRET?.trim() || null)
+  const secret = process.env.GOOGLE_MAPS_STATIC_SECRET?.trim() || null
+  const deployed = process.env.VERCEL_ENV === 'production' || process.env.VERCEL_ENV === 'preview'
+  if (!secret && (deployed || process.env.ROOF_MEASURE_UNMETERED !== '1')) {
+    console.error('[roof-lookup] no Google photo: GOOGLE_MAPS_STATIC_KEY is set without GOOGLE_MAPS_STATIC_SECRET, so its URLs would be unsigned.')
+    return null
+  }
+  return google(key, secret)
 }
 
 export function imageryFromEnv(): ImageryProvider | null {
@@ -218,6 +231,5 @@ export function imageryFromEnv(): ImageryProvider | null {
   const choice = process.env.ROOF_IMAGERY?.trim() || (token ? 'mapbox' : 'naip')
   if (choice === 'mapbox') return token ? mapbox(token) : null
   if (choice === 'naip') return naip
-  if (choice === 'google') return googleImageryFromEnv()
   return null
 }

@@ -4,16 +4,16 @@
  * estimate from an open building outline and a pitch the homeowner picks.
  *
  * Behind an interface so the service can change without touching the
- * endpoint or the page. Two are wired up; the first whose key is set wins,
- * or ROOF_MEASURE_PROVIDER names one:
+ * endpoint or the page. Two are wired up:
  *
- *   google-solar    Google Solar API (solar.ts). Cents a call, answers in a
- *                   second or two, and also models solar panels, so the page
- *                   measures as soon as it has a point and shows the roof's
- *                   solar potential. Its terms limit it to solar uses; see
- *                   solar.ts and docs/roofing-demo.md.
- *   instant-roofer  Instant Roofer (below). Dollars a call and 10–20 s, so
+ *   instant-roofer  Instant Roofer (below), the default whenever its key is
+ *                   set: licensed for roofing. Dollars a call and 10–20 s, so
  *                   the page asks the homeowner to confirm the roof first.
+ *   google-solar    Google Solar API (solar.ts). Off unless
+ *                   ROOF_MEASURE_PROVIDER=google-solar: its terms (§20.1)
+ *                   allow it only for solar energy systems, and pricing a
+ *                   standard re-roof from it was judged outside that. Kept
+ *                   for a possible solar-only option; see docs/roofing-demo.md.
  *
  * Instant Roofer's AI measurement API:
  *
@@ -37,11 +37,14 @@
  *                             Google has it; MEDIUM lowers the confidence shown).
  *   INSTANT_ROOFER_API_KEY    From api-dashboard.instantroofer.com. Server-side
  *                             only; never give either key a VITE_ prefix.
- *   ROOF_MEASURE_PROVIDER     Optional: "google-solar" or "instant-roofer".
- *   ROOF_MEASURE_PER_HOUR     Per visitor (default 30 Google, 6 Instant Roofer).
- *   ROOF_MEASURE_DAILY_CAP    Whole site, per UTC day (default 400 / 20).
- *   ROOF_MEASURE_MONTHLY_CAP  Whole site, per UTC month (default 4,000 / 300).
- *                             0 in any of the three pauses measuring.
+ *   ROOF_MEASURE_PROVIDER     Optional: "instant-roofer" (the default) or
+ *                             "google-solar", which must be named to run.
+ *   ROOF_MEASURE_PER_HOUR     Instant Roofer, per visitor (default 6).
+ *   ROOF_MEASURE_DAILY_CAP    Instant Roofer, whole site, per UTC day (default 20).
+ *   ROOF_MEASURE_MONTHLY_CAP  Instant Roofer, whole site, per UTC month (default 300).
+ *   GOOGLE_SOLAR_PER_HOUR, GOOGLE_SOLAR_DAILY_CAP, GOOGLE_SOLAR_MONTHLY_CAP
+ *                             The same for Google (defaults 30 / 400 / 4,000).
+ *                             0 in any of a service's three pauses it.
  *   ROOF_MEASURE_UNMETERED    "1" lets local development measure without the
  *                             Upstash store; ignored on any Vercel deployment.
  */
@@ -197,16 +200,29 @@ function googleSolar(apiKey: string, quality: SolarQuality): MeasurementProvider
 
 const solarQuality = (): SolarQuality => (process.env.GOOGLE_SOLAR_QUALITY?.trim().toUpperCase() === 'HIGH' ? 'HIGH' : 'MEDIUM')
 
-/** The provider whose key is set (or the one ROOF_MEASURE_PROVIDER names), before any spending checks. */
+/**
+ * The measuring service, before any spending checks: Instant Roofer when its
+ * key is set. Google Solar runs only when ROOF_MEASURE_PROVIDER names it, so
+ * a Google key left in the environment never turns it on by itself.
+ */
 export function pickMeasurement(): MeasurementProvider | null {
-  const google = process.env.GOOGLE_SOLAR_API_KEY?.trim()
   const roofer = process.env.INSTANT_ROOFER_API_KEY?.trim()
-  const choice = process.env.ROOF_MEASURE_PROVIDER?.trim()
-  if (choice === 'google-solar') return google ? googleSolar(google, solarQuality()) : null
+  const choice = process.env.ROOF_MEASURE_PROVIDER?.trim().toLowerCase() || 'instant-roofer'
   if (choice === 'instant-roofer') return roofer ? instantRoofer(roofer) : null
-  if (choice && choice !== 'auto') return null
-  if (google) return googleSolar(google, solarQuality())
-  if (roofer) return instantRoofer(roofer)
+  if (choice === 'google-solar') {
+    const google = process.env.GOOGLE_SOLAR_API_KEY?.trim()
+    if (!google) {
+      console.error('[roof-measure] off: ROOF_MEASURE_PROVIDER=google-solar but GOOGLE_SOLAR_API_KEY is not set')
+      return null
+    }
+    // The Static Maps key is in every image URL; if it's the same key, the Solar key is public.
+    if (google === process.env.GOOGLE_MAPS_STATIC_KEY?.trim()) {
+      console.error('[roof-measure] off: GOOGLE_SOLAR_API_KEY is the same as GOOGLE_MAPS_STATIC_KEY, which every visitor can see. Use two keys.')
+      return null
+    }
+    return googleSolar(google, solarQuality())
+  }
+  console.error(`[roof-measure] off: ROOF_MEASURE_PROVIDER=${JSON.stringify(choice)} isn't "instant-roofer" or "google-solar"`)
   return null
 }
 
@@ -226,18 +242,22 @@ function limit(name: string, fallback: number): number {
   return 0
 }
 
-/** Defaults sized to each service's price: a bad month costs about the same either way. */
-const DEFAULT_LIMITS: Record<MeasurementId, MeasureLimits> = {
-  'google-solar': { perHour: 30, perDay: 400, perMonth: 4000 },
-  'instant-roofer': { perHour: 6, perDay: 20, perMonth: 300 },
+/**
+ * Defaults sized to each service's price, and each service's own variables:
+ * Google-sized caps written for one must never carry over to Instant
+ * Roofer's dollars-a-call measurements.
+ */
+const LIMITS: Record<MeasurementId, { prefix: string; defaults: MeasureLimits }> = {
+  'instant-roofer': { prefix: 'ROOF_MEASURE', defaults: { perHour: 6, perDay: 20, perMonth: 300 } },
+  'google-solar': { prefix: 'GOOGLE_SOLAR', defaults: { perHour: 30, perDay: 400, perMonth: 4000 } },
 }
 
 export function measureLimits(id: MeasurementId = 'instant-roofer'): MeasureLimits {
-  const defaults = DEFAULT_LIMITS[id]
+  const { prefix, defaults } = LIMITS[id]
   return {
-    perHour: limit('ROOF_MEASURE_PER_HOUR', defaults.perHour),
-    perDay: limit('ROOF_MEASURE_DAILY_CAP', defaults.perDay),
-    perMonth: limit('ROOF_MEASURE_MONTHLY_CAP', defaults.perMonth),
+    perHour: limit(`${prefix}_PER_HOUR`, defaults.perHour),
+    perDay: limit(`${prefix}_DAILY_CAP`, defaults.perDay),
+    perMonth: limit(`${prefix}_MONTHLY_CAP`, defaults.perMonth),
   }
 }
 

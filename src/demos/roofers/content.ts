@@ -402,6 +402,9 @@ export const roofTool = {
     sends: (provider: string) => `Sends your roof’s location to ${provider}, who measure it for us.`,
     sendsAuto: (provider: string) => `We send your roof’s location to ${provider}, who measure it from aerial imagery.`,
     providers: { 'google-solar': 'Google', 'instant-roofer': 'Instant Roofer' },
+    /** How each service is credited where its figures are repeated, e.g. on the lead. */
+    credits: { 'google-solar': 'Google Maps', 'instant-roofer': 'Instant Roofer' },
+    summaryGoogle: 'roof measured from Google Maps imagery',
     measuring: 'Measuring your roof…',
     measuringNote: 'From aerial imagery, and height data where it’s available. This takes about 20 seconds.',
     measuringNoteAuto: 'This takes a moment.',
@@ -438,6 +441,8 @@ export const roofTool = {
     panels: (n: string) => `Room for ${n} panels`,
     yearly: (kwh: string) => `about ${kwh} kWh a year`,
     note: 'The dark panels on the photo show where solar fits best. Solar shingles are priced with your roof below.',
+    noteNoShingles:
+      'The dark panels on the photo show where solar fits best. Solar shingles need roof faces of 2/12 or steeper with room for a system, so panels would be quoted at your inspection.',
     none: 'There isn’t enough open, sunny roof here for a useful solar array. Your roof is priced in standard materials below.',
     resultLabel: 'Estimated solar roof',
     sizeLabel: 'Solar system size',
@@ -449,6 +454,7 @@ export const roofTool = {
       'The federal residential solar tax credit ended for systems finished after 2025, so none is taken off. Net-metering credits depend on your utility. Your inspection confirms the layout and output.',
   },
   googleNotice: 'This tool uses Google Maps features and content, which are subject to the',
+  otherCredits: 'Address and building-list data',
   googleTerms: { text: 'Google Maps Additional Terms of Service', href: 'https://maps.google.com/help/terms_maps/' },
   googlePrivacy: { text: 'Google Privacy Policy', href: 'https://policies.google.com/privacy' },
 }
