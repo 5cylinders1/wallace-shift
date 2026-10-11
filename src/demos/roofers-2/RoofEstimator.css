@@ -1,0 +1,167 @@
+.er-planner {
+  --rf-font: 'Manrope', Arial, sans-serif;
+  --rf-ink: #f5f2eb;
+  --rf-on-dark: #172a25;
+  --rf-on-dark-muted: #5e6962;
+  --rf-muted: #5e6962;
+  --rf-card: #faf8f2;
+  --rf-line-strong: #bdc3b7;
+  --rf-copper: #8a6b34;
+  --rf-copper-soft: #eae4d5;
+  --rf-bad: #923e28;
+  --rf-ease: cubic-bezier(.2,.65,.3,1);
+  --rf-header: 82px;
+  padding: 100px 0 0;
+  background: var(--er-paper);
+  border-bottom: 1px solid var(--er-line);
+  scroll-margin-top: 24px;
+}
+.er-planner__heading { display:grid;grid-template-columns:1.1fr 1fr;align-items:end;gap:60px;margin-bottom:48px; }
+.er-planner__heading .er-eyebrow { color:#826737;margin-bottom:23px; }
+.er-planner__heading h2 { font-size:clamp(38px,4.3vw,62px);letter-spacing:-.05em;line-height:1.08;margin:0; }
+.er-planner__heading h2 em { color:#6b785e; }
+.er-planner__intro { max-width:420px;justify-self:end;padding-bottom:4px; }
+.er-planner__intro p { font-size:14px;line-height:1.9;color:#5e6962;margin-bottom:24px; }
+.er-planner__intro > span { display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:.13em;font-weight:700; }
+.er-planner__intro > span::before { content:'';width:5px;height:5px;border-radius:50%;background:#8a6b34; }
+.er-planner__key { display:flex;gap:38px;border-top:1px solid var(--er-line);padding:23px 0 30px; }
+.er-planner__key span { display:flex;align-items:center;gap:11px;font-size:11px; }
+.er-planner__key b { font-weight:500;font-size:10px;color:#826737; }
+.er-planner .rf-roof { --rf-roof-line:#d1d5c9;--rf-roof-copper:#9b7b40;--rf-roof-copper-text:#785c29;margin:0;padding:0;background:none; }
+.er-planner .rf-roof p,.er-planner .rf-roof h4,.er-planner .rf-roof dl,.er-planner .rf-roof ul { margin:0; }
+.er-planner .rf-roof ul { list-style:none;padding:0; }
+.er-planner .rf-roof svg { display:block; }
+.er-planner .rf-roof__body { gap:32px; }
+.er-planner .rf-roof__steps { gap:0;border-top:1px solid var(--rf-roof-line); }
+.er-planner .rf-roof__step { padding:26px 0;border:0;border-bottom:1px solid var(--rf-roof-line);background:none;gap:19px; }
+.er-planner .rf-roof__step:first-child { padding-top:24px; }
+.er-planner .rf-roof__step-title { font-size:23px;letter-spacing:-.04em;font-weight:500;gap:16px;line-height:1.25; }
+.er-planner .rf-roof__step-title > span { display:inline-grid;place-items:center;align-self:center;flex-shrink:0;width:28px;height:28px;border:1px solid #c1c8b9;border-radius:50%;font-size:10px;font-weight:600;letter-spacing:0;color:#785c29; }
+.er-planner .rf-roof__step.is-locked { gap:12px; }
+.er-planner .rf-roof__locked { padding-left:44px; }
+.er-planner .rf-roof__help,.er-planner .rf-roof__locked,.er-planner .rf-roof__found,.er-planner .rf-roof__detail { font-size:12px;line-height:1.8; }
+.er-planner .rf-roof__help--tight,.er-planner .rf-roof__fine,.er-planner .rf-roof__notice { font-size:11px;line-height:1.7; }
+.er-planner .rf-roof__help--warn { color:#85602c; }
+.er-planner .rf-roof__visual { gap:13px; }
+.er-planner .rf-stage__frame { background:#1d332a;border:0; }
+.er-planner .rf-stage__blueprint { background:radial-gradient(ellipse at 50% 40%,#294437,transparent 75%); }
+.er-planner .rf-stage__blueprint-ring { stroke:#a8b293;fill:#b99a5c0a;stroke-dasharray:4 5; }
+.er-planner .rf-stage__crosshair { stroke:#c5ab71; }
+.er-planner .rf-stage__scan { fill:#b99a5c22;stroke:#b99a5c; }
+.er-planner .rf-stage__status { max-width:calc(100% - 32px);white-space:normal;text-align:center;background:#172a25ed;border:1px solid #b99a5c66;color:#e5e8d9;font-size:9px;letter-spacing:.13em;line-height:1.5;padding:11px 17px; }
+.er-planner .rf-stage__ring.is-selected { fill:#b99a5c30;stroke:#d3b36e; }
+.er-planner .rf-stage__pin path { fill:#d3b36e;stroke:#172a25; }
+.er-planner .rf-stage__pin circle { fill:#172a25; }
+.er-planner .rf-stage__dim { fill:#172a25;opacity:.28; }
+.er-planner .rf-stage:has(.rf-stage__image[src='/demos/roofers-2/sample-roof.svg']) .rf-stage__dim { opacity:.06; }
+.er-planner .rf-stage:has(.rf-stage__image[src='/demos/roofers-2/sample-roof.svg']) .rf-stage__ring { stroke:#6e7c63; }
+.er-planner .rf-stage:has(.rf-stage__image[src='/demos/roofers-2/sample-roof.svg']) .rf-stage__ring.is-selected { stroke:#987338;fill:#b99a5c22; }
+.er-planner .rf-stage__area { font-size:18px;font-weight:600; }
+.er-planner .rf-roof__sample-note { border-color:#bdc3b7;font-size:11px;line-height:1.7; }
+.er-planner .rf-credits { font-size:10px;line-height:1.6; }
+.er-planner .rf-roof__find { gap:8px; }
+.er-planner .rf-address__label,.er-planner .rf-seg__legend,.er-planner .rf-roof__size-row label { font-size:11px;letter-spacing:.025em;font-weight:600; }
+.er-planner .rf-address input { border:1px solid #bdc3b7;border-radius:0;background:#fcfaf5;min-height:54px;font-size:12px;padding-left:39px; }
+.er-planner .rf-address input::placeholder { color:#727a72; }
+.er-planner .rf-address input:hover { border-color:#8a9786; }
+.er-planner .rf-address__icon { width:17px;height:17px;left:13px; }
+.er-planner .rf-address__popup { background:#fcfaf5;border-color:#bdc3b7;box-shadow:0 15px 30px #172a2518; }
+.er-planner .rf-address__list { margin:0;padding:0;list-style:none; }
+.er-planner .rf-address__option { border-color:#d9dcd1;font-size:12px;line-height:1.6; }
+.er-planner .rf-address__option.is-active { background:#e9e7db; }
+.er-planner .rf-address__secondary { font-size:11px; }
+.er-planner .rf-button { display:inline-flex;align-items:center;justify-content:center;gap:13px;padding:15px 19px;border:1px solid #172a25;border-radius:0;background:#172a25;color:#f5f2eb;font-size:11px;font-weight:600;line-height:1.5;cursor:pointer;text-decoration:none;transition:background .2s ease; }
+.er-planner .rf-button svg { width:16px;height:16px;flex-shrink:0; }
+.er-planner .rf-button:hover { background:#2e4639; }
+.er-planner .rf-button--block { width:100%;justify-content:space-between;padding:20px; }
+.er-planner .rf-roof__alts { gap:6px 22px; }
+.er-planner .rf-roof__link { font-size:11px;line-height:1.6;font-weight:600;text-decoration-thickness:1px;min-height:36px; }
+.er-planner .rf-roof__link:hover,.er-planner .rf-roof__inline-link:hover { color:#172a25; }
+.er-planner .rf-roof__inline-link { font-size:inherit;font-weight:600; }
+.er-planner .rf-roof__building { border-color:#bdc3b7;background:transparent;padding:12px; }
+.er-planner .rf-roof__building:hover { border-color:#6f7e6c; }
+.er-planner .rf-roof__building.is-checked { background:#e8e9dd;border-color:#768569;box-shadow:inset 0 0 0 1px #768569; }
+.er-planner .rf-roof__building-number { border-color:#9ca88f;color:#53634b;font-size:9px; }
+.er-planner .rf-roof__building strong { font-size:11px;font-weight:600; }
+.er-planner .rf-roof__building small { font-size:10px;line-height:1.5; }
+.er-planner .rf-roof__building input { accent-color:#617454;width:16px;height:16px; }
+.er-planner .rf-roof__error { background:#f1e3d8;border-color:#a25939;color:#783d26;font-size:12px;line-height:1.7; }
+.er-planner .rf-roof__rough { border-color:#a5b09b;font-size:12px;line-height:1.7; }
+.er-planner .rf-roof__measured { background:#e8e9dd;border-color:#9cab8d; }
+.er-planner .rf-roof__attribution { padding:4px 7px;background:#172a25; }
+.er-planner .rf-roof__solar { border-color:#d1d5c9; }
+.er-planner .rf-roof__progress { background:#d1d5c9; }
+.er-planner .rf-seg__options { gap:6px; }
+.er-planner .rf-seg--dark .rf-seg__option { border:1px solid #c3c9ba;background:#faf8f2;padding:12px; }
+.er-planner .rf-seg--dark .rf-seg__option:hover { border-color:#7c8d6f; }
+.er-planner .rf-seg--dark .rf-seg__option.is-checked { background:#e8e9dd;border-color:#768569;box-shadow:inset 0 0 0 1px #768569; }
+.er-planner .rf-seg__label { font-size:11px;font-weight:600;line-height:1.5; }
+.er-planner .rf-seg__hint { font-size:10px;line-height:1.6; }
+.er-planner .rf-pitch { gap:16px; }
+.er-planner .rf-pitch__stage { background:#22392e;border:0; }
+.er-planner .rf-pitch__handle { border:0;background:#ceb073;color:#172a25;box-shadow:0 0 0 4px #22392e; }
+.er-planner .rf-pitch__handle::after { border-color:#ceb07380; }
+.er-planner .rf-pitch__drip,.er-planner .rf-pitch__arc,.er-planner .rf-pitch__stem,.er-planner .rf-pitch__triangle { stroke:#ceb073; }
+.er-planner .rf-pitch__tri-label--rise { fill:#e1c890; }
+.er-planner .rf-pitch__value { font-size:40px;font-weight:400;letter-spacing:-.05em; }
+.er-planner .rf-pitch__value span { color:#8a6b34; }
+.er-planner .rf-pitch__label { font-size:9px; }
+.er-planner .rf-pitch__meta,.er-planner .rf-pitch__band { font-size:11px;line-height:1.7; }
+.er-planner .rf-pitch__step { border-color:#bdc3b7;border-radius:0; }
+.er-planner .rf-pitch__step:hover:not(:disabled) { border-color:#8a6b34;background:#eae4d5; }
+.er-planner .rf-pitch__step:focus-visible { outline-color:#8a6b34; }
+.er-planner .rf-pitch__segment { border-color:#cdd2c4; }
+.er-planner .rf-pitch__segment.is-active { border-color:#8a6b34; }
+.er-planner .rf-pitch__marker { background:#172a25; }
+.er-planner .rf-pitch__style { border:1px solid #bdc3b7;cursor:pointer; }
+.er-planner .rf-pitch__style span { font-size:11px;font-weight:600; }
+.er-planner .rf-pitch__style small { font-size:10px; }
+.er-planner .rf-pitch__style:hover { border-color:#8a6b34; }
+.er-planner .rf-pitch__style[aria-pressed='true'] { border-color:#8a6b34;background:#eae4d5; }
+.er-planner .rf-roof__math { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.er-planner .rf-roof__math div { padding:16px;gap:7px;background:#eeeee3; }
+.er-planner .rf-roof__math dt { font-size:9px; }
+.er-planner .rf-roof__math dd { font-size:21px;font-weight:400;letter-spacing:-.03em; }
+.er-planner .rf-roof__price { border-color:#cdd2c4;gap:14px;padding-top:25px; }
+.er-planner .rf-roof__price-label { font-size:10px; }
+.er-planner .rf-roof__range { font-size:clamp(30px,3vw,43px);font-weight:400;letter-spacing:-.045em;gap:0 8px;line-height:1.2; }
+.er-planner .rf-roof__ways { font-size:11px;line-height:1.8;gap:10px; }
+.er-planner .rf-roof__ways a { font-weight:600;text-decoration:underline;text-underline-offset:3px; }
+.er-planner .rf-roof input[type='range']::-webkit-slider-runnable-track { background:linear-gradient(90deg,#8a6b34 var(--rf-fill),#cdd2c4 var(--rf-fill)); }
+.er-planner .rf-roof input[type='range']::-moz-range-track { background:linear-gradient(90deg,#8a6b34 var(--rf-fill),#cdd2c4 var(--rf-fill)); }
+.er-planner .rf-visually-hidden { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+.er-planner__storage { padding:20px;background:#eee4d4;font-size:13px;line-height:1.8; }
+.er-planner__storage a { text-decoration:underline; }
+.er-planner__footnote { display:flex;align-items:center;gap:22px;border-top:1px solid var(--er-line);padding:30px 0;margin-top:42px; }
+.er-planner__seal { flex-shrink:0;display:grid;place-items:center;border:1px solid #c6c4ae;width:54px;height:54px;border-radius:50%;font-family:'Instrument Serif',Georgia,serif;font-size:18px;color:#8a6b34; }
+.er-planner__footnote p { font-size:12px;margin:0;line-height:1.7; }
+.er-planner__footnote small { display:block;max-width:700px;font-size:10px;color:#5e6962;margin-top:5px;line-height:1.8; }
+.er-planner__footnote > a { display:flex;gap:24px;flex-shrink:0;margin-left:auto;font-size:11px; }
+@media (min-width:1080px) {
+  .er-planner .rf-roof__body { grid-template-columns:1.08fr 1fr;gap:56px; }
+  .er-planner .rf-roof__visual .rf-stage { max-width:none; }
+}
+@media (max-width:1079px) and (min-width:721px) {
+  .er-planner .rf-roof__visual { max-width:640px;margin-inline:auto;width:100%; }
+  .er-planner .rf-roof__steps { margin-top:10px; }
+}
+@media (max-width:720px) {
+  .er-planner { --rf-header:72px;padding-top:60px; }
+  .er-planner__heading { grid-template-columns:1fr;gap:24px;margin-bottom:30px; }
+  .er-planner__heading h2 { font-size:43px; }
+  .er-planner__intro { max-width:100%;justify-self:start; }
+  .er-planner__intro p { font-size:13px;margin-bottom:17px; }
+  .er-planner__intro > span { font-size:8px; }
+  .er-planner__key { justify-content:space-between;gap:12px;padding:20px 0; }
+  .er-planner__key span { display:grid;gap:7px;max-width:96px;font-size:10px;line-height:1.6; }
+  .er-planner .rf-roof__body { gap:23px; }
+  .er-planner .rf-roof__step { padding:24px 0; }
+  .er-planner .rf-roof__step-title { font-size:22px; }
+  .er-planner .rf-address input { font-size:16px; }
+  .er-planner .rf-roof__find .rf-button { min-height:48px; }
+  .er-planner .rf-roof__alts { gap:4px 20px; }
+  .er-planner .rf-roof__link { min-height:44px; }
+  .er-planner__footnote { display:grid;grid-template-columns:42px 1fr;gap:16px;margin-top:28px; }
+  .er-planner__seal { width:42px;height:42px;font-size:15px; }
+  .er-planner__footnote > a { grid-column:2;margin:0; }
+}

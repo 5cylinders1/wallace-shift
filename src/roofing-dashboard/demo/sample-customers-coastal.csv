@@ -1,0 +1,5 @@
+id,name,email,phone,address,city,postalCode,longitude,latitude,roofAge
+coastal-property-01,Jamie Example,jamie.coastal@example.com,+1 813-555-0101,101 Example Harbor Lane,Tampa Bay demo district,33601,-82.67,27.78,8 years
+coastal-import-01,Taylor Sample,taylor.coastal@example.com,+1 813-555-0181,801 Example Bay Way,Tampa Bay demo district,33601,-82.505,27.955,12 years
+coastal-import-02,,,,803 Example Bay Way,Tampa Bay demo district,33601,-82.445,27.995,Unknown
+coastal-import-03,Jordan Fiction,jordan.coastal@example.com,,805 Example Bay Way,Tampa Bay demo district,33601,-82.385,28.015,6 years

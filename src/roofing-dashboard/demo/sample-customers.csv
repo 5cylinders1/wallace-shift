@@ -1,0 +1,5 @@
+id,name,email,phone,address,city,postalCode,longitude,latitude,roofAge
+northvane-property-01,Jamie Example,jamie@example.com,+1 816-555-0101,101 Example Meadow Lane,Kansas City demo district,64101,-94.84,38.84,8 years
+northvane-import-01,Taylor Sample,taylor.sample@example.com,+1 816-555-0181,801 Example Ridge Way,Kansas City demo district,64101,-94.705,39.045,12 years
+northvane-import-02,,,,803 Example Ridge Way,Kansas City demo district,64101,-94.665,39.035,Unknown
+northvane-import-03,Jordan Fiction,jordan.fiction@example.com,,805 Example Ridge Way,Kansas City demo district,64101,-94.625,39.025,6 years

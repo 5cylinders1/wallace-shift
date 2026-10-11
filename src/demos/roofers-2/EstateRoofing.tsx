@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import FilmHero from './FilmHero'
 import GuidePage from './Guides'
 import ProjectForm from './ProjectForm'
+import RoofEstimator from './RoofEstimator'
 import { estatePath, roofingGalleryPath, studioUrl } from './routes'
 
 const base = estatePath()
@@ -20,7 +21,7 @@ function Brand() {
 
 function Home() {
   const [audience, setAudience] = useState<'home' | 'business'>('home')
-  return <main id="main"><FilmHero /><section className="er-essentials er-wrap" id="essentials">
+  return <main id="main"><FilmHero /><RoofEstimator /><section className="er-essentials er-wrap" id="essentials">
     <div className="er-section-heading"><p className="er-eyebrow">LESS UNCERTAINTY. MORE CONFIDENCE.</p><h2>Good decisions start<br />with <em>clear answers.</em></h2><p>A roof is a significant investment. Before the inspection, get a clear view of your options and the questions worth asking.</p></div>
     <div className="er-guide-list">
       <a href={estatePath('process')}><span className="er-guide-num">01</span><div><span className="er-eyebrow">THE WORK</span><h3>What happens to my home?</h3><p>From protection and tear-off to cleanup. Know what to expect, how to plan, and what a warranty really covers.</p></div><span className="er-round-arrow" aria-hidden="true">↗</span></a>
