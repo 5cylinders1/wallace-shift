@@ -138,6 +138,20 @@ export function RoofersOffer() {
       <section className="ro-collection" id="collection" aria-labelledby="collection-heading">
         <div className="ro-wrap">
           <div className="ro-section-intro"><div><p className="ro-eyebrow">01 / Find your direction</p><h2 id="collection-heading">Different character.<br /><em>One higher standard.</em></h2></div><p>Explore the complete sites, not just a picture. Each is a starting point for your company’s brand, services and service area.</p></div>
+          <article className="ro-dashboard" aria-labelledby="dashboard-heading">
+            <div className="ro-dashboard-preview">
+              <a className="ro-dashboard-image" href="/roofing-dashboard" aria-label="Explore the roofing dashboard demo">
+                <img src="/demos/roofers-offer/dashboard.jpg" alt="Roofing dashboard showing sample storm areas and nearby customer properties on a map" width="1440" height="1248" loading="lazy" />
+              </a>
+              <p className="ro-dashboard-caption"><span>Sample storm map</span><span>Map © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></span></p>
+            </div>
+            <div className="ro-dashboard-body">
+              <p className="ro-eyebrow">Included with all sites</p>
+              <h3 id="dashboard-heading">Your roofing dashboard.</h3>
+              <p>Explore storm maps, customer records and inspection follow-ups in an interactive demo with sample data.</p>
+              <a className="ro-button ro-button-dark" href="/roofing-dashboard">View dashboard demo <Arrow diagonal /></a>
+            </div>
+          </article>
           <div className="ro-design-grid">{readyDesigns.map(design => <DesignCard key={design.id} design={design} onChoose={chooseDesign} />)}</div>
           <div className="ro-upcoming-grid">{upcomingDesigns.map(design => <article className="ro-upcoming" key={design.id}><span className="ro-upcoming-number" aria-hidden="true">{design.number}</span><div><p className="ro-eyebrow">Design {design.number} / Coming soon</p><h3>{design.name}</h3><p>The next addition to the collection.</p></div><span className="ro-upcoming-mark" aria-hidden="true">/</span></article>)}</div>
           <p className="ro-demo-note">Northvane Roofing and Alder & Stone are illustrative contractor brands. Content, imagery and tools shown in the demos are examples; your final website and automation scope will be agreed together.</p>
