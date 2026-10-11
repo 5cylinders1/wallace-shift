@@ -75,6 +75,8 @@ export function frameFor(
   point: LatLng,
   fit: { points: LatLng[]; share: 'home' | 'all' } | null,
   provider: Pick<ImageryProvider, 'maxZoom' | 'fractionalZoom'> | null,
+  /** The least ground to show, e.g. wider when there's no outline to frame. */
+  minViewM = MIN_VIEW_M,
 ): MapFrame {
   const plane = localMeters(point)
   const xy = [[0, 0] as [number, number], ...(fit?.points ?? []).map(plane.to)]
@@ -82,7 +84,7 @@ export function frameFor(
   const ys = xy.map(([, y]) => y)
   const extent = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys))
   const share = fit?.share === 'all' ? ALL_SHARE : HOUSE_SHARE
-  const view = Math.min(MAX_VIEW_M, Math.max(MIN_VIEW_M, extent / share))
+  const view = Math.min(MAX_VIEW_M, Math.max(minViewM, extent / share))
   const center = plane.from([(Math.max(...xs) + Math.min(...xs)) / 2, (Math.max(...ys) + Math.min(...ys)) / 2])
 
   const groundPerPx = view / FRAME_SIZE

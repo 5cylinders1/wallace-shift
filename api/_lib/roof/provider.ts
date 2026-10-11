@@ -3,15 +3,15 @@
  *
  * `open-data` (the default) composes three swappable parts: an address
  * geocoder, open building-outline datasets, and an optional aerial photo.
- * It returns outlines, not measured roofs; the page asks the homeowner for
- * the pitch. A paid measurement service can replace it by implementing
- * the same two methods and filling `measuredRoof` in the lookup, with no
- * change to the endpoints or the page.
+ * Without a measuring service it returns outlines, and the page asks the
+ * homeowner for the pitch. With one (measurement.ts), outlines are only
+ * hints for where the crosshair starts: a lookup with none still returns
+ * the photo, so houses missing from the open data can be measured too.
  *
  *   ROOF_PROVIDER  Default "open-data".
  */
 
-import type { AddressSuggestion, Credit, FootprintBuilding, LatLng, RoofLookup } from '../../../src/demos/roofers/roof/types.js'
+import type { AddressSuggestion, Credit, FootprintBuilding, LatLng, LocationPrecision, RoofLookup } from '../../../src/demos/roofers/roof/types.js'
 import { footprintSourcesFromEnv, type FootprintSource } from './footprints.js'
 import { geocoderFromEnv, parseBias, type Geocoder } from './geocoder.js'
 import { RoofError, deadlineIn } from './http.js'
@@ -40,6 +40,11 @@ const LOOKUP_BUDGET_MS = 15_000
 const AT_POINT_M = 2
 /** A building-level point within this of the nearest outline: that outline is taken to be the house. */
 const HOME_WITHIN_M = 15
+/**
+ * With no outline to frame, the photo spans this much ground around the
+ * address point, wider the less sure the point is, so the house is in it.
+ */
+const OPEN_VIEW_M: Record<LocationPrecision, number> = { rooftop: 50, parcel: 60, street: 90, unknown: 90 }
 
 export function openDataProvider(
   geocoder: Geocoder,
@@ -80,12 +85,14 @@ export function openDataProvider(
         if (!onBuilding || atPoint) break
       }
       if (!best) {
-        // A service that measures from a point doesn't need an open outline: a
-        // point on the building is enough (a new house, say, not yet in the data).
-        if (measurement?.mode === 'auto' && onBuilding && !failure) {
-          const frame = frameFor(place.location, null, imagery)
+        // A measuring service needs a point on the roof, not an open outline,
+        // so a house missing from the public data (a new one, say) is still
+        // shown: the homeowner puts the crosshair on it. Outlines are only
+        // hints in that flow, so a dataset being down doesn't end it either.
+        if (measurement) {
+          const frame = frameFor(place.location, null, imagery, OPEN_VIEW_M[place.precision])
           return {
-            partial: false,
+            partial: failure !== null,
             lookup: {
               ok: true,
               source: measurement.id,
