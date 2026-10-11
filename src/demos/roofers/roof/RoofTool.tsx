@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type FormEvent } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type FormEvent, type MouseEventHandler } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { financing, roofTool } from '../content'
@@ -33,9 +33,24 @@ import './RoofTool.css'
 const SAMPLE = sampleLookupJson as unknown as RoofLookup
 const LONG_PLAN = financing.plans[2]
 
+/** Presentation-only hooks for another demo; the estimating workflow stays shared. */
+export interface RoofToolPresentation {
+  hideHeading?: boolean
+  addressHelp?: string
+  estimateDisclaimer?: string
+  ctaHref?: string
+  ctaLabel?: string
+  financingHref?: string
+  financingLabel?: string
+  onContinue?: MouseEventHandler<HTMLAnchorElement>
+  sample?: RoofLookup
+  showMonthlyExample?: boolean
+}
+
 interface RoofToolProps {
   onEstimate: (estimate: LeadContext['ballpark']) => void
   onAddress: (address: RoofAddress | null) => void
+  presentation?: RoofToolPresentation
 }
 
 type Phase = StageMode
@@ -88,7 +103,8 @@ interface Paid {
  * size, with no address) and the homeowner sets the pitch on the drawing.
  * `quoteRoof` turns either into a price that updates as the ridge is dragged.
  */
-export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
+export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps) {
+  const sample = presentation?.sample ?? SAMPLE
   const [phase, setPhase] = useState<Phase>('idle')
   const [address, setAddress] = useState('')
   const [lookup, setLookup] = useState<RoofLookup | null>(null)
@@ -282,7 +298,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
   const useSample = () => {
     requestRef.current?.abort()
-    showLookup(SAMPLE)
+    showLookup(sample)
   }
 
   const useManual = () => {
@@ -576,14 +592,16 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
   const measureCopy = canMeasure && !outlineMode
 
   return (
-    <div ref={rootRef} className="rf-roof" data-reveal>
-      <div className="rf-roof__head">
-        <p className="rf-roof__eyebrow">{roofTool.eyebrow}</p>
-        <h2 id="rf-roof-title" className="rf-roof__title">
-          {roofTool.title}
-        </h2>
-        <p className="rf-roof__lede">{measureCopy ? roofTool.ledeMeasured : phase === 'found' ? roofTool.lede : roofTool.ledeIdle}</p>
-      </div>
+    <div ref={rootRef} className="rf-roof" data-reveal data-phase={phase} data-ready={ready}>
+      {!presentation?.hideHeading && (
+        <div className="rf-roof__head">
+          <p className="rf-roof__eyebrow">{roofTool.eyebrow}</p>
+          <h2 id="rf-roof-title" className="rf-roof__title">
+            {roofTool.title}
+          </h2>
+          <p className="rf-roof__lede">{measureCopy ? roofTool.ledeMeasured : phase === 'found' ? roofTool.lede : roofTool.ledeIdle}</p>
+        </div>
+      )}
 
       <div className="rf-roof__body">
         <div className="rf-roof__visual">
@@ -592,7 +610,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
             lookup={lookup}
             selected={selected}
             onToggle={toggle}
-            blueprint={SAMPLE}
+            blueprint={sample}
             status={status}
             loadingStatus={roofTool.loadingPhoto}
             onImageryFail={setFailedImage}
@@ -655,7 +673,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
 
         <div className="rf-roof__steps">
           {/* 1 — the house */}
-          <section className="rf-roof__step" aria-labelledby="rf-roof-step-1">
+          <section className="rf-roof__step" aria-labelledby="rf-roof-step-1" data-step="house">
             <h3 id="rf-roof-step-1" className="rf-roof__step-title">
               <span>01</span> {roofTool.steps[0]}
             </h3>
@@ -702,7 +720,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                   </button>
                 </form>
                 <p id={helpId} className="rf-roof__help">
-                  {roofTool.addressHelp}
+                  {presentation?.addressHelp ?? roofTool.addressHelp}
                 </p>
                 {phase === 'error' && error && (
                   <p className="rf-roof__error" role="alert">
@@ -920,7 +938,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
           </section>
 
           {/* 2 — the pitch */}
-          <section className={`rf-roof__step${ready ? '' : ' is-locked'}`} aria-labelledby="rf-roof-step-2" data-unlock>
+          <section className={`rf-roof__step${ready ? '' : ' is-locked'}`} aria-labelledby="rf-roof-step-2" data-step="pitch" data-unlock>
             <h3 id="rf-roof-step-2" className="rf-roof__step-title">
               <span>02</span> {roofTool.steps[1]}
             </h3>
@@ -938,7 +956,7 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
           </section>
 
           {/* 3 — the price */}
-          <section className={`rf-roof__step${ready ? '' : ' is-locked'}`} aria-labelledby="rf-roof-step-3" data-unlock>
+          <section className={`rf-roof__step${ready ? '' : ' is-locked'}`} aria-labelledby="rf-roof-step-3" data-step="estimate" data-unlock>
             <h3 id="rf-roof-step-3" className="rf-roof__step-title">
               <span>03</span> {roofTool.steps[2]}
             </h3>
@@ -1020,16 +1038,18 @@ export function RoofTool({ onEstimate, onAddress }: RoofToolProps) {
                 {quote.solar && <p className="rf-roof__rough">{roofTool.solar.taxNote}</p>}
                 <ul className="rf-roof__ways">
                   <li>{roofTool.insuranceLine}</li>
-                  <li>
-                    Financing: about <strong>{money(monthly)}/mo</strong> at an example {LONG_PLAN.apr}% APR over {LONG_PLAN.months / 12} years.{' '}
-                    <a href="#financing">See plans</a>
-                  </li>
+                  {presentation?.showMonthlyExample !== false && (
+                    <li>
+                      Financing: about <strong>{money(monthly)}/mo</strong> at an example {LONG_PLAN.apr}% APR over {LONG_PLAN.months / 12} years.{' '}
+                      <a href={presentation?.financingHref ?? '#financing'}>{presentation?.financingLabel ?? 'See plans'}</a>
+                    </li>
+                  )}
                 </ul>
-                <a className="rf-button rf-button--primary rf-button--block" href="#estimate">
-                  {roofTool.cta}
+                <a className="rf-button rf-button--primary rf-button--block" href={presentation?.ctaHref ?? '#estimate'} onClick={presentation?.onContinue}>
+                  {presentation?.ctaLabel ?? roofTool.cta}
                 </a>
                 <p className="rf-roof__fine">
-                  {measured ? (ownPitch ? roofTool.measure.disclaimerOwnPitch : roofTool.measure.disclaimer) : roofTool.disclaimer}
+                  {presentation?.estimateDisclaimer ?? (measured ? (ownPitch ? roofTool.measure.disclaimerOwnPitch : roofTool.measure.disclaimer) : roofTool.disclaimer)}
                 </p>
                 {googleCredit && <p className="rf-roof__attribution">{googleCredit}</p>}
               </div>

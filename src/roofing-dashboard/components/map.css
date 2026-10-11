@@ -1,0 +1,174 @@
+.storm-map {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-height: 430px;
+  overflow: hidden;
+  color: #35404a;
+  background: #e8e9e4;
+}
+
+.storm-map-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 430px;
+  font-family: inherit;
+  background: #e8e9e4;
+}
+
+.storm-map .leaflet-tile-pane { filter: saturate(.48) contrast(.95); }
+.storm-map .leaflet-control-container { font-family: inherit; }
+.storm-map .leaflet-top.leaflet-right { top: 8px; right: 8px; }
+.storm-map .leaflet-bar { border: 1px solid #dce0dd; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px #1e343e12; }
+.storm-map .leaflet-bar a { width: 34px; height: 34px; line-height: 34px; background: #fffefb; color: #334d58; }
+.storm-map .leaflet-bar a:hover { background: #edf2ee; }
+.storm-map .leaflet-control-zoom-in { border-bottom-color: #e5e9e5; }
+.storm-map .leaflet-marker-icon:focus-visible { outline: 3px solid #172f48; outline-offset: 4px; border-radius: 50%; }
+.storm-map .leaflet-container:focus-visible { outline: 2px solid #50708d; outline-offset: -2px; }
+
+.storm-map-badges {
+  position: absolute;
+  z-index: 800;
+  top: 18px;
+  left: 18px;
+  right: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.storm-map-sample-badge, .storm-map-radius-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dbe2dc;
+  border-radius: 7px;
+  background: #fffffff5;
+  box-shadow: 0 2px 9px #243b3c0a;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 650;
+  letter-spacing: .02em;
+}
+
+.storm-map-sample-badge > span { width: 6px; height: 6px; border-radius: 2px; background: #687d76; }
+.storm-map-radius-label { font-size: 9px; font-weight: 500; }
+
+.storm-map-error {
+  position: absolute;
+  z-index: 810;
+  top: 100px;
+  left: 18px;
+  right: 18px;
+  width: fit-content;
+  max-width: calc(100% - 36px);
+  padding: 10px 13px;
+  border: 1px solid #d7bc83;
+  border-radius: 8px;
+  background: #fff8e8f5;
+  color: #735218;
+  font-size: 12px;
+}
+
+.storm-map-weather-marker, .storm-map-property-marker { background: transparent; border: 0; }
+.storm-map-weather-symbol {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--weather-color);
+  border-radius: 50%;
+  color: var(--weather-color);
+  background: #fffef7;
+  box-shadow: 0 2px 6px #314b4a22;
+}
+
+.storm-map-weather-symbol svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.storm-map-weather-symbol--warning { border-style: dashed; }
+.storm-map-weather-symbol--estimated { border-radius: 11px; }
+.storm-map-weather-marker.is-selected .storm-map-weather-symbol { outline: 5px solid color-mix(in srgb, var(--weather-color) 17%, transparent); border-width: 2px; }
+.storm-map-weather-marker:hover .storm-map-weather-symbol { box-shadow: 0 3px 12px #314b4a35; }
+
+.storm-map-property-symbol {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  margin: 4.5px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #435969;
+  box-shadow: 0 1px 4px #28394552;
+  color: white;
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.storm-map-property-symbol--customer, .storm-map-property-symbol--lead { width: 21px; height: 21px; margin: 1.5px; background: #205d55; }
+.storm-map-property-symbol--lead { background: #397dc0; font-size: 15px; }
+.storm-map-property-marker.is-selected .storm-map-property-symbol { outline: 3px solid #244f60; outline-offset: 2px; }
+.storm-map-property-marker:hover .storm-map-property-symbol { box-shadow: 0 0 0 4px #ffffffb3, 0 2px 8px #28394530; }
+
+.storm-map .storm-map-tooltip {
+  max-width: 280px;
+  padding: 10px 12px;
+  border: 1px solid #dae1da;
+  border-radius: 8px;
+  background: #fffefa;
+  color: #293f49;
+  box-shadow: 0 4px 18px #1936331a;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.storm-map-tooltip strong { font-size: 11px; font-weight: 650; }
+.storm-map-tooltip-detail { display: block; margin-top: 3px; color: #5e7079; font-size: 10px; }
+
+.storm-map-legend {
+  position: absolute;
+  z-index: 800;
+  bottom: 30px;
+  left: 18px;
+  max-width: calc(100% - 36px);
+  padding: 11px 13px;
+  border: 1px solid #dce2da;
+  border-radius: 9px;
+  background: #fffffff2;
+  box-shadow: 0 3px 14px #1e343e0d;
+  pointer-events: none;
+}
+
+.storm-map-legend > div { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 13px; }
+.storm-map-legend > div + div { margin-top: 9px; }
+.storm-map-legend span { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; line-height: 1.3; white-space: nowrap; }
+.storm-map-legend-weather span { font-weight: 650; }
+.storm-map-legend-weather i { width: 6px; height: 6px; border-radius: 50%; }
+.storm-map-legend-evidence { color: #64727a; }
+.storm-map-legend-evidence i { display: block; width: 14px; height: 9px; }
+.storm-map-legend-evidence .storm-map-key-report { width: 7px; height: 7px; border: 1px solid #6b7b86; border-radius: 50%; }
+.storm-map-key-area { background: #6b7b8633; border: 1px solid #6b7b8666; border-radius: 2px; }
+.storm-map-key-warning { border: 1px dashed #6b7b86; border-radius: 2px; }
+.storm-map-legend-evidence .storm-map-key-service { height: 0; border-top: 1px dashed #6b7b86; }
+.storm-map-legend-properties { border-top: 1px solid #e8eae6; padding-top: 8px; }
+.storm-map-key-customer { display: grid; place-items: center; width: 12px; height: 12px; border-radius: 50%; background: #205d55; color: #fff; font-style: normal; font-size: 8px; }
+.storm-map-key-lead { background: #397dc0; font-size: 11px; }
+.storm-map-key-prospect { width: 7px; height: 7px; border-radius: 50%; background: #435969; }
+.storm-map-attribution { position: absolute; right: 0; bottom: 0; z-index: 800; max-width: 100%; padding: 3px 7px; background: #ffffffe8; color: #43565f; font-size: 9px; line-height: 1.5; }
+.storm-map-attribution a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .storm-map-badges { top: 12px; left: 12px; }
+  .storm-map-legend { left: 12px; bottom: 27px; max-width: calc(100% - 24px); padding: 9px 10px; }
+  .storm-map-legend > div { gap: 6px 10px; }
+  .storm-map-legend span { font-size: 8px; }
+  .storm-map .leaflet-top.leaflet-right { top: 2px; right: 2px; }
+}
