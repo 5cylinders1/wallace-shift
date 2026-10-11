@@ -45,6 +45,7 @@ export interface RoofToolPresentation {
   onContinue?: MouseEventHandler<HTMLAnchorElement>
   sample?: RoofLookup
   showMonthlyExample?: boolean
+  insuranceLine?: string
 }
 
 interface RoofToolProps {
@@ -58,7 +59,7 @@ type Phase = StageMode
 type Measure =
   | { status: 'idle' }
   | { status: 'measuring' }
-  | { status: 'done'; roof: MeasuredRoof; credits: Credit[]; provider: string; measuredAt: string }
+  | { status: 'done'; roof: MeasuredRoof; credits: Credit[]; provider: string; measuredAt: string; expiresAt: string | null; cached: boolean }
   | { status: 'failed'; error: RoofErrorCode }
 
 /** Failures the homeowner can fix by moving the crosshair; anything else falls back to the outline estimate. */
@@ -78,7 +79,14 @@ const measureError = (code: RoofErrorCode, photoFirst = false) => (photoFirst ? 
 const roundPoint = (point: LatLng): LatLng => ({ lat: Number(point.lat.toFixed(5)), lng: Number(point.lng.toFixed(5)) })
 /** How long a building picked from the list waits before it is measured. */
 const LIST_SETTLE_MS = 500
+/** Browsers overflow longer setTimeout delays; re-arm from the original expiry. */
+const MAX_EXPIRY_TIMEOUT_MS = 2_147_483_647
 const samePoint = (a: LatLng, b: LatLng) => a.lat.toFixed(5) === b.lat.toFixed(5) && a.lng.toFixed(5) === b.lng.toFixed(5)
+const expiryTime = (expiresAt: string | null): number => {
+  if (expiresAt === null) return Infinity
+  const time = Date.parse(expiresAt)
+  return Number.isFinite(time) ? time : 0
+}
 
 /** A measurement bought on this visit, the point it was bought for, and from whom. */
 interface Paid {
@@ -88,6 +96,8 @@ interface Paid {
   credits: Credit[]
   /** When it was measured (ISO): Google's terms limit how long its numbers may be kept. */
   measuredAt: string
+  expiresAt: string | null
+  cached: boolean
 }
 
 /**
@@ -96,8 +106,8 @@ interface Paid {
  * With a measuring service connected, the homeowner puts the crosshair on
  * their roof (a tap on the photo, or a pick from the list) and we buy one
  * measurement of it: footprint, pitch and complexity, measured from aerial
- * imagery. A roof measured once on a visit is never bought again: going
- * back to it shows the same result. Without a service, or if it can't
+ * imagery. While its saved measurement is valid, going back to that roof
+ * shows the same result. Without a service, or if it can't
  * measure this roof, area
  * comes from the building's outline in public footprint data (or from home
  * size, with no address) and the homeowner sets the pitch on the drawing.
@@ -145,6 +155,47 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
     [],
   )
 
+  // Remove retained figures at their original expiry even if this tab stays
+  // open. Returning from browser suspension also clears them before reuse.
+  useEffect(() => {
+    let timer: number | undefined
+    const activeExpiry = measure.status === 'done' ? expiryTime(measure.expiresAt) : Infinity
+    const schedule = () => {
+      const next = Math.min(activeExpiry, ...paidRef.current.map((paid) => expiryTime(paid.expiresAt)))
+      if (Number.isFinite(next)) {
+        timer = window.setTimeout(expireSaved, Math.min(MAX_EXPIRY_TIMEOUT_MS, Math.max(0, next - Date.now())))
+      }
+    }
+    const expireSaved = () => {
+      const now = Date.now()
+      paidRef.current = paidRef.current.filter((paid) => expiryTime(paid.expiresAt) > now)
+      if (activeExpiry <= now) {
+        setMeasure({ status: 'idle' })
+        setPitch(PITCH_DEFAULT)
+        setShape(null)
+        setSolarKw(null)
+        if (phase === 'found') {
+          if (lookup?.buildings.length) {
+            // Retain the independent open-data outline; refreshing the address
+            // can offer a new measurement when the homeowner requests one.
+            setLookup({ ...lookup, measure: null })
+          } else {
+            setLookup(null)
+            setTarget(null)
+            setSelected(new Set())
+            setPhase('manual')
+            onAddress(null)
+          }
+        }
+        // The state change re-arms remaining entries with a fresh active expiry.
+        return
+      }
+      schedule()
+    }
+    schedule()
+    return () => { if (timer !== undefined) window.clearTimeout(timer) }
+  }, [measure, phase, lookup, onAddress])
+
   // Timed, not reported by the server: the copy names what the lookup does, in order.
   useEffect(() => {
     if (phase !== 'locating') return
@@ -158,6 +209,8 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
    * this point is on: the smallest such roof, should two boxes overlap.
    */
   const findPaid = (point: LatLng, buildingId: string | null, view: RoofLookup) => {
+    const now = Date.now()
+    paidRef.current = paidRef.current.filter((paid) => expiryTime(paid.expiresAt) > now)
     const mine = paidRef.current.filter((paid) => paid.provider === view.measure?.provider)
     const same = mine.find(
       (paid) => samePoint(paid.at, point) || (buildingId !== null && buildingAt(paid.at, view.buildings, view.frame)?.id === buildingId),
@@ -180,7 +233,7 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
     const id = buildingAt(paid.at, view.buildings, view.frame)?.id
     setTarget(paid.at)
     setSelected(new Set(id ? [id] : []))
-    setMeasure({ status: 'done', roof: paid.roof, credits: paid.credits, provider: paid.provider, measuredAt: paid.measuredAt })
+    setMeasure({ status: 'done', roof: paid.roof, credits: paid.credits, provider: paid.provider, measuredAt: paid.measuredAt, expiresAt: paid.expiresAt, cached: paid.cached })
     // Start from what was measured; the homeowner can still adjust it.
     setPitch(clampPitch(Math.round(paid.roof.pitchRise)))
     setShape(null)
@@ -209,7 +262,8 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
     setTarget(at)
     setMeasure({ status: 'measuring' })
     try {
-      const result = await measureRoof(at, provider, controller.signal)
+      const building = buildingAt(at, view.buildings, view.frame)
+      const result = await measureRoof(at, provider, controller.signal, building?.measurementToken)
       if (controller.signal.aborted) return
       // Data from a service other than the one this view was built for (its
       // photo, credits and drawing rules) is never shown on it.
@@ -217,7 +271,7 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
         setMeasure({ status: 'failed', error: result.ok ? 'not_configured' : result.error })
         return
       }
-      const paid = { at, provider, roof: result.roof, credits: result.credits, measuredAt: new Date().toISOString() }
+      const paid: Paid = { at, provider, roof: result.roof, credits: result.credits, measuredAt: result.measuredAt, expiresAt: result.expiresAt, cached: result.cache === 'hit' }
       paidRef.current = [...paidRef.current, paid]
       showMeasured(paid, view)
     } catch {
@@ -949,6 +1003,7 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
                 </p>
                 <PitchPicker value={pitch} onChange={setPitch} describedBy={pitchHelpId} />
                 {googleCredit && <p className="rf-roof__attribution">{googleCredit}</p>}
+                {measure.status === 'done' && measure.cached && <p className="rf-roof__help">Saved measurement from {new Date(measure.measuredAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}. Reused without another measurement request.</p>}
               </>
             ) : (
               <p className="rf-roof__locked">{lockedCopy ?? roofTool.pitchLocked}</p>
@@ -1037,7 +1092,7 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
                 </div>
                 {quote.solar && <p className="rf-roof__rough">{roofTool.solar.taxNote}</p>}
                 <ul className="rf-roof__ways">
-                  <li>{roofTool.insuranceLine}</li>
+                  <li>{presentation?.insuranceLine ?? roofTool.insuranceLine}</li>
                   {presentation?.showMonthlyExample !== false && (
                     <li>
                       Financing: about <strong>{money(monthly)}/mo</strong> at an example {LONG_PLAN.apr}% APR over {LONG_PLAN.months / 12} years.{' '}

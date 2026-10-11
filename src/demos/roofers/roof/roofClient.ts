@@ -62,17 +62,19 @@ export function suggestAddresses(query: string, signal?: AbortSignal) {
 export type LookupTarget = { kind: 'suggestion'; id: string } | { kind: 'address'; address: string }
 
 export function lookupRoof(target: LookupTarget, signal?: AbortSignal): Promise<LookupResponse> {
-  const params = new URLSearchParams(target.kind === 'suggestion' ? { id: target.id } : { address: target.address })
+  const params = new URLSearchParams(target.kind === 'suggestion' ? { id: target.id, v: '2' } : { address: target.address, v: '2' })
   return getJson<Extract<LookupResponse, { ok: true }>>(`${LOOKUP_ENDPOINT}?${params}`, signal)
 }
 
 /**
  * One billed measurement of the roof under `point`; the page only asks after
  * the homeowner confirms it. Sent at the 5 decimals the server measures, so
- * the URL the edge caches is the point that was bought.
+ * the URL the edge caches is the point that was bought. A signed footprint
+ * lets the server reuse a measurement across different pins on that building.
  */
-export function measureRoof(point: LatLng, provider: string, signal?: AbortSignal): Promise<MeasureResponse> {
+export function measureRoof(point: LatLng, provider: string, signal?: AbortSignal, measurementToken?: string): Promise<MeasureResponse> {
   // The provider the lookup named: the server refuses another one's data.
-  const params = new URLSearchParams({ lat: point.lat.toFixed(5), lng: point.lng.toFixed(5), provider })
+  const params = new URLSearchParams({ lat: point.lat.toFixed(5), lng: point.lng.toFixed(5), provider, v: '2' })
+  if (measurementToken) params.set('roof', measurementToken)
   return getJson<Extract<MeasureResponse, { ok: true }>>(`${MEASURE_ENDPOINT}?${params}`, signal, 'timed_out')
 }

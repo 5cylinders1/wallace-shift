@@ -16,6 +16,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { handle, isRateLimited, queryOf, sendError, sendJson } from './_lib/roof/http.js'
 import { roofProviderFromEnv, type LookupTarget } from './_lib/roof/provider.js'
+import { signMeasurementBuilding } from './_lib/roof/measurement-identity.js'
 
 export const config = { maxDuration: 20 }
 
@@ -45,6 +46,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (await isRateLimited(req, 'roof-lookup', RATE_LIMIT, RATE_WINDOW_S)) return sendError(res, 'rate_limited')
 
     const { lookup, partial } = await provider.lookup(target)
+    const measurement = lookup.measure?.provider
+    if (measurement === 'instant-roofer' || measurement === 'google-solar') {
+      lookup.buildings = lookup.buildings.map(building => ({
+        ...building,
+        measurementToken: signMeasurementBuilding(measurement, lookup.source, building),
+      }))
+    }
     sendJson(res, lookup, 200, partial ? PARTIAL_CACHE_S : CACHE_S)
   })
 }

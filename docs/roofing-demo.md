@@ -109,7 +109,9 @@ one service's data on another's photo.
 - **The photo can be older than the house.** Instant Roofer measures from
   its own imagery, not ours, so a homeowner whose new house isn't in the
   photo can still tap where its roof is; the page says so.
-- **A roof is bought once per visit.** Once measured, the map stops taking
+- **A roof is reused across visits while its saved measurement is valid.**
+  With licensed caching enabled, the server checks the shared measurement
+  store before calling the provider. Once measured, the map stops taking
   taps until the homeowner chooses "Measure a different building"; going
   back to a building already measured shows its result again without a
   call. A crosshair the service rejected ("no roof here") can't be sent
@@ -138,15 +140,16 @@ one service's data on another's photo.
     store can't be reached, measurements are refused, not waved through.
     For local development only, `ROOF_MEASURE_UNMETERED=1` allows measuring
     without the store; it is ignored on any Vercel deployment.
-  - The call gets the function's whole time budget (55 s). If it still
+  - Provider work shares a 51-second request deadline, leaving time to save
+    the result before the function's 60-second limit. If it still
     runs out, the page offers the home-size estimate and doesn't offer an
     instant retry, since the abandoned request may have been billed.
     Instant Roofer's own "busy" answers can be retried.
   - The page sends the point rounded to 5 decimals (about a metre), the same
-    point the server buys, and a success is cached at the edge for a week
-    with no background refresh. The same pin asked again is usually served
-    from that cache; it is not a guarantee per roof, so the caps above are
-    what bound spend.
+    point the server buys. A signed footprint also lets different pins on
+    the same building reuse one measurement. Shared purchase locks stop
+    concurrent requests from buying that result twice. The spending caps
+    remain in place for uncached measurements.
   - Before launch, also add a bot check (Vercel BotID or Cloudflare
     Turnstile) on the Measure button: the per-visitor limit counts IP
     addresses, and a determined scraper has many.
@@ -154,6 +157,50 @@ one service's data on another's photo.
   the page shows exactly that, linked, beside the Measure button and the
   result (and with the fallback if measuring fails).
 - **Not used:** its outline picture (Google imagery) and raw lidar points.
+
+### Measurement cache
+
+Caching permission under this project's Instant Roofer agreement was confirmed
+by the project owner. Enable it with `ROOF_MEASURE_CACHE_DAYS=7`; this is set in
+the local `.env.local`. Deployed environments need the same setting and the
+existing Upstash REST connection, followed by a deployment. The code defaults
+Instant Roofer caching to off for environments where permission has not been
+configured. Valid retention values are whole days from 1 through 30; `0` or an
+invalid value disables result caching.
+
+Successful measurements are stored by provider and rounded point. When lookup
+supplies a signed building footprint, another pin inside that same footprint
+can reuse the result too, provided the provider returned a point inside it.
+An absent, tampered, oversized, or mismatched footprint falls back to the exact
+pin. Nearby buildings are never merged just because their pins are close.
+Changing Google imagery quality also gives it a separate cache entry.
+
+Cache hits keep the original measurement date and expiry, do not increment
+paid-call counters, and do not call the measuring provider. Pricing is still
+calculated from the current material and project selections. Expired results
+are refreshed only on the next requested measurement, never in the background.
+The CDN may retain an answer only for its remaining lifetime, without stale
+revalidation. A cache hit cannot extend the stored lifetime.
+
+The shared store contains normalized measurement data, attribution, and dates;
+it does not store photos, addresses, or lead/contact details. Redis expires its
+records automatically. Local unmetered development saves Instant Roofer results
+under the ignored `output/roof-measure-cache/` directory so restarting Vite does
+not buy them again. Expired local files are removed when read. Google results
+use memory only locally and are lost when the server restarts. These local
+fallbacks cannot run on Vercel or replace an invalid configured Redis connection.
+
+Cache read/lock failures stop before a paid request. If a provider call has an
+uncertain outcome, or its already-paid result cannot be saved, a 90-second
+purchase lease blocks immediate duplicate attempts. A failed save still returns
+the available measurement to the visitor. Failed provider results are not saved.
+Explicitly setting a measurement limit to zero still pauses the endpoint,
+including cached answers that reach the function.
+
+Run `node scripts/test-roof-measure-cache.mjs` for mocked provider/Redis
+integration checks, including cross-worker duplicate prevention, retention,
+signed footprints, outages, caps, and local persistence. These tests make no
+paid provider calls and do not establish live Upstash or production behavior.
 
 **Signing up** (for the key): create the API account at
 `api-dashboard.instantroofer.com` (not the contractor dashboard, which has no
@@ -257,7 +304,10 @@ Service Specific Terms, read June–August 2026 versions):
   Google's written confirmation before a contractor launches (questions
   below).
 - **Caching (§20.2).** Solar answers may be cached for at most 30 days; the
-  measure endpoint caches a week at the edge with no background refresh.
+  shared cache defaults to seven days, configurable with
+  `GOOGLE_SOLAR_CACHE_DAYS` up to 30. Original retrieval dates are preserved
+  and neither Redis nor the CDN extends them on a cache hit. Local development
+  uses expiring memory rather than disk for Google data.
   Leads record which service measured the roof (`measuredBy`), so a live
   CRM can delete Google's figures after 30 days unless they went into a
   solar proposal the homeowner asked for.
@@ -369,13 +419,15 @@ local dev put them in `.env.local`, which is git-ignored):
 | `GOOGLE_MAPS_STATIC_KEY` | Only with Google measuring | Browser key restricted to the Maps Static API and the site's websites. |
 | `GOOGLE_MAPS_STATIC_SECRET` | Only with Google measuring | The project's URL signing secret. Server-side only. Required: without it Google measuring stays off, except on a developer's machine with `ROOF_MEASURE_UNMETERED=1`. |
 | `GOOGLE_SOLAR_QUALITY` | Optional | `MEDIUM` (default) or `HIGH`. |
-| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for measuring, everywhere | The same Upstash limiter as the site audit: 300 suggestions and 40 lookups per IP per hour, the per-visitor measurement limit, and the daily and monthly measurement counts (kept separately per service). Without them measuring stays off. The URL is the database's REST URL (`https://….upstash.io`, not the `rediss://` string) and the token its standard REST token, never the read-only one. Connecting an "Upstash for Redis" database to the project from Vercel's Storage tab adds `KV_REST_API_URL` and `KV_REST_API_TOKEN` instead, which are used when these two are unset (as are `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`); see `api/_lib/limiter-store.ts`. Store errors are logged as `[limiter]`. |
+| `RATE_LIMIT_REDIS_URL`, `RATE_LIMIT_REDIS_TOKEN` | Required for deployed measuring | The same Upstash store as the site audit: counters for suggestions, lookups, and measurements, plus measurement cache entries and purchase leases. Without it deployed measuring stays off. The URL is the database's REST URL (`https://….upstash.io`, not the `rediss://` string) and the token its standard REST token, never the read-only one. Connecting an "Upstash for Redis" database to the project from Vercel's Storage tab adds `KV_REST_API_URL` and `KV_REST_API_TOKEN` instead, which are used when these two are unset (as are `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`); see `api/_lib/limiter-store.ts`. Counter errors are logged as `[limiter]`; measurement storage errors as `[roof-measure]`. |
+| `ROOF_MEASURE_CACHE_DAYS` | With Instant Roofer caching permission | Whole days, 1–30; use `7` for this project. Defaults to `0` (disabled). Preserves the original measurement timestamp. Invalid values also disable caching. |
+| `GOOGLE_SOLAR_CACHE_DAYS` | Optional with Google measuring | Whole days, 1–30; defaults to `7`. `0` or invalid values disable caching. Cannot exceed Google's 30-day storage limit. |
 | `ROOF_MEASURE_PER_HOUR`, `ROOF_MEASURE_DAILY_CAP`, `ROOF_MEASURE_MONTHLY_CAP` | Optional | Instant Roofer measurements per visitor per hour, and for the whole site per UTC day and month. Defaults 6 / 20 / 300. `0` pauses measuring. |
 | `GOOGLE_SOLAR_PER_HOUR`, `GOOGLE_SOLAR_DAILY_CAP`, `GOOGLE_SOLAR_MONTHLY_CAP` | Only with Google measuring | The same limits for Google Solar, counted separately. Defaults 30 / 400 / 4,000. `0` pauses it. |
-| `ROOF_MEASURE_UNMETERED` | Local development only | `1` lets your own machine measure without Upstash. Ignored on Vercel deployments. Each measurement is still billed. |
+| `ROOF_MEASURE_UNMETERED` | Local development only | `1` lets your own machine measure without Upstash. Ignored on Vercel deployments. Each uncached provider measurement is still billed. |
 
-**Setting up the Upstash store** (one free database covers the site audit
-and the roof tool; it holds only small counters that expire on their own):
+**Setting up the Upstash store** (one database covers the site audit and roof
+tool; counters, normalized measurements, and purchase leases expire on their own):
 
 1. In Vercel, open the project's **Storage** tab, create an **Upstash for
    Redis** database (Vercel can create the Upstash account for you), pick

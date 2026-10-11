@@ -1,45 +1,28 @@
 /**
- * Measures one roof for the estimator, from the point the homeowner put on
- * their roof.
+ * Measure a roof once, then reuse its provider-licensed snapshot.
  *
- *   GET /api/roof-measure?lat=39.04530&lng=-94.58260&provider=instant-roofer
- *   → { ok: true, roof: MeasuredRoof, credits } or { ok: false, error }
- *
- * Every successful call is billed by the measuring service (see
- * api/_lib/roof/measurement.ts), so it is the most guarded endpoint here:
- *
- *   - only our own page: a request another site makes (an <img>, a
- *     cross-site fetch) is refused before anything is counted or bought;
- *   - per visitor: ROOF_MEASURE_PER_HOUR measurements an hour (default 6);
- *   - per day:     ROOF_MEASURE_DAILY_CAP for the whole site (default 20),
- *                  so one bad day can't spend the month;
- *   - per month:   ROOF_MEASURE_MONTHLY_CAP for the whole site (default 300),
- *                  after which the page falls back to the outline estimate;
- *   - the store:   measuring is off unless the Upstash store behind these
- *                  limits is configured (api/_lib/limiter-store.ts), and
- *                  if that store can't be reached the call is refused, not
- *                  waved through.
- *
- * The page only calls this after the homeowner confirms their roof, and it
- * sends the point already rounded to 5 decimals (about a metre), so the same
- * pin asked again is usually answered from the edge cache, not bought twice.
+ * Redis shares results and purchase locks across deployed instances. Local,
+ * explicitly unmetered development persists Instant Roofer to ignored local
+ * disk (Google uses expiring memory). Cache hits do
+ * not consume paid-call budgets. A signed lookup footprint lets different
+ * pins on one building share a result; unsigned pins remain separate.
  */
-
+import { randomUUID } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { countUse, deadlineIn, handle, hasLimiterStore, header, isRateLimited, queryOf, sendError, sendJson } from './_lib/roof/http.js'
+import type { MeasureResponse } from '../src/demos/roofers/roof/types.js'
+import { RoofError, countUse, deadlineIn, handle, hasLimiterStore, header, isRateLimited, queryOf, sendError, sendJson } from './_lib/roof/http.js'
 import { measureLimits, measurementFromEnv, measuringPaused, pickMeasurement, unmeteredAllowed } from './_lib/roof/measurement.js'
+import { cacheSecondsFor, getMeasurementStore, measurementCacheKey, type CachedMeasurement } from './_lib/roof/measurement-cache.js'
+import { verifyMeasurementBuilding } from './_lib/roof/measurement-identity.js'
 
 export const config = { maxDuration: 60 }
-
-/**
- * The service takes 10–20 s, sometimes more. Measured from the start of the
- * request, this leaves a few seconds to answer in JSON before the 60 s limit.
- */
-const BUDGET_MS = 56_000
+// Leave nine seconds for cache writes and the response after provider work.
+const BUDGET_MS = 51_000
 const RATE_WINDOW_S = 3600
-const CACHE_S = 7 * 86_400
+type Success = Extract<MeasureResponse, { ok: true }>
+const inFlight = new Map<string, Promise<Success>>()
 
-/** Five decimals is about a metre: one roof, one cache entry. */
+/** Normalize the pin before both cache identity and provider measurement. */
 function pointOf(query: URLSearchParams) {
   const lat = Number(query.get('lat'))
   const lng = Number(query.get('lng'))
@@ -48,14 +31,16 @@ function pointOf(query: URLSearchParams) {
   return { lat: Math.round(lat * 1e5) / 1e5, lng: Math.round(lng * 1e5) / 1e5 }
 }
 
-/**
- * Browsers say where a request came from. Our page's fetch is same-origin;
- * anything else would spend from its visitors' allowances. Callers that
- * aren't browsers send no such header and still meet every limit below.
- */
 function fromAnotherSite(req: IncomingMessage) {
   const site = header(req, 'sec-fetch-site')
   return site !== undefined && site !== 'same-origin'
+}
+
+/** Never give the CDN a fresh full lifetime for an already-aged result. */
+function respond(res: ServerResponse, result: Success) {
+  const remaining = result.cache !== 'off' && result.expiresAt ? Math.max(0, Math.floor((Date.parse(result.expiresAt) - Date.now()) / 1000)) : 0
+  res.setHeader('x-roof-measure-cache', result.cache)
+  sendJson(res, result, 200, remaining, 0)
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -66,41 +51,117 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const query = queryOf(req)
     const point = pointOf(query)
     if (!point) return sendError(res, 'invalid')
-
     const chosen = pickMeasurement()
     if (!chosen) return sendError(res, 'not_configured')
     const limits = measureLimits(chosen.id)
+    // Preserve the explicit operational pause, even for cached measurements.
     if (measuringPaused(limits)) return sendError(res, 'limit_reached')
     const measurement = measurementFromEnv()
-    if (!measurement) return sendError(res, 'not_configured')
-    // The page names the service its lookup was built for, and gets nothing
-    // from any other: Google's data, say, would land on a Mapbox photo. A page
-    // that names none predates the check (an old tab), so it gets nothing
-    // either. The name is also part of the cache key.
-    if (query.get('provider') !== measurement.id) return sendError(res, 'not_configured')
+    if (!measurement || query.get('provider') !== measurement.id) return sendError(res, 'not_configured')
 
-    // measurementFromEnv only allows a missing store on a developer's machine, by request.
-    if (hasLimiterStore()) {
-      // Each service has its own limits and counters. Instant Roofer keeps the
-      // keys it always had, so deploying this doesn't reset its caps.
-      const scope = measurement.id === 'instant-roofer' ? 'roof-measure' : `roof-measure:${measurement.id}`
-      if (await isRateLimited(req, scope, limits.perHour, RATE_WINDOW_S)) return sendError(res, 'rate_limited')
-      // Counted before the call, so a burst can't slip past a cap while
-      // measurements are in flight. The month is only counted once the day
-      // allows it, so a day's refused requests don't use up the month.
-      const now = new Date().toISOString()
-      const today = await countUse(`${scope}:day:${now.slice(0, 10)}`, 2 * 86_400)
-      if (today === null) return sendError(res, 'busy')
-      if (today > limits.perDay) return sendError(res, 'limit_reached')
-      const month = await countUse(`${scope}:month:${now.slice(0, 7)}`, 40 * 86_400)
-      if (month === null) return sendError(res, 'busy')
-      if (month > limits.perMonth) return sendError(res, 'limit_reached')
-    } else if (!unmeteredAllowed()) {
-      return sendError(res, 'not_configured')
+    const store = getMeasurementStore(measurement.id)
+    if (!store) return sendError(res, 'not_configured')
+    const ttl = cacheSecondsFor(measurement.id)
+    const token = query.get('roof')
+    const identity = verifyMeasurementBuilding(token, measurement.id, point)
+    const exactKey = measurementCacheKey(measurement.id, point)
+    const buildingKey = identity ? measurementCacheKey(measurement.id, point, identity) : null
+
+    async function readSaved(): Promise<Success | null> {
+      if (ttl === 0) return null
+      for (const key of buildingKey ? [exactKey, buildingKey] : [exactKey]) {
+        const entry = await store!.get(key)
+        if (!entry || entry.provider !== measurement!.id) continue
+        // A shorter configured retention period takes effect immediately.
+        const expires = Math.min(Date.parse(entry.expiresAt), Date.parse(entry.measuredAt) + ttl * 1000)
+        if (expires <= Date.now()) continue
+        // A provider can return the nearest building rather than the asked one.
+        // Never let that answer become a cache hit for a different pin.
+        if (key === buildingKey && (entry.roof.atPoint === false || verifyMeasurementBuilding(token, measurement!.id, entry.roof.point) !== identity)) continue
+        return { ok: true, ...entry, expiresAt: new Date(expires).toISOString(), cache: 'hit' }
+      }
+      return null
     }
 
-    const roof = await measurement.measure(point, deadline)
-    // No stale-while-revalidate: a background refresh would buy the roof again.
-    sendJson(res, { ok: true, provider: measurement.id, roof, credits: [measurement.credit] }, 200, CACHE_S, 0)
+    const saved = await readSaved()
+    if (saved) return respond(res, saved)
+
+    // Share only identical pins in this worker. Distinct pins use the shared
+    // building lock and subsequently read the verified building snapshot.
+    const pending = inFlight.get(exactKey)
+    if (pending) return respond(res, await pending)
+
+    const purchase = async (): Promise<Success> => {
+      const owner = randomUUID()
+      const held: string[] = []
+      let release = true
+      try {
+        // Both are needed: an older/unsigned client may request the same pin
+        // while a new client supplies its building identity. A single choice
+        // of lock would allow those two requests to buy the roof concurrently.
+        for (const key of buildingKey ? [exactKey, buildingKey] : [exactKey]) {
+          if (!await store.acquire(key, owner)) {
+            const completed = await readSaved()
+            if (completed) return completed
+            throw new RoofError('busy', 'this roof is already being measured; no new measurement was requested')
+          }
+          held.push(key)
+        }
+        // Another worker may have saved the roof between our first read and lock.
+        const completed = await readSaved()
+        if (completed) return completed
+        if (hasLimiterStore()) {
+          const scope = measurement.id === 'instant-roofer' ? 'roof-measure' : `roof-measure:${measurement.id}`
+          if (await isRateLimited(req, scope, limits.perHour, RATE_WINDOW_S)) throw new RoofError('rate_limited')
+          const now = new Date().toISOString()
+          const today = await countUse(`${scope}:day:${now.slice(0, 10)}`, 2 * 86_400)
+          if (today === null) throw new RoofError('busy')
+          if (today > limits.perDay) throw new RoofError('limit_reached')
+          const month = await countUse(`${scope}:month:${now.slice(0, 7)}`, 40 * 86_400)
+          if (month === null) throw new RoofError('busy')
+          if (month > limits.perMonth) throw new RoofError('limit_reached')
+        } else if (!unmeteredAllowed()) {
+          throw new RoofError('not_configured')
+        }
+
+        // Once the billed call starts, an uncertain outcome leaves the 90-second
+        // lock to expire. Aborts/errors must not trigger an immediate repurchase.
+        release = false
+        const roof = await measurement.measure(point, deadline)
+        const measuredAt = new Date().toISOString()
+        // Even with shared caching off, a long-open page must discard Google
+        // measurements within its maximum retention period.
+        const workingLifetime = ttl || (measurement.id === 'google-solar' ? 30 * 86_400 : 0)
+        const expiresAt = workingLifetime > 0 ? new Date(Date.parse(measuredAt) + workingLifetime * 1000).toISOString() : null
+        const result: Success = { ok: true, provider: measurement.id, roof, credits: [measurement.credit], measuredAt, expiresAt, cache: ttl > 0 ? 'miss' : 'off' }
+        if (ttl > 0 && expiresAt) {
+          const entry: CachedMeasurement = { provider: result.provider, roof, credits: result.credits, measuredAt, expiresAt }
+          try {
+            await store.put(exactKey, entry, ttl)
+            if (buildingKey && roof.atPoint !== false && verifyMeasurementBuilding(token, measurement.id, roof.point) === identity) {
+              await store.put(buildingKey, entry, ttl)
+            }
+          } catch {
+            // The user still receives the result already paid for. Leave the
+            // lock intact if persistence failed, and do not claim it was saved.
+            console.error('[roof-measure] result cache write failed; purchase cooldown retained')
+            return { ...result, cache: 'off' }
+          }
+        }
+        release = true
+        return result
+      } finally {
+        // Unlock is best-effort. If it fails, the lease expires safely by itself.
+        if (release) await Promise.all(held.map(key => store.release(key, owner).catch(() => undefined)))
+      }
+    }
+
+    const work = purchase()
+    inFlight.set(exactKey, work)
+    try {
+      respond(res, await work)
+    } finally {
+      if (inFlight.get(exactKey) === work) inFlight.delete(exactKey)
+    }
   })
 }

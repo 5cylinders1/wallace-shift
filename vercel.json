@@ -51,6 +51,10 @@
     {
       "source": "/alder-stone/estimate",
       "destination": "/demos/roofers-2/estimate"
+    },
+    {
+      "source": "/contour",
+      "destination": "/demos/roofers-3"
     }
   ]
 }

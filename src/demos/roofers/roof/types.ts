@@ -44,6 +44,8 @@ export interface RoofAddress {
 
 export interface FootprintBuilding {
   id: string
+  /** Server-signed identity for sharing measurements only within this footprint. */
+  measurementToken?: string
   /** Outline in lat/lng; closed implicitly. */
   ring: LatLng[]
   /** Ground area covered by the outline, sq ft. */
@@ -166,7 +168,16 @@ export interface MeasuredRoof {
   solar?: SolarPotential | null
 }
 
-export type MeasureResponse = { ok: true; provider: string; roof: MeasuredRoof; credits: Credit[] } | { ok: false; error: RoofErrorCode }
+export type MeasureResponse = {
+  ok: true
+  provider: string
+  roof: MeasuredRoof
+  credits: Credit[]
+  /** Original provider retrieval time; cache hits must not reset this. */
+  measuredAt: string
+  expiresAt: string | null
+  cache: 'hit' | 'miss' | 'off'
+} | { ok: false; error: RoofErrorCode }
 
 export type RoofErrorCode =
   | 'not_configured'
