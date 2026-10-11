@@ -1,4 +1,5 @@
 import { during } from '../content'
+import { Heading } from './Heading'
 import './DuringTheJob.css'
 
 export function DuringTheJob() {
@@ -8,9 +9,9 @@ export function DuringTheJob() {
         <div className="rf-section__head rf-section__head--split" data-reveal>
           <div>
             <p className="rf-eyebrow">{during.eyebrow}</p>
-            <h2 id="rf-during-title" className="rf-display">
+            <Heading id="rf-during-title" className="rf-display">
               {during.title}
-            </h2>
+            </Heading>
           </div>
           <p className="rf-lede">{during.lede}</p>
         </div>
@@ -18,7 +19,7 @@ export function DuringTheJob() {
         <div className="rf-during__lists">
           {[during.before, during.onTheDay].map((list) => (
             <div key={list.title} className="rf-during__list" data-reveal>
-              <h3>{list.title}</h3>
+              <Heading rank={1}>{list.title}</Heading>
               <ol>
                 {list.items.map((item) => (
                   <li key={item}>{item}</li>

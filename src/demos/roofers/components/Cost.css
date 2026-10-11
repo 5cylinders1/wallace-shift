@@ -2,6 +2,26 @@
   background: var(--rf-paper);
 }
 
+/* The way to the estimator, for a price on this roof rather than a range. */
+.rf-cost__tool {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin-top: clamp(32px, 4vw, 48px);
+  padding: clamp(20px, 2.6vw, 28px) clamp(20px, 3vw, 32px);
+  border: 1px solid var(--rf-line-strong);
+  border-left: 4px solid var(--rf-copper);
+  background: var(--rf-card);
+}
+
+.rf-cost__tool p {
+  max-width: 56ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
 .rf-cost__layout {
   display: grid;
   gap: 40px clamp(32px, 4vw, 64px);

@@ -1,10 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { brand } from '../brand'
 import { nav, WALLACE_SHIFT_URL } from '../content'
+import { pageHref, type PageId } from '../routes'
 import { BrandMark } from './BrandMark'
 import './SiteHeader.css'
 
-export function SiteHeader() {
+export function SiteHeader({ page }: { page: PageId }) {
   const [open, setOpen] = useState(false)
   const menuId = useId()
   const toggleRef = useRef<HTMLButtonElement>(null)
@@ -55,7 +56,7 @@ export function SiteHeader() {
   return (
     <header className={`rf-header${open ? ' is-open' : ''}`}>
       <div className="rf-header__bar">
-        <a className="rf-header__brand" href="#top" aria-label={`${brand.company}, back to top`}>
+        <a className="rf-header__brand" href={pageHref('home')} aria-label={page === 'home' ? `${brand.company}, back to top` : `${brand.company} home`}>
           <BrandMark />
           <span className="rf-header__name">{brand.company}</span>
         </a>
@@ -73,8 +74,10 @@ export function SiteHeader() {
         <nav className="rf-header__nav" aria-label="Sections">
           <ul>
             {nav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href}>{item.label}</a>
+              <li key={item.label}>
+                <a href={pageHref(item.page, item.section)} aria-current={!item.section && item.page === page ? 'page' : undefined}>
+                  {item.label}
+                </a>
               </li>
             ))}
           </ul>
@@ -85,7 +88,7 @@ export function SiteHeader() {
             <span className="rf-visually-hidden">Call </span>
             {brand.phoneDisplay}
           </a>
-          <a className="rf-button rf-button--primary rf-header__cta" href="#estimate">
+          <a className="rf-button rf-button--primary rf-header__cta" href={pageHref('home', 'estimate')}>
             Free estimate
           </a>
           <button
@@ -106,8 +109,12 @@ export function SiteHeader() {
         <nav aria-label="Sections">
           <ul>
             {nav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} onClick={() => setOpen(false)}>
+              <li key={item.label}>
+                <a
+                  href={pageHref(item.page, item.section)}
+                  aria-current={!item.section && item.page === page ? 'page' : undefined}
+                  onClick={() => setOpen(false)}
+                >
                   {item.label}
                 </a>
               </li>
@@ -115,7 +122,7 @@ export function SiteHeader() {
           </ul>
         </nav>
         <div className="rf-header__panel-actions">
-          <a className="rf-button rf-button--primary rf-button--block" href="#estimate" onClick={() => setOpen(false)}>
+          <a className="rf-button rf-button--primary rf-button--block" href={pageHref('home', 'estimate')} onClick={() => setOpen(false)}>
             Get my free estimate
           </a>
           <a className="rf-button rf-button--ghost rf-button--block" href={brand.phoneHref}>

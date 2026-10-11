@@ -91,11 +91,16 @@
   color: var(--rf-slate);
 }
 
-.rf-header__nav a:hover {
+.rf-header__nav a:hover,
+.rf-header__nav a[aria-current='page'] {
   color: var(--rf-ink);
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 6px;
+}
+
+.rf-header__nav a[aria-current='page'] {
+  text-decoration-color: var(--rf-copper);
 }
 
 .rf-header__actions {

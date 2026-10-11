@@ -1,5 +1,6 @@
 import { brand } from '../brand'
 import { footer, nav, ribbon, WALLACE_SHIFT_CONTACT_URL, WALLACE_SHIFT_URL } from '../content'
+import { pageHref } from '../routes'
 import { BrandMark } from './BrandMark'
 import './SiteFooter.css'
 
@@ -20,18 +21,18 @@ export function SiteFooter() {
           <nav aria-label="Footer">
             <ul className="rf-footer__nav">
               {nav.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href}>{item.label}</a>
+                <li key={item.label}>
+                  <a href={pageHref(item.page, item.section)}>{item.label}</a>
                 </li>
               ))}
               <li>
-                <a href="#estimate">Free estimate</a>
+                <a href={pageHref('home', 'estimate')}>Free estimate</a>
               </li>
             </ul>
           </nav>
           <div className="rf-footer__contact">
             <a href={brand.phoneHref}>{brand.phoneDisplay}</a>
-            <a className="rf-button rf-button--primary" href="#estimate">
+            <a className="rf-button rf-button--primary" href={pageHref('home', 'estimate')}>
               Get my estimate
             </a>
           </div>

@@ -1,4 +1,5 @@
 import { quickAnswers } from '../content'
+import { pageHref } from '../routes'
 import './QuickAnswers.css'
 
 export function QuickAnswers() {
@@ -19,7 +20,7 @@ export function QuickAnswers() {
               </span>
               <h3 className="rf-answer__q">{item.q}</h3>
               <p className="rf-answer__a">{item.a}</p>
-              <a className="rf-answer__link" href={item.href}>
+              <a className="rf-answer__link" href={pageHref(item.to.page, item.to.section)}>
                 {item.link}
               </a>
             </li>

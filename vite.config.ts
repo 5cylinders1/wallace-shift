@@ -166,6 +166,8 @@ function roofingDemoRoutes(): Plugin {
       const alias = url.pathname.replace(/\/$/, '')
       const destinations: Record<string, string> = {
         '/northvane': '/demos/roofers/index.html',
+        ...Object.fromEntries(['insurance', 'prices', 'warranty', 'faq'].map(page =>
+          [`/northvane/${page}`, `/demos/roofers/${page}/index.html`])),
         '/alder-stone': '/demos/roofers-2/index.html',
         ...Object.fromEntries(['process', 'insurance', 'cost', 'estimate'].map(page =>
           [`/alder-stone/${page}`, `/demos/roofers-2/${page}/index.html`])),
@@ -174,7 +176,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `${destinations[alias]}${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -198,6 +200,10 @@ export default defineConfig({
       input: {
         main: 'index.html',
         roofers: 'demos/roofers/index.html',
+        roofersInsurance: 'demos/roofers/insurance/index.html',
+        roofersPrices: 'demos/roofers/prices/index.html',
+        roofersWarranty: 'demos/roofers/warranty/index.html',
+        roofersFaq: 'demos/roofers/faq/index.html',
         roofersOffer: 'demos/roofers-offer/index.html',
         roofersEstate: 'demos/roofers-2/index.html',
         roofersEstateProcess: 'demos/roofers-2/process/index.html',

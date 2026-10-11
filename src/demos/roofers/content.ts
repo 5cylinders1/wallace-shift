@@ -1,4 +1,5 @@
 import { brand } from './brand'
+import type { PageId } from './routes'
 
 /**
  * Every word on the roofing demo.
@@ -13,14 +14,20 @@ import { brand } from './brand'
 export const WALLACE_SHIFT_URL = 'https://wallaceshift.com'
 export const WALLACE_SHIFT_CONTACT_URL = 'https://wallaceshift.com/contact'
 
-export const nav = [
-  { label: 'Process', href: '#process' },
-  { label: 'Insurance', href: '#insurance' },
-  { label: 'Cost', href: '#cost' },
-  { label: 'Financing', href: '#financing' },
-  { label: 'Warranty', href: '#warranty' },
-  { label: 'FAQ', href: '#faq' },
-] as const
+/** A page, or a section of one (see routes.ts for the URLs). */
+export interface PageLink {
+  page: PageId
+  section?: string
+}
+
+export const nav: (PageLink & { label: string })[] = [
+  { label: 'Price your roof', page: 'home', section: 'estimator' },
+  { label: 'Insurance', page: 'insurance' },
+  { label: 'Prices', page: 'prices' },
+  { label: 'Financing', page: 'home', section: 'financing' },
+  { label: 'Warranty', page: 'warranty' },
+  { label: 'FAQ', page: 'faq' },
+]
 
 export const ribbon = {
   lead: 'Concept demo by Wallace Shift',
@@ -125,59 +132,93 @@ export const finale = {
   secondary: 'The short answers',
 }
 
-export const quickAnswers = {
+export const quickAnswers: { eyebrow: string; title: string; items: { q: string; a: string; to: PageLink; link: string }[] } = {
   eyebrow: 'The short version',
   title: 'What everyone asks first.',
   items: [
     {
       q: 'Will insurance pay for it?',
       a: 'Usually, if a storm did it — hail, wind or a falling limb. Not for age or wear. Either way, you pay your deductible.',
-      href: '#insurance',
+      to: { page: 'insurance' },
       link: 'What’s covered',
     },
     {
       q: 'How long does a claim take?',
       a: 'Typically 2–6 weeks from filing to approval, and longer after a big regional storm.',
-      href: '#claim-timeline',
+      to: { page: 'insurance', section: 'claim-timeline' },
       link: 'The claim timeline',
     },
     {
       q: 'How long is the job?',
       a: 'Repairs take a few hours. Most replacements take 1–2 days on site; large or steep roofs, 3 or more.',
-      href: '#process',
+      to: { page: 'home', section: 'process' },
       link: 'Watch it again',
     },
     {
       q: 'Can we stay in the house?',
       a: 'Yes. It’s loud, but it’s safe — power, water and Wi-Fi stay on. We send a short prep list first.',
-      href: '#during',
+      to: { page: 'warranty', section: 'during' },
       link: 'What to expect',
     },
     {
       q: 'What does it cost?',
       a: 'Repairs start around $350. Most full replacements here land between $10,000 and $18,000.',
-      href: '#cost',
-      link: 'Price your roof',
+      to: { page: 'prices' },
+      link: 'Typical prices',
     },
     {
       q: 'Can I finance it?',
       a: 'Yes — monthly plans with approved credit, including 12 months same-as-cash.',
-      href: '#financing',
+      to: { page: 'home', section: 'financing' },
       link: 'See payments',
     },
     {
       q: 'What’s the warranty?',
       a: 'The manufacturer’s system warranty, plus our own 10-year workmanship warranty in writing.',
-      href: '#warranty',
+      to: { page: 'warranty' },
       link: 'What’s guaranteed',
     },
     {
       q: 'What happens next?',
       a: 'A free inspection with photos, then a written estimate. No pressure and no obligation.',
-      href: '#estimate',
+      to: { page: 'home', section: 'estimate' },
       link: 'Get my estimate',
     },
   ],
+}
+
+/** The deeper pages, as the home page lists them and each page's close offers the rest. */
+export const pages: { eyebrow: string; title: string; items: (PageLink & { label: string; body: string })[] } = {
+  eyebrow: 'Read before anyone visits',
+  title: 'The rest of the story, one topic at a time.',
+  items: [
+    {
+      page: 'insurance',
+      label: 'Insurance claims',
+      body: 'What’s covered, what your deductible means, and how a claim runs from inspection to the final check.',
+    },
+    {
+      page: 'prices',
+      label: 'Typical prices',
+      body: 'Price ranges for repairs and replacements, what every quote includes, and what moves the number.',
+    },
+    {
+      page: 'warranty',
+      label: 'Warranty & the job',
+      body: 'Who guarantees what and for how long, and what the job days are like at home.',
+    },
+    { page: 'faq', label: 'Questions', body: 'Permits, weather, materials, payment, and everything else people ask.' },
+  ],
+}
+
+/** The close of each deeper page. */
+export const nextStep = {
+  eyebrow: 'Next step',
+  title: 'Ready for a real number?',
+  body: 'Price your roof from the aerial photo in a minute, or book a free inspection and get it in writing.',
+  primary: 'Get your free inspection',
+  secondary: 'Price your roof',
+  more: 'Keep reading',
 }
 
 export const insurance = {
@@ -282,9 +323,11 @@ export interface PriceRow {
 }
 
 export const cost = {
-  eyebrow: 'Cost',
+  eyebrow: 'Prices',
   title: 'What it costs, before anyone visits.',
   lede: 'Real ranges, up front. Your written estimate is exact — these put you in the right ballpark so the conversation starts in the right place.',
+  toolPrompt: 'Want the number for your own roof? Find your house on the estimator and see it priced at these rates.',
+  toolAction: 'Price your roof',
   rows: [
     { name: 'Minor repair', range: '$350–$900', body: 'Replace damaged shingles, reseal flashing, swap a cracked pipe boot.' },
     { name: 'Leak repair', range: '$900–$2,500', body: 'Trace and fix a leak, including flashing or valley work and a little decking.' },
@@ -332,6 +375,8 @@ export const cost = {
 export const roofTool = {
   eyebrow: 'Your roof, priced',
   title: 'Find your house. Set the pitch. See the price.',
+  /** Before a search, when it isn't yet known whether a measuring service is connected. */
+  ledeIdle: 'Find your house on the aerial photo and see your roof priced at your contractor’s rates. Adjust anything that looks off; the estimate updates as you go.',
   lede: 'We pull your building’s outline from public map data, you match the roof’s steepness on the drawing, and the estimate updates as you go.',
   ledeMeasured: 'Find your house and we measure the roof itself from aerial imagery, then price it at your contractor’s rates. Adjust anything that looks off; the estimate updates as you go.',
   steps: ['Find the house', 'Set the pitch', 'Your estimate'],
@@ -353,7 +398,7 @@ export const roofTool = {
   buildingsLegend: 'Buildings to include',
   pitchHelp: 'Stand across the street and drag the ridge until the drawing matches your roof.',
   pitchLocked: 'Find your house first, then set the pitch here.',
-  estimateLocked: 'Your price appears here once we have the building outline.',
+  estimateLocked: 'Your price appears here once we’ve found your roof.',
   sizeLabel: 'Home size',
   sizeHelp: 'Finished square feet; include an attached garage.',
   storiesLabel: 'Stories',

@@ -1,4 +1,5 @@
 import { faq } from '../content'
+import { Heading } from './Heading'
 import './Faq.css'
 
 export function Faq() {
@@ -7,9 +8,9 @@ export function Faq() {
       <div className="rf-container rf-faq__layout">
         <div className="rf-section__head" data-reveal>
           <p className="rf-eyebrow">{faq.eyebrow}</p>
-          <h2 id="rf-faq-title" className="rf-display">
+          <Heading id="rf-faq-title" className="rf-display">
             {faq.title}
-          </h2>
+          </Heading>
         </div>
         <div className="rf-faq__list" data-reveal>
           {faq.items.map((item) => (
