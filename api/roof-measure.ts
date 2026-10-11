@@ -16,7 +16,7 @@
  *   - per month:   ROOF_MEASURE_MONTHLY_CAP for the whole site (default 300),
  *                  after which the page falls back to the outline estimate;
  *   - the store:   measuring is off unless the Upstash store behind these
- *                  limits is configured (RATE_LIMIT_REDIS_URL / _TOKEN), and
+ *                  limits is configured (api/_lib/limiter-store.ts), and
  *                  if that store can't be reached the call is refused, not
  *                  waved through.
  *

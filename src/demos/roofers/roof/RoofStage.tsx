@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { fromFrame, metersPerPixel, panelCorners, ringCentroid, toFrame } from './geo'
 import type { FootprintBuilding, LatLng, MapFrame, RoofLookup, SolarPotential } from './types'
 
@@ -21,6 +21,12 @@ interface RoofStageProps {
    * whether the homeowner could see the roof they tapped, or only the plan.
    */
   onPick?: (point: LatLng, onPhoto: boolean) => void
+  /** False hides the open-data outlines, their numbers and the dimming: the photo-first flow. */
+  outlines?: boolean
+  /** The arrow keys move the crosshair on the photo (through onPick), for keyboard users. */
+  keyboardPick?: boolean
+  /** The photo's accessible name and instructions while it takes the arrow keys. */
+  pickHelp?: string
   /** The crosshair: the point that will be (or was) measured. */
   target?: LatLng | null
   /** Shown over the map while something is in progress, e.g. a measurement. */
@@ -37,6 +43,11 @@ const NICE_METERS = [2, 5, 10, 20, 50, 100]
 const CREDIT_STRIP = 30
 /** A photo that hasn't arrived by then is treated as failed; the plan view stays. */
 const IMAGE_TIMEOUT_MS = 10_000
+/** How far one arrow key moves the crosshair, and with Shift held. */
+const NUDGE_M = 1
+const NUDGE_FAR_M = 5
+const ARROWS: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 function scaleBar(frame: MapFrame) {
   const mpp = metersPerPixel(frame)
@@ -106,6 +117,9 @@ export function RoofStage({
   loadingStatus,
   onImageryFail,
   onPick,
+  outlines = true,
+  keyboardPick = false,
+  pickHelp,
   target,
   busyStatus,
   solar,
@@ -128,7 +142,7 @@ export function RoofStage({
   // data at all.
   const googleOnly = view?.measure?.provider === 'google-solar' || view?.imagery?.provider === 'google'
   const onGooglePhoto = photoShown && imagery.provider === 'google'
-  const drawOutlines = !googleOnly
+  const drawOutlines = !googleOnly && outlines
   const drawGoogle = !googleOnly || onGooglePhoto
 
   const fail = (src: string) => {
@@ -159,6 +173,19 @@ export function RoofStage({
     onPick(fromFrame([local.x, local.y], frame), photoShown)
   }
   const targetXY = frame && target ? toFrame(target, frame) : null
+
+  // The keyboard's way to place the crosshair, where a pointer would tap: the
+  // first arrow puts it on the address point, the next ones move it.
+  const keyboardOn = keyboardPick && Boolean(onPick && frame && view && photoShown)
+  const nudge = (event: KeyboardEvent<HTMLDivElement>) => {
+    const step = ARROWS[event.key]
+    if (!step || !onPick || !frame || !view) return
+    event.preventDefault()
+    const px = (event.shiftKey ? NUDGE_FAR_M : NUDGE_M) / metersPerPixel(frame)
+    const [x, y] = targetXY ? [targetXY[0] + step[0] * px, targetXY[1] + step[1] * px] : toFrame(view.location, frame)
+    // Inside the photo and clear of the provider's credit strip, as a tap would be.
+    onPick(fromFrame([clamp(x, 0, frame.width), clamp(y, 0, frame.height - creditStrip - 1)], frame), true)
+  }
   const panels = useMemo(
     () =>
       frame && solar && drawGoogle
@@ -189,7 +216,13 @@ export function RoofStage({
     <div
       className={`rf-stage rf-stage--${mode}${view ? ' is-loaded' : ''}${photoShown ? ' has-photo' : view ? ' is-plan' : ''}${onPick && view ? ' is-picking' : ''}`}
     >
-      <div className="rf-stage__frame">
+      <div
+        className="rf-stage__frame"
+        tabIndex={keyboardOn ? 0 : undefined}
+        role={keyboardOn ? 'application' : undefined}
+        aria-label={keyboardOn ? pickHelp : undefined}
+        onKeyDown={keyboardOn ? nudge : undefined}
+      >
         {!view && <Blueprint lookup={blueprint} scanning={mode === 'locating'} />}
 
         {imagery && frame && (

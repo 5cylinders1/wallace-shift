@@ -86,6 +86,16 @@
   border: 1px solid var(--rf-roof-line);
 }
 
+/* The photo takes the arrow keys in the photo-first flow. */
+.rf-stage__frame:focus {
+  outline: none;
+}
+
+.rf-stage__frame:focus-visible {
+  outline: 3px solid var(--rf-roof-copper);
+  outline-offset: 3px;
+}
+
 .rf-stage__blueprint,
 .rf-stage__image,
 .rf-stage__overlay {
