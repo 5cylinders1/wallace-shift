@@ -596,8 +596,10 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
       {!presentation?.hideHeading && (
         <div className="rf-roof__head">
           <p className="rf-roof__eyebrow">{roofTool.eyebrow}</p>
-          <h3 className="rf-roof__title">{roofTool.title}</h3>
-          <p className="rf-roof__lede">{measureCopy ? roofTool.ledeMeasured : roofTool.lede}</p>
+          <h2 id="rf-roof-title" className="rf-roof__title">
+            {roofTool.title}
+          </h2>
+          <p className="rf-roof__lede">{measureCopy ? roofTool.ledeMeasured : phase === 'found' ? roofTool.lede : roofTool.ledeIdle}</p>
         </div>
       )}
 
@@ -672,9 +674,9 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
         <div className="rf-roof__steps">
           {/* 1 — the house */}
           <section className="rf-roof__step" aria-labelledby="rf-roof-step-1" data-step="house">
-            <h4 id="rf-roof-step-1" className="rf-roof__step-title">
+            <h3 id="rf-roof-step-1" className="rf-roof__step-title">
               <span>01</span> {roofTool.steps[0]}
-            </h4>
+            </h3>
 
             {phase === 'manual' ? (
               <div className="rf-roof__manual">
@@ -937,9 +939,9 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
 
           {/* 2 — the pitch */}
           <section className={`rf-roof__step${ready ? '' : ' is-locked'}`} aria-labelledby="rf-roof-step-2" data-step="pitch" data-unlock>
-            <h4 id="rf-roof-step-2" className="rf-roof__step-title">
+            <h3 id="rf-roof-step-2" className="rf-roof__step-title">
               <span>02</span> {roofTool.steps[1]}
-            </h4>
+            </h3>
             {ready ? (
               <>
                 <p id={pitchHelpId} className="rf-roof__help">
@@ -955,9 +957,9 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
 
           {/* 3 — the price */}
           <section className={`rf-roof__step${ready ? '' : ' is-locked'}`} aria-labelledby="rf-roof-step-3" data-step="estimate" data-unlock>
-            <h4 id="rf-roof-step-3" className="rf-roof__step-title">
+            <h3 id="rf-roof-step-3" className="rf-roof__step-title">
               <span>03</span> {roofTool.steps[2]}
-            </h4>
+            </h3>
             {quote ? (
               <div className="rf-roof__estimate">
                 <dl className="rf-roof__math">

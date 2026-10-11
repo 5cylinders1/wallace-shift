@@ -13,6 +13,22 @@
       "destination": "/demos/roofers"
     },
     {
+      "source": "/northvane/insurance",
+      "destination": "/demos/roofers/insurance"
+    },
+    {
+      "source": "/northvane/prices",
+      "destination": "/demos/roofers/prices"
+    },
+    {
+      "source": "/northvane/warranty",
+      "destination": "/demos/roofers/warranty"
+    },
+    {
+      "source": "/northvane/faq",
+      "destination": "/demos/roofers/faq"
+    },
+    {
       "source": "/roofing-dashboard",
       "destination": "/demos/roofers-dashboard"
     },

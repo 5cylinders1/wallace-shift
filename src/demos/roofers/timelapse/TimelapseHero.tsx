@@ -148,7 +148,7 @@ export function TimelapseHero() {
             <a className="rf-button rf-button--primary" href="#estimate">
               {hero.primary}
             </a>
-            <a className="rf-button rf-button--ghost" href="#cost">
+            <a className="rf-button rf-button--ghost" href="#estimator">
               {hero.secondary}
             </a>
           </div>
@@ -200,7 +200,7 @@ export function TimelapseHero() {
           </div>
         </div>
 
-        <a className="rf-timelapse__skip" href="#answers">
+        <a className="rf-timelapse__skip" href="#estimator">
           {hero.skip}
         </a>
       </div>

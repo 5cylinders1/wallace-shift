@@ -1,5 +1,7 @@
 import { insurance } from '../content'
 import { money } from '../pricing'
+import { pageHref } from '../routes'
+import { Heading } from './Heading'
 import './Insurance.css'
 
 export function Insurance() {
@@ -10,16 +12,16 @@ export function Insurance() {
         <div className="rf-section__head rf-section__head--split" data-reveal>
           <div className="rf-insurance__heading">
             <p className="rf-eyebrow">{insurance.eyebrow}</p>
-            <h2 id="rf-insurance-title" className="rf-display">
+            <Heading id="rf-insurance-title" className="rf-display">
               {insurance.title}
-            </h2>
+            </Heading>
           </div>
           <p className="rf-lede">{insurance.lede}</p>
         </div>
 
         <div className="rf-coverage" data-reveal>
           <div className="rf-coverage__col rf-coverage__col--yes">
-            <h3>{insurance.covered.title}</h3>
+            <Heading rank={1}>{insurance.covered.title}</Heading>
             <ul>
               {insurance.covered.items.map((item) => (
                 <li key={item}>{item}</li>
@@ -27,7 +29,7 @@ export function Insurance() {
             </ul>
           </div>
           <div className="rf-coverage__col rf-coverage__col--no">
-            <h3>{insurance.notCovered.title}</h3>
+            <Heading rank={1}>{insurance.notCovered.title}</Heading>
             <ul>
               {insurance.notCovered.items.map((item) => (
                 <li key={item}>{item}</li>
@@ -37,17 +39,17 @@ export function Insurance() {
         </div>
 
         <div className="rf-deductible" data-reveal>
-          <h3>{insurance.deductible.title}</h3>
+          <Heading rank={1}>{insurance.deductible.title}</Heading>
           <p>{insurance.deductible.body}</p>
         </div>
 
         <div className="rf-policies" data-reveal>
-          <h3 className="rf-subhead">Which policy you have changes the check</h3>
+          <Heading rank={1} className="rf-subhead">Which policy you have changes the check</Heading>
           <ol>
             {insurance.policies.map((policy, index) => (
               <li key={policy.name}>
                 <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                <h4>{policy.name}</h4>
+                <Heading rank={2}>{policy.name}</Heading>
                 <p>{policy.body}</p>
               </li>
             ))}
@@ -56,7 +58,7 @@ export function Insurance() {
 
         <figure className="rf-money" data-reveal>
           <figcaption>
-            <h3 className="rf-subhead">{example.title}</h3>
+            <Heading rank={1} className="rf-subhead">{example.title}</Heading>
             <p>{example.caption}</p>
           </figcaption>
           <div className="rf-money__bar" role="img" aria-label={example.parts.map((part) => `${part.label}: ${money(part.amount)}`).join('; ')}>
@@ -85,7 +87,7 @@ export function Insurance() {
         </figure>
 
         <div id="claim-timeline" className="rf-claim" data-reveal>
-          <h3 className="rf-subhead">{insurance.timeline.title}</h3>
+          <Heading rank={1} className="rf-subhead">{insurance.timeline.title}</Heading>
           <ol className="rf-claim__steps">
             {insurance.timeline.steps.map((step, index) => (
               <li key={step.name} className="rf-claim__step">
@@ -93,7 +95,7 @@ export function Insurance() {
                   {index + 1}
                 </span>
                 <p className="rf-claim__when">{step.when}</p>
-                <h4>{step.name}</h4>
+                <Heading rank={2}>{step.name}</Heading>
                 <p className="rf-claim__body">{step.body}</p>
               </li>
             ))}
@@ -103,9 +105,9 @@ export function Insurance() {
 
         <div className="rf-insurance__foot" data-reveal>
           <div className="rf-deadline">
-            <h3>{insurance.deadline.title}</h3>
+            <Heading rank={1}>{insurance.deadline.title}</Heading>
             <p>{insurance.deadline.body}</p>
-            <a className="rf-button rf-button--primary" href="#estimate">
+            <a className="rf-button rf-button--primary" href={pageHref('home', 'estimate')}>
               Book a free storm inspection
             </a>
           </div>

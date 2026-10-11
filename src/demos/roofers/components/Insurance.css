@@ -37,7 +37,7 @@
   background: var(--rf-bad-soft);
 }
 
-.rf-coverage__col h3 {
+.rf-coverage__col :is(h2, h3) {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -47,7 +47,7 @@
   font-weight: 760;
 }
 
-.rf-coverage__col h3::before {
+.rf-coverage__col :is(h2, h3)::before {
   content: '';
   flex-shrink: 0;
   width: 30px;
@@ -57,13 +57,13 @@
   background-position: center;
 }
 
-.rf-coverage__col--yes h3::before {
+.rf-coverage__col--yes :is(h2, h3)::before {
   background-color: var(--rf-good);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E");
   background-size: 16px;
 }
 
-.rf-coverage__col--no h3::before {
+.rf-coverage__col--no :is(h2, h3)::before {
   background-color: var(--rf-bad);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 4l8 8M12 4l-8 8' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E");
   background-size: 14px;
@@ -106,7 +106,7 @@
   }
 }
 
-.rf-deductible h3 {
+.rf-deductible :is(h2, h3) {
   font-size: clamp(1.6rem, 2.6vw, 2.2rem);
   font-stretch: 108%;
   font-weight: 760;
@@ -159,7 +159,7 @@
   color: var(--rf-copper-deep);
 }
 
-.rf-policies h4 {
+.rf-policies :is(h3, h4) {
   font-size: 1.125rem;
   font-weight: 760;
 }
@@ -324,7 +324,7 @@
   color: var(--rf-copper-deep);
 }
 
-.rf-claim__step h4 {
+.rf-claim__step :is(h3, h4) {
   font-size: 1.125rem;
   font-weight: 760;
 }
@@ -386,7 +386,7 @@
   }
 }
 
-.rf-deadline h3 {
+.rf-deadline :is(h2, h3) {
   font-size: 1.5rem;
   font-stretch: 106%;
   font-weight: 760;

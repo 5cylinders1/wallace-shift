@@ -28,7 +28,7 @@
 .er-planner__key span { display:flex;align-items:center;gap:11px;font-size:11px; }
 .er-planner__key b { font-weight:500;font-size:10px;color:#826737; }
 .er-planner .rf-roof { --rf-roof-line:#d1d5c9;--rf-roof-copper:#9b7b40;--rf-roof-copper-text:#785c29;margin:0;padding:0;background:none; }
-.er-planner .rf-roof p,.er-planner .rf-roof h4,.er-planner .rf-roof dl,.er-planner .rf-roof ul { margin:0; }
+.er-planner .rf-roof p,.er-planner .rf-roof .rf-roof__step-title,.er-planner .rf-roof dl,.er-planner .rf-roof ul { margin:0; }
 .er-planner .rf-roof ul { list-style:none;padding:0; }
 .er-planner .rf-roof svg { display:block; }
 .er-planner .rf-roof__body { gap:32px; }

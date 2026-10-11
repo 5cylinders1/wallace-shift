@@ -1,0 +1,63 @@
+/* The close of each deeper page, edge to edge. */
+.rf-next {
+  padding-block: var(--rf-section-y);
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+  /* The footer below is dark too. */
+  border-bottom: 1px solid rgba(244, 241, 234, 0.14);
+}
+
+.rf-next .rf-container {
+  display: grid;
+  gap: clamp(40px, 5vw, 64px);
+}
+
+@media (min-width: 1000px) {
+  .rf-next .rf-container {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.rf-next__lead {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.rf-next .rf-eyebrow {
+  color: #e9a172;
+}
+
+.rf-next .rf-lede {
+  color: var(--rf-on-dark-muted);
+}
+
+.rf-next .rf-actions {
+  margin-top: 8px;
+}
+
+.rf-next .rf-button--ghost {
+  border-color: rgba(244, 241, 234, 0.4);
+  background: transparent;
+  color: var(--rf-on-dark);
+}
+
+.rf-next .rf-button--ghost:hover {
+  border-color: var(--rf-on-dark);
+  background: rgba(244, 241, 234, 0.08);
+}
+
+.rf-next__more-title {
+  margin-bottom: 14px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rf-on-dark-muted);
+}
+
+/* Three pages read best as one column beside the lead. */
+.rf-next .rf-page-links {
+  grid-template-columns: 1fr;
+}

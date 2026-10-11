@@ -1,0 +1,12 @@
+/* The band carries the tool's dark ground edge to edge; the tool sits in the page's column. */
+.rf-estimator {
+  padding-block: var(--rf-section-y);
+  background: var(--rf-ink);
+  color: var(--rf-on-dark);
+}
+
+.rf-estimator .rf-roof {
+  margin-bottom: 0;
+  padding: 0;
+  background: none;
+}

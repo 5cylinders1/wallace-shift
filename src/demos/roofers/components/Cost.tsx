@@ -1,33 +1,33 @@
 import { cost } from '../content'
-import type { LeadContext } from '../lead'
-import { RoofTool } from '../roof/RoofTool'
-import type { RoofAddress } from '../roof/types'
+import { pageHref } from '../routes'
+import { Heading } from './Heading'
 import './Cost.css'
 
-interface CostProps {
-  onBallpark: (ballpark: LeadContext['ballpark']) => void
-  onAddress: (address: RoofAddress | null) => void
-}
-
-export function Cost({ onBallpark, onAddress }: CostProps) {
+/** Typical prices, what a quote includes, and what moves the number: the Prices page. */
+export function Prices() {
   return (
-    <section id="cost" className="rf-section rf-cost" aria-labelledby="rf-cost-title">
+    <section id="prices" className="rf-section rf-cost" aria-labelledby="rf-cost-title">
       <div className="rf-container">
         <div className="rf-section__head rf-section__head--split" data-reveal>
           <div>
             <p className="rf-eyebrow">{cost.eyebrow}</p>
-            <h2 id="rf-cost-title" className="rf-display">
+            <Heading id="rf-cost-title" className="rf-display">
               {cost.title}
-            </h2>
+            </Heading>
           </div>
           <p className="rf-lede">{cost.lede}</p>
         </div>
 
-        <RoofTool onEstimate={onBallpark} onAddress={onAddress} />
+        <div className="rf-cost__tool" data-reveal>
+          <p>{cost.toolPrompt}</p>
+          <a className="rf-button rf-button--primary" href={pageHref('home', 'estimator')}>
+            {cost.toolAction}
+          </a>
+        </div>
 
         <div className="rf-cost__layout">
           <div className="rf-cost__prices" data-reveal>
-            <h3 className="rf-subhead">Typical prices</h3>
+            <Heading rank={1} className="rf-subhead">Typical prices</Heading>
             <dl className="rf-prices">
               {cost.rows.map((row) => (
                 <div key={row.name} className="rf-prices__row">
@@ -39,7 +39,7 @@ export function Cost({ onBallpark, onAddress }: CostProps) {
             </dl>
           </div>
           <div className="rf-cost__included" data-reveal>
-            <h3 className="rf-subhead">{cost.included.title}</h3>
+            <Heading rank={1} className="rf-subhead">{cost.included.title}</Heading>
             <ul>
               {cost.included.items.map((item) => (
                 <li key={item}>{item}</li>
@@ -50,7 +50,7 @@ export function Cost({ onBallpark, onAddress }: CostProps) {
 
         <div className="rf-cost__more" data-reveal>
           <div className="rf-cost__extras">
-            <h3 className="rf-subhead">{cost.extras.title}</h3>
+            <Heading rank={1} className="rf-subhead">{cost.extras.title}</Heading>
             <dl>
               {cost.extras.items.map(([name, price]) => (
                 <div key={name}>
@@ -61,7 +61,7 @@ export function Cost({ onBallpark, onAddress }: CostProps) {
             </dl>
           </div>
           <div className="rf-cost__factors">
-            <h3 className="rf-subhead">{cost.factors.title}</h3>
+            <Heading rank={1} className="rf-subhead">{cost.factors.title}</Heading>
             <dl>
               {cost.factors.items.map(([name, body]) => (
                 <div key={name}>

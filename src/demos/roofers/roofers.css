@@ -211,6 +211,11 @@ svg {
   padding-block: var(--rf-section-y);
 }
 
+/* The deeper pages have no hero under the fixed header: they start below it. */
+.rf-page {
+  padding-top: var(--rf-header);
+}
+
 .rf-section__head {
   display: grid;
   gap: 18px;
