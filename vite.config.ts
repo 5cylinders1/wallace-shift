@@ -173,12 +173,13 @@ function roofingDemoRoutes(): Plugin {
         ...Object.fromEntries(['process', 'insurance', 'cost', 'estimate'].map(page =>
           [`/alder-stone/${page}`, `/demos/roofers-2/${page}/index.html`])),
         '/contour': '/demos/roofers-3/index.html',
+        '/halcyon': '/demos/roofers-4/index.html',
       }
       if (destinations[alias]) {
         req.url = `${destinations[alias]}${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -214,6 +215,7 @@ export default defineConfig({
         roofersEstateCost: 'demos/roofers-2/cost/index.html',
         roofersEstateEstimate: 'demos/roofers-2/estimate/index.html',
         roofersContour: 'demos/roofers-3/index.html',
+        roofersHalcyon: 'demos/roofers-4/index.html',
       },
     },
   },

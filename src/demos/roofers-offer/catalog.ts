@@ -57,7 +57,19 @@ export const roofingDesigns: RoofingDesign[] = [
     localPath: '/demos/roofers-3/',
     productionPath: '/contour',
   },
-  { id: 'design-04', number: '04', name: 'Design in progress', status: 'coming-soon' },
+  {
+    id: 'halcyon',
+    number: '04',
+    name: 'Halcyon Roofworks',
+    status: 'available',
+    character: 'Cinematic. Luxurious. Transparent.',
+    description: 'A drone-film experience for luxury estates, with a roof visualizer that tries materials on the owner\u2019s own home and a client ledger for every project.',
+    features: ['Scroll-driven drone film', 'Photo roof visualizer with pricing', 'Client project ledger'],
+    thumbnail: '/demos/roofers-4/preview.jpg',
+    thumbnailAlt: 'Halcyon Roofworks website with a drone view of a luxury estate and its standing-seam metal roof',
+    localPath: '/demos/roofers-4/',
+    productionPath: '/halcyon',
+  },
   { id: 'design-05', number: '05', name: 'Design in progress', status: 'coming-soon' },
 ]
 

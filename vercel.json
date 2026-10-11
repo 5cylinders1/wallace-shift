@@ -55,6 +55,10 @@
     {
       "source": "/contour",
       "destination": "/demos/roofers-3"
+    },
+    {
+      "source": "/halcyon",
+      "destination": "/demos/roofers-4"
     }
   ]
 }
