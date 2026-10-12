@@ -39,11 +39,20 @@ selling repairs.
 - **Materials**: standing-seam metal, natural slate, cedar shake, clay tile
   and designer composite, each with typical service life, weight, performance
   notes and an illustrative installed planning rate.
-- **Roof visualizer** (`Visualizer.tsx`, `tiles.ts`): the visitor loads a
-  photo (or the sample home), traces each roof plane as a polygon, and picks a
-  material, finish and texture scale. A procedural seamless tile is composited
-  inside the traced planes with the original image multiplied and soft-lit
-  back over it so shading survives. Roof area and complexity drive a planning
+- **Roof visualizer** (`Visualizer.tsx`, `tiles.ts`, `projective.ts`): the
+  visitor loads a photo (or the sample home), traces each roof plane as a
+  polygon, and picks a material, finish and size. Each plane is textured
+  through its own mapping: a hip face seen from the street (level eave and
+  ridge, ridge centred and narrower) keeps courses parallel to the eave and
+  foreshortens them by the pitch; any other quad is treated as a rectangle in
+  perspective via a homography, drawn as a mesh of affine cells so courses and
+  seams converge toward the ridge. Traces with more than four corners use a
+  covering rectangular mapping clipped to the exact outline, keeping every
+  traced section textured. A Roof planes control overrides the auto
+  choice. Material size is derived from the longest traced eave (assumed about
+  50 ft) and a per-material unit size, with a fine-to-coarse slider. The
+  original photo is multiplied, soft-lit and lightly screened back over the
+  texture so shading and sky highlights survive. Roof area and complexity drive a planning
   range. Everything runs in the browser; the photo is never uploaded. The
   result can be downloaded and the selection carried into the consultation
   form.
@@ -64,7 +73,9 @@ produced with Higgsfield (GPT Image 2.5 stills, Seedance 2.5 film).
   1280×720, 24 fps, silent, six-frame keyframe interval and fast-start
   metadata for bidirectional seeking. Cache version `halcyon-v1`.
 - `material-metal.jpg`, `material-slate.jpg`, `material-cedar.jpg`,
-  `material-clay.jpg`, `material-build.jpg`: 1440-wide section imagery.
+  `material-clay.jpg`, `material-designer.jpg`, `material-build.jpg`:
+  1440-wide section imagery (the framing-stage aerial illustrates the roof
+  system layers, not a material).
 - `sample-home.jpg`: 1600-wide front elevation used by the visualizer, with
   preset roof polygons in `Visualizer.tsx` (`SAMPLE_ROOF`).
 - `preview.jpg`: 1200×630 Open Graph image and gallery thumbnail.
@@ -97,4 +108,24 @@ the clay painter can shade its varied base without losing the chosen color.
 - The Vite build still reports its existing large-chunk warning. These
   local checks do not establish a deployed release or working backend.
 
-Commit message: `feat: add Halcyon Roofworks luxury roofing demo`
+### October 12 update
+
+Imported the updated source ZIP after verifying its 26 files against the
+final file hashes in the two-commit Git patch. The first commit is the
+original demo already imported; this update applies the second commit's
+visualizer and composite-slate image changes. The local clay-color fix and
+October 11 verification notes are preserved.
+
+Both October 12 ZIPs and their extracted root folders are ignored by Git.
+The imported source and new image remain available to commit.
+
+- Full TypeScript/Vite build passes; ESLint reports no errors and the same
+  four existing Fast Refresh warnings. Lint excludes all three retained
+  source/export folders.
+- Local browser checks cover the sample home, all five materials, all three
+  roof-plane modes and the material-size control, with no console errors.
+- The embedded browser did not report a completed image-download event, so
+  saving the exported image through that browser remains unverified.
+- These are local checks; the update has not been deployed by this import.
+
+Commit message: `fix: improve Halcyon roof visualizer and ignore update exports`

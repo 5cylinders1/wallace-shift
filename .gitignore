@@ -62,6 +62,10 @@ dist-ssr
 /review-assets/
 /tmp/
 
-# Original Higgsfield download; imported demo files live in the project folders.
+# Original Higgsfield downloads; imported demo files live in the project folders.
 /d4839bcc-392d-4679-8a9f-10557f75c641.zip
 /d4839bcc-392d-4679-8a9f-10557f75c641/
+/17546f83-11ff-4bac-ba85-5fd6221c0441.zip
+/17546f83-11ff-4bac-ba85-5fd6221c0441/
+/1e35bf70-26c6-43df-b5ec-93c0ee9fb1cf.zip
+/1e35bf70-26c6-43df-b5ec-93c0ee9fb1cf/

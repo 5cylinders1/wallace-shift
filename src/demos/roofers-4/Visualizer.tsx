@@ -1,6 +1,26 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { complexities, materials, money, type ComplexityId, type Material, type MaterialId } from './content'
-import { makeTile } from './tiles'
+import { makeTile, tileUnits } from './tiles'
+import { drawMapped, elevationMap, looksLikeHipFace, planeQuad, squareToQuad } from './projective'
+
+type PlaneMode = 'auto' | 'elevation' | 'perspective'
+
+/** A flat texture of one roof plane: `across` tiles along the eave, `aspect` = slope / eave. */
+function planeTexture(tile: HTMLCanvasElement, across: number, aspect: number): HTMLCanvasElement {
+  const texture = document.createElement('canvas')
+  texture.width = 1024
+  texture.height = Math.max(128, Math.min(2048, Math.round(1024 * aspect)))
+  const ctx = texture.getContext('2d')!
+  const k = texture.width / Math.max(1, across) / tile.width
+  const pattern = ctx.createPattern(tile, 'repeat')
+  if (pattern) {
+    // Anchor the first course on the eave at the bottom of the texture.
+    pattern.setTransform(new DOMMatrix().translate(0, texture.height).scale(k, k))
+    ctx.fillStyle = pattern
+    ctx.fillRect(0, 0, texture.width, texture.height)
+  }
+  return texture
+}
 
 /**
  * Roof visualizer. Everything runs in the visitor's browser: the photo is
@@ -45,6 +65,7 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   const [materialId, setMaterialId] = useState<MaterialId>('standing-seam')
   const [colorIndex, setColorIndex] = useState(0)
   const [scale, setScale] = useState(1)
+  const [planeMode, setPlaneMode] = useState<PlaneMode>('auto')
   const [areaText, setAreaText] = useState('3200')
   const [complexity, setComplexity] = useState<ComplexityId>('moderate')
   const [showGuides, setShowGuides] = useState(true)
@@ -70,6 +91,28 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
     ctx.drawImage(image, 0, 0, w, h)
 
     if (shapes.length) {
+      const tile = makeTile(material.id, color.hex)
+      const quads = shapes.map(shape => planeQuad(shape.map(p => ({ x: p.x * w, y: p.y * h }))))
+      // Assume the longest traced eave is about 50 ft so materials land at real-world size.
+      const longestEave = Math.max(1, ...quads.map(q => Math.hypot(q[1].x - q[0].x, q[1].y - q[0].y)))
+      const { unitPx, unitFeet } = tileUnits[material.id]
+      const tilePx = tile.width * (unitFeet * (longestEave / 50) * scale) / unitPx
+      shapes.forEach((shape, index) => {
+        const quad = quads[index]
+        const eave = Math.max(1, Math.hypot(quad[1].x - quad[0].x, quad[1].y - quad[0].y))
+        const slope = Math.max(1, (Math.hypot(quad[2].x - quad[1].x, quad[2].y - quad[1].y) + Math.hypot(quad[3].x - quad[0].x, quad[3].y - quad[0].y)) / 2)
+        const texture = planeTexture(tile, eave / tilePx, slope / eave)
+        const hip = planeMode === 'elevation' || (planeMode === 'auto' && looksLikeHipFace(quad))
+        ctx.save()
+        ctx.beginPath()
+        shape.forEach((p, i) => (i ? ctx.lineTo(p.x * w, p.y * h) : ctx.moveTo(p.x * w, p.y * h)))
+        ctx.closePath()
+        ctx.clip()
+        if (hip) drawMapped(ctx, texture, elevationMap(quad), 1)
+        else drawMapped(ctx, texture, squareToQuad(quad))
+        ctx.restore()
+      })
+      // Original light and shadow returns through the new material.
       ctx.save()
       ctx.beginPath()
       for (const shape of shapes) {
@@ -77,20 +120,17 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
         ctx.closePath()
       }
       ctx.clip()
-      const tile = makeTile(material.id, color.hex)
-      const pattern = ctx.createPattern(tile, 'repeat')
-      if (pattern) {
-        const px = (w / 1400) * scale
-        pattern.setTransform(new DOMMatrix().scale(px, px))
-        ctx.fillStyle = pattern
-        ctx.fillRect(0, 0, w, h)
-      }
-      // Original light and shadow returns through the new material.
+      // Blur the photo first so broad light and shade carry over, not the old shingle texture.
+      ctx.filter = `blur(${Math.max(2, Math.round(w / 400))}px)`
       ctx.globalCompositeOperation = 'multiply'
-      ctx.globalAlpha = 0.62
+      ctx.globalAlpha = 0.85
       ctx.drawImage(image, 0, 0, w, h)
       ctx.globalCompositeOperation = 'soft-light'
-      ctx.globalAlpha = 0.5
+      ctx.globalAlpha = 0.6
+      ctx.drawImage(image, 0, 0, w, h)
+      // Sky highlights survive on dark finishes.
+      ctx.globalCompositeOperation = 'screen'
+      ctx.globalAlpha = 0.16
       ctx.drawImage(image, 0, 0, w, h)
       ctx.restore()
     }
@@ -122,7 +162,7 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
         })
       }
     }
-  }, [shapes, draft, material.id, color.hex, scale, showGuides])
+  }, [shapes, draft, material.id, color.hex, scale, planeMode, showGuides])
 
   useEffect(() => { render() }, [render])
 
@@ -234,8 +274,16 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
 
       <div className="hr-viz-group hr-viz-row">
         <label>
-          <span className="hr-viz-label">Texture scale</span>
-          <input type="range" min="0.5" max="1.8" step="0.05" value={scale} onChange={event => setScale(Number(event.target.value))} />
+          <span className="hr-viz-label">Material size <span>fine to coarse</span></span>
+          <input type="range" min="0.5" max="2" step="0.05" value={scale} onChange={event => setScale(Number(event.target.value))} />
+        </label>
+        <label>
+          <span className="hr-viz-label">Roof planes</span>
+          <select value={planeMode} onChange={event => setPlaneMode(event.target.value as PlaneMode)}>
+            <option value="auto">Auto: hip faces straight on, gables in perspective</option>
+            <option value="elevation">Street view: courses parallel to the eave</option>
+            <option value="perspective">Drone or angled view: full perspective</option>
+          </select>
         </label>
       </div>
 
