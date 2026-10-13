@@ -12,6 +12,10 @@ payment.
 | --- | --- |
 | `https://roofers.wallaceshift.com/` | `/demos/roofers-offer/` |
 | `https://roofers.wallaceshift.com/northvane` | `/demos/roofers/` |
+| `https://roofers.wallaceshift.com/northvane/insurance` | `/demos/roofers/insurance/` |
+| `https://roofers.wallaceshift.com/northvane/prices` | `/demos/roofers/prices/` |
+| `https://roofers.wallaceshift.com/northvane/warranty` | `/demos/roofers/warranty/` |
+| `https://roofers.wallaceshift.com/northvane/faq` | `/demos/roofers/faq/` |
 | `https://roofers.wallaceshift.com/alder-stone` | `/demos/roofers-2/` |
 | `https://roofers.wallaceshift.com/alder-stone/process` | `/demos/roofers-2/process/` |
 | `https://roofers.wallaceshift.com/alder-stone/insurance` | `/demos/roofers-2/insurance/` |
@@ -30,7 +34,8 @@ available; no broad rewrite captures the demos' media or `/api` requests.
 Each fictional demo document remains `noindex, nofollow`, with canonical and
 Open Graph URLs identifying its public branded path. Alder & Stone navigation
 uses `src/demos/roofers-2/routes.ts` to stay within the public or local entry
-being viewed. Its footer links separately to the studio and the offer gallery.
+being viewed; Northvane's uses `src/demos/roofers/routes.ts`, which also carries
+the `company`, `city` and `phone` parameters from page to page. Its footer links separately to the studio and the offer gallery.
 
 ## Catalog and availability
 
