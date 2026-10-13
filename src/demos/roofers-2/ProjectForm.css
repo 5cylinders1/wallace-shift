@@ -26,6 +26,12 @@
 .er-form-rail-note h3 { font-size: 14px; font-weight: 550; line-height: 1.55; margin: 0 0 11px; }
 .er-form-rail-note p, .er-form-demo-note { color: #646d64; font-size: 12px; line-height: 1.85; }
 .er-form-demo-note { margin-top: 28px; max-width: 37ch; }
+.er-form-roof-estimate { margin-top: 26px; padding: 22px; border: 1px solid #dcd7c8; border-top: 2px solid #b99a5c; background: #f0eee4; }
+.er-form-roof-estimate .er-form-eyebrow { margin-bottom: 10px; font-size: 9px; }
+.er-form-roof-estimate h3 { margin: 0 0 12px; font: 400 clamp(23px, 2.2vw, 30px)/1.15 Georgia, 'Times New Roman', serif; letter-spacing: -.025em; }
+.er-form-roof-estimate p:not(.er-form-eyebrow) { margin: 10px 0 0; color: #5e685c; font-size: 11px; line-height: 1.75; overflow-wrap: anywhere; }
+.er-form-roof-estimate .er-form-roof-address { color: #263c30; font-weight: 550; }
+.er-form-roof-estimate .er-form-reset { padding: 12px 0 0; }
 
 .er-project-form-panel { background: #fffefa; border: 1px solid #e0dfd4; box-shadow: 0 16px 58px -32px #27392c28; min-width: 0; }
 .er-project-form, .er-form-preview { padding: clamp(25px, 4.1vw, 56px); }

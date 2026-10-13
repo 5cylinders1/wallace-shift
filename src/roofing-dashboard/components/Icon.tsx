@@ -1,0 +1,30 @@
+export function Icon({ name, size = 20 }: { name: string; size?: number }) {
+  const paths: Record<string, string> = {
+    overview: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
+    map: 'm3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z M9 3v15 M15 6v15',
+    people: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
+    list: 'm3 6 1 1 2-2 M10 6h11 m-18 6 1 1 2-2 M10 12h11 m-18 6 1 1 2-2 M10 18h11',
+    plug: 'm8 3 3 3 m5-3 3 3 M4 14l6 6 4-4a5 5 0 0 0 0-7l-3-3-7 8Zm3 3-4 4 M12 7l4-4',
+    arrow: 'M4 12h16 m-6-6 6 6-6 6',
+    chevron: 'm9 5 7 7-7 7',
+    plus: 'M12 5v14 M5 12h14',
+    close: 'm6 6 12 12 M6 18 18 6',
+    search: 'M21 21l-4.5-4.5 M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14',
+    calendar: 'M8 2v4 M16 2v4 M3 10h18 M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2 M7 14h3 M14 14h3',
+    hail: 'M6 14a4 4 0 0 1-.3-8 6 6 0 0 1 11.4 0 4 4 0 0 1 .9 8 M6 18h.01 M12 18h.01 M18 18h.01 M9 22h.01 M15 22h.01',
+    wind: 'M3 8h12a3 3 0 1 0-3-3 M2 12h17a3 3 0 1 1-3 3 M3 16h5a3 3 0 1 1-3 3',
+    tornado: 'M3 4h18 M5 8h14 M7 12h10 M9 16h6 M11 20h2',
+    hurricane: 'M16 3a9 9 0 0 0-11 13 M8 21A9 9 0 0 0 19 8 M16 12a4 4 0 1 0-8 0 4 4 0 0 0 8 0',
+    pin: 'M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0 M15 10a3 3 0 1 0-6 0 3 3 0 0 0 6 0',
+    home: 'm3 10 9-7 9 7 M5 9v12h14V9 M9 21v-7h6v7',
+    check: 'm5 12 4 4L19 6',
+    reset: 'M3 10a9 9 0 1 1 1 7 M3 4v6h6',
+    copy: 'M8 8h13v13H8z M16 8V3H3v13h5',
+    shield: 'm12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z m-4 9 3 3 5-6',
+    clock: 'M21 12a9 9 0 1 0-18 0 9 9 0 0 0 18 0 M12 7v5l3 2',
+    upload: 'M12 16V3 m-5 5 5-5 5 5 M3 16v5h18v-5',
+    mail: 'M3 5h18v14H3z m0 0 9 7 9-7',
+    spark: 'm12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z',
+  }
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name] ?? paths.home} /></svg>
+}

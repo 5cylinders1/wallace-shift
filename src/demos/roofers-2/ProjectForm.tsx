@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
+import { roofTool } from '../roofers/content'
+import { clearRoofEstimate, readRoofEstimate, type EstateRoofEstimate } from './estimateContext'
 import './ProjectForm.css'
 
 type PropertyKind = 'residential' | 'commercial'
@@ -18,6 +20,7 @@ export interface RoofProjectPreview {
   source: 'demo2'
   createdAt: string
   educationContext: string[]
+  estimateContext: EstateRoofEstimate | null
   property: { kind: PropertyKind; relationship: Relationship; postalCode: string; streetAddress: string | null }
   roof: { concern: Concern; urgency: Urgency; material: string | null; age: string | null }
   plan: { payment: Payment; insuranceStage: InsuranceStage | null; timing: Timing; notes: string | null }
@@ -155,10 +158,39 @@ function SummaryRow({ label, children }: { label: string; children: ReactNode })
   return <div className="er-form-summary-row"><dt>{label}</dt><dd>{children}</dd></div>
 }
 
+/** Repeat the provider's unaltered credit beside its measurement-derived figures. */
+function measurementCredit(context: EstateRoofEstimate) {
+  const roof = context.ballpark.roof
+  return roof?.source === 'measured' && roof.measuredBy
+    ? roofTool.measure.credits[roof.measuredBy as keyof typeof roofTool.measure.credits] ?? null
+    : null
+}
+
+function EstimateSummary({ context, onRemove }: { context: EstateRoofEstimate; onRemove?: () => void }) {
+  const { ballpark, address } = context
+  const roof = ballpark.roof
+  const sample = roof?.source === 'sample'
+  const money = (value: number) => value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+  const source = roof?.source === 'measured' ? 'Measured roof' : roof?.source === 'outline' ? 'Building outline + selected pitch' : roof?.source === 'home-size' ? 'Home size + selected pitch' : 'Illustrative sample house'
+  return <section className="er-form-roof-estimate" aria-label={sample ? 'Illustrative sample estimate' : 'Roof planning estimate'}>
+    <p className="er-form-eyebrow">{sample ? 'ILLUSTRATIVE SAMPLE ESTIMATE' : 'YOUR PLANNING ESTIMATE'}</p>
+    <h3>{money(ballpark.low)}–{money(ballpark.high)}</h3>
+    {address && <p className="er-form-roof-address">{address.formatted}</p>}
+    {roof && <p>{roof.roofSqFt.toLocaleString('en-US')} sq ft · {roof.pitch}/12 pitch<br />{source}</p>}
+    {measurementCredit(context) && <p className="er-form-measure-credit">{measurementCredit(context)}</p>}
+    <p>{sample ? 'Example only. These figures do not describe your property.' : 'A planning range, subject to an inspection and a written scope.'}</p>
+    {onRemove && <button type="button" className="er-form-reset" onClick={onRemove}>Remove this estimate</button>}
+  </section>
+}
+
 export default function ProjectForm({ educationContext = [] }: ProjectFormProps) {
   const prefix = useId()
   const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<Answers>({ ...EMPTY })
+  const [estimateContext, setEstimateContext] = useState(readRoofEstimate)
+  const [estimateRemoved, setEstimateRemoved] = useState(false)
+  const [answers, setAnswers] = useState<Answers>(() => ({ ...EMPTY,
+    streetAddress: estimateContext?.address?.street ?? '', postalCode: estimateContext?.address?.zip ?? '',
+  }))
   const [errors, setErrors] = useState<Errors>({})
   const [preview, setPreview] = useState<RoofProjectPreview | null>(null)
   const [focusRequest, setFocusRequest] = useState<{ target: 'heading' | 'errors' | 'preview' } | null>(null)
@@ -176,7 +208,17 @@ export default function ProjectForm({ educationContext = [] }: ProjectFormProps)
 
   function requestFocus(target: 'heading' | 'errors' | 'preview') { setFocusRequest({ target }) }
 
+  function removeEstimate() {
+    clearRoofEstimate()
+    setEstimateContext(null)
+  }
+
   function update<K extends Field>(field: K, value: Answers[K]) {
+    if (estimateContext?.address && (field === 'streetAddress' || field === 'postalCode')) {
+      const original = field === 'streetAddress' ? estimateContext.address.street : estimateContext.address.zip
+      const normalize = (input: string) => input.trim().replace(/\s+/g, ' ').toLowerCase()
+      if (normalize(String(value)) !== normalize(original ?? '')) { removeEstimate(); setEstimateRemoved(true) }
+    }
     setAnswers(current => ({ ...current, [field]: value }))
     setErrors(current => {
       const next = { ...current }
@@ -213,6 +255,7 @@ export default function ProjectForm({ educationContext = [] }: ProjectFormProps)
     setErrors({})
     setPreview({
       schemaVersion: 1, source: 'demo2', createdAt: new Date().toISOString(), educationContext: [...educationContext],
+      estimateContext,
       property: { kind: answers.property as PropertyKind, relationship: answers.relationship as Relationship,
         postalCode: answers.postalCode.trim(), streetAddress: optional(answers.streetAddress) },
       roof: { concern: answers.concern as Concern, urgency: answers.urgency as Urgency, material: optional(answers.material), age: optional(answers.age) },
@@ -254,7 +297,8 @@ export default function ProjectForm({ educationContext = [] }: ProjectFormProps)
         <h3>Understanding comes before an estimate.</h3>
         <p>{ESTIMATE_NOTE}</p>
       </div>
-      <p className="er-form-demo-note">Interactive demo for the fictional Alder &amp; Stone Roofing. Your answers stay in this page and clear when you reload.</p>
+      {estimateContext && <EstimateSummary context={estimateContext} onRemove={preview ? undefined : () => { removeEstimate(); requestFocus('heading') }} />}
+      <p className="er-form-demo-note">Interactive demo for the fictional Alder &amp; Stone Roofing. Brief answers and contact details clear when you reload. An estimate you choose to carry here stays in this browser tab for up to 24 hours.</p>
     </aside>
 
     <div className="er-project-form-panel">
@@ -273,6 +317,12 @@ export default function ProjectForm({ educationContext = [] }: ProjectFormProps)
           <SummaryRow label="Priority">{labelFor(URGENCIES, preview.roof.urgency)}</SummaryRow>
           <SummaryRow label="Material">{preview.roof.material ?? 'Not provided'}</SummaryRow>
           <SummaryRow label="Age">{preview.roof.age ?? 'Not provided'}</SummaryRow>
+          {preview.estimateContext && <SummaryRow label={preview.estimateContext.ballpark.roof?.source === 'sample' ? 'Sample estimate' : 'Planning estimate'}>
+            {preview.estimateContext.ballpark.low.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}–{preview.estimateContext.ballpark.high.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}<br />
+            {preview.estimateContext.ballpark.summary}<br />
+            {measurementCredit(preview.estimateContext) && <>{measurementCredit(preview.estimateContext)}<br /></>}
+            {preview.estimateContext.ballpark.roof?.source === 'sample' ? 'Illustrative sample only; not this property.' : 'Subject to an inspection and written scope.'}
+          </SummaryRow>}
         </dl></div>
         <div className="er-form-summary-section"><h3>03 / Your plans</h3><dl>
           <SummaryRow label="Payment path">{labelFor(PAYMENTS, preview.plan.payment)}</SummaryRow>
@@ -291,7 +341,7 @@ export default function ProjectForm({ educationContext = [] }: ProjectFormProps)
         <p className="er-form-estimate-note">{ESTIMATE_NOTE}</p>
         <div className="er-form-actions er-form-preview-actions">
           <button className="er-form-button er-form-button-primary" type="button" onClick={() => { setPreview(null); setStep(0); requestFocus('heading') }}>Edit your brief <span aria-hidden="true">↗</span></button>
-          <button className="er-form-reset" type="button" onClick={() => { setPreview(null); setAnswers({ ...EMPTY }); setStep(0); setErrors({}); requestFocus('heading') }}>Start a fresh preview</button>
+          <button className="er-form-reset" type="button" onClick={() => { setPreview(null); setAnswers({ ...EMPTY }); removeEstimate(); setEstimateRemoved(false); setStep(0); setErrors({}); requestFocus('heading') }}>Start a fresh preview</button>
         </div>
       </section> : <form className="er-project-form" onSubmit={submit} onKeyDown={handleEnter} noValidate aria-labelledby={`${prefix}-step-heading`}>
         <div className="er-form-step-meta"><span>Project brief</span><span>Step {step + 1} of {STEPS.length}</span></div>
@@ -313,6 +363,7 @@ export default function ProjectForm({ educationContext = [] }: ProjectFormProps)
               <input id={fieldId('streetAddress')} name="street-address" autoComplete="street-address" maxLength={180} placeholder="Where the roof is located" value={answers.streetAddress} onChange={event => update('streetAddress', event.target.value)} /></div>
           </div>
           <p className="er-form-helper">The ZIP code describes the project location. This demo does not check service availability.</p>
+          {estimateRemoved && <p className="er-form-context-note" role="status">The property address changed, so the previous roof estimate was removed from this brief.</p>}
         </div>}
 
         {step === 1 && <div className="er-form-step-fields">

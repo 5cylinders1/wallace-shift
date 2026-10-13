@@ -168,6 +168,7 @@ function roofingDemoRoutes(): Plugin {
         '/northvane': '/demos/roofers/index.html',
         ...Object.fromEntries(['insurance', 'prices', 'warranty', 'faq'].map(page =>
           [`/northvane/${page}`, `/demos/roofers/${page}/index.html`])),
+        '/roofing-dashboard': '/demos/roofers-dashboard/index.html',
         '/alder-stone': '/demos/roofers-2/index.html',
         ...Object.fromEntries(['process', 'insurance', 'cost', 'estimate'].map(page =>
           [`/alder-stone/${page}`, `/demos/roofers-2/${page}/index.html`])),
@@ -176,7 +177,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `${destinations[alias]}${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -204,6 +205,7 @@ export default defineConfig({
         roofersPrices: 'demos/roofers/prices/index.html',
         roofersWarranty: 'demos/roofers/warranty/index.html',
         roofersFaq: 'demos/roofers/faq/index.html',
+        roofersDashboard: 'demos/roofers-dashboard/index.html',
         roofersOffer: 'demos/roofers-offer/index.html',
         roofersEstate: 'demos/roofers-2/index.html',
         roofersEstateProcess: 'demos/roofers-2/process/index.html',

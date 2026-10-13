@@ -29,6 +29,10 @@
       "destination": "/demos/roofers/faq"
     },
     {
+      "source": "/roofing-dashboard",
+      "destination": "/demos/roofers-dashboard"
+    },
+    {
       "source": "/alder-stone",
       "destination": "/demos/roofers-2"
     },

@@ -10,11 +10,38 @@ These describe the release configuration, not a record of deployment verificatio
 
 ## Pages
 
-- `/demos/roofers-2/`: scroll-controlled roof film, three guide links, residential/commercial introduction, project CTA.
+- `/demos/roofers-2/`: scroll-controlled roof film, interactive roof planner directly below the hero, three guide links, residential/commercial introduction, project CTA.
 - `process/`: inspection, scope, disruption, staying home, duration factors and warranty layers.
 - `insurance/`: covered damage versus wear, ACV/RCV, deductibles, claim stages and commercial considerations.
 - `cost/`: pricing factors, clearly illustrative $20,000 itemized budget and editable hypothetical payment calculator.
 - `estimate/`: four-step property/authority, issue/urgency, payment/claim/timing, contact/consent brief.
+
+## Roof planner
+
+The `#roof-planner` section reuses Northvane's measurement, outline selection,
+pitch and pricing logic through optional presentation props. Alder & Stone has
+its own scoped cream/pine/brass theme and a native SVG architectural sample plan.
+The original demo retains its default presentation and in-page links. The planner
+uses the existing address/measurement endpoints and their provider configuration;
+the new theme does not add a provider or change billing behavior.
+
+Selecting “Use this estimate in my project brief” stores only validated estimate
+context and the selected property address in this tab's session storage, expiring
+after 24 hours. Sample/manual results never prefill an address. Contact information
+and brief answers stay in React memory; the final brief remains an unsent preview.
+Stored estimates can be removed and are cleared when the carried property address
+changes or a fresh preview is started. Blocked storage shows a fallback link.
+Measured provider attribution follows the result into the brief and preview.
+
+Verified locally on 2026-10-10: production build/TypeScript, scoped ESLint, nine
+storage validation tests (`node --test scripts/test-estate-estimate-context.mjs`)
+and whitespace checks passed. Browser checks covered desktop at 1728px, mobile
+at 390px and overflow at 320px, sample building selection and empty selection,
+pitch presets and keyboard adjustment, material pricing, manual home size/stories,
+local and branded route handoff, the complete unsent brief preview, fresh reset
+and focus after estimate removal. Northvane's sample result and original CTA/
+financing links were rechecked. Live paid provider lookups were not exercised.
+Review image: ignored `output/roofers-2/qa/roof-planner-desktop.png`.
 
 Each route has a real HTML document, its own title, public canonical/OG URL, and
 noindex/nofollow. All five use the same independent React bundle. Original local
