@@ -59,6 +59,10 @@
     {
       "source": "/halcyon",
       "destination": "/demos/roofers-4"
+    },
+    {
+      "source": "/velar",
+      "destination": "/demos/roofers-5"
     }
   ]
 }

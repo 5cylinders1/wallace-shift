@@ -1,0 +1,111 @@
+.va-visualizer{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(280px,1fr);gap:38px;color:#182824;font-family:inherit;font-size:13px;text-align:left;align-items:start}
+.va-visualizer *{box-sizing:border-box}
+.va-visualizer button,.va-visualizer input,.va-visualizer select{font:inherit}
+.va-visualizer button{cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.va-visualizer button:disabled{opacity:.38;cursor:default}
+.va-visualizer button:focus-visible,.va-visualizer input:focus-visible,.va-visualizer select:focus-visible,.va-visualizer summary:focus-visible,.va-visualizer canvas:focus-visible{outline:2px solid #7b8372;outline-offset:4px}
+.va-viz-topline{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px;font-size:10px;letter-spacing:.04em;color:#65726b}
+.va-viz-topline>span:first-child{display:flex;gap:8px;align-items:center}
+.va-viz-topline i{width:5px;height:5px;border-radius:50%;background:#7b8372;display:block}
+.va-viz-private{font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.va-viz-frame{position:relative;overflow:hidden;border-radius:3px;background:#e2e4de;min-height:180px;isolation:isolate}
+.va-viz-frame canvas{display:block;width:100%;height:auto;cursor:pointer}
+.va-viz-frame.is-tracing canvas{cursor:crosshair;touch-action:none}
+.va-viz-frame.has-guides canvas{touch-action:none}
+.va-viz-loading{position:absolute;inset:0;display:grid;place-items:center;background:#e3e6df;color:#5e6b63;font-size:13px}
+.va-viz-photo-label{position:absolute;left:21px;bottom:18px;max-width:calc(100% - 42px);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#fff;background:rgba(24,40,36,.77);padding:10px 12px;border-radius:2px;pointer-events:none;backdrop-filter:blur(10px)}
+.va-viz-photo-label>span{color:#b3bfb2;margin:0 9px}
+.va-viz-sample-label{position:absolute;top:17px;left:20px;color:#fff;background:rgba(24,40,36,.4);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:7px 9px;pointer-events:none}
+.va-viz-split-line{position:absolute;top:0;bottom:0;width:1px;background:white;pointer-events:none}
+.va-viz-split-line>span{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:#f7f6f2;color:#182824;font-size:17px;box-shadow:0 1px 8px #0003}
+.va-viz-viewbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0;border-bottom:1px solid #d9ddd6}
+.va-viz-view-switch{display:flex;gap:4px}
+.va-viz-view-switch button{border:0;color:#788178;background:transparent;padding:9px 12px;font-size:10px;border-radius:2px}
+.va-viz-view-switch button[aria-pressed=true]{color:#182824;background:#e8ebe4}
+.va-viz-save{border:0;background:transparent;padding:6px 0;color:#182824;font-size:10px}
+.va-viz-save>span{padding-left:9px;font-size:15px}
+.va-viz-save:hover{color:#7b8372}
+.va-viz-compare-control{display:flex;align-items:center;gap:14px;font-size:10px;color:#65726b;padding:14px 0 0}
+.va-viz-compare-control input{flex:1;min-width:40px;accent-color:#182824;cursor:ew-resize}
+.va-viz-photo-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:22px 0}
+.va-viz-photo-actions button{border:0;background:transparent;color:#6b756d;font-size:10px;padding:9px 0}
+.va-viz-photo-actions .va-viz-upload{padding:12px 17px;background:#182824;color:#fff;border-radius:2px;font-size:11px;letter-spacing:.015em}
+.va-viz-upload>span{margin-right:8px}
+.va-viz-photo-actions .va-viz-upload:hover{background:#394b40}
+.va-viz-photo-actions p{flex:1;min-width:170px;font-size:9px;line-height:1.8;color:#7c857d;margin:0;text-align:right}
+.va-viz-geometry{border-top:1px solid #d9ddd6;border-bottom:1px solid #d9ddd6}
+.va-viz-geometry summary{display:flex;justify-content:space-between;align-items:center;padding:18px 0;cursor:pointer;list-style:none;font-size:11px}
+.va-viz-geometry summary::-webkit-details-marker{display:none}
+.va-viz-geometry summary>span:last-child{color:#7b8372;font-size:10px;display:flex;align-items:center;gap:20px}
+.va-viz-geometry summary b{font-size:17px;font-weight:400;line-height:1;transition:transform .2s}
+.va-viz-geometry[open] summary b{transform:rotate(45deg)}
+.va-viz-geometry-body{padding-bottom:22px}
+.va-viz-geometry-body>p{margin:0 0 17px;color:#65726b;font-size:10px;line-height:1.9;max-width:620px}
+.va-viz-trace-tools{display:flex;flex-wrap:wrap;gap:7px}
+.va-viz-geometry-body button{border:1px solid #cbd3c7;background:#f7f6f2;color:#344c3d;padding:9px 12px;font-size:10px;border-radius:2px}
+.va-viz-geometry-body button:hover:not(:disabled){background:#e7ece3;border-color:#8e9a84}
+.va-viz-geometry-body select,.va-viz-geometry-body input{display:block;width:100%;min-height:36px;border:1px solid #d3dace;background:#fbfbf8;color:#182824;border-radius:2px;padding:8px 9px;margin-top:7px;font-size:11px}
+.va-viz-keyboard-trace{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;padding:17px;background:#eef0e9;margin-top:16px;border-radius:2px}
+.va-viz-keyboard-trace p{width:100%;margin:0 0 3px;line-height:1.8;font-size:10px;color:#65726b}
+.va-viz-keyboard-trace label{width:95px;font-size:10px}
+.va-viz-keyboard-trace button{min-height:36px}
+.va-viz-plane-selector{display:flex;align-items:flex-end;gap:10px;padding-top:20px}
+.va-viz-plane-selector label{flex:1;font-size:10px;color:#65726b}
+.va-viz-plane-selector button{height:36px}
+.va-viz-mapping{margin-top:19px}
+.va-viz-mapping-fields{display:grid;grid-template-columns:1.9fr 1fr 1fr 1fr;gap:10px}
+.va-viz-mapping-fields label{font-size:9px;color:#65726b}
+.va-viz-anchor-fields{margin-top:18px}
+.va-viz-anchor-fields>p{font-size:10px;line-height:1.8;color:#65726b;margin:0 0 12px}
+.va-viz-anchor-fields>div{display:grid;grid-template-columns:1fr 95px 95px;gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid #e3e6de}
+.va-viz-anchor-fields>div>span{font-size:10px;color:#485d4f}
+.va-viz-anchor-fields label{display:flex;align-items:center;gap:7px}
+.va-viz-anchor-fields label>span{font-size:9px;color:#7b8372;white-space:nowrap}
+.va-viz-anchor-fields input{margin:0;height:32px;min-height:32px}
+.va-viz-error{font-size:10px;line-height:1.8;color:#864530;background:#f4e8df;padding:12px;margin-bottom:0}
+.va-viz-status{margin:15px 0 0;color:#7b8372;line-height:1.8;font-size:10px;min-height:36px}
+.va-viz-panel{padding:29px 27px 24px;border:1px solid #d5dad0;background:#f7f6f2;border-radius:3px}
+.va-viz-panel-head>span,.va-viz-step{font-size:9px;letter-spacing:.17em;color:#7b8372;font-weight:500}
+.va-viz-panel-head h3{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:28px;line-height:1.3;margin:10px 0 24px;letter-spacing:-.03em}
+.va-viz-materials{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.va-viz-materials button{border:1px solid transparent;position:relative;overflow:hidden;padding:0 0 10px;border-radius:2px;background:#eeeee7;color:#68736b;font-size:10px;text-align:center}
+.va-viz-materials button:hover{border-color:#a6afa0;transform:translateY(-2px)}
+.va-viz-materials button[aria-pressed=true]{border-color:#182824;background:#182824;color:#fff}
+.va-viz-materials img{display:block;width:100%;aspect-ratio:1.08;object-fit:cover;margin-bottom:9px}
+.va-viz-materials i{position:absolute;right:5px;top:5px;width:16px;height:16px;display:grid;place-items:center;background:#f7f6f2;color:#182824;border-radius:50%;font-size:9px;font-style:normal}
+.va-viz-finish{padding:22px 0 0}
+.va-viz-finish>div:first-child{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px}
+.va-viz-finish strong{font-weight:500}
+.va-viz-finish>div:first-child>span{color:#7b8372;font-size:10px}
+.va-viz-finish>p{font-size:10px;line-height:1.8;color:#7b8372;margin:9px 0 14px}
+.va-viz-swatches{display:flex;gap:10px}
+.va-viz-swatches button{border:1px solid #0002;width:30px;height:30px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:12px}
+.va-viz-swatches button[aria-pressed=true]{outline:1px solid #182824;outline-offset:3px}
+.va-viz-scale{display:block;padding:25px 0 26px;border-bottom:1px solid #d6dcd0;font-size:10px}
+.va-viz-scale>span{display:flex;justify-content:space-between;color:#526257}
+.va-viz-scale b{font-weight:400;font-variant-numeric:tabular-nums;color:#7b8372}
+.va-viz-scale input{display:block;width:100%;accent-color:#182824;margin:13px 0 8px;height:3px;cursor:ew-resize}
+.va-viz-scale small{font-size:9px;color:#8a9187}
+.va-viz-estimate{padding-top:25px}
+.va-viz-area{display:block;margin-top:22px;font-size:10px;color:#526257}
+.va-viz-area>div{display:flex;align-items:center;border:1px solid #cdd4c7;background:#fcfcf9;border-radius:2px;margin-top:9px;height:45px}
+.va-viz-area input{width:100%;min-width:0;flex:1;border:0;padding:10px 13px;background:transparent;font-size:16px;color:#182824;font-variant-numeric:tabular-nums}
+.va-viz-area>div>span{font-size:10px;color:#7b8372;white-space:nowrap;padding:0 12px}
+.va-viz-estimate>p{color:#8a9187;font-size:9px;line-height:1.75;margin:9px 0 19px}
+.va-viz-complexity{display:block;font-size:10px;color:#526257}
+.va-viz-complexity select{margin-top:9px;display:block;width:100%;padding:11px 12px;border:1px solid #cdd4c7;background:#fcfcf9;border-radius:2px;color:#182824;font-size:11px;min-height:40px}
+.va-viz-complexity small{display:block;color:#8a9187;font-size:9px;line-height:1.75;margin-top:7px}
+.va-viz-range{margin-top:21px;padding:20px 0 17px;border-top:1px solid #d6dcd0}
+.va-viz-range>span{display:block;font-size:9px;color:#7b8372;line-height:1.8}
+.va-viz-range strong{display:block;font-family:Georgia,'Times New Roman',serif;font-size:clamp(23px,2.6vw,34px);line-height:1.4;font-weight:400;letter-spacing:-.04em;margin:6px 0 4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.va-viz-allowance{color:#7b8372;font-size:9px}
+.va-viz-allowance summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.va-viz-allowance summary::-webkit-details-marker{display:none}
+.va-viz-allowance summary>span{font-size:14px;font-weight:400}
+.va-viz-allowance p{font-size:9px;line-height:1.85;margin:9px 0 0}
+.va-viz-note{font-size:9px;line-height:1.85;color:#90978d;margin:20px 0 0;padding-top:18px;border-top:1px solid #d6dcd0}
+@media(min-width:1300px){.va-visualizer{grid-template-columns:minmax(0,2.12fr) minmax(300px,1fr);gap:45px}.va-viz-panel{padding:30px}.va-viz-range strong{font-size:32px}}
+@media(max-width:1000px){.va-visualizer{gap:24px;grid-template-columns:minmax(0,1.5fr) minmax(270px,1fr)}.va-viz-panel{padding:24px 20px}.va-viz-range strong{font-size:26px}.va-viz-photo-actions p{width:100%;text-align:left;flex:initial}.va-viz-mapping-fields{grid-template-columns:repeat(3,1fr)}.va-viz-mapping-fields label:first-child{grid-column:1/-1}.va-viz-private{display:none}.va-viz-view-switch button{font-size:9px;padding:8px}.va-viz-save{font-size:9px}}
+@media(max-width:760px){.va-visualizer{grid-template-columns:1fr;gap:24px}.va-viz-panel{padding:25px}.va-viz-materials{gap:11px}.va-viz-materials img{aspect-ratio:1.4}.va-viz-range strong{font-size:31px}.va-viz-photo-actions{padding:18px 0}.va-viz-topline{font-size:10px}.va-viz-private{display:block;font-size:8px}.va-viz-frame canvas{max-height:none}.va-viz-photo-label{left:12px;bottom:12px;padding:8px 10px;font-size:8px}.va-viz-sample-label{left:12px;top:12px;font-size:8px}.va-viz-panel-head h3{font-size:30px;margin-bottom:21px}.va-viz-view-switch button{font-size:10px;padding:9px}.va-viz-save{font-size:10px}.va-viz-status{margin-top:11px;min-height:0}.va-viz-main{min-width:0}}
+@media(max-width:420px){.va-viz-private{display:none}.va-viz-view-switch{gap:0}.va-viz-view-switch button{font-size:9px;padding:9px 7px}.va-viz-save{font-size:9px}.va-viz-save>span{padding-left:5px}.va-viz-panel{padding:23px 20px}.va-viz-anchor-fields>div{grid-template-columns:1fr 80px 80px;gap:8px}.va-viz-anchor-fields>div>span{font-size:9px}.va-viz-plane-selector{flex-wrap:wrap}.va-viz-plane-selector label{flex-basis:100%}.va-viz-keyboard-trace label{width:80px}}
+@media(prefers-reduced-motion:reduce){.va-visualizer button{transition:none}.va-viz-materials button:hover{transform:none}}

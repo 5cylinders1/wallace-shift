@@ -140,7 +140,7 @@ export function RoofersOffer() {
           <div className="ro-section-intro"><div><p className="ro-eyebrow">01 / Find your direction</p><h2 id="collection-heading">Different character.<br /><em>One higher standard.</em></h2></div><p>Explore the complete sites, not just a picture. Each is a starting point for your company’s brand, services and service area.</p></div>
           <div className="ro-design-grid">{readyDesigns.map(design => <DesignCard key={design.id} design={design} onChoose={chooseDesign} />)}</div>
           <div className="ro-upcoming-grid">{upcomingDesigns.map(design => <article className="ro-upcoming" key={design.id}><span className="ro-upcoming-number" aria-hidden="true">{design.number}</span><div><p className="ro-eyebrow">Design {design.number} / Coming soon</p><h3>{design.name}</h3><p>The next addition to the collection.</p></div><span className="ro-upcoming-mark" aria-hidden="true">/</span></article>)}</div>
-          <p className="ro-demo-note">Northvane Roofing and Alder & Stone are illustrative contractor brands. Content, imagery and tools shown in the demos are examples; your final website and automation scope will be agreed together.</p>
+          <p className="ro-demo-note">All five roofing brands are illustrative contractor concepts. Content, imagery and tools shown in the demos are examples; your final website and automation scope will be agreed together.</p>
         </div>
       </section>
 

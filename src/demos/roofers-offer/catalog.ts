@@ -70,7 +70,15 @@ export const roofingDesigns: RoofingDesign[] = [
     localPath: '/demos/roofers-4/',
     productionPath: '/halcyon',
   },
-  { id: 'design-05', number: '05', name: 'Design in progress', status: 'coming-soon' },
+  {
+    id: 'velar', number: '05', name: 'Velar Roof Atelier', status: 'available',
+    character: 'Refined. Architectural. Personal.',
+    description: 'A luxury roofing experience with a cinematic estate film, a perspective-aware photo studio, sourced investment insights and an interactive owner portal.',
+    features: ['Cinematic luxury estates', 'Photo roof studio & planning prices', 'Interactive homeowner portal'],
+    thumbnail: '/demos/roofers-5/hero-poster.jpg',
+    thumbnailAlt: 'Velar Roof Atelier cinematic luxury roofing concept',
+    localPath: '/demos/roofers-5/', productionPath: '/velar',
+  },
 ]
 
 export const roofingOffer = 'Free website valued at $5000 with 1 year commitment to managed automation'
