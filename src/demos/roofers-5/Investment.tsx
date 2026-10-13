@@ -15,6 +15,12 @@ const reports: Record<ReportYear, Record<Material, { cost: number; value: number
   },
 }
 
+const lifeGuidelines = [
+  { label: 'Architectural asphalt', years: '30 years', start: 0, length: 20 },
+  { label: 'Metal', years: '40–80 years', start: 26.667, length: 26.667 },
+  { label: 'Natural slate', years: '60–150 years', start: 40, length: 60 },
+]
+
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 
 function SourceArrow() {
@@ -27,83 +33,54 @@ export default function Investment() {
   const selected = reports[year][material]
   const source = `https://www.jlconline.com/cost-vs-value/${year}/`
 
-  return (
-    <section className="velar-investment" id="investment" aria-labelledby="velar-investment-heading">
-      <div className="velar-investment-inner">
-        <div className="velar-investment-editorial">
-          <p className="velar-investment-eyebrow"><span /> THE LONG VIEW</p>
-          <h2 id="velar-investment-heading">An investment in<br /><em>everything beneath it.</em></h2>
-          <p className="velar-investment-intro">The right roof belongs to the architecture. Its value is felt in the character of your home, the comfort of its rooms, and the years you spend within them.</p>
+  return <section className="velar-investment" id="investment" aria-labelledby="velar-investment-heading">
+    <div className="velar-investment-inner">
+      <header className="velar-investment-heading">
+        <div><p className="velar-investment-eyebrow">THE OWNERSHIP HORIZON</p><h2 id="velar-investment-heading">Designed for<br />the decades ahead.</h2></div>
+        <p>Architectural character is only part of the decision. Consider the life of the roof assembly, the conditions it will face and the way your plans for the property may change.</p>
+      </header>
 
-          <div className="velar-investment-lifetime">
-            <div className="velar-investment-note-heading"><span>01</span><h3>Think in decades.</h3></div>
-            <p>Material choice sets a long-term planning horizon. These general service-life estimates offer a useful place to begin.</p>
-            <div className="velar-investment-lifespans">
-              <div><span>Architectural asphalt</span><strong>30<small> years</small></strong></div>
-              <div><span>Metal</span><strong>40–80<small> years</small></strong></div>
-              <div><span>Natural slate</span><strong>60–150<small> years</small></strong></div>
+      <div className="velar-investment-panels">
+        <article className="velar-investment-evidence" aria-labelledby="velar-investment-resale-heading">
+          <div className="velar-investment-card-heading"><div><p className="velar-investment-eyebrow">01 / PUBLISHED RESALE ESTIMATES</p><h3 id="velar-investment-resale-heading">A measured view of resale.</h3></div><span className="velar-investment-report-tag">JLC / NATIONAL DATA</span></div>
+          <p className="velar-investment-card-intro">Compare roof replacements in the Journal of Light Construction’s Cost vs. Value reports.</p>
+
+          <div className="velar-investment-controls">
+            <div className="velar-investment-materials" role="group" aria-label="Roof material in published report">
+              <button type="button" aria-pressed={material === 'asphalt'} onClick={() => setMaterial('asphalt')}>Asphalt shingles</button>
+              <button type="button" aria-pressed={material === 'metal'} onClick={() => setMaterial('metal')}>Metal roof</button>
             </div>
-            <p className="velar-investment-small">Climate, installation and maintenance affect life; these are planning guidelines, not warranties. <a href="https://www.nachi.org/life-expectancy.htm" target="_blank" rel="noreferrer">InterNACHI guidance <SourceArrow /></a></p>
-          </div>
-
-          <div className="velar-investment-climate">
-            <div className="velar-investment-note-heading"><span>02</span><h3>Comfort, considered.</h3></div>
-            <p>Reflective roof finishes can reduce heat entering a home and the need for cooling in warm climates. Your climate, insulation and roof assembly determine the benefit; cooler climates can bring a winter heating tradeoff.</p>
-            <a href="https://www.energy.gov/sites/prod/files/guide_to_cool_roofs.pdf" target="_blank" rel="noreferrer" className="velar-investment-source">U.S. Department of Energy <SourceArrow /></a>
-          </div>
-        </div>
-
-        <div className="velar-investment-evidence">
-          <div className="velar-investment-card-heading">
-            <div><p className="velar-investment-eyebrow">THE RESALE PERSPECTIVE</p><h3>What the reports say.</h3></div>
-            <svg className="velar-investment-card-mark" viewBox="0 0 36 36" fill="none" aria-hidden="true"><path d="M5 29V18l13-11 13 11v11H5Z" stroke="currentColor" strokeWidth="1"/><path d="M11 29V20h14v9M18 7v9M8 15h20" stroke="currentColor" strokeWidth="1"/></svg>
-          </div>
-          <p className="velar-investment-card-intro">Explore national roof-replacement estimates from the Journal of Light Construction’s Cost vs. Value reports.</p>
-
-          <div className="velar-investment-materials" role="group" aria-label="Roof material in published report">
-            <button type="button" aria-pressed={material === 'asphalt'} onClick={() => setMaterial('asphalt')}>Asphalt shingles</button>
-            <button type="button" aria-pressed={material === 'metal'} onClick={() => setMaterial('metal')}>Standing-seam metal</button>
-          </div>
-
-          <div className="velar-investment-years" role="group" aria-label="Report year">
-            {([2024, 2025] as const).map((reportYear) => (
-              <button type="button" key={reportYear} aria-pressed={year === reportYear} onClick={() => setYear(reportYear)}>
-                <span><i />{reportYear} REPORT</span>
-                <strong>{reports[reportYear][material].recovery}<small>%</small></strong>
-                <span className="velar-investment-year-caption">estimated cost recovery</span>
-              </button>
-            ))}
+            <div className="velar-investment-years" role="group" aria-label="Report year">
+              {([2024, 2025] as const).map(reportYear => <button type="button" key={reportYear} aria-pressed={year === reportYear} onClick={() => setYear(reportYear)}>{reportYear}</button>)}
+            </div>
           </div>
 
           <div className="velar-investment-result" aria-live="polite" aria-atomic="true">
-            <div className="velar-investment-result-title"><span>{year} NATIONAL SNAPSHOT</span><span>{material === 'asphalt' ? 'ASPHALT' : 'METAL'}</span></div>
-            <div className="velar-investment-data-row">
-              <div><span>Report project cost</span><strong>{money.format(selected.cost)}</strong></div>
-              <div className="velar-investment-bar velar-investment-bar-cost" aria-hidden="true"><span /></div>
+            <div className="velar-investment-recovery"><strong>{selected.recovery}<small>%</small></strong><span>Published cost recovery<br />{year} national estimate</span></div>
+            <div className="velar-investment-chart">
+              <div className="velar-investment-data-row"><div><span>Replacement cost</span><strong>{money.format(selected.cost)}</strong></div><div className="velar-investment-bar velar-investment-bar-cost" aria-hidden="true"><span /></div></div>
+              <div className="velar-investment-data-row"><div><span>Estimated resale contribution</span><strong>{money.format(selected.value)}</strong></div><div className="velar-investment-bar velar-investment-bar-value" aria-hidden="true"><span style={{ width: `${selected.value / selected.cost * 100}%` }} /></div></div>
             </div>
-            <div className="velar-investment-data-row">
-              <div><span>Estimated value at resale</span><strong>{money.format(selected.value)}</strong></div>
-              <div className="velar-investment-bar velar-investment-bar-value" aria-hidden="true"><span style={{ width: `${selected.value / selected.cost * 100}%` }} /></div>
-            </div>
-            <p className="velar-investment-result-note">The estimated resale contribution is {selected.recovery}% of the report’s project cost.</p>
           </div>
 
-          <div className="velar-investment-card-footer">
-            <a href={source} target="_blank" rel="noreferrer">Read the {year} report <SourceArrow /></a>
-            <span>Published percentages rounded.</span>
-          </div>
+          <div className="velar-investment-comparison"><span>REPORT SNAPSHOTS</span><p><b>2024</b> {reports[2024][material].recovery}%<i aria-hidden="true" /><b>2025</b> {reports[2025][material].recovery}%</p><small>Published percentages rounded.</small></div>
+          <p className="velar-investment-context">Survey estimates for specified projects. These figures describe separate markets in time, not one home’s appreciation or a premium for luxury roofing.</p>
+          <div className="velar-investment-card-footer"><a href={source} target="_blank" rel="noreferrer">View the {year} source <SourceArrow /></a><a href="https://www.jlconline.com/cost-vs-value/2025/methodology/" target="_blank" rel="noreferrer">How the report is made <SourceArrow /></a></div>
+          <details className="velar-investment-methodology"><summary>What does this mean for your residence? <span aria-hidden="true">+</span></summary><div><p>Real estate professionals estimate resale value for the report’s defined scope; the values are not recorded home-sale outcomes. Condition, location and buyer preferences influence the result.</p><p>Use a site-specific proposal to establish your project cost and local real estate advice to consider resale implications. The data does not forecast your return.</p></div></details>
+        </article>
 
-          <details className="velar-investment-methodology">
-            <summary>Putting these numbers in context <span aria-hidden="true">+</span></summary>
-            <div>
-              <p>Resale values are real estate professionals’ survey estimates for specified projects, rather than observed sale prices. Report years are separate market snapshots; they do not follow one home over time.</p>
-              <p>Location, scope, roof condition and buyer preferences affect results. These national figures do not predict your home’s appreciation or establish a premium for luxury materials.</p>
-              <a href="https://www.jlconline.com/cost-vs-value/2025/methodology/" target="_blank" rel="noreferrer">Report methodology <SourceArrow /></a>
-            </div>
-          </details>
-          <p className="velar-investment-qualification">National report examples. Your project requires a site-specific proposal, and your local real estate adviser can help assess resale implications.</p>
-        </div>
+        <article className="velar-investment-lifecycle" aria-labelledby="velar-investment-lifecycle-heading">
+          <p className="velar-investment-eyebrow">02 / MATERIAL LONGEVITY</p><h3 id="velar-investment-lifecycle-heading">Plan beyond the installation.</h3>
+          <p className="velar-investment-card-intro">General service-life guidelines help put today’s material decision into a longer frame.</p>
+          <div className="velar-investment-lifespans">
+            {lifeGuidelines.map(item => <div className="velar-investment-life-row" key={item.label}><div><span>{item.label}</span><strong>{item.years}</strong></div><div className="velar-investment-life-track" aria-hidden="true"><span style={{ marginLeft: `${item.start}%`, width: `${item.length}%` }} /></div></div>)}
+            <div className="velar-investment-life-axis" aria-hidden="true"><span>0</span><span>50</span><span>100</span><span>150 YEARS</span></div>
+          </div>
+          <p className="velar-investment-small">Guidelines assume normal wear and recommended maintenance. Exposure, workmanship and care can change service life; the ranges are not warranties.</p>
+          <a href="https://www.nachi.org/life-expectancy.htm" target="_blank" rel="noreferrer" className="velar-investment-source">InterNACHI life-expectancy guidance <SourceArrow /></a>
+          <div className="velar-investment-climate"><span className="velar-investment-climate-mark" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="5" stroke="currentColor" /><path d="M14 2v4m0 16v4M2 14h4m16 0h4M5.5 5.5l3 3m11 11 3 3m0-17-3 3m-11 11-3 3" stroke="currentColor" /></svg></span><div><h4>Performance depends on place.</h4><p>Reflective finishes can reduce cooling needs in warm climates. Climate, insulation and the roof assembly determine the benefit; cold climates can bring a winter heating penalty.</p><a href="https://www.energy.gov/sites/prod/files/guide_to_cool_roofs.pdf" target="_blank" rel="noreferrer" className="velar-investment-source">U.S. Department of Energy <SourceArrow /></a></div></div>
+        </article>
       </div>
-    </section>
-  )
+    </div>
+  </section>
 }

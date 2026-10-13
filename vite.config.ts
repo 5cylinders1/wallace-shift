@@ -118,6 +118,7 @@ const DEV_API_ROUTES: Record<string, string> = {
   '/api/roof-suggest': '/api/roof-suggest.ts',
   '/api/roof-lookup': '/api/roof-lookup.ts',
   '/api/roof-measure': '/api/roof-measure.ts',
+  '/api/roof-render': '/api/roof-render.ts',
 }
 
 function devApiRoutes(): Plugin {
@@ -128,7 +129,7 @@ function devApiRoutes(): Plugin {
       const env = loadEnv(server.config.mode, server.config.root, '')
       // Server-side settings only: never anything a VITE_ prefix would expose.
       for (const [key, value] of Object.entries(env)) {
-        if (/^(ROOF_|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
+        if (/^(OPENAI_API_KEY$|ROOF_|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
       }
       server.middlewares.use(async (req, res, next) => {
         const path = (req.url ?? '').split('?')[0]

@@ -1,6 +1,7 @@
-/** Demo planning allowances. These are illustrative inputs, not market quotations. */
+/** Illustrative design allowances; an on-site survey determines the actual scope. */
 export type MaterialId = 'slate' | 'standing-seam' | 'cedar' | 'clay'
 export type ComplexityId = 'simple' | 'articulated' | 'estate'
+export type RoofFinish = { id: string; name: string; hex: string }
 
 export type RoofMaterial = {
   id: MaterialId
@@ -9,20 +10,20 @@ export type RoofMaterial = {
   character: string
   image: string
   rate: readonly [number, number]
-  colors: { name: string; hex: string }[]
+  colors: RoofFinish[]
 }
 
 export const roofMaterials: RoofMaterial[] = [
-  { id: 'slate', name: 'Natural slate', short: 'Slate', character: 'Quiet texture. Enduring architectural character.', image: '/demos/roofers-4/material-slate.jpg', rate: [25, 45], colors: [{ name: 'Blue gray', hex: '#667077' }, { name: 'Vermont green', hex: '#647268' }, { name: 'Graphite', hex: '#434c50' }] },
-  { id: 'standing-seam', name: 'Standing seam', short: 'Metal', character: 'Precise lines. A beautifully restrained silhouette.', image: '/demos/roofers-4/material-metal.jpg', rate: [16, 28], colors: [{ name: 'Patinated zinc', hex: '#8a9695' }, { name: 'Soft charcoal', hex: '#48504e' }, { name: 'Weathered bronze', hex: '#726756' }] },
-  { id: 'cedar', name: 'Cedar shake', short: 'Cedar', character: 'Natural warmth. A finish that matures with the home.', image: '/demos/roofers-4/material-cedar.jpg', rate: [14, 24], colors: [{ name: 'Silvered cedar', hex: '#939489' }, { name: 'Warm honey', hex: '#ae9064' }, { name: 'Aged timber', hex: '#8b7b68' }] },
-  { id: 'clay', name: 'Clay tile', short: 'Clay', character: 'Sculptural depth. A distinctive Mediterranean language.', image: '/demos/roofers-4/material-clay.jpg', rate: [18, 35], colors: [{ name: 'Terracotta', hex: '#b97653' }, { name: 'Tuscan earth', hex: '#9c735a' }, { name: 'Limestone', hex: '#b6a58a' }] },
+  { id: 'slate', name: 'Natural slate', short: 'Slate', character: 'Crisp stone courses with a subtle variation in tone.', image: '/demos/roofers-5/material-slate.jpg', rate: [24, 42], colors: [{ id: 'blue-gray', name: 'Blue gray', hex: '#647481' }, { id: 'graphite', name: 'Graphite', hex: '#39434b' }] },
+  { id: 'standing-seam', name: 'Standing seam metal', short: 'Metal', character: 'Continuous vertical seams and a precise architectural profile.', image: '/demos/roofers-5/material-metal.jpg', rate: [18, 31], colors: [{ id: 'charcoal', name: 'Charcoal', hex: '#3e474b' }, { id: 'zinc', name: 'Zinc', hex: '#8d999d' }, { id: 'bronze', name: 'Bronze', hex: '#826b54' }] },
+  { id: 'cedar', name: 'Cedar shake', short: 'Cedar', character: 'Individual timber shakes with depth, grain and natural variation.', image: '/demos/roofers-5/material-cedar.jpg', rate: [19, 32], colors: [{ id: 'silver', name: 'Silvered cedar', hex: '#97978d' }, { id: 'honey', name: 'Honey cedar', hex: '#ae9064' }] },
+  { id: 'clay', name: 'Clay tile', short: 'Clay', character: 'Dimensional barrel tiles, shaped by light and shadow.', image: '/demos/roofers-5/material-clay.jpg', rate: [23, 39], colors: [{ id: 'terracotta', name: 'Terracotta', hex: '#b97653' }, { id: 'sandstone', name: 'Sandstone', hex: '#b9a48b' }] },
 ]
 
 export const roofComplexities = [
-  { id: 'simple', name: 'Simple', description: 'Few planes · straightforward access', factor: 1 },
-  { id: 'articulated', name: 'Articulated', description: 'Dormers · valleys · several roof planes', factor: 1.18 },
-  { id: 'estate', name: 'Complex estate', description: 'Steep slopes · intricate details · access constraints', factor: 1.4 },
+  { id: 'simple', name: 'Simple roof', description: 'A few roof faces and straightforward access', factor: 1 },
+  { id: 'articulated', name: 'Articulated roof', description: 'Dormers, valleys and multiple roof faces', factor: 1.18 },
+  { id: 'estate', name: 'Complex estate', description: 'Steep slopes, detailed rooflines or difficult access', factor: 1.4 },
 ] as const
 
 export function planningRange(materialId: MaterialId, area: number, complexity: ComplexityId): [number, number] {

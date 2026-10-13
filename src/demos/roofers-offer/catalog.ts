@@ -72,9 +72,9 @@ export const roofingDesigns: RoofingDesign[] = [
   },
   {
     id: 'velar', number: '05', name: 'Velar Roof Atelier', status: 'available',
-    character: 'Refined. Architectural. Personal.',
-    description: 'A luxury roofing experience with a cinematic estate film, a perspective-aware photo studio, sourced investment insights and an interactive owner portal.',
-    features: ['Cinematic luxury estates', 'Photo roof studio & planning prices', 'Interactive homeowner portal'],
+    character: 'Sculptural. Coastal. Bespoke.',
+    description: 'A luxury roofing experience with a cinematic estate film, an AI photo design studio, sourced investment insights and an interactive owner portal.',
+    features: ['Cinematic luxury estates', 'AI roof design studio & planning prices', 'Interactive homeowner portal'],
     thumbnail: '/demos/roofers-5/hero-poster.jpg',
     thumbnailAlt: 'Velar Roof Atelier cinematic luxury roofing concept',
     localPath: '/demos/roofers-5/', productionPath: '/velar',

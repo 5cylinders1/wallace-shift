@@ -1,81 +1,133 @@
 .velar-investment {
-  --vi-ink: #182824;
-  --vi-muted: #606960;
-  --vi-olive: #7b8372;
-  --vi-line: #d8dbd0;
-  padding: 112px 5.5%;
+  --vi-ink: #152633;
+  --vi-muted: #69747a;
+  --vi-bronze: #aa825a;
+  --vi-line: #dcdedc;
+  padding: clamp(78px, 8vw, 128px) 5.5%;
   color: var(--vi-ink);
-  background: #f7f6f2;
+  background: #fff;
   scroll-margin-top: 88px;
 }
 .velar-investment * { box-sizing: border-box; }
-.velar-investment-inner { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 8vw, 112px); align-items: start; }
-.velar-investment .velar-investment-eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 24px; font-size: 10px; line-height: 1.5; letter-spacing: .2em; font-weight: 600; color: #606a5d; }
-.velar-investment-editorial > .velar-investment-eyebrow > span { width: 25px; height: 1px; background: var(--vi-olive); }
-.velar-investment h2 { font-family: var(--velar-serif, 'Cormorant Garamond', Georgia, serif); font-size: clamp(38px, 3.65vw, 60px); font-weight: 400; line-height: 1.06; letter-spacing: -.035em; margin: 0 0 25px; }
-.velar-investment h2 em { font-weight: 400; color: var(--vi-olive); }
-.velar-investment-intro { max-width: 490px; margin: 0; font-size: 14px; line-height: 1.85; color: var(--vi-muted); }
-.velar-investment-lifetime { margin-top: 43px; padding-top: 25px; border-top: 1px solid var(--vi-line); }
-.velar-investment-note-heading { display: flex; align-items: center; gap: 18px; }
-.velar-investment-note-heading > span { color: var(--vi-olive); font-size: 9px; letter-spacing: .1em; }
-.velar-investment h3 { font-family: var(--velar-serif, 'Cormorant Garamond', Georgia, serif); font-size: 26px; font-weight: 400; line-height: 1.2; letter-spacing: -.02em; margin: 0; }
-.velar-investment-lifetime > p, .velar-investment-climate > p { color: var(--vi-muted); font-size: 12px; line-height: 1.85; margin: 12px 0 0; }
-.velar-investment-lifespans { display: grid; grid-template-columns: .95fr 1fr 1.1fr; gap: 15px; padding: 24px 0 16px; }
-.velar-investment-lifespans > div { min-width: 0; }
-.velar-investment-lifespans > div + div { border-left: 1px solid var(--vi-line); padding-left: 15px; }
-.velar-investment-lifespans span { display: block; font-size: 9px; line-height: 1.5; margin-bottom: 6px; color: var(--vi-muted); }
-.velar-investment-lifespans strong { display: block; font-family: var(--velar-serif, 'Cormorant Garamond', Georgia, serif); font-size: clamp(21px, 2.1vw, 32px); font-weight: 400; letter-spacing: -.04em; line-height: 1.25; white-space: nowrap; }
-.velar-investment-lifespans small { display: block; font-family: inherit; font-size: 12px; line-height: 1.4; letter-spacing: 0; color: var(--vi-muted); }
-.velar-investment-lifetime > p.velar-investment-small { font-size: 10px; line-height: 1.8; max-width: 450px; }
+.velar-investment-inner { max-width: 1380px; margin-inline: auto; }
+.velar-investment-heading { display: grid; grid-template-columns: 1.1fr 1fr; gap: 65px; align-items: end; margin-bottom: 45px; }
+.velar-investment-eyebrow { margin: 0 0 20px; color: #8c6746; font-size: 10px; line-height: 1.6; letter-spacing: .14em; font-weight: 600; }
+.velar-investment h2 { font-family: var(--velar-display, 'Sora'), sans-serif; font-size: clamp(34px, 3.4vw, 55px); font-weight: 500; line-height: 1.15; letter-spacing: -.045em; margin: 0; }
+.velar-investment-heading > p { max-width: 470px; margin: 0 0 3px auto; font-size: 14px; line-height: 1.8; color: var(--vi-muted); }
+.velar-investment-panels { display: grid; grid-template-columns: 1.35fr 1fr; gap: 30px; align-items: stretch; }
+.velar-investment h3 { font-family: var(--velar-display, 'Sora'), sans-serif; font-size: 23px; font-weight: 500; line-height: 1.45; letter-spacing: -.035em; margin: 0; }
+.velar-investment-evidence { min-width: 0; padding: 31px 32px 23px; background: #f5f3ee; border: 1px solid #e2dfd8; }
+.velar-investment-card-heading { display: flex; justify-content: space-between; gap: 18px; align-items: start; }
+.velar-investment-card-heading .velar-investment-eyebrow, .velar-investment-lifecycle > .velar-investment-eyebrow { font-size: 8px; margin-bottom: 10px; letter-spacing: .1em; }
+.velar-investment-report-tag { margin-top: 2px; padding: 5px 7px; background: #e9e5de; color: #8b7a67; font-size: 6px; letter-spacing: .06em; line-height: 1.4; white-space: nowrap; }
+.velar-investment-card-intro { font-size: 12px; line-height: 1.8; color: var(--vi-muted); max-width: 490px; margin: 13px 0 24px; }
+.velar-investment-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 27px; }
+.velar-investment-materials, .velar-investment-years { display: flex; gap: 3px; padding: 3px; background: #e8e7e2; }
+.velar-investment-materials button, .velar-investment-years button { padding: 9px 10px; border: 0; background: transparent; font-family: inherit; font-size: 10px; font-weight: 500; line-height: 1.4; color: var(--vi-muted); cursor: pointer; transition: background .2s ease, color .2s ease; }
+.velar-investment-materials button[aria-pressed='true'] { background: #fff; color: var(--vi-ink); box-shadow: 0 1px 4px #1526330a; }
+.velar-investment-years { background: transparent; padding: 0; gap: 2px; }
+.velar-investment-years button { border: 1px solid transparent; padding-inline: 8px; }
+.velar-investment-years button[aria-pressed='true'] { border-color: #c8b7a3; color: #8c6746; }
+.velar-investment-result { display: grid; grid-template-columns: .8fr 1.3fr; align-items: center; gap: 25px; padding-block: 27px; border-bottom: 1px solid var(--vi-line); }
+.velar-investment-recovery strong { font-family: var(--velar-display, 'Sora'), sans-serif; display: block; font-size: clamp(48px, 4.8vw, 75px); font-weight: 400; line-height: 1.2; letter-spacing: -.065em; font-variant-numeric: tabular-nums; }
+.velar-investment-recovery strong small { font-size: .45em; letter-spacing: -.03em; margin-left: 3px; color: var(--vi-bronze); }
+.velar-investment-recovery > span { display: block; margin-top: 6px; font-size: 9px; line-height: 1.65; color: var(--vi-muted); }
+.velar-investment-data-row + .velar-investment-data-row { margin-top: 23px; }
+.velar-investment-data-row > div:first-child { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 9px; }
+.velar-investment-data-row span { font-size: 9px; line-height: 1.6; color: var(--vi-muted); }
+.velar-investment-data-row strong { font-weight: 500; font-size: 13px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.velar-investment-bar { height: 5px; overflow: hidden; background: #e1e1dd; }
+.velar-investment-bar > span { display: block; height: 100%; transition: width .45s cubic-bezier(.22, 1, .36, 1); }
+.velar-investment-bar-cost > span { width: 100%; background: #bac4c9; }
+.velar-investment-bar-value > span { background: var(--vi-ink); }
+.velar-investment-comparison { display: flex; align-items: center; gap: 17px; padding-top: 21px; }
+.velar-investment-comparison > span { color: #8c6746; font-size: 7px; letter-spacing: .06em; }
+.velar-investment-comparison p { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 11px; color: var(--vi-ink); font-variant-numeric: tabular-nums; }
+.velar-investment-comparison b { font-weight: 400; font-size: 9px; color: var(--vi-muted); }
+.velar-investment-comparison i { width: 1px; height: 12px; background: #d5d9d8; margin-inline: 5px; }
+.velar-investment-comparison > small { margin-left: auto; color: #8b959a; font-size: 7px; line-height: 1.6; max-width: 90px; text-align: right; }
+.velar-investment-context { margin: 20px 0 0; color: var(--vi-muted); font-size: 10px; line-height: 1.8; }
 .velar-investment a { color: var(--vi-ink); text-decoration: none; }
 .velar-investment a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .velar-investment a svg { display: inline-block; width: 12px; height: 12px; margin-left: 3px; vertical-align: -2px; }
-.velar-investment-climate { margin-top: 25px; padding-top: 25px; border-top: 1px solid var(--vi-line); }
-.velar-investment .velar-investment-source { display: inline-block; font-size: 10px; margin-top: 12px; }
-.velar-investment-evidence { padding: 32px 35px 24px; background: #eceee7; border: 1px solid #dde1d5; }
-.velar-investment-card-heading { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
-.velar-investment-card-heading .velar-investment-eyebrow { font-size: 8px; margin: 0 0 10px; letter-spacing: .18em; }
-.velar-investment-card-heading h3 { font-size: 30px; }
-.velar-investment-card-mark { width: 35px; height: 35px; color: #7c8677; flex-shrink: 0; }
-.velar-investment-card-intro { font-size: 11px; line-height: 1.8; color: var(--vi-muted); max-width: 390px; margin: 13px 0 25px; }
-.velar-investment-materials { display: grid; grid-template-columns: 1fr 1.2fr; padding: 3px; background: #e0e4d9; gap: 3px; }
-.velar-investment-materials button { padding: 10px 5px; border: 0; background: transparent; font-family: inherit; font-size: 10px; font-weight: 500; color: var(--vi-muted); cursor: pointer; transition: background .2s ease, color .2s ease; }
-.velar-investment-materials button[aria-pressed='true'] { background: #f7f6f2; color: var(--vi-ink); box-shadow: 0 1px 4px #1828240a; }
-.velar-investment-years { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 15px; }
-.velar-investment-years button { display: flex; flex-direction: column; align-items: start; text-align: left; padding: 17px 17px 15px; border: 1px solid #d4d9cb; background: transparent; color: var(--vi-muted); font-family: inherit; cursor: pointer; transition: background .25s ease, border-color .25s ease, color .25s ease; }
-.velar-investment-years button[aria-pressed='true'] { background: var(--vi-ink); border-color: var(--vi-ink); color: #f7f6f2; }
-.velar-investment-years button > span:first-child { display: flex; align-items: center; gap: 6px; font-size: 8px; font-weight: 500; letter-spacing: .13em; }
-.velar-investment-years i { width: 5px; height: 5px; border-radius: 50%; border: 1px solid currentColor; }
-.velar-investment-years button[aria-pressed='true'] i { background: #c4cead; border-color: #c4cead; }
-.velar-investment-years strong { font-family: var(--velar-serif, 'Cormorant Garamond', Georgia, serif); font-weight: 400; font-size: clamp(42px, 4vw, 65px); line-height: 1.15; letter-spacing: -.06em; margin-top: 7px; }
-.velar-investment-years strong small { font-size: .48em; letter-spacing: -.02em; margin-left: 3px; }
-.velar-investment-year-caption { font-size: 8px; line-height: 1.4; opacity: .8; margin-top: 4px; }
-.velar-investment-result { margin-top: 24px; }
-.velar-investment-result-title { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #d5dacd; font-size: 8px; line-height: 1.4; letter-spacing: .12em; color: var(--vi-muted); }
-.velar-investment-data-row { margin-top: 17px; }
-.velar-investment-data-row > div:first-child { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
-.velar-investment-data-row span { font-size: 10px; color: var(--vi-muted); }
-.velar-investment-data-row strong { font-weight: 500; font-size: 15px; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.velar-investment-bar { height: 5px; overflow: hidden; background: #dce1d3; }
-.velar-investment-bar > span { display: block; height: 100%; transition: width .6s cubic-bezier(.22, 1, .36, 1); }
-.velar-investment-bar-cost > span { width: 100%; background: #aab39c; }
-.velar-investment-bar-value > span { background: var(--vi-ink); }
-.velar-investment-result-note { margin: 15px 0 0; font-size: 10px; line-height: 1.65; color: var(--vi-muted); }
-.velar-investment-card-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 9px; padding: 20px 0; }
-.velar-investment-card-footer a { font-size: 10px; font-weight: 500; }
-.velar-investment-card-footer > span { color: var(--vi-muted); font-size: 8px; }
-.velar-investment-methodology { border-top: 1px solid #d5dacd; border-bottom: 1px solid #d5dacd; }
-.velar-investment-methodology summary { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 0; font-size: 10px; list-style: none; cursor: pointer; }
+.velar-investment-card-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 9px; padding: 21px 0; }
+.velar-investment-card-footer a { font-size: 9px; font-weight: 500; }
+.velar-investment-methodology { border-top: 1px solid var(--vi-line); }
+.velar-investment-methodology summary { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 16px 0 0; font-size: 10px; line-height: 1.7; list-style: none; cursor: pointer; }
 .velar-investment-methodology summary::-webkit-details-marker { display: none; }
-.velar-investment-methodology summary > span { font-size: 18px; font-weight: 300; line-height: 1; transition: transform .2s ease; }
+.velar-investment-methodology summary > span { font-size: 19px; font-weight: 300; line-height: 1; transition: transform .2s ease; }
 .velar-investment-methodology[open] summary > span { transform: rotate(45deg); }
-.velar-investment-methodology > div { padding-bottom: 17px; }
+.velar-investment-methodology > div { padding-top: 14px; }
 .velar-investment-methodology p { margin: 0 0 10px; color: var(--vi-muted); font-size: 10px; line-height: 1.8; }
-.velar-investment-methodology a { font-size: 10px; }
-.velar-investment-qualification { color: var(--vi-muted); font-size: 9px; line-height: 1.8; margin: 15px 0 0; }
-.velar-investment button:focus-visible, .velar-investment a:focus-visible, .velar-investment summary:focus-visible { outline: 2px solid #536b48; outline-offset: 4px; }
-@media (min-width: 1600px) { .velar-investment-inner { gap: 115px; } }
-@media (max-width: 1000px) { .velar-investment { padding: 85px 5%; } .velar-investment-inner { gap: 38px; } .velar-investment-evidence { padding: 26px 24px 22px; } .velar-investment-lifespans { gap: 10px; } .velar-investment-lifespans > div + div { padding-left: 10px; } }
-@media (max-width: 760px) { .velar-investment { padding: 65px 6%; } .velar-investment-inner { grid-template-columns: 1fr; gap: 34px; } .velar-investment h2 { font-size: clamp(36px, 7vw, 50px); } .velar-investment-intro { max-width: 560px; } .velar-investment-lifetime { margin-top: 30px; } .velar-investment-lifespans strong { font-size: 29px; } .velar-investment-years strong { font-size: 62px; } .velar-investment-card-intro { max-width: none; } }
-@media (max-width: 390px) { .velar-investment { padding-left: 5%; padding-right: 5%; } .velar-investment-evidence { padding: 23px 18px 21px; } .velar-investment-lifespans strong { font-size: 25px; } .velar-investment-lifespans span { font-size: 8px; } .velar-investment-materials button { font-size: 9px; } .velar-investment-years button { padding: 15px 12px; } }
+.velar-investment-lifecycle { padding: 31px 32px 28px; background: var(--vi-ink); color: #f5f3ee; min-width: 0; }
+.velar-investment-lifecycle > .velar-investment-eyebrow { color: #c9a782; }
+.velar-investment-lifecycle > h3 { max-width: 350px; }
+.velar-investment-lifecycle .velar-investment-card-intro { color: #a4b4bf; font-size: 11px; margin-bottom: 29px; }
+.velar-investment-lifespans { margin-block: 26px 23px; }
+.velar-investment-life-row + .velar-investment-life-row { margin-top: 24px; }
+.velar-investment-life-row > div:first-child { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.velar-investment-life-row span { font-size: 10px; color: #bac7cf; }
+.velar-investment-life-row strong { font-size: 12px; font-weight: 500; color: #f5f3ee; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.velar-investment-life-track { height: 6px; margin-top: 12px; background: #ffffff08; background-image: linear-gradient(to right, transparent calc(33.333% - 1px), #ffffff15 calc(33.333% - 1px), #ffffff15 33.333%, transparent 33.333%, transparent calc(66.667% - 1px), #ffffff15 calc(66.667% - 1px), #ffffff15 66.667%, transparent 66.667%); }
+.velar-investment-life-track > span { display: block; height: 100%; background: #c5a17b; }
+.velar-investment-life-axis { display: flex; justify-content: space-between; margin-top: 12px; gap: 10px; }
+.velar-investment-life-axis > span { color: #738997; font-size: 7px; line-height: 1.6; }
+.velar-investment-small { margin: 0 0 13px; font-size: 9px; color: #a4b4bf; line-height: 1.85; }
+.velar-investment-lifecycle a { color: #d9bb98; }
+.velar-investment-source { display: inline-block; font-size: 9px; line-height: 1.6; }
+.velar-investment-climate { display: flex; align-items: start; gap: 17px; margin-top: 28px; padding-top: 25px; border-top: 1px solid #ffffff1c; }
+.velar-investment-climate-mark { width: 31px; height: 31px; color: #c5a17b; flex-shrink: 0; }
+.velar-investment-climate-mark svg { width: 100%; }
+.velar-investment-climate h4 { margin: 3px 0 9px; font-weight: 500; font-size: 13px; line-height: 1.7; }
+.velar-investment-climate p { margin: 0 0 13px; font-size: 10px; line-height: 1.85; color: #a4b4bf; }
+.velar-investment button:focus-visible, .velar-investment a:focus-visible, .velar-investment summary:focus-visible { outline: 2px solid var(--vi-bronze); outline-offset: 4px; }
+@media (max-width: 1100px) {
+  .velar-investment-heading { gap: 40px; }
+  .velar-investment-panels { grid-template-columns: 1.2fr 1fr; gap: 22px; }
+  .velar-investment-evidence, .velar-investment-lifecycle { padding: 26px 24px; }
+  .velar-investment-report-tag { display: none; }
+  .velar-investment h3 { font-size: 21px; }
+  .velar-investment-controls { align-items: start; gap: 10px; }
+  .velar-investment-materials button { padding: 9px 8px; font-size: 9px; }
+  .velar-investment-years button { font-size: 9px; padding: 9px 6px; }
+  .velar-investment-result { grid-template-columns: 1fr; gap: 23px; padding-block: 25px; }
+  .velar-investment-recovery { display: flex; align-items: center; gap: 22px; }
+  .velar-investment-recovery strong { font-size: 61px; }
+  .velar-investment-recovery > span { margin: 0; }
+  .velar-investment-comparison { gap: 12px; flex-wrap: wrap; }
+  .velar-investment-comparison > small { max-width: none; margin-left: 0; text-align: left; }
+}
+@media (max-width: 760px) {
+  .velar-investment { padding: 70px 6%; }
+  .velar-investment-heading { grid-template-columns: 1fr; gap: 21px; margin-bottom: 30px; }
+  .velar-investment h2 { font-size: clamp(33px, 7.5vw, 45px); }
+  .velar-investment-eyebrow { font-size: 9px; margin-bottom: 17px; }
+  .velar-investment-heading > p { max-width: 540px; margin: 0; font-size: 12px; }
+  .velar-investment-panels { grid-template-columns: 1fr; gap: 22px; }
+  .velar-investment-evidence, .velar-investment-lifecycle { padding: 25px 23px; }
+  .velar-investment h3 { font-size: 21px; }
+  .velar-investment-card-intro { font-size: 11px; margin-bottom: 21px; }
+  .velar-investment-result { grid-template-columns: .75fr 1.3fr; gap: 18px; }
+  .velar-investment-recovery { display: block; }
+  .velar-investment-recovery strong { font-size: 54px; }
+  .velar-investment-recovery > span { font-size: 8px; margin-top: 6px; }
+  .velar-investment-data-row > div:first-child { display: block; margin-bottom: 9px; }
+  .velar-investment-data-row span { display: block; font-size: 8px; }
+  .velar-investment-data-row strong { display: block; margin-top: 3px; font-size: 12px; }
+  .velar-investment-data-row + .velar-investment-data-row { margin-top: 16px; }
+  .velar-investment-comparison > span { width: 100%; }
+  .velar-investment-comparison > small { margin-left: auto; max-width: 90px; text-align: right; }
+  .velar-investment-context { font-size: 9px; }
+  .velar-investment-methodology summary { font-size: 9px; }
+  .velar-investment-lifecycle .velar-investment-card-intro { margin-bottom: 27px; }
+}
+@media (max-width: 390px) {
+  .velar-investment { padding-inline: 5%; }
+  .velar-investment-evidence, .velar-investment-lifecycle { padding-inline: 20px; }
+  .velar-investment-controls { flex-wrap: wrap; }
+  .velar-investment-years { margin-left: auto; }
+  .velar-investment-recovery strong { font-size: 48px; }
+  .velar-investment-result { gap: 15px; }
+  .velar-investment-card-footer a { font-size: 8px; }
+}
 @media (prefers-reduced-motion: reduce) { .velar-investment *, .velar-investment *::before, .velar-investment *::after { transition: none !important; animation: none !important; } }

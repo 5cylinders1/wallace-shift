@@ -39,6 +39,6 @@ Cross-check: the current [ENERGY STAR cool-roof guidance](https://www.energystar
 
 ## Component integration
 
-Import the default `Investment` component from `src/demos/roofers-5/Investment.tsx` and render it once. It loads its own `investment.css`, exposes the `investment` section anchor, and requires no props, provider calls or dependencies beyond React. Styles are scoped to `.velar-investment`. The font uses `--velar-serif` when supplied, then Cormorant Garamond/Georgia fallbacks.
+Import the default `Investment` component from `src/demos/roofers-5/Investment.tsx` and render it once. It loads its own `investment.css`, exposes the `investment` section anchor, and requires no props, provider calls or dependencies beyond React. Styles are scoped to `.velar-investment` and use Velar's Sora and DM Sans typography.
 
 Material and year controls use native buttons with `aria-pressed`; changing the data announces a concise result region. Context uses native details/summary. Links open the actual publisher sources. Transitions respect reduced-motion preferences.

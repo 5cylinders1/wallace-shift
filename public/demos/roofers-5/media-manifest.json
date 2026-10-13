@@ -1,0 +1,191 @@
+{
+  "demo": "Velar / roofing demo 05",
+  "revisionDate": "2026-10-12",
+  "conceptImagery": true,
+  "crossDemoAudit": {
+    "otherMediaFilesCompared": 25,
+    "exactDuplicates": 0,
+    "method": "SHA-256 of all image, vector and video files in public/demos outside roofers-5"
+  },
+  "assets": [
+    {
+      "file": "estate-film-mobile.mp4",
+      "bytes": 2129229,
+      "sha256": "50d47c0d48499998810c22f30403dcb138faa7a61f5ee2a59135f57568f0e789",
+      "origin": {
+        "tool": "Higgsfield",
+        "model": "Seedance 2.5",
+        "purpose": "Exclusive Velar three-scene hero film",
+        "conversation": "https://higgsfield.ai/supercomputer/799c9d9d-f6d4-4fae-97f9-865bf10fe16f"
+      }
+    },
+    {
+      "file": "estate-film.mp4",
+      "bytes": 6888075,
+      "sha256": "097398e188143c5b5ca0de9d81dd11226092dbddae361e3c6b19e5aed80a0927",
+      "origin": {
+        "tool": "Higgsfield",
+        "model": "Seedance 2.5",
+        "purpose": "Exclusive Velar three-scene hero film",
+        "conversation": "https://higgsfield.ai/supercomputer/799c9d9d-f6d4-4fae-97f9-865bf10fe16f"
+      }
+    },
+    {
+      "file": "favicon.svg",
+      "bytes": 240,
+      "sha256": "6f3a468ead055ead9ac106672103622a7e183c29777271335e0461113ea02987",
+      "origin": {
+        "tool": "Local vector design",
+        "purpose": "Exclusive Velar roofline mark"
+      }
+    },
+    {
+      "file": "hero-poster.jpg",
+      "bytes": 444451,
+      "sha256": "df3ad17a69270f08236ea7db440d26edb6b07ccb3dff5a89ff6caa761ace94b0",
+      "origin": {
+        "tool": "Higgsfield",
+        "model": "GPT Image 2.5",
+        "purpose": "Exclusive matching Velar film poster"
+      }
+    },
+    {
+      "file": "material-cedar.jpg",
+      "bytes": 444183,
+      "sha256": "28422a40e1b6da222d7e815229ec3331dbc8cd14c94c345c38ca985a23b13514",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "cedar",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    },
+    {
+      "file": "material-clay.jpg",
+      "bytes": 443833,
+      "sha256": "dc68e88ecc5e4bc41d01c66316dafda1ba4f61c15745d4269ba58bd7bbe4a97e",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "clay",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    },
+    {
+      "file": "material-metal.jpg",
+      "bytes": 423472,
+      "sha256": "6d15d991383e8347fd5331c9f770ecf50d3ed0fe416f00427432291dd20d3c63",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "metal",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    },
+    {
+      "file": "material-slate.jpg",
+      "bytes": 436011,
+      "sha256": "77f0208ecd63f1b1d613c642cb86d2a04b9acae77576f8e759e735f3e0cf37b6",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "slate",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    },
+    {
+      "file": "project-progress.jpg",
+      "bytes": 295460,
+      "sha256": "dc9cefc3d03122a708dce685f375832d94957494c971b7f4ff79bd8b136aee09",
+      "origin": {
+        "tool": "OpenAI built-in ImageGen",
+        "purpose": "New exclusive Velar concept image"
+      }
+    },
+    {
+      "file": "residence-cedar.jpg",
+      "bytes": 444183,
+      "sha256": "28422a40e1b6da222d7e815229ec3331dbc8cd14c94c345c38ca985a23b13514",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "cedar",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    },
+    {
+      "file": "residence-clay.jpg",
+      "bytes": 443833,
+      "sha256": "dc68e88ecc5e4bc41d01c66316dafda1ba4f61c15745d4269ba58bd7bbe4a97e",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "clay",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    },
+    {
+      "file": "residence-metal.jpg",
+      "bytes": 423472,
+      "sha256": "6d15d991383e8347fd5331c9f770ecf50d3ed0fe416f00427432291dd20d3c63",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "metal",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    },
+    {
+      "file": "residence-original.jpg",
+      "bytes": 554864,
+      "sha256": "a73f76c9e1361045ab9c3c9330a08e09e0b736628eb811729b289ee3f5fbe001",
+      "origin": {
+        "tool": "OpenAI built-in ImageGen",
+        "purpose": "New exclusive Velar concept image"
+      }
+    },
+    {
+      "file": "residence-slate.jpg",
+      "bytes": 436011,
+      "sha256": "77f0208ecd63f1b1d613c642cb86d2a04b9acae77576f8e759e735f3e0cf37b6",
+      "origin": {
+        "tool": "Velar /api/roof-render",
+        "provider": "OpenAI Images edits API",
+        "model": "gpt-image-2",
+        "quality": "medium",
+        "promptRevision": 2,
+        "material": "slate",
+        "source": "residence-original.jpg",
+        "purpose": "Exclusive Velar roof concept"
+      }
+    }
+  ]
+}
