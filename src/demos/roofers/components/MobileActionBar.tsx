@@ -5,15 +5,16 @@ import './MobileActionBar.css'
 
 /**
  * Call / estimate shortcuts for phones, shown once the visitor is past the
- * timelapse (on the deeper pages, past the page's opening section) and
- * hidden again while the estimate form itself is on screen.
+ * timelapse (on the deeper pages, past the page's heading) and hidden again
+ * while the estimate form, or a deeper page's closing band with the same
+ * two actions, is on screen.
  */
 export function MobileActionBar() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const hero = document.getElementById('process') ?? document.querySelector('main > section')
-    const form = document.getElementById('estimate')
+    const hero = document.getElementById('process') ?? document.querySelector('main .rf-section__head')
+    const form = document.getElementById('estimate') ?? document.querySelector('.rf-next')
     if (!hero) return
     const state = { pastHero: false, formInView: false }
     const update = () => setVisible(state.pastHero && !state.formInView)

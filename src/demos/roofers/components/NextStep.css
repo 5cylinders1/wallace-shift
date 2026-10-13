@@ -61,3 +61,8 @@
 .rf-next .rf-page-links {
   grid-template-columns: 1fr;
 }
+
+/* Straight after another dark band (the Warranty page's "During the job"), a hairline marks the seam. */
+.rf-during + .rf-next {
+  border-top: 1px solid rgba(244, 241, 234, 0.14);
+}

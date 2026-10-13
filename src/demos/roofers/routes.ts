@@ -13,7 +13,7 @@ const branded = location?.hostname === 'roofers.wallaceshift.com' || /^\/northva
 
 /** The page this document is, from the last part of its path. */
 export function currentPage(): PageId {
-  const last = (location?.pathname ?? '').replace(/\/+$/, '').split('/').pop() ?? ''
+  const last = (location?.pathname ?? '').replace(/\/index\.html$/, '').replace(/\/+$/, '').split('/').pop() ?? ''
   return (INFO_PAGES as readonly string[]).includes(last) ? (last as PageId) : 'home'
 }
 

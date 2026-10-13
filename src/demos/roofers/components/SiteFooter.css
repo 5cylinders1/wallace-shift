@@ -4,6 +4,13 @@
   color: var(--rf-on-dark-muted);
 }
 
+/* Room for the phone action bar (MobileActionBar), so the last line can scroll clear of it. */
+@media (max-width: 899px) {
+  .rf-footer {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .rf-footer__top {
   display: grid;
   gap: 36px;

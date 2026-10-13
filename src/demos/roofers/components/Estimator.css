@@ -3,6 +3,9 @@
   padding-block: var(--rf-section-y);
   background: var(--rf-ink);
   color: var(--rf-on-dark);
+  /* A jump here lands the band right under the header, without the light gap
+     other sections keep (scroll-padding-top in roofers.css). */
+  scroll-margin-top: -12px;
 }
 
 .rf-estimator .rf-roof {

@@ -207,7 +207,7 @@ export const pages: { eyebrow: string; title: string; items: (PageLink & { label
       label: 'Warranty & the job',
       body: 'Who guarantees what and for how long, and what the job days are like at home.',
     },
-    { page: 'faq', label: 'Questions', body: 'Permits, weather, materials, payment, and everything else people ask.' },
+    { page: 'faq', label: 'Questions', body: 'Permits, weather, HOAs, scheduling, shingle colors, and the rest of what people ask.' },
   ],
 }
 
@@ -615,7 +615,7 @@ export const warranty = {
 
 export const faq = {
   eyebrow: 'Questions',
-  title: 'Everything else.',
+  title: 'Roofing questions, answered.',
   items: [
     {
       q: 'Do I need to be home during the job?',

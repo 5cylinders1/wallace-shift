@@ -10,22 +10,39 @@ site.
 
 ## What it shows a prospect
 
+The home page (`/northvane`), top to bottom:
+
 1. **Timelapse hero.** As the visitor scrolls, the camera rises and a crew
    inspects, tears off, re-decks, dries in, shingles and cleans up a house
    over two days, with a night in between. Seven captions explain each step;
    callouts label drip edge, ice & water shield, underlayment, flashing,
    pipe boots and ridge vent.
-2. **The short version.** Eight one-line answers linking to the detail.
-3. **Insurance.** Covered vs not, the deductible, RCV / ACV / roof schedules,
-   how the money moves on a claim, and the claim timeline.
-4. **Cost.** A roof estimator built on the visitor's own house (below), then
-   the price table, what every quote includes, and priced-if-needed extras.
-5. **Financing.** Ways to pay and a payment calculator with example terms.
-6. **Staying home**, **warranty layers**, and an **FAQ**.
-7. **Qualifying form.** Four short steps (problem, insurance and payment,
+2. **Roof estimator.** A full-width dark band built on the visitor's own
+   house (below).
+3. **Financing.** Ways to pay and a payment calculator with example terms,
+   starting from the estimator's price.
+4. **The short version.** Eight one-line answers, each linking to the page or
+   section with the detail.
+5. **The deeper pages**, listed with what each answers.
+6. **Qualifying form.** Four short steps (problem, insurance and payment,
    timing, contact). Submitting shows the scored lead the contractor would
    receive, including the roof they priced and the payment they saw. The
    street and ZIP are pre-filled from the address they looked up.
+
+The deeper pages, each closing with the estimator, the inspection and the
+other pages:
+
+- **Insurance** (`/northvane/insurance`): covered vs not, the deductible,
+  RCV / ACV / roof schedules, how the money moves on a claim, and the claim
+  timeline.
+- **Prices** (`/northvane/prices`): the price table, what every quote
+  includes, priced-if-needed extras and what moves the price.
+- **Warranty** (`/northvane/warranty`): the warranty layers, then what the
+  job days are like at home.
+- **FAQ** (`/northvane/faq`).
+
+A link to a section on another page (`/northvane#estimate`, say) lands on
+that section once the page has rendered (`RoofersApp.tsx`).
 
 ## Personalizing a link
 
@@ -45,6 +62,8 @@ Northvane Roofing with a 555-01xx number reserved for fiction.
 | Change | File |
 | --- | --- |
 | Any copy, prices in the table, FAQ | `src/demos/roofers/content.ts` |
+| Which sections each page shows | `src/demos/roofers/pages/` (home: `main.tsx`; the rest: `info.tsx`) |
+| Page URLs and links between pages | `src/demos/roofers/routes.ts`, `vercel.json`, `vite.config.ts` |
 | Roof price rates and finance math | `src/demos/roofers/pricing.ts` |
 | Pitch range, bands and house styles | `src/demos/roofers/roof/pitch.ts` |
 | Roof estimator UI | `src/demos/roofers/roof/` |
@@ -442,8 +461,9 @@ any keys.
 ## Deploying the subdomain
 
 `vercel.json` rewrites `/` on host `roofers.wallaceshift.com` to the offer
-gallery at `/demos/roofers-offer`. `/northvane` rewrites to this demo's
-`/demos/roofers` document, retaining query parameters for personalization.
+gallery at `/demos/roofers-offer`. `/northvane` and `/northvane/<page>`
+(insurance, prices, warranty, faq) rewrite to this demo's `/demos/roofers`
+documents, retaining query parameters for personalization.
 Branded demo paths also work on Vercel preview domains. To release:
 
 1. Build and review the offer gallery and both demo entries, then merge the
@@ -453,8 +473,9 @@ Branded demo paths also work on Vercel preview domains. To release:
 3. If `wallaceshift.com` DNS is not on Vercel, add the CNAME record Vercel
    shows for `roofers` (typically `cname.vercel-dns.com`).
 
-4. Verify the roofing host root, `/northvane`, `/alder-stone` and its direct
-   guide URLs on the deployment. A local path check does not prove host routing.
+4. Verify the roofing host root, `/northvane` and its four pages
+   (`/northvane/insurance`, `/prices`, `/warranty`, `/faq`), `/alder-stone`
+   and its direct guide URLs on the deployment. A local path check does not prove host routing.
 
 Local review: `npm run dev`, then open `/demos/roofers/` on the URL Vite reports.
 The roof endpoints run inside `vite dev` too, using keys from `.env.local`.
