@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useScrollVideo } from '../../hooks/useScrollVideo'
 import { estatePath } from './routes'
 
 const stages = [
@@ -26,6 +27,7 @@ export default function FilmHero() {
   const [ready, setReady] = useState(false)
   const [unavailable, setUnavailable] = useState(false)
   const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  const { seek, cancelPreparation, markPrepared } = useScrollVideo(sectionRef, videoRef, progressRef, !playing && (!reduced || requestedMedia))
   const phase = Math.max(0, Math.min(4, chapterStarts.findLastIndex(start => progress >= start)))
   const introHidden = progress > (playing || reduced ? .08 : .14)
 
@@ -63,10 +65,7 @@ export default function FilmHero() {
       progressRef.current = p
       section.style.setProperty('--er-progress', String(p))
       setProgress(p)
-      const video = videoRef.current
-      if (video && Number.isFinite(video.duration) && !video.seeking && Math.abs(video.currentTime - p * (video.duration - .06)) > .04) {
-        video.currentTime = p * (video.duration - .06)
-      }
+      seek()
     }
     const scroll = () => { if (!frame) frame = requestAnimationFrame(update) }
     // Pausing or finishing a user-started film keeps that frame. Resume
@@ -75,13 +74,13 @@ export default function FilmHero() {
     window.addEventListener('scroll', scroll, { passive: true })
     window.addEventListener('resize', scroll)
     return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', scroll); window.removeEventListener('resize', scroll) }
-  }, [playing, reduced, ready])
+  }, [playing, reduced, ready, seek])
 
   const scrub = (p: number) => {
     playbackRequest.current += 1
     preserveFrame.current = true
     setPlaying(false)
-    videoRef.current?.pause()
+    if (playing) videoRef.current?.pause()
     setProgress(p)
     progressRef.current = p
     const section = sectionRef.current
@@ -94,19 +93,19 @@ export default function FilmHero() {
       window.scrollTo({ top: top + p * (section.offsetHeight - height), behavior: 'instant' })
     }
     const video = videoRef.current
-    if (video && Number.isFinite(video.duration)) video.currentTime = p * Math.max(0, video.duration - .06)
+    if (video && Number.isFinite(video.duration)) seek()
     else if (video && !unavailable) {
-      // Reduced motion leaves the movie unloaded initially. An explicit
-      // chapter request may load it and seek one still, without playback.
+      // Reduced motion leaves the movie unloaded initially. Do not restart
+      // a pending decoder preparation when choosing a chapter mid-load.
       setRequestedMedia(true)
-      video.preload = 'auto'
-      video.load()
+      if (video.preload === 'none') { video.preload = 'auto'; video.load() }
     }
   }
 
   const togglePlayback = async () => {
     const video = videoRef.current
     if (!video) return
+    cancelPreparation()
     const request = ++playbackRequest.current
     preserveFrame.current = true
     if (playing) { video.pause(); setPlaying(false); return }
@@ -118,7 +117,7 @@ export default function FilmHero() {
       // media is loading. That is not a failed film or a reason to disable it.
       if (request !== playbackRequest.current) return
       setPlaying(false)
-      if (!(error instanceof DOMException && error.name === 'AbortError')) setUnavailable(true)
+      if (!(error instanceof DOMException && ['AbortError', 'NotAllowedError'].includes(error.name))) setUnavailable(true)
     }
   }
 
@@ -142,9 +141,8 @@ export default function FilmHero() {
     <div className="er-film-sticky">
       <img className="er-film-poster" src="/demos/roofers-2/house-poster.webp" alt="A stone home with a sweeping charcoal roof, surrounded by mature trees and lawn" fetchPriority="high" width="1920" height="1080" />
       <video ref={videoRef} className={`er-film-video ${ready && !unavailable ? 'is-ready' : ''}`} muted playsInline preload={reduced && !requestedMedia ? 'none' : 'auto'} poster="/demos/roofers-2/house-poster.webp" aria-label="AI-generated roof replacement timelapse" onLoadedMetadata={() => {
-        const video = videoRef.current
-        if (!playing && video && Number.isFinite(video.duration)) video.currentTime = progressRef.current * Math.max(0, video.duration - .06)
-      }} onLoadedData={() => { setReady(true); setUnavailable(false) }} onError={event => {
+        if (!playing) seek()
+      }} onPlaying={markPrepared} onLoadedData={() => { setReady(true); setUnavailable(false) }} onCanPlay={() => { setReady(true); setUnavailable(false); if (!playing) seek() }} onError={event => {
         // A rejected <source> may bubble an error while a later source works.
         if (event.target !== event.currentTarget) return
         playbackRequest.current += 1
@@ -159,10 +157,8 @@ export default function FilmHero() {
         sectionRef.current?.style.setProperty('--er-progress', '1')
       }} onSeeked={() => {
         const video = videoRef.current
-        if (!playing && video && Number.isFinite(video.duration)) {
-          const target = progressRef.current * (video.duration - .06)
-          if (Math.abs(video.currentTime - target) > .08) video.currentTime = target
-        }
+        if (video && video.readyState >= 2) setReady(true)
+        if (!playing) seek()
       }} onTimeUpdate={() => {
         if (playing && videoRef.current && Number.isFinite(videoRef.current.duration) && videoRef.current.duration > 0) {
           const p = videoRef.current.currentTime / videoRef.current.duration

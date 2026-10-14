@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useScrollVideo } from '../../hooks/useScrollVideo'
 
 /**
  * Scroll-driven drone film. The section is a tall runway; its first child
@@ -27,12 +28,14 @@ export default function DroneFilm() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const progressRef = useRef(0)
   const holdFrame = useRef(false)
+  const playbackRequest = useRef(0)
   const [progress, setProgress] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [ready, setReady] = useState(false)
   const [failed, setFailed] = useState(false)
   const [still, setStill] = useState(prefersReduced)
   const [wantsMedia, setWantsMedia] = useState(() => !prefersReduced())
+  const { seek, cancelPreparation, markPrepared } = useScrollVideo(sectionRef, videoRef, progressRef, !playing && (!still || wantsMedia))
 
   const phase = Math.max(0, Math.min(chapters.length - 1, starts.findLastIndex(start => progress >= start)))
   const introGone = progress > 0.1
@@ -43,14 +46,6 @@ export default function DroneFilm() {
     media.addEventListener('change', change)
     return () => media.removeEventListener('change', change)
   }, [])
-
-  const seek = (p: number) => {
-    const video = videoRef.current
-    if (video && Number.isFinite(video.duration) && video.duration > 0 && !video.seeking) {
-      const target = p * Math.max(0, video.duration - 0.05)
-      if (Math.abs(video.currentTime - target) > 0.03) video.currentTime = target
-    }
-  }
 
   useEffect(() => {
     if (still || playing) return
@@ -65,19 +60,20 @@ export default function DroneFilm() {
       progressRef.current = p
       section.style.setProperty('--hr-progress', String(p))
       setProgress(p)
-      seek(p)
+      seek()
     }
     const onScroll = () => { if (!frame) frame = requestAnimationFrame(update) }
     if (!holdFrame.current) onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
     return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll) }
-  }, [playing, still, ready])
+  }, [playing, still, ready, seek])
 
   const goTo = (p: number) => {
+    playbackRequest.current += 1
     holdFrame.current = true
     setPlaying(false)
-    videoRef.current?.pause()
+    if (playing) videoRef.current?.pause()
     progressRef.current = p
     setProgress(p)
     sectionRef.current?.style.setProperty('--hr-progress', String(p))
@@ -90,25 +86,32 @@ export default function DroneFilm() {
       }
     }
     const video = videoRef.current
-    if (video && Number.isFinite(video.duration) && video.duration > 0) seek(p)
-    else if (video && !failed) { setWantsMedia(true); video.preload = 'auto'; video.load() }
+    if (video && Number.isFinite(video.duration) && video.duration > 0) seek()
+    else if (video && !failed) {
+      setWantsMedia(true)
+      if (video.preload === 'none') { video.preload = 'auto'; video.load() }
+    }
   }
 
   const togglePlay = async () => {
     const video = videoRef.current
     if (!video) return
+    cancelPreparation()
+    const request = ++playbackRequest.current
     holdFrame.current = true
     if (playing) { video.pause(); setPlaying(false); return }
     setWantsMedia(true)
     if (video.currentTime >= video.duration - 0.1) video.currentTime = 0
     setPlaying(true)
     try { await video.play() } catch (error) {
+      if (request !== playbackRequest.current) return
       setPlaying(false)
-      if (!(error instanceof DOMException && error.name === 'AbortError')) setFailed(true)
+      if (!(error instanceof DOMException && ['AbortError', 'NotAllowedError'].includes(error.name))) setFailed(true)
     }
   }
 
   const toggleStill = () => {
+    playbackRequest.current += 1
     holdFrame.current = true
     videoRef.current?.pause()
     setPlaying(false)
@@ -131,10 +134,16 @@ export default function DroneFilm() {
         preload={wantsMedia ? 'auto' : 'none'}
         poster={poster}
         aria-label="AI concept drone film of a luxury estate roof"
-        onLoadedMetadata={() => { if (!playing) seek(progressRef.current) }}
+        onLoadedMetadata={() => { if (!playing) seek() }}
+        onPlaying={markPrepared}
         onLoadedData={() => { setReady(true); setFailed(false) }}
-        onError={event => { if (event.target === event.currentTarget) { setPlaying(false); setFailed(true) } }}
-        onEnded={() => { holdFrame.current = true; progressRef.current = 1; setProgress(1); setPlaying(false); sectionRef.current?.style.setProperty('--hr-progress', '1') }}
+        onCanPlay={() => { setReady(true); setFailed(false); if (!playing) seek() }}
+        onSeeked={() => {
+          if (videoRef.current && videoRef.current.readyState >= 2) setReady(true)
+          if (!playing) seek()
+        }}
+        onError={event => { if (event.target === event.currentTarget) { playbackRequest.current += 1; setPlaying(false); setFailed(true) } }}
+        onEnded={() => { playbackRequest.current += 1; holdFrame.current = true; progressRef.current = 1; setProgress(1); setPlaying(false); sectionRef.current?.style.setProperty('--hr-progress', '1') }}
         onTimeUpdate={() => {
           const video = videoRef.current
           if (playing && video && Number.isFinite(video.duration) && video.duration > 0) {
