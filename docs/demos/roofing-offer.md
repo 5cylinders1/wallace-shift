@@ -1,10 +1,48 @@
-# Roofing website collection and offer
+# Roofing website + CRM collection and offer
 
-The offer is **Free website valued at $5000 with 1 year commitment to managed automation**.
-The collection has five client places: two published demo designs and three
-designs marked coming soon. Paid automation scope and pricing are agreed in
-writing before commitment; this page does not invent a monthly price or collect
-payment.
+The offer is **Motion website + roofing CRM included with a 12-month managed
+automation plan**. Managed automation starts at **$750/month**, a **$9,000 minimum
+service commitment** over the initial year, before separate vendor costs. The
+website build and CRM setup are included at no additional charge. The final fee
+depends on workflow complexity, integrations and support needs, with the initial
+implementation and ongoing scope agreed in writing before commitment.
+
+The collection currently has five available demo designs and five client places.
+An inquiry does not reserve a place, create a contract or collect payment.
+The offer index identifies Wallace Shift with the existing white WS logo and
+company name in both the header and footer, linked to the studio homepage.
+
+## Positioning and automation education
+
+The previous $5,000 website-value badge is removed. The studio's Motion starting
+price is $5,000, but there is no established standalone price for this combined
+roofing package. Do not invent a higher bundle valuation or add the custom-app
+price to the reusable CRM offering.
+
+The page keeps the website collection first, followed by included CRM tools,
+six practical automation starting points and service terms. A hero link jumps
+directly to the automation examples. Featured workflows cover
+lead response, estimates, inspections, customer progress, reviews and storm
+outreach. Each explains a qualitative time benefit and financial upside; none
+claims measured savings, guaranteed revenue or unsupported popularity.
+
+`src/demos/roofers-offer/automationMenu.ts` contains the six featured examples and
+the full 24-item menu, grouped into sales, operations and growth. One native
+`details` disclosure keeps the full menu collapsed until requested and supports
+keyboard operation. The menu offers workflow choices; it does not promise all
+24 workflows at the starting price.
+
+The CRM scope includes customer/property records, severe-weather/customer maps
+and outreach tools, a customer progress portal, lead/review follow-up, and paid
+ads/social media management tools. Done-for-you campaigns and content management
+are separately scoped services. Ad spend, platform subscriptions and third-party
+usage are separate. The dashboard preview remains labeled as sample data and
+illustrates part of the CRM; it is not proof of deployed customer integrations.
+
+This roofing promotion includes an agreed initial implementation and has a
+12-month commitment. It is distinct from the general studio rolling maintenance
+offer. New workflows and substantial changes after the agreed launch scope are
+quoted separately.
 
 ## URL map
 
@@ -40,9 +78,9 @@ the `company`, `city` and `phone` parameters from page to page. Its footer links
 ## Catalog and availability
 
 `src/demos/roofers-offer/catalog.ts` is the manual source of truth for all five
-tiles and their `available`, `claimed` or `coming-soon` status. Only the first
-two slots have actual demo links. The remaining tiles represent future designs,
-not additional completed websites.
+tiles and their `available`, `claimed` or `coming-soon` status. All five currently
+have demo links. The upcoming-design grid is hidden when no designs are marked
+coming soon.
 
 An inquiry does not reserve a design or change the catalog. Confirm availability
 and the agreement personally, then mark the appropriate catalog entry `claimed`
@@ -59,7 +97,7 @@ These notes document configuration, not a completed deployment. Before announcin
 the release:
 
 - Build the gallery and all demo documents, and inspect the published metadata.
-- On the deployed roofing hostname, check root, both demo homepages and every
+- On the deployed roofing hostname, check root, all five demo homepages and every
   Alder & Stone guide with a direct refresh. Confirm studio root still serves
   Wallace Shift; local Vite paths do not establish production host routing.
 - Check gallery tiles and links, mobile navigation, poster/video loads, and
@@ -68,3 +106,19 @@ the release:
 - Verify the contact endpoint configuration and honest success/failure behavior.
   Do not represent a local mocked response as email delivery.
 - Check the manually maintained availability status before sharing the offer.
+- Check the six featured workflows and the full 24-item disclosure on desktop and
+  mobile, including keyboard expand/collapse and the design-to-inquiry selection.
+- Confirm website + CRM wording and the monthly/12-month terms match in the hero,
+  offer details, form acknowledgment, inquiry payload and metadata.
+
+## Local verification — 2026-10-13
+
+- Production build, scoped ESLint and whitespace checks passed. Vite reported
+  its large-chunk advisory and plugin timing advisory.
+- Browser checks at 1440×1000, 768×1024, 390×844 and 320×740 found no horizontal
+  overflow. Desktop and mobile screenshots were visually reviewed.
+- Confirmed six featured examples, all 24 expanded ideas, collapsed-by-default
+  behavior, pointer opening, Enter/Space closing and mobile single-column layout.
+- Requesting Velar selected it in the inquiry form and focused the name field.
+  No inquiry was submitted; email delivery and live CRM integrations were not
+  tested. No production deployment was performed.

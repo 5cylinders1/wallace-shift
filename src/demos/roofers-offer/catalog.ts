@@ -81,7 +81,9 @@ export const roofingDesigns: RoofingDesign[] = [
   },
 ]
 
-export const roofingOffer = 'Free website valued at $5000 with 1 year commitment to managed automation'
+export const roofingOffer = 'Motion website + roofing CRM included with a 12-month managed automation plan'
+export const roofingMonthlyMinimum = 750
+export const roofingCommitmentMonths = 12
 export const roofingContactEmail = 'bella@wallaceshift.com'
 
 export function roofingDemoHref(design: RoofingDesign, hostname: string): string {
