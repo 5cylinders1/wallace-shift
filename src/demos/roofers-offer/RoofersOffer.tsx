@@ -131,11 +131,13 @@ export function RoofersOffer() {
     <a className="ro-skip" href="#main">Skip to content</a>
     <header className="ro-header ro-wrap">
       <Wordmark />
-      <nav aria-label="Main navigation"><a href="#collection">The collection</a><a href="#automation">What we automate</a><a href="#offer">The offer</a><a className="ro-header-cta" href="#enquire">Let’s talk <Arrow diagonal /></a></nav>
+      <nav aria-label="Main navigation"><a href="#collection">The collection</a><a href="#automation">What we automate</a><a href="#offer">The offer</a></nav>
+      <a className="ro-header-cta" href="#enquire">Let’s talk <Arrow diagonal /></a>
     </header>
 
     <main id="main">
-      <section className="ro-hero ro-wrap" aria-labelledby="hero-heading">
+      <section className="ro-hero" aria-labelledby="hero-heading">
+        <div className="ro-wrap">
         <div className="ro-hero-top"><p className="ro-eyebrow">Websites, CRM & automation for roofers</p><span className="ro-edition">THE COLLECTION / 01—05</span></div>
         <div className="ro-hero-layout">
           <div className="ro-hero-heading"><h1 id="hero-heading">Built to win<br />the <em>right</em> work.</h1><p>A memorable website. A connected customer system. Less chasing between the first inquiry and the final review.</p><div className="ro-hero-actions"><a className="ro-button ro-button-light" href="#collection">Find your website <Arrow /></a><a className="ro-hero-link" href="#automation">See what we can automate <span aria-hidden="true">↓</span></a></div></div>
@@ -148,6 +150,7 @@ export function RoofersOffer() {
           </div>
         </div>
         <div className="ro-hero-foot"><span>Designed by Wallace Shift</span><span>{readyDesigns.length} live demos{upcomingDesigns.length > 0 && <><i aria-hidden="true">/</i> {upcomingDesigns.length} in progress</>}</span><a href="#automation">Explore the possibilities <span aria-hidden="true">↓</span></a></div>
+        </div>
       </section>
 
       <section className="ro-collection" id="collection" aria-labelledby="collection-heading">

@@ -28,9 +28,10 @@ interface WaterSceneProps {
   reducedMotion: boolean
   channel: number
   appearance: LogoAppearance
+  onReady?: () => void
 }
 
-export function WaterScene({ progress, override, sceneState, telemetry, tier, reducedMotion, channel, appearance }: WaterSceneProps) {
+export function WaterScene({ progress, override, sceneState, telemetry, tier, reducedMotion, channel, appearance, onReady }: WaterSceneProps) {
   const gl = useThree(state => state.gl)
   const scene = useThree(state => state.scene)
   const camera = useThree(state => state.camera)
@@ -95,6 +96,7 @@ export function WaterScene({ progress, override, sceneState, telemetry, tier, re
     <SurfaceFog sceneState={sceneState} reducedMotion={reducedMotion} />
     <ForegroundMist sceneState={sceneState} reducedMotion={reducedMotion} tier={tier} fogDepth={fogDepth} />
     <WaterSurface sceneState={sceneState} telemetry={telemetry} quality={QUALITY[tier]}
-      environment={environment} channel={channel} reducedMotion={reducedMotion} fogDepth={fogDepth} logoNodes={nodes} appearance={appearance} />
+      environment={environment} channel={channel} reducedMotion={reducedMotion} fogDepth={fogDepth} logoNodes={nodes} appearance={appearance}
+      onReady={!glassEnabled || activeCrystalEnvironment ? onReady : undefined} />
   </>
 }

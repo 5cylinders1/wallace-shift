@@ -4,17 +4,23 @@ import { Hero } from './Hero'
 import { HeroContactProvider } from './HeroContactProvider'
 import { BrandStatement } from '../BrandStatement/BrandStatement'
 import { WaterHeroErrorBoundary } from '../experiments/water-hero/WaterHeroErrorBoundary'
+import { LoadingFallback } from '../experiments/water-hero/LoadingFallback'
 import { getInteractiveHomeHeroSnapshot, getStaticHomeHeroSnapshot, subscribeInteractiveHomeHero } from './homeHeroDisplay'
 
-// React calls this loader only when the eligible branch is rendered. Mobile
-// visitors never mount a hidden Canvas or fetch the Three.js scene chunk.
+// Both mobile and desktop load the scene on demand. Reduced-motion visitors
+// keep the lightweight still without fetching the Three.js scene chunk.
 const InteractiveHero = lazy(() => import('../experiments/water-hero/WaterHeroExperiment')
   .then(module => ({ default: module.WaterHeroExperiment })))
 
-// Keep the statement with its hero branch: desktop folds it into the logo
-// reveal, while mobile, loading and failure use the About studio still.
-function VideoHeroSequence({ posterOnly = false }: { posterOnly?: boolean }) {
-  return <><Hero posterOnly={posterOnly} appearance="studio" /><BrandStatement /></>
+// Keep the complete composition available when animation is unavailable.
+function StaticHeroSequence() {
+  return <><Hero posterOnly appearance="studio" /><BrandStatement /></>
+}
+
+function LoadingHeroSequence() {
+  return <><section className="hero-loading-shell" aria-label="Loading the homepage">
+    <LoadingFallback visible />
+  </section><BrandStatement /></>
 }
 
 export function HomeHero() {
@@ -26,7 +32,7 @@ export function HomeHero() {
     if (!container.current) return
     let frame = 0
     let height = -1
-    // Loading, failure or a changed input device can replace the tall scene
+    // Loading, failure or a changed motion preference can replace the tall scene
     // with a single-screen hero. Remeasure later sections after that layout.
     const observer = new ResizeObserver(([entry]) => {
       if (!entry || entry.contentRect.height === height) return
@@ -45,10 +51,10 @@ export function HomeHero() {
   }, [])
 
   return <HeroContactProvider><div ref={container}>
-    {interactive ? <WaterHeroErrorBoundary fallback={() => <VideoHeroSequence posterOnly />}>
-      <Suspense fallback={<VideoHeroSequence posterOnly />}>
-        <InteractiveHero mode="landing" fallback={<VideoHeroSequence posterOnly />} />
+    {interactive ? <WaterHeroErrorBoundary fallback={() => <StaticHeroSequence />}>
+      <Suspense fallback={<LoadingHeroSequence />}>
+        <InteractiveHero mode="landing" fallback={<StaticHeroSequence />} />
       </Suspense>
-    </WaterHeroErrorBoundary> : <VideoHeroSequence />}
+    </WaterHeroErrorBoundary> : <StaticHeroSequence />}
   </div></HeroContactProvider>
 }

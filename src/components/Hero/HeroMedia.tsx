@@ -32,14 +32,11 @@ export function HeroMedia({ posterOnly = false, appearance = 'original' }: {
           preload="auto"
           poster={POSTER}
         >
-          {/* Seedance 2.0 locked-camera loop grown from the approved poster
-              frame: livelier water, rigid WS, and matching first/last
-              frames so the loop point stays invisible. Verified against
-              the original footage for motion level and zero camera drift;
-              the original sources remain in /media as the known-good
-              fallback. */}
-          <source src="/media/generated/hero-loop.webm" type="video/webm" />
-          <source src="/media/generated/hero-loop.mp4" type="video/mp4" />
+          {/* Archived Seedance 2.0 homepage loop, retained for the
+              original-media experiment. Its poster and source footage
+              remain in /media; the live homepage uses the WebGL scene. */}
+          <source src="/media/archive/home-hero/hero-loop.webm" type="video/webm" />
+          <source src="/media/archive/home-hero/hero-loop.mp4" type="video/mp4" />
         </video>
       )}
       <div className="hero-media__scrim" />

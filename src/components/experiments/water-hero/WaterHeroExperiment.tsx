@@ -74,11 +74,12 @@ function supportsWebGL(): boolean {
   if (typeof window === 'undefined') return false
   try {
     const canvas = document.createElement('canvas')
-    return Boolean(
-      canvas.getContext('webgl2') ??
-        canvas.getContext('webgl') ??
-        canvas.getContext('experimental-webgl'),
-    )
+    // The renderer requires WebGL2. Release the probe immediately so it
+    // doesn't consume a second context on a phone with a tight GPU budget.
+    const context = canvas.getContext('webgl2')
+    if (!context) return false
+    context.getExtension('WEBGL_lose_context')?.loseContext()
+    return true
   } catch {
     return false
   }

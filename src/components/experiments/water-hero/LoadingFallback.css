@@ -1,0 +1,154 @@
+.hero-loading-shell {
+  position: relative;
+  height: 100svh;
+  background: #04060a;
+}
+
+.water-hero__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 46%, #101e2b 0%, #070c13 33%, #04060a 68%);
+  color: #e8eef1;
+  pointer-events: none;
+  transition: opacity .8s ease, visibility .8s;
+}
+
+.water-hero__loading[data-visible='false'] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.water-hero__loading-art {
+  position: relative;
+  width: min(320px, 80vw);
+  height: 180px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 24px;
+}
+
+.water-hero__loading-mark {
+  position: relative;
+  width: 168px;
+  filter: drop-shadow(0 0 22px rgb(161 213 255 / .2));
+  animation: hero-loader-float 3.2s ease-in-out infinite;
+}
+
+.water-hero__loading-mark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: .22;
+}
+
+.water-hero__loading-light {
+  position: absolute;
+  inset: 0;
+  mask: url('/brand/wallace-shift-logo-white.svg') center / contain no-repeat;
+  background: linear-gradient(115deg, #526677 20%, #c3e5f9 38%, #fff 46%, #89c5ed 52%, #526677 68%);
+  background-size: 300% 100%;
+  animation: hero-loader-light 2.6s ease-in-out infinite;
+}
+
+.water-hero__loading-reflection {
+  position: absolute;
+  top: 124px;
+  width: 168px;
+  height: 60px;
+  background: linear-gradient(transparent, rgb(161 213 255 / .12));
+  mask: url('/brand/wallace-shift-logo-white.svg') center / 100% 100% no-repeat;
+  transform: scaleY(-1);
+  filter: blur(3px);
+}
+
+.water-hero__loading-orbit {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 58px;
+  border: 1px solid rgb(153 208 247 / .3);
+  border-radius: 50%;
+  animation: hero-loader-ripple 3.2s ease-out infinite;
+}
+
+.water-hero__loading-orbit--echo {
+  animation-delay: -1.6s;
+}
+
+.water-hero__loading-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+}
+
+.water-hero__loading-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.55rem, 5vw, 1.9rem);
+  letter-spacing: -.02em;
+}
+
+.water-hero__loading-label {
+  color: #8da4b7;
+  font-size: .625rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.water-hero__loading-track {
+  width: 88px;
+  height: 1px;
+  margin-top: 26px;
+  overflow: hidden;
+  background: rgb(159 199 228 / .14);
+}
+
+.water-hero__loading-track::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #c3e5f9, transparent);
+  animation: hero-loader-travel 2.6s ease-in-out infinite;
+}
+
+.water-hero__loading[data-visible='false'] *,
+.water-hero__loading[data-visible='false'] *::after {
+  animation-play-state: paused;
+}
+
+@keyframes hero-loader-light {
+  0%, 12% { background-position: 100% 50%; }
+  75%, 100% { background-position: 0% 50%; }
+}
+
+@keyframes hero-loader-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes hero-loader-ripple {
+  0% { transform: scale(.45); opacity: 0; }
+  25% { opacity: .6; }
+  100% { transform: scale(1.1); opacity: 0; }
+}
+
+@keyframes hero-loader-travel {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water-hero__loading,
+  .water-hero__loading *,
+  .water-hero__loading *::after {
+    animation: none;
+    transition: none;
+  }
+}

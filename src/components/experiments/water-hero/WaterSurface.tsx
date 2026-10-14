@@ -58,6 +58,8 @@ interface WaterSurfaceProps {
   fogDepth: SurfaceFogDepth
   logoNodes: LogoNodes
   appearance: LogoAppearance
+  /** Called once, after all surface resources and the beauty draw exist. */
+  onReady?: () => void
 }
 
 /**
@@ -102,12 +104,19 @@ export function WaterSurface({
   fogDepth,
   logoNodes,
   appearance,
+  onReady,
 }: WaterSurfaceProps) {
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
   const dpr = useThree((state) => state.viewport.dpr)
 
   const meshRef = useRef<Mesh>(null)
+  const reportedReady = useRef(false)
+  const reportReady = () => {
+    if (reportedReady.current || !onReady) return
+    reportedReady.current = true
+    onReady()
+  }
 
   const geometry = useDisposable(
     () => createWaterGeometry(quality.waterSegments),
@@ -326,6 +335,7 @@ export function WaterSurface({
       gl.setRenderTarget(null)
       gl.render(scene, camera)
       if (glowEnabled && sceneState.progress < .98) renderLEDGlow(gl, scene, camera, targets.glow, logoNodes, mesh)
+      reportReady()
       telemetry.rippleEnergy = 0
       return
     }
@@ -425,6 +435,7 @@ export function WaterSurface({
     /* 5 — Beauty pass. */
     gl.render(scene, camera)
     if (glowEnabled) renderLEDGlow(gl, scene, camera, targets.glow, logoNodes, mesh)
+    reportReady()
 
     /* 6 — Telemetry. */
     telemetry.rippleEnergy = ripple.energy

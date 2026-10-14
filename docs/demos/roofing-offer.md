@@ -12,6 +12,14 @@ An inquiry does not reserve a place, create a contract or collect payment.
 The offer index identifies Wallace Shift with the existing white WS logo and
 company name in both the header and footer, linked to the studio homepage.
 
+The index uses the studio's Manrope / Instrument Serif typography and production
+ink, pearl and azure palette from `docs/brand-palette.md`. Its capsule navigation,
+underlined header action, cool hero glow, diagonal transition and editorial rules
+carry Wallace Shift's style through the offer, collection, CRM and inquiry form.
+Light surfaces use deep azure for readable accent text. The separate demo brands
+keep their own styling. The offer entry point has scoped styles rather than
+importing the main site's layout stylesheet.
+
 ## Positioning and automation education
 
 The previous $5,000 website-value badge is removed. The studio's Motion starting
@@ -122,3 +130,15 @@ the release:
 - Requesting Velar selected it in the inquiry form and focused the name field.
   No inquiry was submitted; email delivery and live CRM integrations were not
   tested. No production deployment was performed.
+
+### Brand alignment pass
+
+- Compared the local studio pricing page and production palette with the offer.
+  Reviewed the restyled hero, collection, automation examples and inquiry form in
+  the browser. The CRM switches to a stacked panel at 900px to keep tablet copy
+  readable.
+- Checked 1440px, 1050px, 900px, 768px, 760px, 390px and 320px viewport widths;
+  no page overflow or overflowing text controls were found. Mobile inputs remain
+  16px, with dark/light focus colors and reduced-motion support preserved.
+- Rechecked the six featured workflows, pointer expansion of all 24 ideas,
+  keyboard collapse and Velar-to-form selection/focus. No form was submitted.

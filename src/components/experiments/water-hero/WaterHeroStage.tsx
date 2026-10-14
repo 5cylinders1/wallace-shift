@@ -40,19 +40,6 @@ interface WaterHeroStageProps {
   mode?: 'experiment' | 'landing'
 }
 
-/**
- * Signals that the suspended subtree resolved, so the loader can retire.
- *
- * Mounting is the signal: React does not run this effect until everything
- * the Suspense boundary was waiting on has loaded.
- */
-function SceneReady({ onReady }: { onReady: () => void }) {
-  useEffect(() => {
-    onReady()
-  }, [onReady])
-  return null
-}
-
 function LandingSceneActivity({ active }: { active: boolean }) {
   const clock = useThree(state => state.clock)
   const advance = useThree(state => state.advance)
@@ -81,6 +68,7 @@ export function WaterHeroStage({
   const uiRef = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
   const [active, setActive] = useState(true)
+  const onReady = useCallback(() => setReady(true), [])
 
   // The homepage continues below this scene. Keep its resources ready for
   // reverse scrolling, but stop GPU work once the canvas leaves the viewport.
@@ -158,7 +146,6 @@ export function WaterHeroStage({
           >
             {mode === 'landing' && <LandingSceneActivity active={active} />}
             <Suspense fallback={null}>
-              <SceneReady onReady={() => setReady(true)} />
               <WaterScene
                 progress={progress}
                 override={override}
@@ -168,14 +155,15 @@ export function WaterHeroStage({
                 reducedMotion={reducedMotion}
                 channel={channel}
                 appearance={appearance}
+                onReady={onReady}
               />
             </Suspense>
           </Canvas>
 
-          <div ref={uiRef} className="water-hero__ui-root">
+          <div ref={uiRef} className="water-hero__ui-root" inert={!ready} aria-hidden={!ready}>
             {mode === 'landing' ? <LandingHeroUI still={reducedMotion} /> : <HeroUI still={reducedMotion} />}
-            <LoadingFallback visible={!ready} />
           </div>
+          <LoadingFallback visible={!ready} />
 
           {mode === 'experiment' && ready && <LogoAppearanceSelector appearance={appearance} onChange={onAppearance} />}
 

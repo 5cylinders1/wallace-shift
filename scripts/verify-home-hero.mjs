@@ -12,26 +12,30 @@ const compile = (source, jsx = false) => ts.transpileModule(source, { compilerOp
   target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.ESNext,
   jsx: jsx ? ts.JsxEmit.ReactJSX : undefined,
 } }).outputText
-const { HOME_HERO_DESKTOP_QUERY, getInteractiveHomeHeroSnapshot, subscribeInteractiveHomeHero,
+const { HOME_HERO_MOTION_QUERY, getInteractiveHomeHeroSnapshot, subscribeInteractiveHomeHero,
   getStaticHomeHeroSnapshot } = await import(asModule(compile(await readFile(new URL('homeHeroDisplay.ts', base), 'utf8'))))
+const loadingSource = (await readFile(new URL('../experiments/water-hero/LoadingFallback.tsx', base), 'utf8'))
+  .replace("import './LoadingFallback.css'", '')
+const loadingModule = asModule(compile(loadingSource, true)
+  .replace('from "react/jsx-runtime"', `from '${import.meta.resolve('react/jsx-runtime')}'`))
+const { LoadingFallback } = await import(loadingModule)
 
-await test('homepage eligibility responds to screen, pointer and motion changes, and releases its listener', () => {
+await test('mobile and desktop keep the interactive hero unless reduced motion is requested, and release the listener', () => {
   const previousWindow = globalThis.window
   const listeners = new Set()
   const device = { width: 390, hover: false, fine: false, motion: true }
   const query = {
-    get matches() { return device.width >= 1024 && device.hover && device.fine && device.motion },
+    get matches() { return device.motion },
     addEventListener(type, callback) { assert.equal(type, 'change'); listeners.add(callback) },
     removeEventListener(type, callback) { assert.equal(type, 'change'); listeners.delete(callback) },
   }
-  assert.equal(HOME_HERO_DESKTOP_QUERY,
-    '(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)')
+  assert.equal(HOME_HERO_MOTION_QUERY, '(prefers-reduced-motion: no-preference)')
   try {
     delete globalThis.window
     assert.equal(getInteractiveHomeHeroSnapshot(), false)
     assert.equal(getStaticHomeHeroSnapshot(), false)
     subscribeInteractiveHomeHero(() => assert.fail('no server listener'))()
-    globalThis.window = { matchMedia(media) { assert.equal(media, HOME_HERO_DESKTOP_QUERY); return query } }
+    globalThis.window = { matchMedia(media) { assert.equal(media, HOME_HERO_MOTION_QUERY); return query } }
     const observed = [getInteractiveHomeHeroSnapshot()]
     const stop = subscribeInteractiveHomeHero(() => observed.push(getInteractiveHomeHeroSnapshot()))
     for (const next of [
@@ -41,11 +45,13 @@ await test('homepage eligibility responds to screen, pointer and motion changes,
       { fine: false },
       { fine: true, width: 1023 },
       { width: 1024 },
+      { width: 390, hover: false, fine: false },
+      { motion: false },
     ]) {
       Object.assign(device, next)
       for (const listener of listeners) listener()
     }
-    assert.deepEqual(observed, [false, true, false, true, false, false, true])
+    assert.deepEqual(observed, [true, true, false, true, true, true, true, true, false])
     stop()
     assert.equal(listeners.size, 0)
   } finally {
@@ -54,7 +60,7 @@ await test('homepage eligibility responds to screen, pointer and motion changes,
   }
 })
 
-await test('original media remains intact while Studio uses the About still for every motion and fallback state', async () => {
+await test('archived video remains accessible while Studio uses the About still for every motion and fallback state', async () => {
   const hook = asModule('export function useReducedMotion() { return globalThis.__homeHeroReducedMotion ?? false }')
   let source = await readFile(new URL('HeroMedia.tsx', base), 'utf8')
   source = source.replace("from '../../hooks/useReducedMotion'", `from '${hook}'`).replace("import './HeroMedia.css'", '')
@@ -67,6 +73,12 @@ await test('original media remains intact while Studio uses the About still for 
     assert.match(video, /<video[^>]*autoPlay=""[^>]*muted=""[^>]*loop=""[^>]*playsInline=""/)
     assert.match(video, /hero-loop\.webm[\s\S]*hero-loop\.mp4/)
     assert.match(video, /poster="\/media\/wallace-shift-hero-poster\.webp"/)
+    for (const extension of ['webm', 'mp4']) {
+      const archivePath = `/media/archive/home-hero/hero-loop.${extension}`
+      assert.ok(video.includes(`src="${archivePath}"`), 'the archive preview resolves its retained video')
+      const asset = await readFile(new URL(`../public${archivePath}`, import.meta.url))
+      assert.ok(asset.byteLength > 0, `${archivePath} is preserved in the public build assets`)
+    }
     const poster = renderToStaticMarkup(createElement(HeroMedia, { posterOnly: true }))
     assert.doesNotMatch(poster, /<video|<source/)
     assert.match(poster, /<img[^>]*wallace-shift-hero-poster\.webp/)
@@ -114,8 +126,6 @@ await test('the homepage wrapper keeps the WebGL scene out of its static depende
   await walk(new URL('HomeHero.tsx', base))
   const wrapper = await readFile(new URL('HomeHero.tsx', base), 'utf8')
   assert.match(wrapper, /lazy\(\(\) => import\('\.\.\/experiments\/water-hero\/WaterHeroExperiment'\)/)
-  assert.match(wrapper, /\{interactive \? <WaterHeroErrorBoundary[\s\S]*<\/WaterHeroErrorBoundary> : <VideoHeroSequence \/>\}/)
-  assert.match(wrapper, /<InteractiveHero mode="landing" fallback=\{<VideoHeroSequence posterOnly \/>\}/)
   assert.ok([...visited].some(path => path.endsWith('/HeroMedia.tsx')))
   assert.ok([...visited].some(path => path.endsWith('/BrandStatement.tsx')))
   const page = await readFile(new URL('../../pages/HomePage.tsx', base), 'utf8')
@@ -123,7 +133,7 @@ await test('the homepage wrapper keeps the WebGL scene out of its static depende
     'HomeHero owns the statement; rendering it after HomeHero would duplicate the desktop handoff')
 })
 
-await test('mobile, loading and unavailable-scene branches each keep their hero and original statement together', async () => {
+await test('loading, reduced-motion and unavailable-scene branches preserve one hero and one statement', async () => {
   const react = import.meta.resolve('react')
   const runtime = import.meta.resolve('react/jsx-runtime')
   const policy = asModule(`export const getInteractiveHomeHeroSnapshot = () => globalThis.__homeBranchInteractive;
@@ -155,6 +165,7 @@ await test('mobile, loading and unavailable-scene branches each keep their hero 
     './HeroContactProvider': provider,
     '../BrandStatement/BrandStatement': statement,
     '../experiments/water-hero/WaterHeroErrorBoundary': boundary,
+    '../experiments/water-hero/LoadingFallback': loadingModule,
     './homeHeroDisplay': policy,
     'react/jsx-runtime': runtime,
   }
@@ -169,19 +180,28 @@ await test('mobile, loading and unavailable-scene branches each keep their hero 
   const { HomeHero } = await import(asModule(javascript))
   const previous = { interactive: globalThis.__homeBranchInteractive, phase: globalThis.__homeBranchPhase }
   try {
-    for (const [interactive, phase, media] of [
-      [false, 'ready', 'video'], [true, 'loading', 'poster'], [true, 'failure', 'poster'],
-      [true, 'boundary-failure', 'poster'],
+    for (const [interactive, phase] of [
+      [false, 'ready'], [true, 'failure'], [true, 'boundary-failure'],
     ]) {
       globalThis.__homeBranchInteractive = interactive
       globalThis.__homeBranchPhase = phase
       const markup = renderToStaticMarkup(createElement(HomeHero))
       assert.equal((markup.match(/data-original-hero=/g) ?? []).length, 1)
-      assert.match(markup, new RegExp(`data-original-hero="${media}"`))
+      assert.match(markup, /data-original-hero="poster"/)
       assert.match(markup, /data-appearance="studio"/)
       assert.equal((markup.match(/data-original-statement=/g) ?? []).length, 1)
       assert.ok(markup.indexOf('data-original-hero') < markup.indexOf('data-original-statement'))
     }
+    globalThis.__homeBranchInteractive = true
+    globalThis.__homeBranchPhase = 'loading'
+    const loading = renderToStaticMarkup(createElement(HomeHero))
+    assert.equal((loading.match(/class="water-hero__loading"/g) ?? []).length, 1)
+    assert.match(loading, /data-visible="true" aria-hidden="false"/)
+    assert.match(loading, /src="\/brand\/wallace-shift-logo-white\.svg"/)
+    assert.match(loading, /role="status" aria-live="polite"/)
+    assert.equal((loading.match(/data-original-statement=/g) ?? []).length, 1)
+    assert.ok(loading.indexOf('class="water-hero__loading"') < loading.indexOf('data-original-statement'))
+    assert.doesNotMatch(loading, /data-original-hero|<video|<source/)
     globalThis.__homeBranchInteractive = true
     globalThis.__homeBranchPhase = 'ready'
     const ready = renderToStaticMarkup(createElement(HomeHero))
@@ -193,6 +213,23 @@ await test('mobile, loading and unavailable-scene branches each keep their hero 
       else globalThis[name] = value
     }
   }
+})
+
+await test('the shared loader announces loading, uses the brand logo, and hides after readiness', async () => {
+  const visible = renderToStaticMarkup(createElement(LoadingFallback, { visible: true }))
+  const hidden = renderToStaticMarkup(createElement(LoadingFallback, { visible: false }))
+  assert.match(visible, /data-visible="true" aria-hidden="false"/)
+  assert.match(visible, /role="status" aria-live="polite"/)
+  assert.match(visible, /Preparing the experience/)
+  assert.match(visible, /<img[^>]*src="\/brand\/wallace-shift-logo-white\.svg"[^>]*alt=""/)
+  assert.match(hidden, /data-visible="false" aria-hidden="true"/)
+  const logo = await readFile(new URL('../public/brand/wallace-shift-logo-white.svg', import.meta.url), 'utf8')
+  assert.match(logo, /<svg\b/)
+  const styles = await readFile(new URL('../experiments/water-hero/LoadingFallback.css', base), 'utf8')
+  const hiddenStyle = styles.match(/\.water-hero__loading\[data-visible=['"]false['"]\]\s*\{([^}]+)\}/)?.[1]
+  assert.ok(hiddenStyle, 'the completed loader has a visual hiding rule')
+  assert.match(hiddenStyle, /visibility:\s*hidden/)
+  assert.match(hiddenStyle, /opacity:\s*0/)
 })
 
 await test('the original-media experiment selects preserved media explicitly and leaves normal logo comparisons intact', async () => {

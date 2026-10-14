@@ -38,8 +38,8 @@ export function WaterHeroExperimentPage() {
   }, [])
 
   if (originalMedia) return <HeroContactProvider><div className="hero-original-experiment">
-    <nav className="hero-original-experiment__nav" aria-label="Preserved homepage hero">
-      <span>Original homepage media</span>
+    <nav className="hero-original-experiment__nav" aria-label="Archived homepage hero">
+      <span>Archived homepage video</span>
       <a href="/">Back to Wallace Shift</a>
       <a href={`${WATER_HERO_EXPERIMENT_PATH}?look=glass`}>Glass logo experiment</a>
     </nav>

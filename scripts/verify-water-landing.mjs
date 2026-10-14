@@ -123,7 +123,10 @@ function browserState(search, webgl, run) {
     history: { state: {}, replaceState: (...args) => writes.push(args[2]) },
     matchMedia: () => ({ matches: false }),
   }
-  globalThis.document = { createElement: () => ({ getContext: () => webgl ? {} : null }) }
+  globalThis.document = { createElement: () => ({ getContext: type => {
+    assert.equal(type, 'webgl2', 'the renderer requires WebGL2')
+    return webgl ? { getExtension: () => ({ loseContext() {} }) } : null
+  } }) }
   try { return run(writes) } finally {
     for (const [name, value] of Object.entries({ window: previous.window, document: previous.document, __waterStage: previous.stage })) {
       if (value === undefined) delete globalThis[name]
