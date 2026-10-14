@@ -1,9 +1,14 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { incrementWindow, limiterStore } from './limiter-store.js'
+import { agreementText, demoAgreement } from '../../src/content/demoAgreement.js'
 
 export const DEMO_ACCESS_SECONDS = 72 * 60 * 60
 export const DEMO_COOKIE = 'wallace_demo_access'
+export const DEMO_PENDING_COOKIE = 'wallace_demo_pending'
+export const DEMO_PROOF_COOKIE = 'wallace_demo_verified'
+export const DEMO_AGREEMENT_HASH = createHash('sha256').update(agreementText).digest('hex')
+export const DEMO_VERIFICATION_SECONDS = 10 * 60
 export const PRIVATE_CACHE = 'private, no-store, max-age=0'
 export const DEMO_PATHS = {
   roofers: '/northvane',
@@ -14,7 +19,11 @@ export const DEMO_PATHS = {
   'roofers-dashboard': '/roofing-dashboard',
 } as const
 export type DemoKey = keyof typeof DEMO_PATHS
-export type DemoGrant = { v: 1; kind: 'invite' | 'session'; origin: string; demo: DemoKey; iat: number; exp: number; nonce: string }
+type GrantBase = { v: 2; origin: string; demo: DemoKey; iat: number; exp: number; nonce: string; recipientHash: string }
+export type InviteGrant = GrantBase & { kind: 'invite' }
+export type SessionGrant = GrantBase & { kind: 'session'; agreementVersion: string; agreementHash: string; acceptanceId: string }
+export type ProofGrant = GrantBase & { kind: 'proof'; verifiedEmail: string }
+export type DemoGrant = InviteGrant | SessionGrant | ProofGrant
 const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg'])
 const COUNTER_ENV = ['RATE_LIMIT_REDIS_URL', 'RATE_LIMIT_REDIS_TOKEN', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
 const counters = new Map<string, { count: number; until: number }>()
@@ -80,26 +89,48 @@ export function signDemoGrant(grant: DemoGrant): string {
   return `${data}.${createHmac('sha256', secret()).update(data).digest('base64url')}`
 }
 
-export function createDemoInvite(demo: DemoKey, now = Math.floor(Date.now() / 1000)): string {
-  return signDemoGrant({ v: 1, kind: 'invite', origin: demoAccessOrigin(), demo, iat: now, exp: now + DEMO_ACCESS_SECONDS, nonce: randomBytes(16).toString('hex') })
+export function normalizeDemoEmail(value: unknown): string {
+  if (typeof value !== 'string') throw new DemoError('invalid', 400)
+  const email = value.trim().toLowerCase()
+  if (email.length > 254 || [...email].some(character => character.charCodeAt(0) <= 32 || character.charCodeAt(0) === 127) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new DemoError('invalid', 400)
+  return email
 }
 
-export function verifyDemoGrant(token: string, origin: string, kind: DemoGrant['kind'], now = Math.floor(Date.now() / 1000)): DemoGrant | null {
+export function recipientEmailHash(email: string): string {
+  return createHmac('sha256', secret()).update(`demo-recipient:${normalizeDemoEmail(email)}`).digest('hex')
+}
+
+export function verificationCodeHash(nonce: string, code: string): string {
+  return createHmac('sha256', secret()).update(`demo-code:${nonce}:${code}`).digest('hex')
+}
+
+export function createDemoInvite(demo: DemoKey, email: string, now = Math.floor(Date.now() / 1000)): string {
+  return signDemoGrant({ v: 2, kind: 'invite', origin: demoAccessOrigin(), demo, recipientHash: recipientEmailHash(email), iat: now, exp: now + DEMO_ACCESS_SECONDS, nonce: randomBytes(16).toString('hex') })
+}
+
+export function verifyDemoGrant<K extends DemoGrant['kind']>(token: string, origin: string, kind: K, now = Math.floor(Date.now() / 1000)): Extract<DemoGrant, { kind: K }> | null {
   const signingSecret = secret()
-  if (token.length > 2048 || !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{43}$/.test(token)) return null
+  if (token.length > 4096 || !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{43}$/.test(token)) return null
   const [data, signature] = token.split('.')
   const expected = createHmac('sha256', signingSecret).update(data).digest()
   const supplied = Buffer.from(signature, 'base64url')
   if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return null
   try {
     const grant = JSON.parse(Buffer.from(data, 'base64url').toString('utf8')) as DemoGrant
-    if (grant.v !== 1 || grant.kind !== kind || grant.origin !== origin || !Object.hasOwn(DEMO_PATHS, grant.demo) || !Number.isInteger(grant.iat) || !Number.isInteger(grant.exp) || grant.iat > now + 30 || grant.exp <= now || grant.exp <= grant.iat || grant.exp - grant.iat > DEMO_ACCESS_SECONDS || typeof grant.nonce !== 'string' || !/^[a-f0-9]{32}$/.test(grant.nonce)) return null
-    return grant
+    if (grant.v !== 2 || grant.kind !== kind || grant.origin !== origin || !Object.hasOwn(DEMO_PATHS, grant.demo) || !Number.isInteger(grant.iat) || !Number.isInteger(grant.exp) || grant.iat > now + 30 || grant.exp <= now || grant.exp <= grant.iat || grant.exp - grant.iat > DEMO_ACCESS_SECONDS || typeof grant.nonce !== 'string' || !/^[a-f0-9]{32}$/.test(grant.nonce) || typeof grant.recipientHash !== 'string' || !/^[a-f0-9]{64}$/.test(grant.recipientHash)) return null
+    if (grant.kind === 'session' && (grant.agreementVersion !== demoAgreement.version || grant.agreementHash !== DEMO_AGREEMENT_HASH || typeof grant.acceptanceId !== 'string' || !/^[a-f0-9]{64}$/.test(grant.acceptanceId))) return null
+    if (grant.kind === 'proof' && (grant.exp - grant.iat > DEMO_VERIFICATION_SECONDS || recipientEmailHash(grant.verifiedEmail) !== grant.recipientHash)) return null
+    return grant as Extract<DemoGrant, { kind: K }>
   } catch { return null }
 }
 
-function cookieValue(header: string | null): string {
-  return header?.split(';').map(value => value.trim()).find(value => value.startsWith(`${DEMO_COOKIE}=`))?.slice(DEMO_COOKIE.length + 1) ?? ''
+export function readDemoCookie(header: string | null | undefined, name: string): string {
+  const values = header?.split(';').map(value => value.trim()).filter(value => value.startsWith(`${name}=`)) ?? []
+  return values.length === 1 ? values[0].slice(name.length + 1) : ''
+}
+
+export function demoCookie(name: string, token: string, origin: string, remaining: number): string {
+  return `${name}=${token}; Path=/; Max-Age=${Math.max(0, Math.floor(remaining))}; HttpOnly; SameSite=Lax${origin.startsWith('https:') ? '; Secure' : ''}`
 }
 
 export async function gateDemoRequest(request: Request): Promise<Response | null> {
@@ -107,7 +138,7 @@ export async function gateDemoRequest(request: Request): Promise<Response | null
   const protectedRoute = protectedPath(url.pathname)
   if (!protectedRoute) return null
   let granted = false
-  try { granted = verifyDemoGrant(cookieValue(request.headers.get('cookie')), url.origin, 'session') !== null } catch { /* Missing configuration must not publish private files. */ }
+  try { granted = verifyDemoGrant(readDemoCookie(request.headers.get('cookie'), DEMO_COOKIE), url.origin, 'session') !== null } catch { /* Missing configuration must not publish private files. */ }
   if (granted) return null
   const headers = { 'cache-control': PRIVATE_CACHE, 'cdn-cache-control': 'no-store', 'vercel-cdn-cache-control': 'no-store', 'referrer-policy': 'no-referrer', 'x-robots-tag': 'noindex, nofollow' }
   if (protectedRoute.document && (request.method === 'GET' || request.method === 'HEAD')) {

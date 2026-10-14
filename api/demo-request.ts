@@ -18,8 +18,10 @@ async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> 
   if (!Number.isFinite(length) || length < 0 || length > MAX_BYTES) throw new DemoError('too_large', 413)
   const parsed = (req as IncomingMessage & { body?: unknown }).body
   let raw: string
-  if (parsed !== undefined) raw = typeof parsed === 'string' ? parsed : JSON.stringify(parsed)
-  else {
+  if (parsed !== undefined) {
+    try { raw = Buffer.isBuffer(parsed) ? parsed.toString('utf8') : typeof parsed === 'string' ? parsed : JSON.stringify(parsed) } catch { throw new DemoError('invalid', 400) }
+    if (typeof raw !== 'string') throw new DemoError('invalid', 400)
+  } else {
     const chunks: Buffer[] = []
     let bytes = 0
     for await (const chunk of req) {
@@ -62,7 +64,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const to = process.env.CONTACT_TO_EMAIL?.trim()
     const from = process.env.CONTACT_FROM_EMAIL?.trim()
     if (!apiKey || !to || !from || /[\r\n]/.test(to + from)) throw new DemoError('not_configured', 503)
-    const token = createDemoInvite(demo)
+    const token = createDemoInvite(demo, email)
     await reserveDemoRequest(req)
     const invitation = `${demoAccessOrigin()}/api/demo-access?token=${encodeURIComponent(token)}`
     let result: Response
@@ -80,7 +82,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             '', `Name: ${name}`, `Business: ${businessName}`, `Email: ${email}`, `Website: ${website || 'Not provided'}`, `Requested demo: ${demo}`, '',
             'Requester message:', message || 'Not provided', '',
             'If you approve, manually send the following link to the requester:', invitation, '',
-            'The link and resulting browser access expire 72 hours after this request. It grants access to all demos on the invitation host. Anyone holding this link can use it until expiry; share it only with the approved requester.',
+            'The link expires 72 hours after this request. The requester must verify this approved email address and explicitly accept the Demo Evaluation & Confidentiality Agreement before receiving access to all demos on the invitation host. Resulting browser access expires with the original invitation. Share the link only with the approved requester.',
           ].join('\n'),
         }),
       })

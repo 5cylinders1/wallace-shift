@@ -1,0 +1,72 @@
+/* Scope overrides so they win even when Vite emits the shared stylesheet last. */
+.demo-agreement .demo-agreement__main { max-width: 1340px; margin: 0 auto; padding: 64px 0 94px; }
+.demo-agreement .demo-agreement__intro { max-width: 790px; margin-bottom: 48px; }
+.demo-agreement .demo-agreement__intro h1 { font-size: clamp(48px, 5.5vw, 80px); margin-top: 23px; }
+.demo-agreement .demo-agreement__intro h1 em { margin-left: .08em; }
+.demo-agreement .demo-agreement__intro > p:last-of-type { max-width: 600px; margin-top: 24px; color: #adbac3; font-size: 14px; line-height: 1.9; }
+.demo-agreement .demo-agreement__intro > a { display: inline-flex; gap: 13px; margin-top: 22px; font-size: 12px; color: #83c3ff; }
+.demo-agreement .demo-agreement__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(330px, 420px); gap: clamp(36px, 6vw, 86px); align-items: start; }
+.demo-agreement .demo-agreement__terms { scroll-margin-top: 28px; border-top: 1px solid #394650; padding-top: 28px; }
+.demo-agreement .demo-agreement__document-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 22px; color: #93a3ae; font-size: 10px; line-height: 1.8; letter-spacing: .045em; }
+.demo-agreement .demo-agreement__terms h2 { max-width: 580px; margin-top: 17px; font-size: clamp(26px, 2.5vw, 35px); font-weight: 500; line-height: 1.3; letter-spacing: -.03em; }
+.demo-agreement .demo-agreement__print { display: inline-flex; align-items: center; gap: 12px; margin: 18px 0 8px; padding: 10px 0; color: #83c3ff; background: none; border: 0; font-size: 11px; }
+.demo-agreement .demo-agreement__terms section { margin-top: 30px; }
+.demo-agreement .demo-agreement__terms h3 { font-size: 15px; line-height: 1.65; font-weight: 700; }
+.demo-agreement .demo-agreement__terms p { margin-top: 12px; font-size: 13px; line-height: 1.95; color: #adbac3; }
+.demo-agreement .demo-agreement__print-confirmations { display: none; }
+.demo-agreement .demo-agreement__access { position: sticky; top: 26px; padding: clamp(24px, 3vw, 34px); }
+.demo-agreement .demo-agreement__loading { margin-top: 24px; font-size: 12px; color: #52616b; }
+.demo-agreement .demo-agreement__verification { margin-top: 30px; }
+.demo-agreement .demo-agreement__verification > h3,
+.demo-agreement .demo-agreement__accept > h3 { display: flex; gap: 13px; align-items: baseline; font-size: 15px; font-weight: 700; line-height: 1.5; }
+.demo-agreement .demo-agreement__verification h3 > span,
+.demo-agreement .demo-agreement__accept h3 > span { font-size: 10px; font-weight: 700; color: #175c99; letter-spacing: .05em; }
+.demo-agreement .demo-agreement__verification > p { margin-top: 10px; font-size: 12px; color: #52616b; line-height: 1.8; }
+.demo-agreement .demo-agreement__code { padding-top: 24px; border-top: 1px solid #c9d2d7; }
+.demo-agreement .demo-agreement__code input { letter-spacing: .35em; }
+.demo-agreement .demo-agreement__verified { display: flex; gap: 13px; align-items: center; background: #dce9e7; border: 1px solid #bfd4d0; border-radius: 3px; padding: 14px; margin-top: 25px; color: #28534a; }
+.demo-agreement .demo-agreement__verified > span { font-size: 18px; }
+.demo-agreement .demo-agreement__verified p { font-size: 10px; }
+.demo-agreement .demo-agreement__verified strong { display: block; font-size: 11px; font-weight: 600; line-height: 1.7; margin-top: 3px; overflow-wrap: anywhere; }
+.demo-agreement .demo-agreement__accept .demo-access__required-note { margin-top: 14px; line-height: 1.7; }
+.demo-agreement .demo-agreement__review-link { font-size: 11px; color: #175c99; line-height: 1.6; text-decoration: underline; text-underline-offset: 4px; }
+.demo-agreement .demo-agreement__check { display: flex; gap: 11px; align-items: flex-start; font-size: 11px; line-height: 1.9; color: #354750; cursor: pointer; }
+.demo-agreement .demo-agreement__check input { flex: 0 0 auto; width: 17px; height: 17px; margin: 3px 0 0; accent-color: #175c99; }
+.demo-agreement .demo-agreement__check span { min-width: 0; }
+.demo-agreement .demo-agreement__accept .demo-access__submit { line-height: 1.65; padding: 14px; }
+.demo-agreement .demo-agreement__accept .demo-access__submit:disabled { cursor: not-allowed; }
+.demo-agreement .demo-agreement__accept .demo-access__form-note a { text-decoration: underline; text-underline-offset: 3px; }
+.demo-agreement .demo-agreement__status > a { display: inline-block; margin-top: 17px; color: #175c99; font-size: 12px; font-weight: 700; }
+.demo-agreement .demo-agreement__status--notice { color: #28534a; }
+
+@media (max-width: 900px) {
+  .demo-agreement .demo-agreement__layout { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+  .demo-agreement .demo-agreement__main { max-width: 650px; }
+  .demo-agreement .demo-agreement__access { position: static; margin-top: 0; }
+  .demo-agreement .demo-agreement__intro { margin-bottom: 36px; }
+}
+
+@media (max-width: 440px) {
+  .demo-agreement .demo-agreement__main { padding-top: 42px; padding-bottom: 60px; }
+  .demo-agreement .demo-agreement__intro h1 { font-size: 47px; line-height: 1.12; }
+  .demo-agreement .demo-agreement__terms p { font-size: 13px; }
+  .demo-agreement .demo-agreement__terms h2 { font-size: 26px; }
+  .demo-agreement .demo-agreement__access { padding: 25px 22px; }
+  .demo-agreement .demo-agreement__check { font-size: 12px; }
+}
+
+@media print {
+  html:root { background: white; color: black; color-scheme: light; }
+  html body { min-width: 0; }
+  .demo-access.demo-agreement { max-width: none; padding: 0; background: none; }
+  .demo-agreement .demo-access__header, .demo-agreement .demo-access__footer, .demo-agreement .demo-access__skip,
+  .demo-agreement .demo-agreement__intro, .demo-agreement .demo-agreement__access, .demo-agreement .demo-agreement__print { display: none; }
+  .demo-agreement .demo-agreement__main { max-width: none; padding: 0; }
+  .demo-agreement .demo-agreement__layout { display: block; }
+  .demo-agreement .demo-agreement__terms { border: 0; padding: 0; }
+  .demo-agreement .demo-agreement__terms h2 { font-size: 23px; }
+  .demo-agreement .demo-agreement__terms h3 { font-size: 12px; break-after: avoid; }
+  .demo-agreement .demo-agreement__terms p { color: black; font-size: 10px; line-height: 1.6; orphans: 3; widows: 3; }
+  .demo-agreement .demo-agreement__document-meta { color: #444; font-size: 9px; }
+  .demo-agreement .demo-agreement__print-confirmations { display: block; margin-top: 24px; }
+}

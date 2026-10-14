@@ -96,7 +96,7 @@ export function DemoRequestPage() {
             </div>
           </div>
 
-          <p className="demo-access__access-note">Have an access link? Open the link shared with you.</p>
+          <p className="demo-access__access-note">Have an access link? Open the link shared with you. After approval, verify your email and accept our <a href="/demo-agreement/" style={{ color: '#83c3ff', textDecoration: 'underline', textUnderlineOffset: '3px' }}>Demo Evaluation & Confidentiality Agreement</a> before exploring.</p>
         </section>
 
         <section className="demo-access__card" id="demo-request" aria-labelledby="request-heading">
@@ -161,7 +161,7 @@ export function DemoRequestPage() {
               <>
                 <span className="demo-access__success-mark" aria-hidden="true">✓</span>
                 <h3>Request received.</h3>
-                <p>Thank you for your interest{demo ? ` in ${demo.name}` : ''}. We’ll review your request and follow up by email.</p>
+                <p>Thank you for your interest{demo ? ` in ${demo.name}` : ''}. We’ll review your request and follow up by email. If approved, your invitation will guide you through email verification and our demo agreement.</p>
                 <a href={studioUrl}>Explore Wallace Shift <Arrow /></a>
               </>
             )}

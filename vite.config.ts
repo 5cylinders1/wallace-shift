@@ -6,6 +6,7 @@ import { SITE_ORIGIN, routeMeta } from './src/content/routeMeta.ts'
 import { gateDemoRequest, isProtectedDemoPath } from './api/_lib/demo-access.ts'
 import demoRequestHandler from './api/demo-request.ts'
 import demoAccessHandler from './api/demo-access.ts'
+import demoAgreementHandler from './api/demo-agreement.ts'
 
 /**
  * Emits one real HTML file per route, plus `sitemap.xml` and `robots.txt`.
@@ -190,6 +191,7 @@ function demoAccessRoutes(): Plugin {
         }
         if (url.pathname === '/api/demo-request') return await demoRequestHandler(req, res)
         if (url.pathname === '/api/demo-access') return await demoAccessHandler(req, res)
+        if (url.pathname === '/api/demo-agreement') return await demoAgreementHandler(req, res)
         next()
       } catch {
         if (!res.headersSent) {
@@ -272,6 +274,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         main: 'index.html',
         roofersOffer: 'demos/roofers-offer/index.html',
         requestDemo: 'request-demo/index.html',
+        demoAgreement: 'demo-agreement/index.html',
       } : {
         roofers: 'demos/roofers/index.html',
         roofersInsurance: 'demos/roofers/insurance/index.html',

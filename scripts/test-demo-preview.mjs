@@ -5,16 +5,18 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { preview } from 'vite'
+import { createAgreementTestStore } from './demo-agreement-test-store.mjs'
 
 // Exercise actual built HTML/assets and Node handlers over loopback HTTP.
 // The empty Vite root/env directory prevents its loadEnv hook from reading real
-// local credentials. All outbound fetch is blocked except a mocked Resend send.
+// local credentials. Outbound calls are blocked except mocked email/Redis APIs.
 const root = fileURLToPath(new URL('../', import.meta.url))
 const dist = join(root, 'dist')
 const environment = await mkdtemp(join(tmpdir(), 'wallace-demo-preview-test-'))
 const savedEnv = { ...process.env }
 const savedFetch = globalThis.fetch
 const sends = []
+const store = createAgreementTestStore()
 const privateFiles = []
 let server
 let origin
@@ -41,6 +43,12 @@ async function checkStatus(path, status, options = {}) {
   checks++
   return result
 }
+function responseCookie(result, name) {
+  return result.headers.getSetCookie().find(value => value.startsWith(name + '='))?.split(';')[0]
+}
+function postAgreement(body, cookie) {
+  return { method: 'POST', headers: { origin, 'content-type': 'application/json', cookie }, body: JSON.stringify(body) }
+}
 
 try {
   for (const key of Object.keys(process.env)) {
@@ -52,14 +60,20 @@ try {
   process.env.RESEND_API_KEY = 'fixture-key-never-real'
   process.env.CONTACT_TO_EMAIL = 'reviewer@example.test'
   process.env.CONTACT_FROM_EMAIL = 'Wallace Shift <site@example.test>'
+  process.env.DEMO_AUDIT_REDIS_URL = 'https://redis.example.test'
+  process.env.DEMO_AUDIT_REDIS_TOKEN = 'fixture-audit-token'
   globalThis.fetch = async (input, init) => {
     const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url)
     if (url.href === 'https://api.resend.com/emails') {
       assert.equal(init?.headers?.authorization, 'Bearer fixture-key-never-real')
       const email = JSON.parse(init.body)
-      assert.deepEqual(email.to, ['reviewer@example.test'])
+      assert.ok(email.to.length === 1 && ['reviewer@example.test', 'prospect@example.test'].includes(email.to[0]))
       sends.push(email)
       return Response.json({ id: 'preview-test-provider-accepted' })
+    }
+    if (url.origin === 'https://redis.example.test') {
+      assert.equal(init?.headers?.authorization, 'Bearer fixture-audit-token')
+      return store.fetch(url, init)
     }
     if (url.hostname !== '127.0.0.1' || (origin && url.origin !== origin)) throw new Error(`Test blocked outbound network to ${url.origin}`)
     return savedFetch(input, init)
@@ -100,8 +114,8 @@ try {
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
 
-  for (const path of ['/', '/request-demo/', '/demos/roofers-offer/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg']) await checkStatus(path, 200)
-  for (const path of ['/request-demo/', '/demos/roofers-offer/']) {
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demos/roofers-offer/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg']) await checkStatus(path, 200)
+  for (const path of ['/request-demo/', '/demo-agreement/', '/demos/roofers-offer/']) {
     const page = await request(path)
     for (const asset of assetsFrom(page.body)) {
       assert.equal(asset.startsWith('/demo-assets/'), false, `${path} imports a private generated asset`)
@@ -117,17 +131,57 @@ try {
   assert.deepEqual(JSON.parse(submitted.body), { ok: true })
   assert.equal(submitted.headers.get('set-cookie'), null)
   assert.equal(sends.length, 1)
+  assert.deepEqual(sends[0].to, ['reviewer@example.test'])
   assert.equal(sends[0].reply_to, 'prospect@example.test')
   const invite = sends[0].text.match(/http:\/\/127\.0\.0\.1:\d+\/api\/demo-access\?token=[A-Za-z0-9_.-]+/)?.[0]
   assert.ok(invite, 'Internal review email must contain its fixture invitation')
   assert.equal(submitted.body.includes('token'), false)
-  const unlocked = await checkStatus(new URL(invite).pathname + new URL(invite).search, 303)
-  assert.equal(unlocked.headers.get('location'), '/halcyon')
-  const setCookie = unlocked.headers.get('set-cookie')
+  const started = await checkStatus(new URL(invite).pathname + new URL(invite).search, 303)
+  assert.equal(started.headers.get('location'), '/demo-agreement/')
+  assert.ok(started.headers.getSetCookie().find(value => value.startsWith('wallace_demo_access=')).includes('Max-Age=0;'))
+  const pending = responseCookie(started, 'wallace_demo_pending')
+  assert.ok(pending)
+  await checkStatus('/halcyon', 303, { headers: { cookie: pending } })
+  await checkStatus('/demo-assets/' + privateAssets[0], 403, { headers: { cookie: pending } })
+  await checkStatus('/api/demo-agreement', 403)
+  const status = JSON.parse((await checkStatus('/api/demo-agreement', 200, { headers: { cookie: pending } })).body)
+  assert.equal(status.verified, false)
+  assert.equal(status.email, undefined)
+  const acceptance = { action: 'accept', name: 'Preview Tester', businessName: 'Fixture Roofing', accepted: true, authority: true, agreementVersion: status.agreementVersion, agreementHash: status.agreementHash }
+  await checkStatus('/api/demo-agreement', 403, postAgreement(acceptance, pending))
+  await checkStatus('/api/demo-agreement', 403, postAgreement({ action: 'send-code', email: 'wrong@example.test' }, pending))
+  const codeSent = await checkStatus('/api/demo-agreement', 200, postAgreement({ action: 'send-code', email: 'prospect@example.test' }, pending))
+  assert.equal(JSON.parse(codeSent.body).ok, true)
+  assert.equal(sends.length, 2)
+  assert.deepEqual(sends[1].to, ['prospect@example.test'])
+  const code = sends[1].text.match(/^\d{6}$/m)?.[0]
+  assert.ok(code)
+  assert.equal(codeSent.body.includes(code), false)
+  await checkStatus('/api/demo-agreement', 429, postAgreement({ action: 'send-code', email: 'prospect@example.test' }, pending))
+  const verified = await checkStatus('/api/demo-agreement', 200, postAgreement({ action: 'verify-code', code }, pending))
+  const proof = responseCookie(verified, 'wallace_demo_verified')
+  assert.ok(proof)
+  const consentCookie = pending + '; ' + proof
+  await checkStatus('/demo-assets/' + privateAssets[0], 403, { headers: { cookie: consentCookie } })
+  await checkStatus('/api/demo-agreement', 400, postAgreement({ action: 'verify-code', code }, pending))
+  await checkStatus('/api/demo-agreement', 400, postAgreement({ ...acceptance, accepted: false }, consentCookie))
+  await checkStatus('/api/demo-agreement', 400, postAgreement({ ...acceptance, authority: false }, consentCookie))
+  await checkStatus('/api/demo-agreement', 409, postAgreement({ ...acceptance, agreementVersion: 'stale' }, consentCookie))
+  assert.equal(store.records().length, 0)
+  const unlocked = await checkStatus('/api/demo-agreement', 200, postAgreement(acceptance, consentCookie))
+  assert.equal(JSON.parse(unlocked.body).redirectTo, '/halcyon')
+  const setCookie = unlocked.headers.getSetCookie().find(value => value.startsWith('wallace_demo_access='))
   assert.match(setCookie, /HttpOnly; SameSite=Lax/)
   assert.equal(setCookie.includes('Domain='), false)
   const cookie = setCookie.split(';')[0]
   const authorized = { headers: { cookie } }
+  const [record] = store.records()
+  assert.equal(record.verifiedEmail, 'prospect@example.test')
+  assert.equal(record.person, 'Preview Tester')
+  assert.equal(record.agreementVersion, status.agreementVersion)
+  assert.equal(record.agreementHash, status.agreementHash)
+  assert.match(record.agreementText, /Wallace Shift LLC/)
+  assert.equal(store.expirations.has(`demo-agreement:acceptance:${record.id}`), false)
 
   // Check actual preview response headers after the static-file middleware ran.
   // A pre-gate header alone is insufficient if sirv replaces it afterward.
@@ -158,10 +212,10 @@ try {
   await checkStatus('/halcyon', 303, { headers: { cookie: 'wallace_demo_access=invalid' } })
   await checkStatus('/demo-assets/' + privateAssets[0], 403)
   const invalidInvite = await checkStatus('/api/demo-access?token=invalid', 303)
-  assert.equal(invalidInvite.headers.get('set-cookie'), null)
+  assert.ok(invalidInvite.headers.getSetCookie().every(value => value.includes('Max-Age=0;')))
   assert.equal(invalidInvite.headers.get('location'), '/request-demo/?access=expired')
-  assert.equal(sends.length, 1)
-  console.log(`Demo preview HTTP integration passed: ${checks} route/asset responses; fourteen private documents; isolated public assets; manual approval; signed cookie; no-store. One mocked internal email; no external network or live provider calls.`)
+  assert.equal(sends.length, 2)
+  console.log(`Demo preview HTTP integration passed: ${checks} route/asset responses; fourteen private documents; isolated public assets; manual approval; verified email; explicit NDA acceptance; persisted evidence; signed cookie; no-store. Two mocked emails and modeled Redis operations; no external network or live provider calls.`)
 } finally {
   if (server) {
     server.httpServer.closeIdleConnections?.()

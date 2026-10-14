@@ -6,10 +6,12 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 const help = `Create a private demo invitation for a prospect you have approved.
 
 Usage:
-  node scripts/create-demo-invite.mjs [--demo KEY] [--origin ORIGIN]
+  node scripts/create-demo-invite.mjs --email EMAIL [--demo KEY] [--origin ORIGIN]
   node scripts/create-demo-invite.mjs --help
 
 Options:
+  --email EMAIL   Approved recipient's email address (required). Only that
+                   mailbox can verify and accept the demo agreement.
   --demo KEY       roofers (default), roofers-2, roofers-3, roofers-4,
                    roofers-5, or roofers-dashboard
   --origin ORIGIN  Exact website origin, with no path, query, or credentials.
@@ -20,18 +22,19 @@ Configuration:
   DEMO_ACCESS_SECRET must match the destination server's secret.
   DEMO_ACCESS_ORIGIN defaults to https://roofers.wallaceshift.com.
   Missing environment values are read from the repository's development
-  environment files. Invitations expire 72 hours after creation.
+  environment files. Invitations expire 72 hours after creation. Access opens
+  only after email verification and agreement acceptance.
 
 This command prints a private link. It does not send email.`
 
 function readOptions(args) {
-  const options = { demo: 'roofers', origin: undefined, help: false }
+  const options = { demo: 'roofers', email: undefined, origin: undefined, help: false }
   const seen = new Set()
   for (let index = 0; index < args.length; index++) {
     const argument = args[index]
     if (argument === '--help') { options.help = true; continue }
     const [flag, ...inline] = argument.split('=')
-    if (flag !== '--demo' && flag !== '--origin') {
+    if (flag !== '--demo' && flag !== '--origin' && flag !== '--email') {
       throw new Error('Unknown argument. Use --help for the supported options.')
     }
     if (seen.has(flag)) throw new Error(`${flag} may only be supplied once.`)
@@ -46,6 +49,7 @@ function readOptions(args) {
 async function main() {
   const options = readOptions(process.argv.slice(2))
   if (options.help) { console.log(help); return }
+  if (!options.email) throw new Error('--email is required. Use the approved recipient’s email address.')
 
   const localEnv = loadEnv('development', root, '')
   for (const key of ['DEMO_ACCESS_SECRET', 'DEMO_ACCESS_ORIGIN']) {
@@ -66,8 +70,10 @@ async function main() {
     server: { middlewareMode: true, hmr: false, watch: null },
   })
   try {
-    const { DEMO_PATHS, DEMO_ACCESS_SECONDS, createDemoInvite, demoAccessOrigin } =
+    const { DEMO_PATHS, DEMO_ACCESS_SECONDS, createDemoInvite, demoAccessOrigin, normalizeDemoEmail } =
       await server.ssrLoadModule('/api/_lib/demo-access.ts')
+    let email
+    try { email = normalizeDemoEmail(options.email) } catch { throw new Error('--email must be a valid email address.') }
     if (!Object.hasOwn(DEMO_PATHS, options.demo)) {
       throw new Error(`Unknown demo key. Choose one of: ${Object.keys(DEMO_PATHS).join(', ')}.`)
     }
@@ -80,7 +86,7 @@ async function main() {
     }
     const now = Math.floor(Date.now() / 1000)
     const invitation = new URL('/api/demo-access', origin)
-    invitation.searchParams.set('token', createDemoInvite(options.demo, now))
+    invitation.searchParams.set('token', createDemoInvite(options.demo, email, now))
     console.log(invitation.href)
     console.log(`Expires: ${new Date((now + DEMO_ACCESS_SECONDS) * 1000).toISOString()} (72 hours)`)
   } finally {
@@ -89,7 +95,7 @@ async function main() {
 }
 
 try { await main() } catch (error) {
-  const known = error instanceof Error && /^(Unknown argument\.|--(?:demo|origin) |Unknown demo key\.|Invalid demo origin\.|DEMO_ACCESS_SECRET )/.test(error.message)
+  const known = error instanceof Error && /^(Unknown argument\.|--(?:demo|origin|email) |Unknown demo key\.|Invalid demo origin\.|DEMO_ACCESS_SECRET )/.test(error.message)
   console.error(known ? error.message : 'Unable to create the invitation. Check the project dependencies and demo access configuration.')
   process.exitCode = 1
 }
