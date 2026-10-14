@@ -31,9 +31,9 @@ function DesignCard({ design, onChoose }: { design: RoofingDesign; onChoose: (id
   const available = design.status === 'available'
   const demoHref = roofingDemoHref(design, window.location.hostname)
   return <article className="ro-design">
-    <a className="ro-design-image" href={demoHref} aria-label={`Explore the ${design.name} demo`}>
+    <a className="ro-design-image" href={demoHref} aria-label={`Request access to the ${design.name} demo`}>
       <img src={design.thumbnail} alt={design.thumbnailAlt} width="1440" height="900" loading="lazy" />
-      <span className="ro-preview-label">Explore the live site <Arrow diagonal /></span>
+      <span className="ro-preview-label">Request demo access <Arrow diagonal /></span>
     </a>
     <div className="ro-design-body">
       <div className="ro-card-meta"><span>DESIGN {design.number}</span><span className={`ro-status ${available ? 'is-available' : 'is-claimed'}`}><i aria-hidden="true" />{available ? 'Available to request' : 'Claimed'}</span></div>
@@ -42,7 +42,7 @@ function DesignCard({ design, onChoose }: { design: RoofingDesign; onChoose: (id
       <p className="ro-description">{design.description}</p>
       <ul className="ro-features">{design.features?.map(feature => <li key={feature}>{feature}</li>)}</ul>
       <div className="ro-card-actions">
-        <a href={demoHref}>View live demo <Arrow diagonal /></a>
+        <a href={demoHref}>Request demo access <Arrow diagonal /></a>
         {available && <button type="button" onClick={() => onChoose(design.id)}>Request this design <Arrow /></button>}
       </div>
     </div>
@@ -155,7 +155,7 @@ export function RoofersOffer() {
 
       <section className="ro-collection" id="collection" aria-labelledby="collection-heading">
         <div className="ro-wrap">
-          <div className="ro-section-intro"><div><p className="ro-eyebrow">01 / Find your direction</p><h2 id="collection-heading">Different character.<br /><em>One higher standard.</em></h2></div><p>Explore the complete sites, not just a picture. Each is a starting point for your company’s brand, services and service area.</p></div>
+          <div className="ro-section-intro"><div><p className="ro-eyebrow">01 / Find your direction</p><h2 id="collection-heading">Different character.<br /><em>One higher standard.</em></h2></div><p>Find a direction, then request access to explore the complete site. Each is a starting point for your company’s brand, services and service area.</p></div>
           <div className="ro-design-grid">{readyDesigns.map(design => <DesignCard key={design.id} design={design} onChoose={chooseDesign} />)}</div>
           {upcomingDesigns.length > 0 && <div className="ro-upcoming-grid">{upcomingDesigns.map(design => <article className="ro-upcoming" key={design.id}><span className="ro-upcoming-number" aria-hidden="true">{design.number}</span><div><p className="ro-eyebrow">Design {design.number} / Coming soon</p><h3>{design.name}</h3><p>The next addition to the collection.</p></div><span className="ro-upcoming-mark" aria-hidden="true">/</span></article>)}</div>}
           <p className="ro-demo-note">All five roofing brands are illustrative contractor concepts. Content, imagery and tools shown in the demos are examples; your final website, CRM setup and automation scope will be agreed together.</p>
@@ -166,7 +166,7 @@ export function RoofersOffer() {
         <div className="ro-wrap">
           <div className="ro-dashboard">
             <div className="ro-dashboard-preview">
-              <a className="ro-dashboard-image" href="/roofing-dashboard" aria-label="Explore the roofing dashboard demo">
+              <a className="ro-dashboard-image" href="/roofing-dashboard" aria-label="Request access to the roofing dashboard demo">
                 <img src="/demos/roofers-offer/dashboard.jpg" alt="Roofing dashboard showing sample storm areas and nearby customer properties on a map" width="1440" height="1248" loading="lazy" />
               </a>
               <p className="ro-dashboard-caption"><span>Sample storm map</span><span>Map © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></span></p>
@@ -179,7 +179,7 @@ export function RoofersOffer() {
                 <li>Customer & property records</li><li>Severe-weather maps & customer outreach</li><li>Customer progress portal</li><li>Lead & review follow-up</li><li>Paid ads management</li><li>Social media management</li>
               </ul>
               <p className="ro-crm-note">Ads and social media tools are included. Done-for-you campaign and content management are priced separately by scope.</p>
-              <a className="ro-button ro-button-dark" href="/roofing-dashboard">View dashboard demo <Arrow diagonal /></a>
+              <a className="ro-button ro-button-dark" href="/roofing-dashboard">Request dashboard access <Arrow diagonal /></a>
               <p className="ro-preview-note">This preview uses sample data and shows part of the CRM. Live connections and workflows are configured for your agreed plan.</p>
             </div>
           </div>

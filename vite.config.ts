@@ -1,8 +1,11 @@
-import { defineConfig, loadEnv, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin, type UserConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { SITE_ORIGIN, routeMeta } from './src/content/routeMeta.ts'
+import { gateDemoRequest, isProtectedDemoPath } from './api/_lib/demo-access.ts'
+import demoRequestHandler from './api/demo-request.ts'
+import demoAccessHandler from './api/demo-access.ts'
 
 /**
  * Emits one real HTML file per route, plus `sitemap.xml` and `robots.txt`.
@@ -159,6 +162,66 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;')
 }
 
+/** Mirror the production gate in local dev and built-output previews. This
+ * runs before aliases and static files, so a direct asset URL is checked too. */
+function demoAccessRoutes(): Plugin {
+  const install = (server: import('vite').ViteDevServer | import('vite').PreviewServer) => {
+    const env = loadEnv(server.config.mode, server.config.root, '')
+    for (const [key, value] of Object.entries(env)) {
+      if (/^(DEMO_|RESEND_API_KEY$|CONTACT_|RATE_LIMIT_|KV_REST_API_|UPSTASH_REDIS_REST_)/.test(key) && !process.env[key]) process.env[key] = value
+    }
+    server.middlewares.use(async (req, res, next) => {
+      try {
+        const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`)
+        const headers = new Headers()
+        for (const [key, value] of Object.entries(req.headers)) {
+          if (typeof value === 'string') headers.set(key, value)
+          else if (value) headers.set(key, value.join(', '))
+        }
+        const blocked = await gateDemoRequest(new Request(url, { method: req.method, headers }))
+        if (blocked) {
+          res.statusCode = blocked.status
+          blocked.headers.forEach((value, key) => res.setHeader(key, value))
+          res.end(Buffer.from(await blocked.arrayBuffer()))
+          return
+        }
+        if (isProtectedDemoPath(url.pathname)) {
+          res.setHeader('Cache-Control', 'private, no-store')
+        }
+        if (url.pathname === '/api/demo-request') return await demoRequestHandler(req, res)
+        if (url.pathname === '/api/demo-access') return await demoAccessHandler(req, res)
+        next()
+      } catch {
+        if (!res.headersSent) {
+          res.statusCode = 503
+          res.setHeader('Cache-Control', 'no-store')
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({ ok: false, error: 'unavailable' }))
+        }
+      }
+    })
+  }
+  return {
+    name: 'wallace-shift-demo-access',
+    configureServer: install,
+    configurePreviewServer: install,
+  }
+}
+
+/** Fail the public build if a future import pulls private demo implementation
+ * into a publicly downloadable bundle (including CSS and ?raw imports). */
+function publicDemoBoundary(): Plugin {
+  return {
+    name: 'wallace-shift-public-demo-boundary',
+    apply: 'build',
+    transform(_code, id) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/))/.test(id)) {
+        this.error(`Private demo module imported by the public build: ${id}`)
+      }
+    },
+  }
+}
+
 // Mirror the public aliases in dev/preview without changing the browser URL.
 // Legacy directory entries still accept pasted links without their slash.
 function roofingDemoRoutes(): Plugin {
@@ -193,24 +256,29 @@ function roofingDemoRoutes(): Plugin {
   }
 }
 
-export default defineConfig({
-  plugins: [react(), prerenderRoutes(), devApiRoutes(), roofingDemoRoutes()],
+export default defineConfig(({ mode }): UserConfig => ({
+  plugins: [react(), ...(mode === 'demos' ? [] : [prerenderRoutes(), publicDemoBoundary()]), demoAccessRoutes(), devApiRoutes(), roofingDemoRoutes()],
+  // The public pass copies static media once. The second pass adds only the
+  // demo documents and their fully isolated JS/CSS dependency graph.
   build: {
+    copyPublicDir: mode !== 'demos',
+    emptyOutDir: mode !== 'demos',
+    assetsDir: mode === 'demos' ? 'demo-assets' : 'assets',
+    sourcemap: false,
     rolldownOptions: {
-      // Sales demos are separate documents with their own bundle, so a
-      // prospect opening one never downloads the studio site (or its
-      // WebGL), and the studio site never ships demo code. Each is served
-      // at /demos/<vertical> and, on its own subdomain, by a host rewrite
-      // in vercel.json.
-      input: {
+      // Separate builds prevent shared chunks from making demo source
+      // available through the public gallery's /assets directory.
+      input: mode !== 'demos' ? {
         main: 'index.html',
+        roofersOffer: 'demos/roofers-offer/index.html',
+        requestDemo: 'request-demo/index.html',
+      } : {
         roofers: 'demos/roofers/index.html',
         roofersInsurance: 'demos/roofers/insurance/index.html',
         roofersPrices: 'demos/roofers/prices/index.html',
         roofersWarranty: 'demos/roofers/warranty/index.html',
         roofersFaq: 'demos/roofers/faq/index.html',
         roofersDashboard: 'demos/roofers-dashboard/index.html',
-        roofersOffer: 'demos/roofers-offer/index.html',
         roofersEstate: 'demos/roofers-2/index.html',
         roofersEstateProcess: 'demos/roofers-2/process/index.html',
         roofersEstateInsurance: 'demos/roofers-2/insurance/index.html',
@@ -222,4 +290,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

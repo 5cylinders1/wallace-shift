@@ -1,16 +1,23 @@
 import { next, rewrite } from '@vercel/functions'
+import { gateDemoRequest, isProtectedDemoPath, PRIVATE_CACHE } from './api/_lib/demo-access.js'
 
-// The root HTML file takes precedence over vercel.json rewrites. Select the
-// roofing gallery before Vercel serves that file; all other routes bypass this.
-export const config = { matcher: '/' }
+export const config = { runtime: 'nodejs', matcher: '/:path*' }
 
-export default function middleware(request: Request): Response {
+export default async function middleware(request: Request): Promise<Response> {
+  const denied = await gateDemoRequest(request)
+  if (denied) return denied
   const url = new URL(request.url)
-  if (url.hostname !== 'roofers.wallaceshift.com' || url.pathname !== '/') {
-    return next()
+  if (url.hostname === 'roofers.wallaceshift.com' && url.pathname === '/') {
+    // Root HTML otherwise takes precedence over the public gallery rewrite.
+    url.pathname = '/demos/roofers-offer'
+    return rewrite(url)
   }
-
-  // Change only the pathname, keeping campaign and inquiry query parameters.
-  url.pathname = '/demos/roofers-offer'
-  return rewrite(url)
+  if (!isProtectedDemoPath(url.pathname)) return next()
+  return next({ headers: {
+    'cache-control': PRIVATE_CACHE,
+    'cdn-cache-control': 'no-store',
+    'vercel-cdn-cache-control': 'no-store',
+    'x-robots-tag': 'noindex, nofollow',
+    'referrer-policy': 'no-referrer',
+  } })
 }

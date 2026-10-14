@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --mode demos && node scripts/verify-demo-build.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "demo:invite": "node scripts/create-demo-invite.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
