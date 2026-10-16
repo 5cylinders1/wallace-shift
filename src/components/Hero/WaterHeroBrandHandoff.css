@@ -19,28 +19,23 @@
   clip-path: polygon(50% 0%, 50% 100%, 50% 100%, 50% 0%);
 }
 
-/* The portrait logo splits across the middle of the screen. Keep both copy
-   layers outside that band, including while the paragraph fades in. Once
-   the mark exits, the same scroll frame brings the statement back together. */
-@media (max-width: 1023px) and (min-height: 501px) {
-  .water-hero-brand__aperture {
-    /* The contour mask is authored for text between the halves. Portrait
-       copy sits above them, so keep its scroll-driven fade without cutting
-       letters against an extrapolated off-logo contour. */
-    clip-path: none !important;
-  }
-
+/* Center the headline itself in the opening mark. A centered flex stack
+   includes the invisible paragraph's height, lifting the headline above
+   the logo. Both wipe layers share these fixed positions, and the original
+   contour mask reveals the letters only as the halves move past them. */
+@media (max-width: 1023px) {
   .water-hero-brand .shift-wipe__headline {
     position: absolute;
     inset-inline: var(--gutter);
-    bottom: calc(50% + 8px + clamp(58px, min(14vw, 16svh), 140px) * var(--brand-mobile-clearance, 1));
-    font-size: clamp(2rem, min(8.7vw, 6svh), 3.25rem);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
   }
 
   .water-hero-brand .shift-wipe__body {
     position: absolute;
     inset-inline: var(--gutter);
-    top: calc(50% + 24px + clamp(64px, min(15vw, 17svh), 144px) * var(--brand-mobile-clearance, 1));
+    top: calc(50% + clamp(56px, 12vw, 70px));
     max-width: 36ch;
     margin-inline: auto;
     font-size: 1rem;
@@ -56,5 +51,12 @@
 
   .water-hero-brand .shift-wipe__headline {
     font-size: clamp(2rem, 9svh, 3.9rem);
+  }
+}
+
+@media (max-width: 1023px) and (max-height: 500px) {
+  .water-hero-brand .shift-wipe__body {
+    max-width: 52ch;
+    line-height: 1.5;
   }
 }

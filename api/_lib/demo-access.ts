@@ -7,6 +7,9 @@ export const DEMO_ACCESS_SECONDS = 72 * 60 * 60
 export const DEMO_COOKIE = 'wallace_demo_access'
 export const DEMO_PENDING_COOKIE = 'wallace_demo_pending'
 export const DEMO_PROOF_COOKIE = 'wallace_demo_verified'
+export const DEMO_ADMIN_COOKIE = 'wallace_demo_admin'
+export const DEMO_ADMIN_PENDING_COOKIE = 'wallace_demo_admin_pending'
+export const DEMO_ADMIN_SECONDS = 30 * 24 * 60 * 60
 export const DEMO_AGREEMENT_HASH = createHash('sha256').update(agreementText).digest('hex')
 export const DEMO_VERIFICATION_SECONDS = 10 * 60
 export const PRIVATE_CACHE = 'private, no-store, max-age=0'
@@ -23,7 +26,9 @@ type GrantBase = { v: 2; origin: string; demo: DemoKey; iat: number; exp: number
 export type InviteGrant = GrantBase & { kind: 'invite' }
 export type SessionGrant = GrantBase & { kind: 'session'; agreementVersion: string; agreementHash: string; acceptanceId: string }
 export type ProofGrant = GrantBase & { kind: 'proof'; verifiedEmail: string }
-export type DemoGrant = InviteGrant | SessionGrant | ProofGrant
+export type AdminPendingGrant = GrantBase & { kind: 'admin-pending' }
+export type AdminSessionGrant = GrantBase & { kind: 'admin-session' }
+export type DemoGrant = InviteGrant | SessionGrant | ProofGrant | AdminPendingGrant | AdminSessionGrant
 const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg'])
 const COUNTER_ENV = ['RATE_LIMIT_REDIS_URL', 'RATE_LIMIT_REDIS_TOKEN', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
 const counters = new Map<string, { count: number; until: number }>()
@@ -108,6 +113,16 @@ export function createDemoInvite(demo: DemoKey, email: string, now = Math.floor(
   return signDemoGrant({ v: 2, kind: 'invite', origin: demoAccessOrigin(), demo, recipientHash: recipientEmailHash(email), iat: now, exp: now + DEMO_ACCESS_SECONDS, nonce: randomBytes(16).toString('hex') })
 }
 
+/** Only this server-configured mailbox may become an administrator. */
+export function demoAdminEmail(): string {
+  try { return normalizeDemoEmail(process.env.DEMO_ADMIN_EMAIL ?? process.env.CONTACT_TO_EMAIL) }
+  catch { throw new DemoError('not_configured', 503) }
+}
+
+export function createDemoAdminGrant(kind: 'admin-pending' | 'admin-session', origin: string, now = Math.floor(Date.now() / 1000)): string {
+  return signDemoGrant({ v: 2, kind, origin, demo: 'roofers', recipientHash: recipientEmailHash(demoAdminEmail()), iat: now, exp: now + (kind === 'admin-session' ? DEMO_ADMIN_SECONDS : DEMO_VERIFICATION_SECONDS), nonce: randomBytes(16).toString('hex') })
+}
+
 export function verifyDemoGrant<K extends DemoGrant['kind']>(token: string, origin: string, kind: K, now = Math.floor(Date.now() / 1000)): Extract<DemoGrant, { kind: K }> | null {
   const signingSecret = secret()
   if (token.length > 4096 || !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{43}$/.test(token)) return null
@@ -117,7 +132,9 @@ export function verifyDemoGrant<K extends DemoGrant['kind']>(token: string, orig
   if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return null
   try {
     const grant = JSON.parse(Buffer.from(data, 'base64url').toString('utf8')) as DemoGrant
-    if (grant.v !== 2 || grant.kind !== kind || grant.origin !== origin || !Object.hasOwn(DEMO_PATHS, grant.demo) || !Number.isInteger(grant.iat) || !Number.isInteger(grant.exp) || grant.iat > now + 30 || grant.exp <= now || grant.exp <= grant.iat || grant.exp - grant.iat > DEMO_ACCESS_SECONDS || typeof grant.nonce !== 'string' || !/^[a-f0-9]{32}$/.test(grant.nonce) || typeof grant.recipientHash !== 'string' || !/^[a-f0-9]{64}$/.test(grant.recipientHash)) return null
+    const lifetime = kind === 'admin-session' ? DEMO_ADMIN_SECONDS : kind === 'admin-pending' ? DEMO_VERIFICATION_SECONDS : DEMO_ACCESS_SECONDS
+    if (grant.v !== 2 || grant.kind !== kind || grant.origin !== origin || !Object.hasOwn(DEMO_PATHS, grant.demo) || !Number.isInteger(grant.iat) || !Number.isInteger(grant.exp) || grant.iat > now + 30 || grant.exp <= now || grant.exp <= grant.iat || grant.exp - grant.iat > lifetime || typeof grant.nonce !== 'string' || !/^[a-f0-9]{32}$/.test(grant.nonce) || typeof grant.recipientHash !== 'string' || !/^[a-f0-9]{64}$/.test(grant.recipientHash)) return null
+    if ((grant.kind === 'admin-pending' || grant.kind === 'admin-session') && grant.recipientHash !== recipientEmailHash(demoAdminEmail())) return null
     if (grant.kind === 'session' && (grant.agreementVersion !== demoAgreement.version || grant.agreementHash !== DEMO_AGREEMENT_HASH || typeof grant.acceptanceId !== 'string' || !/^[a-f0-9]{64}$/.test(grant.acceptanceId))) return null
     if (grant.kind === 'proof' && (grant.exp - grant.iat > DEMO_VERIFICATION_SECONDS || recipientEmailHash(grant.verifiedEmail) !== grant.recipientHash)) return null
     return grant as Extract<DemoGrant, { kind: K }>
@@ -138,7 +155,10 @@ export async function gateDemoRequest(request: Request): Promise<Response | null
   const protectedRoute = protectedPath(url.pathname)
   if (!protectedRoute) return null
   let granted = false
-  try { granted = verifyDemoGrant(readDemoCookie(request.headers.get('cookie'), DEMO_COOKIE), url.origin, 'session') !== null } catch { /* Missing configuration must not publish private files. */ }
+  try {
+    granted = verifyDemoGrant(readDemoCookie(request.headers.get('cookie'), DEMO_COOKIE), url.origin, 'session') !== null
+      || verifyDemoGrant(readDemoCookie(request.headers.get('cookie'), DEMO_ADMIN_COOKIE), url.origin, 'admin-session') !== null
+  } catch { /* Missing configuration must not publish private files. */ }
   if (granted) return null
   const headers = { 'cache-control': PRIVATE_CACHE, 'cdn-cache-control': 'no-store', 'vercel-cdn-cache-control': 'no-store', 'referrer-policy': 'no-referrer', 'x-robots-tag': 'noindex, nofollow' }
   if (protectedRoute.document && (request.method === 'GET' || request.method === 'HEAD')) {

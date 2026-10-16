@@ -9,6 +9,7 @@ dist
 /tmp/
 
 # Local source/reference assets. Optimized deploy copies live under public/.
+/BannerImage.png
 /PitStopFinal.mp4
 /PitStopFinalCompressed.mp4
 /car-side-view.png

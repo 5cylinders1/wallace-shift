@@ -22,7 +22,7 @@ for (const path of privateHtml) {
   assert.ok(bundles.length, `Missing compiled bundles: ${path}`)
   for (const bundle of bundles) assert.ok(bundle.startsWith('/demo-assets/'), `${path} exposes ${bundle}`)
 }
-for (const path of ['index.html', 'request-demo/index.html', 'demo-agreement/index.html', 'demos/roofers-offer/index.html']) {
+for (const path of ['index.html', 'request-demo/index.html', 'demo-agreement/index.html', 'demo-admin/index.html', 'demos/roofers-offer/index.html']) {
   const html = await readFile(new URL(path, root), 'utf8')
   assert.ok(!html.includes('/demo-assets/'), `Public page depends on private bundles: ${path}`)
 }

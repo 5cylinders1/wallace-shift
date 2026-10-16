@@ -32,9 +32,6 @@ export function getBrandHandoffFrame(narrative: number, offset: number,
     headingOpacity: active ? headingOpacity : 0,
     bodyOpacity: active ? (afterCanvas ? 1 : smoothRange(.92, .98, narrative)) : 0,
     backgroundOpacity,
-    // On portrait screens the copy has its own space above and below the
-    // opening mark, then settles together once both halves have cleared.
-    mobileClearance: afterCanvas ? 0 : 1 - smoothRange(.94, 1, narrative),
     clip: afterCanvas ? 'none' : logoRevealClip(contour, { left: 0, top: 0, width: 1, height: 1 }),
     wipeProgress,
     ...wipe,

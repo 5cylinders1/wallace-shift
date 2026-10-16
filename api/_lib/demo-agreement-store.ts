@@ -64,14 +64,17 @@ redis.call('SET', KEYS[2], '1', 'EX', 60)
 redis.call('SET', KEYS[1], ARGV[1], 'EX', ARGV[2])
 return 'ok'`
 
-export async function reserveVerificationCode(invite: InviteGrant, email: string, codeHash: string, now = Math.floor(Date.now() / 1000)): Promise<void> {
+type VerificationChallenge = Pick<InviteGrant, 'nonce' | 'recipientHash' | 'exp'>
+type VerificationNamespace = 'demo-agreement' | 'demo-admin'
+
+export async function reserveVerificationCode(invite: VerificationChallenge, email: string, codeHash: string, now = Math.floor(Date.now() / 1000), namespace: VerificationNamespace = 'demo-agreement'): Promise<void> {
   const ttl = Math.min(DEMO_VERIFICATION_SECONDS, invite.exp - now)
   if (ttl <= 0) throw new DemoError('invite_expired', 403)
   const result = await evaluate(RESERVE_CODE, [
-    `demo-agreement:code:${invite.nonce}`,
-    `demo-agreement:cooldown:${invite.nonce}`,
-    `demo-agreement:send:${invite.recipientHash}:${Math.floor(now / 3600)}`,
-    `demo-agreement:send:day:${Math.floor(now / 86400)}`,
+    `${namespace}:code:${invite.nonce}`,
+    `${namespace}:cooldown:${namespace === 'demo-admin' ? invite.recipientHash : invite.nonce}`,
+    `${namespace}:send:${invite.recipientHash}:${Math.floor(now / 3600)}`,
+    `${namespace}:send:day:${Math.floor(now / 86400)}`,
   ], [JSON.stringify({ email, recipientHash: invite.recipientHash, codeHash, attempts: 0, expiresAt: now + ttl }), String(ttl)])
   if (result === 'rate_limited') throw new DemoError('rate_limited', 429)
   if (result !== 'ok') throw new DemoError('unavailable', 503)
@@ -92,8 +95,8 @@ end
 redis.call('DEL', KEYS[1])
 return {'ok', code.email}`
 
-export async function consumeVerificationCode(invite: InviteGrant, codeHash: string, now = Math.floor(Date.now() / 1000)): Promise<string> {
-  const result = await evaluate(VERIFY_CODE, [`demo-agreement:code:${invite.nonce}`], [codeHash, invite.recipientHash, String(now)])
+export async function consumeVerificationCode(invite: VerificationChallenge, codeHash: string, now = Math.floor(Date.now() / 1000), namespace: VerificationNamespace = 'demo-agreement'): Promise<string> {
+  const result = await evaluate(VERIFY_CODE, [`${namespace}:code:${invite.nonce}`], [codeHash, invite.recipientHash, String(now)])
   if (!Array.isArray(result)) throw new DemoError('unavailable', 503)
   if (result[0] === 'rate_limited') throw new DemoError('rate_limited', 429)
   if (result[0] === 'code_invalid' || result[0] === 'code_expired') throw new DemoError(result[0], 400)
