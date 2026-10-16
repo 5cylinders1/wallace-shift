@@ -58,6 +58,7 @@ try {
   process.env.DEMO_ACCESS_SECRET = randomBytes(32).toString('hex')
   process.env.DEMO_ACCESS_ORIGIN = 'http://127.0.0.1:1'
   process.env.RESEND_API_KEY = 'fixture-key-never-real'
+  process.env.DEMO_ADMIN_EMAIL = 'owner@example.test'
   process.env.CONTACT_TO_EMAIL = 'reviewer@example.test'
   process.env.CONTACT_FROM_EMAIL = 'Wallace Shift <site@example.test>'
   process.env.DEMO_AUDIT_REDIS_URL = 'https://redis.example.test'
@@ -67,7 +68,7 @@ try {
     if (url.href === 'https://api.resend.com/emails') {
       assert.equal(init?.headers?.authorization, 'Bearer fixture-key-never-real')
       const email = JSON.parse(init.body)
-      assert.ok(email.to.length === 1 && ['reviewer@example.test', 'prospect@example.test'].includes(email.to[0]))
+      assert.ok(email.to.length === 1 && ['reviewer@example.test', 'prospect@example.test', 'owner@example.test'].includes(email.to[0]))
       sends.push(email)
       return Response.json({ id: 'preview-test-provider-accepted' })
     }
@@ -114,8 +115,8 @@ try {
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
 
-  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demos/roofers-offer/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg']) await checkStatus(path, 200)
-  for (const path of ['/request-demo/', '/demo-agreement/', '/demos/roofers-offer/']) {
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg']) await checkStatus(path, 200)
+  for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/']) {
     const page = await request(path)
     for (const asset of assetsFrom(page.body)) {
       assert.equal(asset.startsWith('/demo-assets/'), false, `${path} imports a private generated asset`)
@@ -215,7 +216,57 @@ try {
   assert.ok(invalidInvite.headers.getSetCookie().every(value => value.includes('Max-Age=0;')))
   assert.equal(invalidInvite.headers.get('location'), '/request-demo/?access=expired')
   assert.equal(sends.length, 2)
-  console.log(`Demo preview HTTP integration passed: ${checks} route/asset responses; fourteen private documents; isolated public assets; manual approval; verified email; explicit NDA acceptance; persisted evidence; signed cookie; no-store. Two mocked emails and modeled Redis operations; no external network or live provider calls.`)
+
+  // Owner sign-in is independent of invitations and never creates NDA evidence.
+  const anonymousAdmin = await checkStatus('/api/demo-admin', 200)
+  assert.deepEqual(JSON.parse(anonymousAdmin.body), { ok: true, authenticated: false, pending: false })
+  assert.match(anonymousAdmin.headers.get('cache-control'), /no-store/)
+  const guestAdmin = await checkStatus('/api/demo-admin', 200, authorized)
+  assert.equal(JSON.parse(guestAdmin.body).authenticated, false)
+  const ownerCodeSent = await checkStatus('/api/demo-admin', 200, postAgreement({ action: 'send-code' }, ''))
+  assert.equal(JSON.parse(ownerCodeSent.body).ok, true)
+  assert.equal(sends.length, 3)
+  assert.deepEqual(sends[2].to, ['owner@example.test'])
+  const ownerCode = sends[2].text.match(/^\d{6}$/m)?.[0]
+  assert.ok(ownerCode)
+  assert.equal(ownerCodeSent.body.includes(ownerCode), false)
+  const ownerPending = responseCookie(ownerCodeSent, 'wallace_demo_admin_pending')
+  assert.ok(ownerPending)
+  const pendingOwnerStatus = await checkStatus('/api/demo-admin', 200, { headers: { cookie: ownerPending } })
+  assert.deepEqual(JSON.parse(pendingOwnerStatus.body), { ok: true, authenticated: false, pending: true })
+  await checkStatus('/halcyon', 303, { headers: { cookie: ownerPending } })
+  await checkStatus('/demo-assets/' + privateAssets[0], 403, { headers: { cookie: ownerPending } })
+  await checkStatus('/api/demo-admin', 429, postAgreement({ action: 'send-code' }, ''))
+  const ownerVerified = await checkStatus('/api/demo-admin', 200, postAgreement({ action: 'verify-code', code: ownerCode }, ownerPending))
+  const ownerCookie = responseCookie(ownerVerified, 'wallace_demo_admin')
+  assert.ok(ownerCookie)
+  assert.match(ownerVerified.headers.getSetCookie().find(value => value.startsWith('wallace_demo_admin=')), /; Max-Age=2592000; HttpOnly; SameSite=Lax/)
+  assert.ok(ownerVerified.headers.getSetCookie().find(value => value.startsWith('wallace_demo_admin_pending=')).includes('Max-Age=0;'))
+  const ownerOptions = { headers: { cookie: ownerCookie } }
+  const ownerStatus = await checkStatus('/api/demo-admin', 200, ownerOptions)
+  assert.equal(JSON.parse(ownerStatus.body).authenticated, true)
+  await checkStatus('/api/demo-admin', 400, postAgreement({ action: 'verify-code', code: ownerCode }, ownerPending))
+  await checkStatus('/api/demo-agreement', 403, ownerOptions)
+  for (const path of aliases) {
+    const page = await checkStatus(path, 200, ownerOptions)
+    assert.match(page.headers.get('cache-control'), /no-store/)
+  }
+  for (const file of privateAssets) {
+    const asset = await checkStatus(`/demo-assets/${file}`, 200, { ...ownerOptions, method: 'HEAD' })
+    assert.match(asset.headers.get('cache-control'), /no-store/)
+  }
+  assert.deepEqual(store.records(), [record], 'Owner access must not add or alter prospect agreement evidence')
+  const signedOut = await checkStatus('/api/demo-admin', 200, postAgreement({ action: 'logout' }, ownerCookie))
+  for (const name of ['wallace_demo_admin', 'wallace_demo_admin_pending', 'wallace_demo_access', 'wallace_demo_pending', 'wallace_demo_verified']) {
+    assert.ok(signedOut.headers.getSetCookie().find(value => value.startsWith(name + '=')).includes('Max-Age=0;'))
+  }
+  const clearedOwner = signedOut.headers.getSetCookie().map(value => value.split(';')[0]).join('; ')
+  assert.equal(JSON.parse((await checkStatus('/api/demo-admin', 200, { headers: { cookie: clearedOwner } })).body).authenticated, false)
+  await checkStatus('/halcyon', 303, { headers: { cookie: clearedOwner } })
+  await checkStatus('/demo-assets/' + privateAssets[0], 403, { headers: { cookie: clearedOwner } })
+  await checkStatus('/halcyon', 200, authorized)
+  assert.equal(sends.length, 3)
+  console.log(`Demo preview HTTP integration passed: ${checks} route/asset responses; fourteen private documents; isolated public assets; manual approval; verified email; explicit NDA acceptance; persisted evidence; owner code sign-in and logout; guest/admin separation; signed cookies; no-store. Three mocked emails and modeled Redis operations; no external network or live provider calls.`)
 } finally {
   if (server) {
     server.httpServer.closeIdleConnections?.()

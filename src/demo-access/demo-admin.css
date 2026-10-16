@@ -1,0 +1,24 @@
+.demo-admin .demo-access__main { min-height: calc(100svh - 197px); }
+.demo-admin h1 { font-size: clamp(59px, 6.1vw, 96px); }
+.demo-admin__primary { width: 100%; margin-top: 28px; }
+.demo-admin__checking { margin-top: 30px; color: #52616b; font-size: 13px; line-height: 1.8; }
+.demo-admin__code { font-size: 24px !important; font-variant-numeric: tabular-nums; letter-spacing: .25em; }
+.demo-admin__text-button { padding: 8px 0; border: 0; background: transparent; color: #175c99; font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.demo-admin__text-button:hover { color: #121a21; }
+.demo-admin__text-button:disabled { cursor: default; color: #52616b; text-decoration: none; }
+.demo-admin .demo-access__form .demo-admin__text-button { margin-top: 12px; }
+.demo-admin__collection { display: grid; margin-top: 26px; }
+.demo-admin__demo { display: grid; grid-template-columns: 23px minmax(0, 1fr) 20px; align-items: center; gap: 12px; padding: 17px 0; border-top: 1px solid #c9d2d7; }
+.demo-admin__demo:hover { color: #175c99; }
+.demo-admin__number { align-self: start; color: #697780; font-size: 10px; line-height: 2.1; }
+.demo-admin__demo strong { display: block; font-size: 14px; font-weight: 600; line-height: 1.5; }
+.demo-admin__demo small { display: block; margin-top: 4px; color: #52616b; font-size: 10px; line-height: 1.6; }
+.demo-admin__session { display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid #c9d2d7; padding-top: 17px; margin-top: 5px; }
+.demo-admin__session p { color: #52616b; font-size: 10px; }
+.demo-admin .demo-admin__status { color: #175c99; }
+.demo-admin .demo-admin__status--error { color: #9a301e; }
+.demo-access__footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+@media (max-width: 780px) {
+  .demo-admin h1 { font-size: clamp(56px, 10.5vw, 80px); }
+}

@@ -183,6 +183,7 @@ export function DemoRequestPage() {
 
       <footer className="demo-access__footer">
         <p>© {new Date().getFullYear()} Wallace Shift</p>
+        <a href={`/demo-admin/${demoKey ? `?demo=${encodeURIComponent(demoKey)}` : ''}`}>Admin sign in</a>
         <p>Distinctive by design. Built to move you forward.</p>
       </footer>
     </div>

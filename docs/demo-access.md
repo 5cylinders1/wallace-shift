@@ -1,8 +1,41 @@
 # Demo requests, approval, and confidentiality
 
-The roofing collection is public. All five interactive websites and the roofing
-dashboard require approval, email verification, and agreement acceptance.
+The roofing collection is public. Visitors to all five interactive websites and
+the roofing dashboard require approval, email verification, and agreement acceptance.
 Submitting a request or opening an invitation never unlocks the demos by itself.
+
+## Admin access
+
+Open `/demo-admin/` on the same site as the demos, or follow **Admin sign in**
+from the request page or collection footer. Select **Email me a sign-in code**, then enter
+the six-digit code sent to the configured owner inbox. There is no separate
+password, invitation, or visitor agreement for the owner. The admin page links
+to all five demos and the roofing dashboard.
+
+The only permitted admin mailbox is `DEMO_ADMIN_EMAIL`, or `CONTACT_TO_EMAIL`
+when `DEMO_ADMIN_EMAIL` is unset. Set `DEMO_ADMIN_EMAIL` to your personal owner
+address if the contact inbox is shared. An explicitly empty or invalid override
+disables admin sign-in; it does not fall back. The browser cannot choose or change
+the recipient. Keep this setting server-only, without a `VITE_` prefix.
+
+This reuses the existing `DEMO_ACCESS_SECRET`, Resend sender, and Redis REST
+configuration listed below. No additional auth service is needed. Those settings
+must be present in the running environment; `.env.local` is only for local work.
+
+A code expires within ten minutes, can be used once, and permits five attempts.
+Sending is limited to once per minute and three times per mailbox per hour,
+including across browsers and cleared cookies. Admin counters are separate from
+visitor verification. Missing configuration, email rejection, and storage failures
+do not grant access. Codes and mailbox addresses are never returned to the browser.
+
+The signed, host-only, HttpOnly cookie lasts 30 days and uses `Secure` on HTTPS
+and `SameSite=Lax`. It opens all protected demos, assets, and demo APIs on that
+origin. A different hostname or browser needs its own sign-in. Returning to
+`/demo-admin/` lets you sign out, which clears both admin and visitor cookies in
+that browser. Logout does not revoke a copied cookie on another device: rotate
+`DEMO_ACCESS_SECRET` to invalidate all sessions immediately. Changing the configured
+admin mailbox invalidates existing admin sessions without affecting visitor grants.
+Signing in as the owner creates no visitor agreement acceptance record.
 
 ## Owner workflow
 
@@ -18,7 +51,7 @@ Submitting a request or opening an invitation never unlocks the demos by itself.
    host-only, HttpOnly access cookie. Access ends 72 hours after invitation creation,
    even if the invitation is opened later. Acceptance does not extend that window.
 
-For a request received directly, an expired approval, or your own preview, generate
+For a request received directly or an expired approval, generate
 an invitation with the same server secret as the target environment:
 
 ```sh
@@ -49,6 +82,7 @@ Set these server-only values before production use:
 | --- | --- |
 | `DEMO_ACCESS_SECRET` | Random secret of at least 32 characters, for example generated with `openssl rand -hex 32`. Never use a `VITE_` prefix. |
 | `DEMO_ACCESS_ORIGIN` | Exact HTTPS origin for emailed invitations. Defaults to `https://roofers.wallaceshift.com`; use the exact localhost origin only in development. |
+| `DEMO_ADMIN_EMAIL` | Optional owner-only sign-in mailbox. Defaults to `CONTACT_TO_EMAIL` when unset. Use a private owner inbox if the contact inbox is shared. |
 | `RESEND_API_KEY` | Email provider credential. |
 | `CONTACT_FROM_EMAIL` | Verified sender address for requests and verification codes. |
 | `CONTACT_TO_EMAIL` | Owner inbox receiving requests and invitations for manual approval. |
@@ -155,8 +189,10 @@ verify direct document, asset, API, and alternate-domain URLs without cookies.
 - `npm run build`: compile both output trees and check the public/private boundary.
 - `node --test scripts/test-demo-access.mjs`: exercise request, invitation,
   verification, agreement persistence, and access logic with mocked providers.
+- `node --test scripts/test-demo-admin.mjs`: exercise owner sign-in, expiration,
+  replay and attempt limits, origin restrictions, and separation from visitor grants.
 - `node --test scripts/test-demo-preview.mjs`: load the built output over real
-  local HTTP, with mocked email and Redis, through the full approval-to-access flow.
+  local HTTP, with mocked email and Redis, through visitor approval and admin sign-in.
 - `node scripts/verify-demo-redis.mjs`: with a supported Redis REST URL/token pair
   already in the process environment, check live connectivity and the current
   application Lua using isolated synthetic keys. The probe attaches a two-minute

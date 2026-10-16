@@ -232,6 +232,6 @@ export function RoofersOffer() {
         </div>
       </section>
     </main>
-    <footer className="ro-footer ro-wrap"><Wordmark /><p>Thoughtful websites. Useful automation.</p><div><a href="https://www.wallaceshift.com/">Visit the studio <Arrow diagonal /></a><span>© {new Date().getFullYear()} Wallace Shift</span></div></footer>
+    <footer className="ro-footer ro-wrap"><Wordmark /><p>Thoughtful websites. Useful automation.</p><div><a href="https://www.wallaceshift.com/">Visit the studio <Arrow diagonal /></a><a className="ro-admin-link" href="/demo-admin/">Admin sign in</a><span>© {new Date().getFullYear()} Wallace Shift</span></div></footer>
   </div>
 }

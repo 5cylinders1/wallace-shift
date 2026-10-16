@@ -49,7 +49,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (req.method === 'GET') {
       demoAdminEmail()
       const authenticated = verifyDemoGrant(readDemoCookie(cookie, DEMO_ADMIN_COOKIE), origin, 'admin-session') !== null
-      demoJson(res, 200, { ok: true, authenticated })
+      const pending = verifyDemoGrant(readDemoCookie(cookie, DEMO_ADMIN_PENDING_COOKIE), origin, 'admin-pending') !== null
+      demoJson(res, 200, { ok: true, authenticated, pending })
       return
     }
     if (nodeHeader(req, 'origin') !== origin || nodeHeader(req, 'sec-fetch-site') === 'cross-site') throw new DemoError('forbidden', 403)

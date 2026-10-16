@@ -242,6 +242,8 @@ img { display: block; width: 100%; }
 .ro-footer>p { font-family: 'Instrument Serif', Georgia, serif; color: var(--ro-silver); font-size: 23px; margin: 0; }
 .ro-footer>div { display: flex; flex-direction: column; align-items: end; gap: 17px; }
 .ro-footer>div>a { display: flex; align-items: center; gap: 24px; font-size: 13px; }
+.ro-footer>div>a.ro-admin-link { color: var(--ro-muted-dark); font-size: 11px; }
+.ro-footer>div>a.ro-admin-link:hover { color: var(--ro-paper); }
 .ro-footer>div>a>span { font-size: 19px; line-height: 1; }
 .ro-footer>div>span { font-size: 11px; color: var(--ro-muted-dark); }
 

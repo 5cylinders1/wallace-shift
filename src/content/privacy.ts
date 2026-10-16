@@ -36,7 +36,7 @@ export const privacySections: PrivacySection[] = [
     heading: 'What we do not collect',
     paragraphs: [
       'This site runs no analytics, no advertising pixels, no tracking scripts, no session recording, and no chat widget.',
-      'Private demos use essential cookies for your pending invitation, email verification, and approved access. These are not advertising cookies. Verification lasts up to ten minutes, and invitation and access cookies last no longer than the invitation’s 72-hour window. We use temporary counters and hashed identifiers to limit repeated requests and verification attempts.',
+      'Private demos use essential cookies for your pending invitation, email verification, and approved access. These are not advertising cookies. Verification lasts up to ten minutes, and visitor invitation and access cookies last no longer than the invitation’s 72-hour window. The site owner can separately sign in with an emailed code; the admin access cookie lasts up to 30 days or until the owner signs out of that browser. We use temporary counters and hashed identifiers to limit repeated requests and verification attempts.',
     ],
   },
   {
