@@ -19,6 +19,35 @@
   clip-path: polygon(50% 0%, 50% 100%, 50% 100%, 50% 0%);
 }
 
+/* The portrait logo splits across the middle of the screen. Keep both copy
+   layers outside that band, including while the paragraph fades in. Once
+   the mark exits, the same scroll frame brings the statement back together. */
+@media (max-width: 1023px) and (min-height: 501px) {
+  .water-hero-brand__aperture {
+    /* The contour mask is authored for text between the halves. Portrait
+       copy sits above them, so keep its scroll-driven fade without cutting
+       letters against an extrapolated off-logo contour. */
+    clip-path: none !important;
+  }
+
+  .water-hero-brand .shift-wipe__headline {
+    position: absolute;
+    inset-inline: var(--gutter);
+    bottom: calc(50% + 8px + clamp(58px, min(14vw, 16svh), 140px) * var(--brand-mobile-clearance, 1));
+    font-size: clamp(2rem, min(8.7vw, 6svh), 3.25rem);
+  }
+
+  .water-hero-brand .shift-wipe__body {
+    position: absolute;
+    inset-inline: var(--gutter);
+    top: calc(50% + 24px + clamp(64px, min(15vw, 17svh), 144px) * var(--brand-mobile-clearance, 1));
+    max-width: 36ch;
+    margin-inline: auto;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
 @media (max-height: 500px) {
   .water-hero-brand .shift-wipe__content {
     padding-top: var(--site-header-height, 96px);

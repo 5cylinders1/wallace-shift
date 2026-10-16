@@ -157,12 +157,19 @@ verify direct document, asset, API, and alternate-domain URLs without cookies.
   verification, agreement persistence, and access logic with mocked providers.
 - `node --test scripts/test-demo-preview.mjs`: load the built output over real
   local HTTP, with mocked email and Redis, through the full approval-to-access flow.
+- `node scripts/verify-demo-redis.mjs`: with a supported Redis REST URL/token pair
+  already in the process environment, check live connectivity and the current
+  application Lua using isolated synthetic keys. The probe attaches a two-minute
+  fallback expiry, deletes its keys afterward, and verifies cleanup. It never
+  loads `.env` files, prints credentials, sends email, or reads application records.
 - Check the request and agreement screens at desktop and narrow widths.
 - Confirm an invitation alone cannot load private HTML, JavaScript, media, or APIs.
 - Confirm incorrect recipients/codes, unchecked consent, stale terms, expired
   invitations, and storage failures never issue access.
 
-These fixtures model Redis command behavior but do not execute Lua on a real Redis
-service. Production middleware, provider compatibility/persistence, and real
-mailbox delivery require deployed verification. No production deployment or real
-email delivery is established by local checks.
+The mocked flow tests model Redis command behavior but do not execute Lua on a
+real Redis service. The live Redis probe checks the configured REST connection
+and command compatibility; it does not verify provider persistence, backups, or
+deployed application credentials. Production middleware and real mailbox delivery
+require deployed verification. No production deployment or real email delivery is
+established by local checks.

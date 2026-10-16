@@ -6,7 +6,7 @@ import { ContactCta } from '../ContactCta/ContactCta'
 import { PageLink } from '../PageLink/PageLink'
 import { ShiftQuiz } from '../ShiftQuiz/ShiftQuiz'
 import { SiteFooter } from '../SiteFooter/SiteFooter'
-import { getInteractiveHomeHeroSnapshot, getStaticHomeHeroSnapshot, subscribeInteractiveHomeHero } from '../Hero/homeHeroDisplay'
+import { getInteractiveHomeJourneySnapshot, getStaticHomeJourneySnapshot, subscribeInteractiveHomeJourney } from './homeJourneyDisplay'
 import { initialJourneyFrame, PROCESS_SCROLL_UNITS, sampleJourneyFrame, type JourneyFrame, type JourneyLayout } from './journeyDirector'
 import { JourneyServiceRows } from './JourneyServiceRows'
 import { JourneyStageArt, type JourneyStage } from './JourneyStageArt'
@@ -46,7 +46,7 @@ const processPanels: JourneyStage[] = ['find', 'make', 'launch']
  * native DOM, with a complete static layout when motion/WebGL is unavailable. */
 export function HomeJourney() {
   const rootRef = useRef<HTMLDivElement>(null)
-  const interactive = useSyncExternalStore(subscribeInteractiveHomeHero, getInteractiveHomeHeroSnapshot, getStaticHomeHeroSnapshot)
+  const interactive = useSyncExternalStore(subscribeInteractiveHomeJourney, getInteractiveHomeJourneySnapshot, getStaticHomeJourneySnapshot)
   const [nearby, setNearby] = useState(false)
   const [failed, setFailed] = useState(false)
   const frame = useRef({ ...initialJourneyFrame })
@@ -73,31 +73,6 @@ export function HomeJourney() {
     }, { rootMargin: '600px 0px' })
     observer.observe(root)
     return () => observer.disconnect()
-  }, [live])
-
-  /**
-   * Stacked panels hold once their own end reaches the bottom of the frame,
-   * which is an offset only a panel's own height can give and no CSS length
-   * knows. Live, the director owns these panels — they are absolute inside one
-   * frame and wipe on its cue — so there is nothing to measure.
-   */
-  useEffect(() => {
-    const root = rootRef.current
-    if (!root || live) return
-    const panels = Array.from(root.querySelectorAll<HTMLElement>('.journey-process__panel'))
-    if (panels.length === 0) return
-    const measure = () => {
-      for (const panel of panels) {
-        panel.style.setProperty('--journey-panel-height', `${panel.offsetHeight}px`)
-      }
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    for (const panel of panels) observer.observe(panel)
-    return () => {
-      observer.disconnect()
-      for (const panel of panels) panel.style.removeProperty('--journey-panel-height')
-    }
   }, [live])
 
   useEffect(() => {
@@ -220,6 +195,7 @@ export function HomeJourney() {
       cancelAnimationFrame(charging)
       kickPower.current = () => {}
       delete root.dataset.grip
+      for (const item of panels) item.panel.style.removeProperty('--journey-panel-padding')
       frame.current = { ...frame.current, visible: 0 }
     }
   }, [frame, interactive, live])

@@ -483,7 +483,10 @@ export const QUALITY: Record<QualityTier, QualitySettings> = {
     particles: 1700,
   },
   low: {
-    dprCap: 1.0,
+    // Keep enough beauty-pass samples for the thin crystal shoulders on
+    // retina phones. Water captures, geometry and particles retain their
+    // low-tier budgets; rendering at the full device DPR is unnecessary.
+    dprCap: 1.35,
     waterSegments: 144,
     reflectionSize: 384,
     refractionSize: 512,

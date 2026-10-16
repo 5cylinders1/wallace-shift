@@ -1,10 +1,10 @@
 /** The approach panels where the live scene does not reach: the mark drawn
- * from the approved SVG, and the panels stacked the way the pricing packages
- * are. Source and stylesheet contracts; the travel itself is a browser
- * behaviour these cannot see. */
+ * from the approved SVG, with mobile copy and art in natural document flow.
+ * Source contracts cannot establish rendered browser placement. */
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
+import ts from 'typescript'
 
 const root = new URL('../', import.meta.url)
 const read = path => readFile(new URL(path, root), 'utf8')
@@ -12,6 +12,12 @@ const css = await read('src/components/HomeJourney/HomeJourney.css')
 const journey = await read('src/components/HomeJourney/HomeJourney.tsx')
 const art = await read('src/components/HomeJourney/JourneyStageArt.tsx')
 const scene = await read('src/components/HomeJourney/LogoJourneyScene.tsx')
+const display = ts.transpileModule(await read('src/components/HomeJourney/homeJourneyDisplay.ts'), {
+  compilerOptions: { module: ts.ModuleKind.ESNext },
+}).outputText
+const { HOME_JOURNEY_MOTION_QUERY, getInteractiveHomeJourneySnapshot,
+  subscribeInteractiveHomeJourney, getStaticHomeJourneySnapshot } = await import(
+  `data:text/javascript;base64,${Buffer.from(display).toString('base64')}`)
 
 const mobileBlock = (() => {
   const start = css.indexOf('@media (max-width: 1023px)')
@@ -28,6 +34,37 @@ const rule = (block, selector) => {
   assert.ok(at >= 0, `${selector} has a rule`)
   return block.slice(at, block.indexOf('}', at) + 1)
 }
+
+await test('the travelling journey has its own responsive gate and releases its media listener', () => {
+  assert.equal(HOME_JOURNEY_MOTION_QUERY,
+    '(min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: no-preference)')
+  assert.ok(!journey.includes('../Hero/homeHeroDisplay'), 'enabling the mobile hero cannot enable the desktop journey')
+  assert.match(journey, /useSyncExternalStore\(subscribeInteractiveHomeJourney, getInteractiveHomeJourneySnapshot, getStaticHomeJourneySnapshot\)/)
+  assert.equal(getStaticHomeJourneySnapshot(), false)
+  assert.equal(getInteractiveHomeJourneySnapshot(), false, 'server markup remains complete without a scene')
+  const originalWindow = globalThis.window
+  const listeners = new Set()
+  const query = {
+    matches: false,
+    addEventListener(type, listener) { assert.equal(type, 'change'); listeners.add(listener) },
+    removeEventListener(type, listener) { assert.equal(type, 'change'); listeners.delete(listener) },
+  }
+  try {
+    globalThis.window = { matchMedia(media) { assert.equal(media, HOME_JOURNEY_MOTION_QUERY); return query } }
+    let changes = 0
+    const unsubscribe = subscribeInteractiveHomeJourney(() => { changes++ })
+    assert.equal(getInteractiveHomeJourneySnapshot(), false)
+    query.matches = true
+    listeners.forEach(listener => listener())
+    assert.equal(changes, 1)
+    assert.equal(getInteractiveHomeJourneySnapshot(), true)
+    unsubscribe()
+    assert.equal(listeners.size, 0)
+  } finally {
+    if (originalWindow === undefined) delete globalThis.window
+    else globalThis.window = originalWindow
+  }
+})
 
 await test('the live scene still owns these panels where it runs', () => {
   // Everything added here hangs off `data-live="false"`, which is the state the
@@ -78,42 +115,24 @@ await test('the art is the approved mark, not a drawing of it', () => {
   }
 })
 
-await test('a panel fills the frame, holds at its own end, and is ridden over', () => {
+await test('mobile panels follow document flow without viewport-sized empty space', () => {
   const panel = rule(mobileBlock, '.home-journey[data-live="false"] .journey-process__panel {')
-  assert.match(panel, /position: sticky/)
-
-  // The live stage gives every panel `inset: 0` so it fills one frame. The
-  // `bottom: 0` inside that shorthand is a second sticky constraint, and it
-  // pins each panel's bottom edge to the bottom of the frame — which drags all
-  // of them up onto each other the moment the section appears. It has to be
-  // cleared, and before the one edge this needs is set.
-  assert.match(panel, /inset: auto;[\s\S]*top: min\(/,
-    'the frame-filling inset is cleared first')
-  assert.match(panel, /top: min\(\s*var\(--journey-header-offset\),\s*calc\(100svh - var\(--journey-panel-height/)
-
+  assert.match(panel, /position: relative/)
+  assert.match(panel, /inset: auto;/, 'desktop frame constraints do not displace mobile panels')
   assert.match(mobileBlock,
-    /\.journey-process__step \{\s*min-height: calc\(100svh - var\(--journey-header-offset\)\);\s*\}/)
-
-  // No CSS length knows a panel's height, so it is measured and written back —
-  // and only where the director is not already driving these panels.
-  assert.match(journey, /if \(!root \|\| live\) return/)
-  assert.match(journey, /setProperty\(`?'--journey-panel-height'/)
-  assert.match(journey, /new ResizeObserver\(measure\)/)
-  assert.match(journey, /removeProperty\('--journey-panel-height'\)/,
-    'and cleared when the scene takes over')
+    /\.journey-process__step \{\s*min-height: 0;\s*\}/)
+  assert.ok(!journey.includes('--journey-panel-height'), 'mobile needs no viewport-dependent sticky measurement')
+  assert.match(journey, /removeProperty\('--journey-panel-padding'\)/,
+    'desktop padding measurements are released when switching to mobile')
 })
 
-await test('a panel holds only while something is coming up behind it', () => {
-  // Nothing follows the last panel inside the section to ride over it, so it
-  // leaves with the page instead of stopping against an edge nothing arrives
-  // at — and the edge goes with the hold, or a relatively positioned box is
-  // displaced down the page by it.
-  const last = rule(mobileBlock, '.journey-process__panel--launch {')
-  assert.match(last, /position: relative/)
-  assert.match(last, /top: auto/)
-
-  // The z-order and the opaque grounds are the live scene's own, unchanged —
-  // which is what makes this the same layered look rather than a copy of it.
+await test('mobile artwork follows readable full-width copy within each stage', () => {
+  assert.match(mobileBlock, /\.journey-process__copy \{ width: 100%;/)
+  const art = rule(mobileBlock, '.home-journey[data-live="false"] .journey-stage-art {')
+  assert.match(art, /flex: none;/)
+  assert.match(art, /min-height: 0;/)
+  assert.match(art, /margin: 30px auto 0;/)
+  // Desktop keeps the existing order and opaque grounds for the live wipe.
   const order = ['intro', 'find', 'make', 'launch'].map(name => {
     const at = css.indexOf(`.journey-process__panel--${name} {`)
     return Number(css.slice(at, css.indexOf('}', at)).match(/z-index: (\d)/)[1])

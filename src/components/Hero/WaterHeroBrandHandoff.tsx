@@ -38,6 +38,7 @@ export function WaterHeroBrandHandoff({ still, progress, sceneState }: {
         const state = getBrandHandoffFrame(progress.current, offset, contour, height)
         stage.style.visibility = state.active ? 'visible' : 'hidden'
         stage.style.backgroundColor = `rgb(6 7 8 / ${state.backgroundOpacity})`
+        stage.style.setProperty('--brand-mobile-clearance', String(state.mobileClearance))
         section.inert = !state.active
         section.setAttribute('aria-hidden', String(!state.active))
         aperture.style.clipPath = state.clip

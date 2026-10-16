@@ -112,3 +112,11 @@ await test('viewport resizing keeps the contour in canvas coordinates and the ed
   }
   assert.equal(getBrandStatementBandPct(0), .4)
 })
+
+await test('portrait copy clears the opening logo and settles only as the halves leave', () => {
+  for (const scroll of [410, 430, 450, 470]) assert.equal(at(scroll).mobileClearance, 1)
+  assert.ok(at(485).mobileClearance > 0 && at(485).mobileClearance < 1)
+  for (const scroll of [500, 600, 645]) assert.equal(at(scroll).mobileClearance, 0)
+  assert.equal(getBrandHandoffFrame(0, offset(645), null, 844).mobileClearance, 0,
+    'a restored post-canvas statement keeps its settled placement before the scene catches up')
+})

@@ -33,10 +33,21 @@ float studioFaceSign = dot(normal, vGlassFaceNormal) < 0.0 ? -1.0 : 1.0;
 vec2 studioPlane = vGlassPlane / 6.0;
 float studioAlong = clamp((.081148 - studioPlane.y) / .162296, 0.0, 1.0);
 float studioAcross = clamp((studioPlane.x + .47 * studioPlane.y + .027) / .054, 0.0, 1.0);
-vec2 studioFacet = vec2(-.018, .008);
-if (studioAlong < .24 + .62 * studioAcross) studioFacet = vec2(-.13, .09);
-else if (studioAlong > .76 - .46 * studioAcross) studioFacet = vec2(.055, -.030);
-if (studioAcross > .82 - .24 * studioAlong) studioFacet = vec2(.09, .04);
+// The facets remain crisp, but each boundary covers a pixel footprint.
+// MSAA only smooths geometry coverage, so hard fragment branches alias
+// inside the crystal even when the canvas has antialiasing enabled.
+float studioUpperEdge = studioAlong - (.24 + .62 * studioAcross);
+float studioLowerEdge = studioAlong - (.76 - .46 * studioAcross);
+float studioSideEdge = studioAcross - (.82 - .24 * studioAlong);
+float studioUpperWidth = max(fwidth(studioUpperEdge), .00001);
+float studioLowerWidth = max(fwidth(studioLowerEdge), .00001);
+float studioSideWidth = max(fwidth(studioSideEdge), .00001);
+float studioUpper = 1.0 - smoothstep(-studioUpperWidth * .5, studioUpperWidth * .5, studioUpperEdge);
+float studioLower = smoothstep(-studioLowerWidth * .5, studioLowerWidth * .5, studioLowerEdge);
+float studioSide = smoothstep(-studioSideWidth * .5, studioSideWidth * .5, studioSideEdge);
+vec2 studioFacet = mix(vec2(-.018, .008), vec2(.055, -.030), studioLower);
+studioFacet = mix(studioFacet, vec2(-.13, .09), studioUpper);
+studioFacet = mix(studioFacet, vec2(.09, .04), studioSide);
 vec3 studioTilt = normalize(vGlassTangentX) * studioFacet.x
   + normalize(vGlassTangentZ) * studioFacet.y;
 studioTilt -= normal * dot(normal, studioTilt);
@@ -131,9 +142,15 @@ export function createLogoStudioCrystalMaterial(source: Material, worldThickness
   const compileCrystal = material.onBeforeCompile
   material.onBeforeCompile = (shader, renderer) => {
     compileCrystal(shader, renderer)
-    shader.fragmentShader = shader.fragmentShader.replace(logoCrystalFragmentNormal, studioCrystalNormal)
+    shader.fragmentShader = shader.fragmentShader
+      .replace(logoCrystalFragmentNormal, studioCrystalNormal)
+      // The rear interface needs the same pixel-footprint filtering as
+      // Three's front reflection. Raw polish makes the narrow shoulder
+      // sparkle and stair-step when it is only a few mobile pixels wide.
+      .replace('getIBLRadiance(insideView, rearNormal, roughness)',
+        'getIBLRadiance(insideView, rearNormal, material.roughness)')
   }
   studioMaterials.set(material, 'crystal')
-  material.customProgramCacheKey = () => 'water-hero-studio-blue-optical-crystal-v2'
+  material.customProgramCacheKey = () => 'water-hero-studio-blue-optical-crystal-v3'
   return material
 }

@@ -63,7 +63,7 @@ html[data-journey-grabbing] body { user-select: none; }
 .journey-services__heading-wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
 .journey-services__header h2 { max-width: 18ch; }
 .journey-services__baseline, .journey-process__baseline { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
-.journey-static-mark { width: clamp(100px, 19vw, 240px); opacity: 0.85; height: auto; filter: invert(1); }
+.journey-static-mark { width: clamp(100px, 19vw, 240px); flex-shrink: 0; opacity: 0.85; height: auto; filter: invert(1); }
 .home-journey[data-live="true"] .journey-static-mark { visibility: hidden; }
 .journey-services__links { display: flex; gap: clamp(30px, 6vw, 100px); padding-block: 48px; }
 .journey-services__links a { display: flex; flex-direction: column; gap: 12px; font-size: 1rem; }
@@ -259,6 +259,7 @@ html[data-journey-grabbing] body { user-select: none; }
 @keyframes journey-art-settle { from { opacity: .78; } to { opacity: 1; } }
 
 .home-journey[data-scroll="false"] .journey-services__header { position: relative; top: auto; }
+.home-journey[data-scroll="false"] > section[id] { scroll-margin-top: var(--journey-header-offset); }
 .home-journey[data-live="false"] .journey-process__stage { position: relative; top: auto; height: auto; overflow: visible; }
 .home-journey[data-live="false"] .journey-process__panel { position: relative; transform: none; padding-block: clamp(70px, 12vw, 110px); }
 .home-journey[data-live="false"] .journey-process__copy { width: min(100%, 680px); }
@@ -279,50 +280,49 @@ html[data-journey-grabbing] body { user-select: none; }
   .home-journey__still-water { inset: 0; opacity: 0.2; }
   .home-journey__still-water img { top: auto; bottom: 26%; left: 12%; width: 38%; }
 
-  /* The approach panels stack the way the pricing packages do: each fills the
-     frame, holds once its own end reaches the bottom of it, and the next rides
-     up over it. The panels already carry the z-order and the opaque grounds
-     the live scene wipes between, so this is the same layered look driven by
-     scroll position instead of by the director.
-
-     The hold is `frame - the panel's own height`, measured per panel, so a
-     panel taller than the frame is read all the way through before it stops.
-     `min()` keeps the intro — which is only as tall as its heading — against
-     the header rather than pushing it down the screen. */
+  /* A phone reads one compact chapter at a time. Copy and the approved mark
+     share normal document flow, so browser chrome, larger type and short
+     landscape screens cannot hide a paragraph behind a pinned canvas. */
   .home-journey[data-live="false"] .journey-process__panel {
-    position: sticky;
-    /* The live stage sets `inset: 0` to make every panel fill one frame. The
-       `bottom: 0` in that shorthand is a second sticky constraint, and it pins
-       each panel's bottom edge to the bottom of the frame — which drags all of
-       them up onto each other from the moment the section appears. Cleared
-       before the one edge this needs is set. */
-    inset: auto;
-    top: min(
-      var(--journey-header-offset),
-      calc(100svh - var(--journey-panel-height, 0px))
-    );
-  }
-  .home-journey[data-live="false"] .journey-process__step {
-    min-height: calc(100svh - var(--journey-header-offset));
-  }
-  /* A panel holds only while something is coming up behind it. Nothing
-     follows the last one inside the section to ride over it, so it leaves
-     with the page and the quiz below takes over. */
-  .home-journey[data-live="false"] .journey-process__panel--launch {
     position: relative;
-    /* And the edge goes with the hold: a relatively positioned box with a
-       `top` is displaced by it, which would push the last panel down the page
-       by the height of the header. */
-    top: auto;
+    inset: auto;
+    padding-block: clamp(42px, 8vw, 64px);
+  }
+  .home-journey[data-live="false"] .journey-process__panel--intro { padding-block: 48px 40px; }
+  .home-journey[data-live="false"] .journey-process__annotation { margin-top: 24px; }
+  .home-journey[data-live="false"] .journey-process__step {
+    min-height: 0;
+  }
+  .home-journey[data-live="false"] .journey-process__copy { width: 100%; max-width: 680px; }
+  .home-journey[data-live="false"] .journey-stage-art {
+    flex: none;
+    width: min(100%, 440px);
+    min-height: 0;
+    height: clamp(160px, 48vw, 220px);
+    margin: 30px auto 0;
+  }
+  .home-journey .shift-quiz {
+    min-height: 0;
+    padding-block: 64px;
   }
 }
 @media (max-width: 600px) {
-  .journey-services__heading-wrap { align-items: flex-start; }
-  .journey-static-mark { width: 58px; margin-top: 52px; }
+  .journey-services__header { padding-block: 42px; }
+  .journey-services__heading-wrap { align-items: center; gap: 18px; }
+  .journey-services__heading-wrap > div { min-width: 0; }
+  .journey-static-mark { width: clamp(48px, 14vw, 72px); }
+  .journey-services__header .journey-kicker { font-size: .65rem; line-height: 1.6; letter-spacing: .1em; }
   .home-journey h2 { font-size: clamp(2.1rem, 7.2vw, 3rem); }
   .journey-services__links { flex-direction: column; gap: 30px; }
   .journey-services__links a { align-self: flex-start; }
-  .journey-process__copy h3 { font-size: 2.5rem; }
+  .journey-process__copy h3 { font-size: clamp(2.25rem, 9vw, 2.8rem); margin-block: 22px 16px; }
+  .journey-process__copy > p:not([class]) { font-size: 1rem; line-height: 1.65; }
+  .journey-process__link { gap: 18px; margin-top: 26px; font-size: .95rem; line-height: 1.5; }
+  .home-journey .shift-quiz__headline { font-size: clamp(2.25rem, 9vw, 3rem); }
+  .home-journey .shift-quiz__quiz-col { gap: 28px; }
+  .home-journey .quiz-question__heading { font-size: 1rem; line-height: 1.45; }
+  .home-journey .quiz-question__answer { min-height: 56px; padding: 16px 18px; font-size: 1.15rem; line-height: 1.4; }
+  .home-journey .quiz-question__back { min-height: 44px; padding-block: 10px; }
   .home-journey__closing .contact-cta__form-wrap { padding: 20px 18px; border-radius: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
