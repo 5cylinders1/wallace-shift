@@ -77,6 +77,26 @@ export function HomeJourney() {
 
   useEffect(() => {
     const root = rootRef.current
+    if (!root || live) return
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('.journey-process__step'))
+    // A tall panel must finish scrolling before it holds for the next one.
+    // This also tracks text wrapping, font loading and phone rotation.
+    const measure = () => {
+      for (const panel of panels) {
+        panel.style.setProperty('--journey-panel-height', `${panel.offsetHeight}px`)
+      }
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    panels.forEach(panel => observer.observe(panel, { box: 'border-box' }))
+    return () => {
+      observer.disconnect()
+      panels.forEach(panel => panel.style.removeProperty('--journey-panel-height'))
+    }
+  }, [live])
+
+  useEffect(() => {
+    const root = rootRef.current
     if (!root || !interactive) return
     const section = root.querySelector<HTMLElement>('.journey-services')!
     const heading = root.querySelector<HTMLElement>('.journey-services__header')!
@@ -217,11 +237,20 @@ export function HomeJourney() {
           </header>
           <JourneyServiceRows />
         </div>
-        <div className="container journey-services__links">
-          {[services.detailLink, services.pricingLink].map(link => <PageLink href={link.href} key={link.href}>
-            <span className="eyebrow">{link.eyebrow}</span><span>{link.label} <span aria-hidden="true">↗</span></span>
-          </PageLink>)}
-        </div>
+        <nav className="journey-services__next" aria-label="Explore services and pricing">
+          <div className="container journey-services__links">
+            <PageLink href={services.detailLink.href}>
+              <span className="eyebrow">{services.detailLink.eyebrow}</span>
+              <span className="journey-services__link-title">Explore our services <span aria-hidden="true">↗</span></span>
+              <span className="journey-services__link-description">What we build and what’s included.</span>
+            </PageLink>
+            <PageLink href={services.pricingLink.href}>
+              <span className="eyebrow">{services.pricingLink.eyebrow}</span>
+              <span className="journey-services__link-title">View pricing &amp; packages <span aria-hidden="true">↗</span></span>
+              <span className="journey-services__link-description">Find the right scope for your business.</span>
+            </PageLink>
+          </div>
+        </nav>
       </section>
 
       <section className="journey-process" id="approach" aria-labelledby="journey-process-heading"

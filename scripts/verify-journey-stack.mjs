@@ -1,6 +1,5 @@
-/** The approach panels where the live scene does not reach: the mark drawn
- * from the approved SVG, with mobile copy and art in natural document flow.
- * Source contracts cannot establish rendered browser placement. */
+/** Fallback panel stacking and the separate desktop scene gate.
+ * Source contracts supplement rendered forward/reverse browser checks. */
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
@@ -10,7 +9,6 @@ const root = new URL('../', import.meta.url)
 const read = path => readFile(new URL(path, root), 'utf8')
 const css = await read('src/components/HomeJourney/HomeJourney.css')
 const journey = await read('src/components/HomeJourney/HomeJourney.tsx')
-const art = await read('src/components/HomeJourney/JourneyStageArt.tsx')
 const scene = await read('src/components/HomeJourney/LogoJourneyScene.tsx')
 const display = ts.transpileModule(await read('src/components/HomeJourney/homeJourneyDisplay.ts'), {
   compilerOptions: { module: ts.ModuleKind.ESNext },
@@ -74,9 +72,6 @@ await test('the live scene still owns these panels where it runs', () => {
     if (!line.includes('.journey-process')) continue
     assert.match(line, /data-live="false"/, `${line.trim()} is scoped to the fallback`)
   }
-  assert.match(css, /\.journey-stage-art \{[^}]*display: none/s,
-    'the art is off until the fallback turns it on')
-  assert.match(css, /\.home-journey\[data-live="false"\] \.journey-stage-art \{[^}]*display: block/s)
   // The stage the director pins, the absolute panels and the wipe transforms
   // are all left exactly as they were.
   assert.match(css, /\.journey-process__stage \{ position: sticky; top: var\(--journey-header-offset\)/)
@@ -90,48 +85,24 @@ await test('the live scene still owns these panels where it runs', () => {
   assert.ok(!/live && <JourneyStageArt/.test(journey))
 })
 
-await test('the art is the approved mark, not a drawing of it', () => {
-  // The shape comes from the logo file through a mask. Nothing here describes
-  // geometry, so there is no second copy of the mark to drift from the first.
-  assert.match(css, /mask: url\('\/brand\/wallace-shift-logo-black\.svg'\) center \/ contain no-repeat/)
-  assert.match(css, /-webkit-mask: url\('\/brand\/wallace-shift-logo-black\.svg'\)/,
-    'with the prefixed form for older Safari')
-  assert.ok(!/<svg|<path|viewBox|\bd="M/.test(art), 'the component draws nothing itself')
-  assert.ok(!/clip-path: polygon/.test(css.slice(css.indexOf('.journey-stage-art'))),
-    'and nothing traces it a second way')
-
-  // Each stage changes the light on the mark and the ground behind it. Three
-  // stages, three treatments, all from the one silhouette.
-  for (const stage of ['find', 'make', 'launch']) {
-    assert.match(css, new RegExp(`\\.journey-stage-art--${stage} \\.journey-stage-art__mark`))
-    assert.match(css, new RegExp(`\\.journey-stage-art--${stage} \\.journey-stage-art__field`))
-  }
-
-  // Slow, and only where motion is welcome.
-  const motion = css.slice(css.indexOf('@media (prefers-reduced-motion: no-preference)'))
-  for (const name of ['journey-art-survey', 'journey-art-shift', 'journey-art-settle']) {
-    assert.match(motion, new RegExp(`animation: ${name} \\d+s`))
-    assert.match(css, new RegExp(`@keyframes ${name}`))
-  }
-})
-
-await test('mobile panels follow document flow without viewport-sized empty space', () => {
-  const panel = rule(mobileBlock, '.home-journey[data-live="false"] .journey-process__panel {')
-  assert.match(panel, /position: relative/)
-  assert.match(panel, /inset: auto;/, 'desktop frame constraints do not displace mobile panels')
-  assert.match(mobileBlock,
-    /\.journey-process__step \{\s*min-height: 0;\s*\}/)
-  assert.ok(!journey.includes('--journey-panel-height'), 'mobile needs no viewport-dependent sticky measurement')
+await test('fallback steps hold only after all of their content can be read', () => {
+  const panel = rule(css, '.home-journey[data-live="false"] .journey-process__step {')
+  assert.match(panel, /position: sticky/)
+  assert.match(panel, /inset: auto;/, 'desktop bottom constraint cannot pin the next panel early')
+  assert.match(panel, /top: min\(var\(--journey-header-offset\), calc\(100svh - var\(--journey-panel-height, 0px\)\)\)/,
+    'a tall panel scrolls to its bottom before holding')
+  assert.match(panel, /min-height: calc\(100svh - var\(--journey-header-offset\)\)/)
+  assert.match(journey, /panel.style.setProperty\('--journey-panel-height', `\$\{panel.offsetHeight\}px`\)/)
+  assert.match(journey, /observer.observe\(panel, \{ box: 'border-box' \}\)/)
+  assert.match(journey, /removeProperty\('--journey-panel-height'\)/)
   assert.match(journey, /removeProperty\('--journey-panel-padding'\)/,
     'desktop padding measurements are released when switching to mobile')
+  const reducedMotion = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'))
+  assert.match(reducedMotion, /\.journey-process__step \{ position: relative; top: auto; min-height: 0;/)
 })
 
-await test('mobile artwork follows readable full-width copy within each stage', () => {
+await test('fallback panels keep their readable copy and opaque stacking order', () => {
   assert.match(mobileBlock, /\.journey-process__copy \{ width: 100%;/)
-  const art = rule(mobileBlock, '.home-journey[data-live="false"] .journey-stage-art {')
-  assert.match(art, /flex: none;/)
-  assert.match(art, /min-height: 0;/)
-  assert.match(art, /margin: 30px auto 0;/)
   // Desktop keeps the existing order and opaque grounds for the live wipe.
   const order = ['intro', 'find', 'make', 'launch'].map(name => {
     const at = css.indexOf(`.journey-process__panel--${name} {`)
