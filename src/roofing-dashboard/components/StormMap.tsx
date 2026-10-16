@@ -196,6 +196,9 @@ export function StormMap({
     map.setMaxZoom(config.map.maxZoom)
     const tiles = L.tileLayer(config.map.tileUrl, {
       maxZoom: config.map.maxZoom,
+      // OSM requires a Referer, while private demo pages use no-referrer.
+      // Identify only the site origin; never send the demo path or query.
+      referrerPolicy: 'strict-origin',
       updateWhenIdle: true,
       keepBuffer: 1,
     })

@@ -184,7 +184,7 @@ export default function HalcyonRoofworks() {
               <p className="hr-kicker"><span /> Roof visualizer</p>
               <h2>See your home in slate, metal, cedar or clay before you decide.</h2>
             </div>
-            <p className="hr-lede">Upload a photo, trace the roof planes, and compare materials and finishes with a planning range beside each one. It runs entirely on your device.</p>
+            <p className="hr-lede">Upload a photo, choose your material and finish, and generate an AI roof preview. Compare it with the original and explore a planning range beside it.</p>
           </div>
           <Visualizer onSelection={onSelection} />
         </div>

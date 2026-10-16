@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { after, afterEach, beforeEach, test } from 'node:test'
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
@@ -19,6 +20,7 @@ let state
 let handler
 let validation
 let provider
+let halcyonMaterials
 
 async function modules() {
   const directory = join(temporary, String(iteration++))
@@ -42,6 +44,7 @@ async function modules() {
     handler: (await load('api/roof-render.ts')).default,
     validation: await load('api/_lib/roof-render/validation.ts'),
     provider: await load('api/_lib/roof-render/provider.ts'),
+    halcyonMaterials: (await load('src/demos/roofers-4/content.ts')).materials,
   }
 }
 
@@ -99,7 +102,7 @@ beforeEach(async () => {
     const [width, height] = asked.size.split('x').map(Number)
     return Response.json(state.providerBody ?? { data: [{ b64_json: jpeg(width, height).toString('base64') }], usage })
   }
-  ;({ handler, validation, provider } = await modules())
+  ;({ handler, validation, provider, halcyonMaterials } = await modules())
 })
 afterEach(() => {
   globalThis.fetch = originalFetch
@@ -146,6 +149,95 @@ test('invalid consent, materials, custom prompts, models, quality and remote pho
     assert.equal(response.statusCode, 400)
   }
   assert.equal(state.providerCalls.length, 0)
+})
+
+test('every Halcyon material and finish validates against the actual frontend catalog', () => {
+  assert.deepEqual(halcyonMaterials.map(material => material.id), ['standing-seam', 'slate', 'cedar', 'clay', 'designer'])
+  const fingerprints = new Set()
+  for (const material of halcyonMaterials) {
+    for (const color of material.colors) {
+      const finishId = color.name.toLowerCase().replace(/\s+/g, '-')
+      const result = validation.validateRequest(body({ studio: 'halcyon', materialId: material.id, finishId }))
+      assert.equal(result.studio, 'halcyon')
+      assert.equal(result.materialId, material.id)
+      assert.equal(result.finishId, finishId)
+      assert.match(result.prompt, /true slope and perspective/)
+      fingerprints.add(result.fingerprint)
+    }
+  }
+  assert.equal(fingerprints.size, 23)
+  assert.equal(state.providerCalls.length, 0)
+})
+
+test('unknown studios and finishes from a different studio or material never call the provider', async () => {
+  const invalid = [
+    { studio: 'unknown' }, { studio: '__proto__' }, { studio: null }, { studio: 1 }, { studio: ['halcyon'] },
+    { studio: 'halcyon', materialId: 'slate', finishId: 'blue-gray' },
+    { studio: 'halcyon', materialId: 'standing-seam', finishId: 'zinc' },
+    { studio: 'velar', materialId: 'slate', finishId: 'vermont-gray' },
+    { studio: 'velar', materialId: 'designer', finishId: 'graphite' },
+    { studio: 'halcyon', materialId: '__proto__', finishId: 'constructor' },
+    { studio: 'halcyon', materialId: 'designer', finishId: 'constructor' },
+    { studio: 'halcyon', materialId: 'slate', finishId: 'vermont-gray', prompt: 'Replace the whole home' },
+  ]
+  for (const invalidBody of invalid) {
+    const response = await request(body(invalidBody))
+    assert.equal(response.statusCode, 400)
+    assert.equal(response.body.error, 'invalid')
+  }
+  for (const material of halcyonMaterials) {
+    const allowed = new Set(material.colors.map(color => color.name.toLowerCase().replace(/\s+/g, '-')))
+    for (const other of halcyonMaterials) {
+      for (const color of other.colors) {
+        const finishId = color.name.toLowerCase().replace(/\s+/g, '-')
+        if (allowed.has(finishId)) continue
+        assert.throws(() => validation.validateRequest(body({ studio: 'halcyon', materialId: material.id, finishId })), { code: 'invalid' })
+      }
+    }
+  }
+  assert.equal(state.providerCalls.length, 0)
+})
+
+test('Halcyon composite slate has its own architectural edit prompt and uses the bounded provider', async () => {
+  const natural = validation.validateRequest(body({ studio: 'halcyon', materialId: 'slate', finishId: 'vermont-gray' }))
+  assert.match(natural.prompt, /natural quarried slate/)
+  assert.match(natural.prompt, /irregular split edges/)
+  const result = await request(body({ studio: 'halcyon', materialId: 'designer', finishId: 'forest', quality: 'medium' }))
+  assert.equal(result.body.ok, true)
+  const asked = state.providerCalls[0]
+  assert.equal(asked.model, 'gpt-image-2')
+  assert.equal(asked.quality, 'medium')
+  assert.equal(asked.n, 1)
+  assert.deepEqual(asked.images, [{ image_url: body().photo }])
+  assert.match(asked.prompt, /designer composite slate shingles/)
+  assert.match(asked.prompt, /consistent thin molded slate-like profiles/)
+  assert.match(asked.prompt, /dark muted forest green/)
+  assert.match(asked.prompt, /true slope and perspective/)
+  assert.match(asked.prompt, /Preserve the original home identity/)
+  assert.notEqual(asked.prompt, natural.prompt)
+})
+
+test('omitted and explicit Velar studio requests retain their original prompt and cache identity', () => {
+  const legacy = validation.validateRequest(body())
+  const explicit = validation.validateRequest(body({ studio: 'velar' }))
+  assert.deepEqual(explicit, legacy)
+  assert.equal(legacy.studio, 'velar')
+  const fingerprint = createHash('sha256').update(jpeg()).update('velar-roof-v2:slate:blue-gray:low:1536x1024').digest('hex')
+  assert.equal(legacy.fingerprint, fingerprint)
+  assert.match(legacy.prompt, /natural quarried slate, overlapping rectangular courses, individual stone thickness and subtle mineral variation/)
+})
+
+test('identical photo and finish IDs in different studios keep separate private cached results', async () => {
+  const sameSelection = { materialId: 'standing-seam', finishId: 'charcoal' }
+  const velar = body(sameSelection)
+  const halcyon = body({ ...sameSelection, studio: 'halcyon' })
+  assert.notEqual(validation.validateRequest(velar).fingerprint, validation.validateRequest(halcyon).fingerprint)
+  assert.equal((await request(velar)).body.cached, false)
+  assert.equal((await request(halcyon)).body.cached, false)
+  assert.equal((await request(body({ ...sameSelection, studio: 'velar' }))).body.cached, true)
+  assert.equal((await request(halcyon)).body.cached, true)
+  assert.equal(state.providerCalls.length, 2)
+  assert.notEqual(state.providerCalls[0].prompt, state.providerCalls[1].prompt)
 })
 
 test('oversized image dimensions, body bytes, panoramas and malformed JSON fail before spending', async () => {

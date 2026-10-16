@@ -39,23 +39,18 @@ selling repairs.
 - **Materials**: standing-seam metal, natural slate, cedar shake, clay tile
   and designer composite, each with typical service life, weight, performance
   notes and an illustrative installed planning rate.
-- **Roof visualizer** (`Visualizer.tsx`, `tiles.ts`, `projective.ts`): the
-  visitor loads a photo (or the sample home), traces each roof plane as a
-  polygon, and picks a material, finish and size. Each plane is textured
-  through its own mapping: a hip face seen from the street (level eave and
-  ridge, ridge centred and narrower) keeps courses parallel to the eave and
-  foreshortens them by the pitch; any other quad is treated as a rectangle in
-  perspective via a homography, drawn as a mesh of affine cells so courses and
-  seams converge toward the ridge. Traces with more than four corners use a
-  covering rectangular mapping clipped to the exact outline, keeping every
-  traced section textured. A Roof planes control overrides the auto
-  choice. Material size is derived from the longest traced eave (assumed about
-  50 ft) and a per-material unit size, with a fine-to-coarse slider. The
-  original photo is multiplied, soft-lit and lightly screened back over the
-  texture so shading and sky highlights survive. Roof area and complexity drive a planning
-  range. Everything runs in the browser; the photo is never uploaded. The
-  result can be downloaded and the selection carried into the consultation
-  form.
+- **Roof visualizer** (`Visualizer.tsx`): the visitor loads a photo (or the
+  sample home), picks a material and finish, and explicitly generates a new
+  roof image through the OpenAI API. The sample starts as the original
+  photograph, without a prepared AI preview. Quick and refined quality
+  options control each requested render. A permission checkbox and Generate
+  button precede sending the resized photo to the server; selecting a
+  material or finish alone does not start a paid request. Original, preview
+  and comparison views keep the source available, and generated results can
+  be downloaded. Manual roof-plane tracing and procedural material-size
+  controls are no longer part of the experience. Roof area and complexity
+  still drive an illustrative planning range, and the selection can be
+  carried into the consultation form.
 - **Halcyon Ledger**: the high-transparency project-management portal is
   referenced with a static concept preview (daily drone sets, video
   walk-throughs, reports, warranty vault). The portal itself is not built.
@@ -76,8 +71,8 @@ produced with Higgsfield (GPT Image 2.5 stills, Seedance 2.5 film).
   `material-clay.jpg`, `material-designer.jpg`, `material-build.jpg`:
   1440-wide section imagery (the framing-stage aerial illustrates the roof
   system layers, not a material).
-- `sample-home.jpg`: 1600-wide front elevation used by the visualizer, with
-  preset roof polygons in `Visualizer.tsx` (`SAMPLE_ROOF`).
+- `sample-home.jpg`: 1600-wide front elevation used as the visualizer's
+  initial original photo. AI previews are generated on request.
 - `preview.jpg`: 1200×630 Open Graph image and gallery thumbnail.
 - `favicon.svg`.
 
@@ -90,10 +85,36 @@ for the demo, not quotes, manufacturer claims or warranty terms. No licenses,
 testimonials, certifications or lender offers are invented. Before adapting
 for a real contractor: replace the brand, approve pricing and service-area
 copy, supply real warranty terms, connect the consultation endpoint, and
-decide whether the visualizer's uploaded photos should ever leave the browser
-(today they do not).
+approve the photo-processing consent and production API configuration.
 
-## Local import and verification
+## OpenAI photo rerenders
+
+Halcyon uses the shared `POST /api/roof-render` endpoint with
+`studio: "halcyon"`. The browser prepares a resized JPEG locally and sends it
+only after the visitor gives permission and selects Generate. The server
+chooses the roof-edit prompt from allowlisted Halcyon materials and finishes;
+the visitor cannot supply a prompt, model or remote image URL. Quick uses
+low quality and refined uses medium quality. Each new preview is based on
+the original photograph rather than an earlier AI result.
+
+The server-held `OPENAI_API_KEY` is never exposed in the client bundle.
+Halcyon inherits the shared endpoint's input validation, availability check,
+usage caps, concurrency controls, cache and failure cooldown. Non-local
+generation remains disabled unless the production enablement, exact allowed
+origin and Redis-backed limits are configured. See the
+[shared endpoint configuration](./roofers-5.md#openai-endpoint) for the
+required environment variables and limits. The original photo is not stored
+by this application; generated results are temporarily cached by the server.
+The photo is sent to OpenAI to produce the requested image.
+
+The editing prompt asks the model to preserve the home and roof geometry,
+but AI can alter architectural details. A generated image is a planning
+concept, not an exact product representation, measured roof survey,
+installation specification or quote. The area and complexity inputs affect
+the illustrative price range; they do not measure the photo. API generation
+is separately billed by OpenAI and is not included in a ChatGPT subscription.
+
+## Local import and verification history
 
 Imported from the Higgsfield source package on October 11, 2026. The local
 copy also corrects clay texture shading: the shade helper returns hex so
@@ -129,3 +150,15 @@ The imported source and new image remain available to commit.
 - These are local checks; the update has not been deployed by this import.
 
 Commit message: `fix: improve Halcyon roof visualizer and ignore update exports`
+
+### October 16 update
+
+Replaced the browser-only roof texture preview with opt-in OpenAI photo
+rerenders through the shared roof-render endpoint. Materials, finishes,
+planning prices, uploads, image download and consultation selection remain
+available. The original image stays available for comparison, and the page
+now describes the remote photo processing and AI limitations.
+
+The October 11 and October 12 checks above apply to the earlier procedural
+visualizer. They do not validate this API integration or establish that it
+has been deployed.

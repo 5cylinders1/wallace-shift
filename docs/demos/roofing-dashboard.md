@@ -142,6 +142,11 @@ prefetching, or offline tile storage. The list and its actions remain usable
 when tiles fail. Use an appropriate configurable production basemap provider
 for the client's intended usage and preserve its required attribution.
 
+Tile images explicitly use `referrerPolicy: 'strict-origin'`. The private demo
+document uses `no-referrer`, but OpenStreetMap requires a valid `Referer` on tile
+requests. The image-specific policy sends only the site origin, never the private
+demo path or query, without relaxing the document's policy for other requests.
+
 - [Leaflet documentation](https://leafletjs.com/reference-1.9.4.html).
 - [OpenStreetMap standard tile policy](https://operations.osmfoundation.org/policies/tiles/).
 - [NOAA/SPC storm reports](https://www.spc.noaa.gov/climo/reports/) are a future
