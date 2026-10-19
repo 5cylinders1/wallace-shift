@@ -1,6 +1,6 @@
 # Roofing demo 04 — Halcyon Roofworks
 
-Local entry: `http://127.0.0.1:5174/demos/roofers-4/`
+Local entry: `/demos/roofers-4/` on the running Vite development server.
 
 Branded alias: `/halcyon`. The Vite development/preview middleware and the
 Vercel rewrite both map the alias to the separate demo document. It is listed
@@ -39,13 +39,16 @@ selling repairs.
 - **Materials**: standing-seam metal, natural slate, cedar shake, clay tile
   and designer composite, each with typical service life, weight, performance
   notes and an illustrative installed planning rate.
-- **Roof visualizer** (`Visualizer.tsx`): the visitor loads a photo (or the
-  sample home), picks a material and finish, and explicitly generates a new
-  roof image through the OpenAI API. The sample starts as the original
-  photograph, without a prepared AI preview. Quick and refined quality
-  options control each requested render. A permission checkbox and Generate
-  button precede sending the resized photo to the server; selecting a
-  material or finish alone does not start a paid request. Original, preview
+- **Roof visualizer** (`Visualizer.tsx`): the sample home opens with a
+  prepared Charcoal metal preview. Each of the five material choices loads
+  a prepared image of its first finish immediately, at either detail
+  setting, without generation or photo processing consent. Other finishes
+  and uploaded homes still require an explicit OpenAI render unless that
+  exact selection was already generated in the current session. Quick and
+  refined quality options control those requested renders. A permission
+  checkbox and Generate button precede sending the resized photo to the
+  server; selecting a material or finish alone does not start a paid
+  request. Original, preview
   and comparison views keep the source available, and generated results can
   be downloaded. Manual roof-plane tracing and procedural material-size
   controls are no longer part of the experience. Roof area and complexity
@@ -60,8 +63,10 @@ selling repairs.
 
 ## Assets
 
-All under `public/demos/roofers-4/`. Imagery is AI-generated concept art
-produced with Higgsfield (GPT Image 2.5 stills, Seedance 2.5 film).
+All under `public/demos/roofers-4/`. The original concept imagery was
+produced with Higgsfield (GPT Image 2.5 stills, Seedance 2.5 film). The five
+prepared sample roof variants were created with the built in image
+generation tool from the same original sample photograph.
 
 - `estate-poster.jpg`: 1920×1080 hero poster and first frame of the film.
 - `estate-flight.mp4` / `estate-flight-mobile.mp4`: H.264 1920×1080 and
@@ -71,8 +76,12 @@ produced with Higgsfield (GPT Image 2.5 stills, Seedance 2.5 film).
   `material-clay.jpg`, `material-designer.jpg`, `material-build.jpg`:
   1440-wide section imagery (the framing-stage aerial illustrates the roof
   system layers, not a material).
-- `sample-home.jpg`: 1600-wide front elevation used as the visualizer's
-  initial original photo. AI previews are generated on request.
+- `sample-home.jpg`: original front elevation, retained for comparison
+  and as the source for any new sample render.
+- `sample-standing-seam-charcoal.jpg`, `sample-slate-vermont-gray.jpg`,
+  `sample-cedar-new-honey.jpg`, `sample-clay-terracotta.jpg`, and
+  `sample-designer-graphite.jpg`: prepared sample concepts for the first
+  finish of each material. These never substitute for an uploaded home.
 - `preview.jpg`: 1200×630 Open Graph image and gallery thumbnail.
 - `favicon.svg`.
 
@@ -162,3 +171,70 @@ now describes the remote photo processing and AI limitations.
 The October 11 and October 12 checks above apply to the earlier procedural
 visualizer. They do not validate this API integration or establish that it
 has been deployed.
+
+Validation for the OpenAI update:
+
+- Full TypeScript/Vite production build and private-demo bundle-boundary
+  verification passed. Only the existing large-chunk warnings remain.
+- Scoped ESLint and `git diff --check` passed.
+- All 20 mocked roof-render API tests passed, including all five Halcyon
+  materials and 23 finishes, invalid selections, studio cache isolation,
+  and compatibility with existing Velar requests.
+- An isolated loopback browser preview made one real OpenAI request with
+  the existing server key: standing-seam metal / Charcoal, refined quality.
+  It returned a 1536×1024 JPEG using `gpt-image-2`; token-based estimated
+  API cost was $0.055433. This verifies provider access locally, not a
+  deployed origin or production configuration. The request format was
+  checked against the [OpenAI image-edit reference](https://developers.openai.com/api/reference/resources/images/methods/edit).
+- Browser checks covered original/preview/comparison, the keyboard-operated
+  comparison slider, native JPEG download (saved bytes match the provider
+  result), upload/reset/consent, all five material controls, finish and
+  quality selection, and a 390×844 viewport without horizontal overflow.
+  No browser warning or error logs were captured during these checks.
+- Delayed-success and provider-error fixtures verified in-flight selection
+  changes, saved-preview reuse, disabled duplicate submission, and retention
+  of the original and previous preview after a failed request. Only the
+  first request used OpenAI; these follow-up cases were mocked.
+- Desktop and mobile review screenshots are retained in ignored
+  `output/roofers-4/openai-visualizer-*.png`. The temporary QA server does not
+  change the normal demo access gate. No deployment or physical-device test
+  was performed.
+
+Commit message: `feat: render Halcyon roof previews with OpenAI`
+
+### October 18 update
+
+Added prepared sample studies for the first finish of all five materials.
+The sample opens in Charcoal metal, and material selection immediately
+shows the matching prepared image. Both detail settings can use these
+studies without consent or a working generation service. Other finishes
+and uploaded homes retain the explicit Generate preview flow. Use sample
+restores the selected material's first finish.
+
+Prepared studies live outside the bounded generated preview cache and are
+preloaded for material switching. The built in image generation tool edited
+the original sample home independently for each material. Source paths and
+exact prompts are retained locally in ignored
+`output/roofers-4/prepared-preview-prompts.md`.
+
+Validation:
+
+- Full TypeScript/Vite build and demo boundary verification passed. The
+  existing large chunk warnings remain.
+- `node --test scripts/test-halcyon-previews.mjs` passes all three checks:
+  five distinct JPEGs with matching aspect ratios, correct sample and finish
+  isolation at both detail settings, and immutable prepared lookup behavior.
+- Scoped ESLint and `git diff --check` passed.
+- An isolated loopback browser fixture with generation unavailable verified
+  all five material images, both detail settings, alternate finish gating,
+  Original/Preview/Compare, and the keyboard comparison slider.
+- Uploading a different sample house did not show prepared Halcyon images.
+  Use sample restored the current material's first finish. Native JPEG
+  download completed and matched the prepared clay image byte for byte.
+- The fixture recorded zero generation requests and no browser warnings or
+  errors. No live provider request was needed for browser validation.
+- A review screenshot is retained in ignored
+  `output/roofers-4/prepared-preview-qa/halcyon-prepared-clay.jpg`.
+  No deployment or physical device test was performed.
+
+Commit message: `feat: add instant prepared Halcyon roof previews`

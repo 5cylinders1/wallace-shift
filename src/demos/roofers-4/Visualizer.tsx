@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { complexities, materials, money, type ComplexityId, type Material, type MaterialId } from './content'
+import { getPreparedPreview, HALCYON_SAMPLE_ID, HALCYON_SAMPLE_PREVIEWS, previewKey, type PreviewQuality, type RoofPreview } from './prepared-previews'
 
 export type VisualizerSelection = {
   material: Material
@@ -10,13 +11,12 @@ export type VisualizerSelection = {
   high: number
 }
 
-type Quality = 'low' | 'medium'
+type Quality = PreviewQuality
 type Photo = { id: string; image: string; data: string | null; sample: boolean }
-type Preview = { image: string; sourceId: string; materialId: MaterialId; colorIndex: number; quality: Quality }
+type Preview = RoofPreview
 type Availability = { state: 'checking' | 'ready' | 'unavailable'; message: string }
-const SAMPLE: Photo = { id: 'halcyon-sample', image: '/demos/roofers-4/sample-home.jpg', data: null, sample: true }
+const SAMPLE: Photo = { id: HALCYON_SAMPLE_ID, image: '/demos/roofers-4/sample-home.jpg', data: null, sample: true }
 const finishId = (name: string) => name.toLowerCase().replace(/\s+/g, '-')
-const previewKey = (photoId: string, materialId: MaterialId, colorIndex: number, quality: Quality) => `${photoId}:${materialId}:${colorIndex}:${quality}`
 
 function estimate(material: Material, area: number, complexity: ComplexityId): [number, number] {
   const factor = complexities.find(c => c.id === complexity)?.factor ?? 1
@@ -64,12 +64,12 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   const mounted = useRef(true)
   const photoVersion = useRef(0)
   const [photo, setPhoto] = useState<Photo>(SAMPLE)
-  const [preview, setPreview] = useState<Preview | null>(null)
+  const [preview, setPreview] = useState<Preview | null>(() => getPreparedPreview(SAMPLE.id, 'standing-seam', 0, 'medium'))
   const [previews, setPreviews] = useState<Map<string, Preview>>(() => new Map())
   const [materialId, setMaterialId] = useState<MaterialId>('standing-seam')
   const [colorIndex, setColorIndex] = useState(0)
   const [quality, setQuality] = useState<Quality>('medium')
-  const [view, setView] = useState<'original' | 'preview' | 'compare'>('original')
+  const [view, setView] = useState<'original' | 'preview' | 'compare'>('preview')
   const [split, setSplit] = useState(50)
   const [consent, setConsent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -77,7 +77,7 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   const [availability, setAvailability] = useState<Availability>({ state: 'checking', message: 'Checking preview availability…' })
   const [availabilityVersion, setAvailabilityVersion] = useState(0)
   const [error, setError] = useState('')
-  const [status, setStatus] = useState('Choose a material and finish, then generate a preview of the sample home or upload your own photo.')
+  const [status, setStatus] = useState('A prepared metal preview is ready. Explore the first finish of every material instantly, or upload your own home.')
   const [areaText, setAreaText] = useState('3200')
   const [complexity, setComplexity] = useState<ComplexityId>('moderate')
   const current = useRef({ sourceId: SAMPLE.id, key: previewKey(SAMPLE.id, 'standing-seam', 0, 'medium') })
@@ -87,7 +87,8 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   const area = Math.max(0, Math.min(40000, Number(areaText.replace(/[^0-9.]/g, '')) || 0))
   const [low, high] = estimate(material, area, complexity)
   const key = previewKey(photo.id, materialId, colorIndex, quality)
-  const alreadyPrepared = previews.has(key)
+  const availablePreview = getPreparedPreview(photo.id, materialId, colorIndex, quality) ?? previews.get(key)
+  const alreadyPrepared = Boolean(availablePreview)
   const shown = preview?.sourceId === photo.id ? preview : null
   const shownMaterial = materials.find(m => m.id === shown?.materialId)
   const shownColor = shownMaterial?.colors[shown?.colorIndex ?? 0]
@@ -100,6 +101,15 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   useEffect(() => {
     mounted.current = true
     return () => { mounted.current = false; requestRef.current?.abort() }
+  }, [])
+
+  useEffect(() => {
+    // Warm the bundled studies so material changes do not wait for another image request.
+    for (const source of Object.values(HALCYON_SAMPLE_PREVIEWS)) {
+      const image = new Image()
+      image.decoding = 'async'
+      image.src = source
+    }
   }, [])
 
   useEffect(() => {
@@ -129,11 +139,11 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
     setColorIndex(nextColor)
     setQuality(nextQuality)
     setError('')
-    const saved = previews.get(nextKey)
+    const saved = getPreparedPreview(photo.id, nextMaterial, nextColor, nextQuality) ?? previews.get(nextKey)
     if (saved) {
       setPreview(saved)
       setView('preview')
-      setStatus('Your saved preview is ready. No new generation was needed.')
+      setStatus(saved.prepared ? 'This prepared sample preview is ready. No new generation was needed.' : 'Your saved preview is ready. No new generation was needed.')
     } else setStatus(busy ? 'Finishing the requested preview. Your new choice can be generated once it completes.' : 'Your new choice is ready. Select Generate preview to see it on the home.')
   }
 
@@ -170,20 +180,28 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   function useSample() {
     if (requestLocked.current || preparingLocked.current) return
     photoVersion.current++
-    current.current = { sourceId: SAMPLE.id, key: previewKey(SAMPLE.id, materialId, colorIndex, quality) }
+    current.current = { sourceId: SAMPLE.id, key: previewKey(SAMPLE.id, materialId, 0, quality) }
     setPhoto(SAMPLE)
+    setColorIndex(0)
     setPreviews(new Map())
-    setPreview(null)
-    setView('original')
+    setPreview(getPreparedPreview(SAMPLE.id, materialId, 0, quality))
+    setView('preview')
     setConsent(false)
     setError('')
-    setStatus('The original sample photo is ready. Choose your roof finish and generate a preview.')
+    setStatus('The prepared sample preview is ready. The first finish of every material is available without a new generation.')
   }
 
   async function generate() {
-    if (requestLocked.current || preparingLocked.current) return
-    const saved = previews.get(key)
-    if (saved) { setPreview(saved); setView('compare'); setStatus('Your saved preview is ready to compare.'); return }
+    if (preparingLocked.current) return
+    const saved = getPreparedPreview(photo.id, materialId, colorIndex, quality) ?? previews.get(key)
+    if (saved) {
+      setPreview(saved)
+      setView('preview')
+      setError('')
+      setStatus(saved.prepared ? 'This prepared sample preview is ready. No new generation was needed.' : 'Your saved preview is ready. No new generation was needed.')
+      return
+    }
+    if (requestLocked.current) return
     if (availability.state !== 'ready') { setError(availability.message); return }
     if (!consent) { setError('Please allow this photo to be sent to OpenAI before generating a preview.'); return }
     const snapshot = { photo, materialId, colorIndex, quality, key, finish: finishId(color.name) }
@@ -206,11 +224,11 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
       if (!/^data:image\/jpeg;base64,/.test(body.image)) throw new Error('The image service returned an unreadable preview. Please try again later.')
       await readImage(body.image)
       if (controller.signal.aborted || !mounted.current || current.current.sourceId !== snapshot.photo.id) return
-      const result: Preview = { sourceId: snapshot.photo.id, image: body.image, materialId: snapshot.materialId, colorIndex: snapshot.colorIndex, quality: snapshot.quality }
+      const result: Preview = { sourceId: snapshot.photo.id, image: body.image, materialId: snapshot.materialId, colorIndex: snapshot.colorIndex, quality: snapshot.quality, prepared: false }
       setPreviews(previous => {
         const next = new Map(previous)
         next.set(snapshot.key, result)
-        // Keep a handful of comparisons in memory, never in browser storage.
+        // Only generated comparisons occupy this bounded cache; bundled studies cannot be evicted.
         if (next.size > 6) next.delete(next.keys().next().value!)
         return next
       })
@@ -249,7 +267,7 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
         <span className="hr-viz-image-label">{view === 'original' || !shown ? 'Original photograph' : `${shownMaterial?.short} · ${shownColor?.name}`}</span>
         {shown && view !== 'original' && <span className="hr-viz-ai-label">AI concept</span>}
         {shown && view === 'compare' && <div className="hr-viz-split-line" style={{ left: `${split}%` }}><span aria-hidden="true">↔</span></div>}
-        {(busy || preparing) && <div className="hr-viz-loading" role="status"><span className="hr-viz-spinner" aria-hidden="true" />{preparing ? 'Preparing your photo…' : 'Creating your roof preview…'}</div>}
+        {((busy && !alreadyPrepared) || preparing) && <div className="hr-viz-loading" role="status"><span className="hr-viz-spinner" aria-hidden="true" />{preparing ? 'Preparing your photo…' : 'Creating your roof preview…'}</div>}
       </div>
       <div className="hr-viz-toolbar">
         <div className="hr-viz-viewbar">
@@ -266,7 +284,7 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
           <button type="button" className="hr-tool" disabled={busy || preparing || photo.sample} onClick={useSample}>Use sample</button>
         </div>
         <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" hidden aria-label="Upload a photograph of your home" onChange={event => { void choosePhoto(event.target.files?.[0]); event.target.value = '' }} />
-        {shown && !matchesSelection && <p className="hr-viz-pending">Saved preview: {shownMaterial?.name}, {shownColor?.name}, {shown.quality === 'medium' ? 'refined' : 'quick'} detail. Generate your current selection to see the change.</p>}
+        {shown && !matchesSelection && <p className="hr-viz-pending">{shown.prepared ? 'Prepared sample preview' : 'Saved preview'}: {shownMaterial?.name}, {shownColor?.name}{!shown.prepared && `, ${shown.quality === 'medium' ? 'refined' : 'quick'} detail`}. Generate your current selection to see the change.</p>}
         <p className="hr-viz-status" aria-live="polite">{status}</p>
         <p className="hr-viz-disclaimer">AI previews are planning concepts and may alter architectural details. Compare against your original photo; finishes, roof measurements and installation details require an on-site review.</p>
       </div>
@@ -292,9 +310,9 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
         <label><span className="hr-viz-label">Preview detail</span><select value={quality} disabled={preparing} onChange={event => chooseDesign(materialId, colorIndex, event.target.value as Quality)} aria-label="Preview detail"><option value="low">Quick · first impression</option><option value="medium">Refined · more detail</option></select></label>
       </div>
       <div className="hr-viz-generation">
-        <label className="hr-viz-consent"><input type="checkbox" checked={consent} disabled={busy || preparing} onChange={event => setConsent(event.target.checked)} /><span>I have permission to use this photo and agree to send it to OpenAI to create a roof preview.</span></label>
-        <button type="button" className="hr-cta-primary hr-cta-wide" onClick={() => void generate()} disabled={busy || preparing || (!alreadyPrepared && (!consent || availability.state !== 'ready'))}>{busy ? 'Creating preview…' : alreadyPrepared ? 'View saved preview' : 'Generate preview'}<span aria-hidden="true">↗</span></button>
-        {availability.state !== 'ready' && <p className="hr-viz-status" role="status">{availability.message} {availability.state === 'unavailable' && <button type="button" className="hr-viz-retry" onClick={() => { setAvailability({ state: 'checking', message: 'Checking preview availability…' }); setAvailabilityVersion(version => version + 1) }}>Check again</button>}</p>}
+        {!alreadyPrepared && <label className="hr-viz-consent"><input type="checkbox" checked={consent} disabled={busy || preparing} onChange={event => setConsent(event.target.checked)} /><span>I have permission to use this photo and agree to send it to OpenAI to create a roof preview.</span></label>}
+        <button type="button" className="hr-cta-primary hr-cta-wide" onClick={() => void generate()} disabled={preparing || (!alreadyPrepared && (busy || !consent || availability.state !== 'ready'))}>{availablePreview?.prepared ? 'View prepared preview' : alreadyPrepared ? 'View saved preview' : busy ? 'Creating preview…' : 'Generate preview'}<span aria-hidden="true">↗</span></button>
+        {!alreadyPrepared && availability.state !== 'ready' && <p className="hr-viz-status" role="status">{availability.message} {availability.state === 'unavailable' && <button type="button" className="hr-viz-retry" onClick={() => { setAvailability({ state: 'checking', message: 'Checking preview availability…' }); setAvailabilityVersion(version => version + 1) }}>Check again</button>}</p>}
         {error && <p className="hr-viz-error" role="alert">{error}</p>}
         <p className="hr-viz-disclaimer">Your photo is sent only when you generate a preview. Each new design starts from your original photograph.</p>
       </div>
