@@ -21,6 +21,7 @@ const demoNames: Record<string, string> = {
   'roofers-3': 'Contour Roofing',
   'roofers-4': 'Halcyon Roofworks',
   'roofers-5': 'Velar Roof Atelier',
+  'roofers-6': 'Stratum Roofing Co.',
   'roofers-dashboard': 'Roofing Dashboard',
 }
 

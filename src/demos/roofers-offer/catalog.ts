@@ -79,6 +79,15 @@ export const roofingDesigns: RoofingDesign[] = [
     thumbnailAlt: 'Velar Roof Atelier cinematic luxury roofing concept',
     localPath: '/demos/roofers-5/', productionPath: '/velar',
   },
+  {
+    id: 'stratum', number: '06', name: 'Stratum Roofing Co.', status: 'available',
+    character: 'Interactive. Engineered. Unforgettable.',
+    description: 'One live 3D home carries the whole site: watch a storm hit the roof, take it apart layer by layer, see a new roof built and design your own with real measurements.',
+    features: ['Real-time 3D roof, storm to ridge cap', 'Layer-by-layer roof anatomy', 'Roof studio with live measurements & planning prices'],
+    thumbnail: '/demos/roofers-6/preview.jpg',
+    thumbnailAlt: 'Stratum Roofing Co. website with a live 3D farmhouse model at dusk',
+    localPath: '/demos/roofers-6/', productionPath: '/stratum',
+  },
 ]
 
 export const roofingOffer = 'Motion website + roofing CRM included with a 12-month managed automation plan'

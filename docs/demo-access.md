@@ -1,6 +1,6 @@
 # Demo requests, approval, and confidentiality
 
-The roofing collection is public. Visitors to all five interactive websites and
+The roofing collection is public. Visitors to all six interactive websites and
 the roofing dashboard require approval, email verification, and agreement acceptance.
 Submitting a request or opening an invitation never unlocks the demos by itself.
 
@@ -10,7 +10,7 @@ Open `/demo-admin/` on the same site as the demos, or follow **Admin sign in**
 from the request page or collection footer. Select **Email me a sign-in code**, then enter
 the six-digit code sent to the configured owner inbox. There is no separate
 password, invitation, or visitor agreement for the owner. The admin page links
-to all five demos and the roofing dashboard.
+to all six demos and the roofing dashboard.
 
 The only permitted admin mailbox is `DEMO_ADMIN_EMAIL`, or `CONTACT_TO_EMAIL`
 when `DEMO_ADMIN_EMAIL` is unset. Set `DEMO_ADMIN_EMAIL` to your personal owner

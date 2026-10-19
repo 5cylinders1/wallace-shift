@@ -15,7 +15,7 @@ async function files(directory, prefix = '') {
 }
 const output = await files(root)
 const privateHtml = output.filter(path => /^demos\/(?!roofers-offer\/).*\.html$/.test(path))
-assert.equal(privateHtml.length, 14, 'Every private demo entry must be emitted')
+assert.equal(privateHtml.length, 15, 'Every private demo entry must be emitted')
 for (const path of privateHtml) {
   const html = await readFile(new URL(path, root), 'utf8')
   const bundles = [...html.matchAll(/(?:src|href)="([^"?]+\.(?:js|css))(?:\?[^" ]*)?"/g)].map(match => match[1])

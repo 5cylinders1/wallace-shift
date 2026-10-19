@@ -115,7 +115,7 @@ test('signed grants reject tampering, expired/future grants, wrong kind and diff
 })
 
 test('documents redirect while assets, API aliases, and encoded paths deny without a cookie', async () => {
-  for (const path of ['/northvane', '/alder-stone/process', '/contour/', '/halcyon/index.html', '/velar', '/roofing-dashboard', '/demos/roofers-4/index.html', '/%68alcyon', '/demos%2Froofers-4/']) {
+  for (const path of ['/northvane', '/alder-stone/process', '/contour/', '/halcyon/index.html', '/velar', '/stratum', '/demos/roofers-6/', '/roofing-dashboard', '/demos/roofers-4/index.html', '/%68alcyon', '/demos%2Froofers-4/']) {
     const response = await access.gateDemoRequest(new Request(origin + path))
     assert.equal(response?.status, 303, path)
     assert.match(response.headers.get('location'), /^\/request-demo\/\?demo=/)
@@ -128,7 +128,7 @@ test('documents redirect while assets, API aliases, and encoded paths deny witho
 })
 
 test('only exact previews, gallery and public asset namespace remain public', async () => {
-  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/assets/public.js', '/demos/roofers-offer/index.html', '/src/demos/roofers-offer/main.tsx', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg']) assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/assets/public.js', '/demos/roofers-offer/index.html', '/src/demos/roofers-offer/main.tsx', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg']) assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
   assert.equal((await access.gateDemoRequest(new Request(origin + '/demos/roofers-4/preview.jpg/extra')))?.status, 303)
 })
 

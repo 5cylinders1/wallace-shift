@@ -19,6 +19,7 @@ export const DEMO_PATHS = {
   'roofers-3': '/contour',
   'roofers-4': '/halcyon',
   'roofers-5': '/velar',
+  'roofers-6': '/stratum',
   'roofers-dashboard': '/roofing-dashboard',
 } as const
 export type DemoKey = keyof typeof DEMO_PATHS
@@ -29,7 +30,7 @@ export type ProofGrant = GrantBase & { kind: 'proof'; verifiedEmail: string }
 export type AdminPendingGrant = GrantBase & { kind: 'admin-pending' }
 export type AdminSessionGrant = GrantBase & { kind: 'admin-session' }
 export type DemoGrant = InviteGrant | SessionGrant | ProofGrant | AdminPendingGrant | AdminSessionGrant
-const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg'])
+const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg'])
 const COUNTER_ENV = ['RATE_LIMIT_REDIS_URL', 'RATE_LIMIT_REDIS_TOKEN', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
 const counters = new Map<string, { count: number; until: number }>()
 

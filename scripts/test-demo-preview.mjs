@@ -81,7 +81,7 @@ try {
   }
 
   await walk(join(dist, 'demos'))
-  assert.equal(privateFiles.length, 14, 'Expected all fourteen private demo HTML outputs')
+  assert.equal(privateFiles.length, 15, 'Expected all fifteen private demo HTML outputs')
   const privateAssets = (await readdir(join(dist, 'demo-assets'))).filter(file => /\.(?:js|css)$/.test(file))
   assert.ok(privateAssets.some(file => file.endsWith('.js')))
   assert.ok(privateAssets.some(file => file.endsWith('.css')))
@@ -98,7 +98,7 @@ try {
   origin = `http://127.0.0.1:${address.port}`
   process.env.DEMO_ACCESS_ORIGIN = origin
 
-  const aliases = ['/northvane', '/northvane/insurance', '/northvane/prices', '/northvane/warranty', '/northvane/faq', '/alder-stone', '/alder-stone/process', '/alder-stone/insurance', '/alder-stone/cost', '/alder-stone/estimate', '/contour', '/halcyon', '/velar', '/roofing-dashboard']
+  const aliases = ['/northvane', '/northvane/insurance', '/northvane/prices', '/northvane/warranty', '/northvane/faq', '/alder-stone', '/alder-stone/process', '/alder-stone/insurance', '/alder-stone/cost', '/alder-stone/estimate', '/contour', '/halcyon', '/velar', '/stratum', '/roofing-dashboard']
   for (const path of [...aliases, ...privateFiles]) {
     const result = await checkStatus(path, 303)
     assert.match(result.headers.get('location'), /^\/request-demo\/\?demo=roofers(?:-\d|-dashboard)?$/)
@@ -115,7 +115,7 @@ try {
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
 
-  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg']) await checkStatus(path, 200)
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg']) await checkStatus(path, 200)
   for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/']) {
     const page = await request(path)
     for (const asset of assetsFrom(page.body)) {

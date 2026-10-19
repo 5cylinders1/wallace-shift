@@ -8,6 +8,7 @@ const demos = [
   { id: 'roofers-3', href: '/contour', name: 'Contour Roofing', detail: 'Website concept 03' },
   { id: 'roofers-4', href: '/halcyon', name: 'Halcyon Roofworks', detail: 'Website concept 04' },
   { id: 'roofers-5', href: '/velar', name: 'Velar Roof Atelier', detail: 'Website concept 05' },
+  { id: 'roofers-6', href: '/stratum', name: 'Stratum Roofing Co.', detail: 'Website concept 06' },
   { id: 'roofers-dashboard', href: '/roofing-dashboard', name: 'Roofing Dashboard', detail: 'Interactive operations concept' },
 ] as const
 

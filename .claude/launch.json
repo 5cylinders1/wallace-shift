@@ -22,6 +22,15 @@
         "--strictPort"
       ],
       "port": 5175
+    },
+    {
+      "name": "wallace-shift-demo-preview",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "set -a; . ./.demo-preview.local; set +a; exec npm run dev -- --port 5176 --strictPort"
+      ],
+      "port": 5176
     }
   ]
 }

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { complexities, materials, money, type ComplexityId, type Material, type MaterialId } from './content'
 import { getPreparedPreview, HALCYON_SAMPLE_ID, HALCYON_SAMPLE_PREVIEWS, previewKey, type PreviewQuality, type RoofPreview } from './prepared-previews'
+import './visualizer-compare.css'
 
 export type VisualizerSelection = {
   material: Material
@@ -58,6 +59,8 @@ async function preparePhoto(url: string): Promise<string> {
 /** Each render starts from the original photo, never from an earlier AI edit. */
 export default function Visualizer({ onSelection }: { onSelection?: (selection: VisualizerSelection) => void }) {
   const fileRef = useRef<HTMLInputElement>(null)
+  const imageRef = useRef<HTMLDivElement>(null)
+  const dragPointer = useRef<number | null>(null)
   const requestRef = useRef<AbortController | null>(null)
   const requestLocked = useRef(false)
   const preparingLocked = useRef(false)
@@ -71,6 +74,7 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   const [quality, setQuality] = useState<Quality>('medium')
   const [view, setView] = useState<'original' | 'preview' | 'compare'>('preview')
   const [split, setSplit] = useState(50)
+  const [dragging, setDragging] = useState(false)
   const [consent, setConsent] = useState(false)
   const [busy, setBusy] = useState(false)
   const [preparing, setPreparing] = useState(false)
@@ -101,6 +105,27 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
   useEffect(() => {
     mounted.current = true
     return () => { mounted.current = false; requestRef.current?.abort() }
+  }, [])
+
+  useEffect(() => {
+    // The divider can disappear while a pointer is held, for example when a
+    // keyboard user changes the photo view. Its local capture handlers will no
+    // longer receive the release, so also end the drag at the document level.
+    const stopDrag = (event?: globalThis.PointerEvent) => {
+      if (dragPointer.current === null || (event && event.pointerId !== dragPointer.current)) return
+      dragPointer.current = null
+      setDragging(false)
+    }
+    const stopOnBlur = () => stopDrag()
+    document.addEventListener('pointerup', stopDrag, true)
+    document.addEventListener('pointercancel', stopDrag, true)
+    window.addEventListener('blur', stopOnBlur)
+    return () => {
+      dragPointer.current = null
+      document.removeEventListener('pointerup', stopDrag, true)
+      document.removeEventListener('pointercancel', stopDrag, true)
+      window.removeEventListener('blur', stopOnBlur)
+    }
   }, [])
 
   useEffect(() => {
@@ -259,14 +284,67 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
     link.remove()
   }
 
+  function moveComparison(clientX: number) {
+    const bounds = imageRef.current?.getBoundingClientRect()
+    if (!bounds?.width) return
+    setSplit(Math.max(0, Math.min(100, (clientX - bounds.left) / bounds.width * 100)))
+  }
+
+  function beginComparison(event: PointerEvent<HTMLButtonElement>) {
+    if (!event.isPrimary || event.button !== 0 || dragPointer.current !== null) return
+    event.preventDefault()
+    event.currentTarget.focus({ preventScroll: true })
+    event.currentTarget.setPointerCapture(event.pointerId)
+    dragPointer.current = event.pointerId
+    setDragging(true)
+    moveComparison(event.clientX)
+  }
+
+  function finishComparison(event: PointerEvent<HTMLButtonElement>) {
+    if (dragPointer.current !== event.pointerId) return
+    dragPointer.current = null
+    setDragging(false)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+  }
+
+  function keyComparison(event: KeyboardEvent<HTMLButtonElement>) {
+    const step = event.shiftKey ? 10 : 1
+    const change = { ArrowLeft: -step, ArrowDown: -step, ArrowRight: step, ArrowUp: step, PageDown: -10, PageUp: 10 }[event.key]
+    if (change === undefined && event.key !== 'Home' && event.key !== 'End') return
+    event.preventDefault()
+    setSplit(value => event.key === 'Home' ? 0 : event.key === 'End' ? 100 : Math.max(0, Math.min(100, value + (change ?? 0))))
+  }
+
   return <div className="hr-viz">
     <div className="hr-viz-stage">
-      <div className="hr-viz-image-wrap" aria-label="Roof design image" aria-busy={busy || preparing}>
-        <img className="hr-viz-original" src={photo.image} aria-hidden={view === 'preview' && Boolean(shown)} alt={photo.sample ? 'Halcyon sample home with its original roof' : 'Your uploaded home with its original roof'} />
-        {shown && view !== 'original' && <img className="hr-viz-render" src={shown.image} alt={`${shownMaterial?.name}, ${shownColor?.name}, AI roof concept`} style={{ clipPath: view === 'compare' ? `inset(0 0 0 ${split}%)` : undefined }} />}
+      <div ref={imageRef} className={`hr-viz-image-wrap${shown && view === 'compare' ? ' is-comparing' : ''}`} aria-label="Roof design image" aria-busy={busy || preparing}>
+        <img className="hr-viz-original" src={photo.image} draggable={false} aria-hidden={view === 'preview' && Boolean(shown)} alt={photo.sample ? 'Halcyon sample home with its original roof' : 'Your uploaded home with its original roof'} />
+        {shown && view !== 'original' && <img className="hr-viz-render" src={shown.image} draggable={false} alt={`${shownMaterial?.name}, ${shownColor?.name}, AI roof concept`} style={{ clipPath: view === 'compare' ? `inset(0 0 0 ${split}%)` : undefined }} />}
         <span className="hr-viz-image-label">{view === 'original' || !shown ? 'Original photograph' : `${shownMaterial?.short} · ${shownColor?.name}`}</span>
-        {shown && view !== 'original' && <span className="hr-viz-ai-label">AI concept</span>}
-        {shown && view === 'compare' && <div className="hr-viz-split-line" style={{ left: `${split}%` }}><span aria-hidden="true">↔</span></div>}
+        {shown && view !== 'original' && <span className="hr-viz-ai-label">{view === 'compare' ? 'AI preview' : 'AI concept'}</span>}
+        {shown && view === 'compare' && <>
+          <span className="hr-viz-original-label">Original</span>
+          <div className="hr-viz-split-line" style={{ left: `${split}%` }} aria-hidden="true" />
+          <button
+            type="button"
+            role="slider"
+            className={`hr-viz-compare-handle${dragging ? ' is-dragging' : ''}`}
+            style={{ left: `clamp(24px, ${split}%, calc(100% - 24px))` }}
+            aria-label="Original and preview comparison position"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(split)}
+            aria-valuetext={`${Math.round(split)}% original, ${100 - Math.round(split)}% AI preview`}
+            aria-orientation="horizontal"
+            title="Drag to compare. Use arrow keys to adjust."
+            onPointerDown={beginComparison}
+            onPointerMove={event => { if (dragPointer.current === event.pointerId) moveComparison(event.clientX) }}
+            onPointerUp={finishComparison}
+            onPointerCancel={finishComparison}
+            onLostPointerCapture={finishComparison}
+            onKeyDown={keyComparison}
+          ><span aria-hidden="true"><svg viewBox="0 0 32 24" fill="none"><path d="m10 6-6 6 6 6m12-12 6 6-6 6M4 12h8m8 0h8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
+        </>}
         {((busy && !alreadyPrepared) || preparing) && <div className="hr-viz-loading" role="status"><span className="hr-viz-spinner" aria-hidden="true" />{preparing ? 'Preparing your photo…' : 'Creating your roof preview…'}</div>}
       </div>
       <div className="hr-viz-toolbar">
@@ -278,7 +356,6 @@ export default function Visualizer({ onSelection }: { onSelection?: (selection: 
           </div>
           <button type="button" className="hr-tool hr-tool-accent" onClick={download} disabled={!shown}>Download <span aria-hidden="true">↓</span></button>
         </div>
-        {shown && view === 'compare' && <label className="hr-viz-compare-control"><span>Original</span><input type="range" min="0" max="100" value={split} onChange={event => setSplit(Number(event.target.value))} aria-label="Original and preview comparison position" /><span>AI preview</span></label>}
         <div className="hr-viz-tools">
           <button type="button" className="hr-tool" disabled={busy || preparing} onClick={() => fileRef.current?.click()}>Upload your home <span aria-hidden="true">↑</span></button>
           <button type="button" className="hr-tool" disabled={busy || preparing || photo.sample} onClick={useSample}>Use sample</button>

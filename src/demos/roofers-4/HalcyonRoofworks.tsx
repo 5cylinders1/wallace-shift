@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import DroneFilm from './DroneFilm'
+import InvestmentIntro from './InvestmentIntro'
+import ServiceJourney from './ServiceJourney'
+import MaterialGallery from './MaterialGallery'
+import ProcessTimeline from './ProcessTimeline'
 import Visualizer, { type VisualizerSelection } from './Visualizer'
-import { brand, faqs, ledgerEntries, ledgerFeatures, materials, money, paths, pillars, steps, stewardship } from './content'
+import { brand, faqs, ledgerEntries, ledgerFeatures, money } from './content'
 import { roofingGalleryPath, studioUrl } from './routes'
 
 const Arrow = () => <span aria-hidden="true">↗</span>
@@ -92,90 +96,9 @@ export default function HalcyonRoofworks() {
         </div>
       </section>
 
-      <section className="hr-investment" id="investment">
-        <div className="hr-wrap">
-          <div className="hr-section-head">
-            <p className="hr-kicker"><span /> The architectural investment</p>
-            <h2>A roof is the one renovation your home wears on the outside, for the rest of its life.</h2>
-            <p className="hr-lede">Kitchens date. Finishes change. The roof is the surface that decides how the whole house reads from the street, from the air and in every appraisal, and it is the system that protects everything underneath. For a custom home, it deserves the same attention as the facade it crowns.</p>
-          </div>
-          <div className="hr-pillars">
-            {pillars.map((pillar, i) => <article key={pillar.kicker} className="hr-pillar">
-              <span className="hr-pillar-index">0{i + 1}</span>
-              <p className="hr-pillar-kicker">{pillar.kicker}</p>
-              <h3>{pillar.title}</h3>
-              <p>{pillar.text}</p>
-            </article>)}
-          </div>
-          <div className="hr-system">
-            <figure className="hr-system-figure">
-              <img src="/demos/roofers-4/material-build.jpg" alt="A new custom home at the framing stage with fresh roof decking and underlayment, seen from above" loading="lazy" width="1440" height="1080" />
-              <figcaption>Decking, underlayment, flashing and ventilation: the four layers no one sees, and the ones that decide how long the finish lasts.</figcaption>
-            </figure>
-            <div className="hr-system-copy">
-              <p className="hr-kicker"><span /> What performance means</p>
-              <h3>The finish is the last five percent. The system is the rest.</h3>
-              <dl className="hr-system-list">
-                <div><dt>Deck and structure</dt><dd>Inspected and repaired before anything is covered. Slate and clay loads are reviewed by an engineer.</dd></div>
-                <div><dt>Ice barrier and underlayment</dt><dd>High-temperature, self-sealing membranes at eaves, valleys and penetrations, full-coverage synthetic elsewhere.</dd></div>
-                <div><dt>Ventilation and insulation</dt><dd>Balanced intake and exhaust so attics stay dry in winter and cool in summer, with the finish never fighting condensation.</dd></div>
-                <div><dt>Flashing and drainage</dt><dd>Copper or matched metal at every transition, concealed where the architecture wants it quiet, expressed where it wants a line.</dd></div>
-                <div><dt>Ratings that matter</dt><dd>Class A fire assemblies and Class 4 impact-rated options, which insurers increasingly recognize.</dd></div>
-              </dl>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="hr-paths" id="paths">
-        <div className="hr-wrap">
-          <div className="hr-section-head hr-section-head-row">
-            <div>
-              <p className="hr-kicker hr-kicker-light"><span /> Two ways we work</p>
-              <h2>Built in from the start, or rebuilt once, properly.</h2>
-            </div>
-            <p className="hr-lede">Most of our work is one of these two projects. Each begins with a drone survey you keep, whether or not we go further together.</p>
-          </div>
-          <div className="hr-path-grid">
-            {paths.map(path => <article key={path.kicker} className="hr-path">
-              <p className="hr-path-kicker">{path.kicker}</p>
-              <h3>{path.title}</h3>
-              <p>{path.text}</p>
-              <ul>{path.points.map(point => <li key={point}>{point}</li>)}</ul>
-            </article>)}
-            <article className="hr-path hr-path-quiet">
-              <p className="hr-path-kicker">{stewardship.title}</p>
-              <p>{stewardship.text}</p>
-              <a href="#consultation" className="hr-text-link">Request an assessment <Arrow /></a>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section className="hr-materials" id="materials">
-        <div className="hr-wrap">
-          <div className="hr-section-head">
-            <p className="hr-kicker"><span /> Materials</p>
-            <h2>Five finishes we install. Each one chosen for the architecture, not the catalog.</h2>
-          </div>
-          <div className="hr-material-grid">
-            {materials.map((material, i) => <article key={material.id} className={`hr-material ${i === 0 ? 'is-feature' : ''}`}>
-              <img src={material.image} alt={material.alt} loading="lazy" width="1440" height="1080" />
-              <div className="hr-material-body">
-                <h3>{material.name}</h3>
-                <p>{material.character}</p>
-                <dl>
-                  <div><dt>Service life</dt><dd>{material.lifespan}</dd></div>
-                  <div><dt>Weight</dt><dd>{material.weight}</dd></div>
-                  <div><dt>Planning rate</dt><dd>{money(material.rate[0])} to {money(material.rate[1])} per sq ft installed</dd></div>
-                </dl>
-                <ul>{material.performance.map(point => <li key={point}>{point}</li>)}</ul>
-              </div>
-            </article>)}
-          </div>
-          <p className="hr-fine">Service lives are typical ranges for properly installed systems in temperate climates, not a warranty term. Planning rates are illustrative for this demo.</p>
-        </div>
-      </section>
+      <InvestmentIntro />
+      <ServiceJourney />
+      <MaterialGallery />
 
       <section className="hr-visualizer" id="visualizer">
         <div className="hr-wrap">
@@ -230,21 +153,7 @@ export default function HalcyonRoofworks() {
         </div>
       </section>
 
-      <section className="hr-process" id="process">
-        <div className="hr-wrap">
-          <div className="hr-section-head">
-            <p className="hr-kicker"><span /> The Halcyon process</p>
-            <h2>Five steps, one dedicated crew, no surprises.</h2>
-          </div>
-          <ol className="hr-steps">
-            {steps.map(step => <li key={step.n}>
-              <span>{step.n}</span>
-              <h3>{step.title}</h3>
-              <p>{step.text}</p>
-            </li>)}
-          </ol>
-        </div>
-      </section>
+      <ProcessTimeline />
 
       <section className="hr-faq" aria-label="Questions">
         <div className="hr-wrap hr-faq-inner">

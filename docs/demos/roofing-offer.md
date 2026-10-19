@@ -7,7 +7,9 @@ website build and CRM setup are included at no additional charge. The final fee
 depends on workflow complexity, integrations and support needs, with the initial
 implementation and ongoing scope agreed in writing before commitment.
 
-The collection currently has five available demo designs and five client places.
+The collection currently has six available demo designs and five client places.
+Demo 06 (Stratum) was added without changing the number of client places;
+that is an offer term, so change it only if the offer itself changes.
 An inquiry does not reserve a place, create a contract or collect payment.
 The offer index identifies Wallace Shift with the existing white WS logo and
 company name in both the header and footer, linked to the studio homepage.

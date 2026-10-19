@@ -63,6 +63,10 @@
     {
       "source": "/velar",
       "destination": "/demos/roofers-5"
+    },
+    {
+      "source": "/stratum",
+      "destination": "/demos/roofers-6"
     }
   ]
 }

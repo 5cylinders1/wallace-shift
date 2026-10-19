@@ -13,7 +13,7 @@ Options:
   --email EMAIL   Approved recipient's email address (required). Only that
                    mailbox can verify and accept the demo agreement.
   --demo KEY       roofers (default), roofers-2, roofers-3, roofers-4,
-                   roofers-5, or roofers-dashboard
+                   roofers-5, roofers-6, or roofers-dashboard
   --origin ORIGIN  Exact website origin, with no path, query, or credentials.
                    Overrides DEMO_ACCESS_ORIGIN for this invitation only.
   --help          Show this help without creating an invitation.

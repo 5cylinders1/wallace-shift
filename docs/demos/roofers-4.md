@@ -253,3 +253,73 @@ was performed. Exact built in image edit prompts and output paths are
 retained in ignored `output/roofers-4/roof-peak-repair-prompts.md`.
 
 Commit message: `fix: restore front roof peaks in Halcyon sample previews`
+
+### Landing page motion update
+
+The investment introduction now enters with a light reveal, followed by
+Beauty, Performance and Value in order. The five roof system details use
+individual architectural icons in a carousel, showing two cards where the
+panel has room and one on smaller screens. The construction photograph has
+a subtle scroll parallax.
+
+The service section includes a lazy loaded 3D survey drone that travels
+across the three project stations as each card opens from its top edge.
+The stage pins only when its measured content fits below the header.
+Smaller or shorter screens keep the content in natural flow. A static
+drone illustration remains available for reduced motion or WebGL failure.
+
+Materials now form a horizontal image gallery driven by page scrolling on
+large screens. Smaller screens use a native scrollable carousel. Arrow
+buttons and keyboard controls reach all five materials. Existing images,
+descriptions, prices and disclosures are retained. Reduced motion removes
+pinning and presents the materials as a static list.
+
+The visualizer comparison arrows are now a draggable handle with keyboard
+support and a 48 pixel hit area. The separate range input was removed.
+Pointer release, cancellation and window blur clear the drag state even
+if a view change removes the handle.
+
+Validation:
+
+- Local browser checks covered 1440×1000, 1280×720, 390×844 and 844×390
+  viewports. Desktop checks confirmed sticky travel, sequential card
+  opening, reverse scrolling, the final material and keyboard navigation.
+  Phone checks confirmed all five system details and materials remain
+  reachable, service text is fully revealed, the drone fits its canvas,
+  and no horizontal page overflow occurs.
+- Comparison dragging and repeated grabbing worked in desktop and phone
+  layouts. Home and End reached 0 and 100; no range input remains. The
+  held pointer plus view change cleanup was reviewed in code, rather than
+  reproduced as a simultaneous keyboard and pointer gesture.
+- Scoped ESLint, Halcyon TypeScript and the three prepared preview regression
+  checks passed. Both Vite builds compiled. The final repository build
+  guard failed because a separate roofers-6 addition emits 15 private
+  documents while the guard still expects 14. That unrelated work was
+  left unchanged. A later repository TypeScript run also encountered
+  missing Booking imports in the new roofers-6 work; the focused Halcyon
+  check passes independently. Existing large bundle warnings remain.
+- No browser errors were captured. Three.js reports a Clock deprecation
+  warning from the rendering dependency. The fixture recorded zero image
+  generation requests. Reduced motion behavior was reviewed in source;
+  no OS preference emulation or physical device testing was performed.
+- Review screenshots are retained locally in ignored
+  `output/roofers-4/motion-qa/`. No deployment was performed.
+
+Commit message: `feat: add cinematic motion to the Halcyon landing page`
+
+### Process wave reveal
+
+The five process steps now enter in an overlapping wave from 01 to 05.
+Each top rule draws across as its card rises and settles, with the number,
+heading and description following in sequence. Stacked layouts wait for
+each visible row; reduced motion and print show the complete static list.
+Copy, list semantics and final layout remain unchanged.
+
+Local browser checks verified staggered desktop animation phases, delayed
+offscreen steps and all five completed steps at 390×844, plus the two
+column layout at 1000×800. Focused TypeScript, ESLint and whitespace checks
+passed. Reduced motion cleanup was reviewed in source. No deployment was
+performed. Desktop proof is in ignored
+`output/roofers-4/motion-qa/process-wave-desktop.jpg`.
+
+Commit message: `feat: add a wave reveal to the Halcyon process steps`

@@ -1,0 +1,7 @@
+.hr-process-wave .hr-steps li { position:relative; border-top-color:transparent; }
+.hr-process-rule { position:absolute; top:-2px; left:0; right:0; height:2px; background:var(--hr-ink); transform-origin:left center; }
+
+@media (prefers-reduced-motion:reduce), print {
+  .hr-process-wave .hr-steps li,
+  .hr-process-wave .hr-steps li > * { opacity:1!important; transform:none!important; }
+}

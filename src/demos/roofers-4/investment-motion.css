@@ -1,0 +1,9 @@
+.hr-pillars.hr-pillars-motion { gap:16px; border:0; background:none; perspective:1000px; }
+.hr-pillars-motion .hr-pillar { border:1px solid var(--hr-line); transform-origin:50% 100%; transition:background .3s, border-color .3s, box-shadow .3s; }
+.hr-pillars-motion .hr-pillar::after { content:''; position:absolute; left:32px; bottom:0; width:32px; height:2px; background:var(--hr-verd); transition:width .4s; }
+.hr-pillars-motion .hr-pillar:hover { background:#faf9f6; border-color:#a8b8ad; box-shadow:0 14px 28px #152d2310; }
+.hr-pillars-motion .hr-pillar:hover::after { width:calc(100% - 64px); }
+.hr-pillars-motion .hr-pillar-index { color:#a9b5ad; }
+@media (prefers-reduced-motion:reduce) {
+  .hr-pillars-motion .hr-pillar, .hr-pillars-motion .hr-pillar::after { transition:none; }
+}

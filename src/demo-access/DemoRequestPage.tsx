@@ -9,6 +9,7 @@ const demos = {
   'roofers-3': { name: 'Contour Roofing', detail: 'Roofing website · Concept 03' },
   'roofers-4': { name: 'Halcyon Roofworks', detail: 'Roofing website · Concept 04' },
   'roofers-5': { name: 'Velar Roof Atelier', detail: 'Roofing website · Concept 05' },
+  'roofers-6': { name: 'Stratum Roofing Co.', detail: 'Roofing website · Concept 06' },
   'roofers-dashboard': { name: 'Roofing Dashboard', detail: 'Roofing operations · Interactive concept' },
 } as const
 

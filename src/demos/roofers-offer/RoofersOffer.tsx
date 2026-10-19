@@ -138,7 +138,7 @@ export function RoofersOffer() {
     <main id="main">
       <section className="ro-hero" aria-labelledby="hero-heading">
         <div className="ro-wrap">
-        <div className="ro-hero-top"><p className="ro-eyebrow">Websites, CRM & automation for roofers</p><span className="ro-edition">THE COLLECTION / 01—05</span></div>
+        <div className="ro-hero-top"><p className="ro-eyebrow">Websites, CRM & automation for roofers</p><span className="ro-edition">THE COLLECTION / 01—{String(readyDesigns.length).padStart(2, '0')}</span></div>
         <div className="ro-hero-layout">
           <div className="ro-hero-heading"><h1 id="hero-heading">Built to win<br />the <em>right</em> work.</h1><p>A memorable website. A connected customer system. Less chasing between the first inquiry and the final review.</p><div className="ro-hero-actions"><a className="ro-button ro-button-light" href="#collection">Find your website <Arrow /></a><a className="ro-hero-link" href="#automation">See what we can automate <span aria-hidden="true">↓</span></a></div></div>
           <div className="ro-offer-card">
@@ -158,7 +158,7 @@ export function RoofersOffer() {
           <div className="ro-section-intro"><div><p className="ro-eyebrow">01 / Find your direction</p><h2 id="collection-heading">Different character.<br /><em>One higher standard.</em></h2></div><p>Find a direction, then request access to explore the complete site. Each is a starting point for your company’s brand, services and service area.</p></div>
           <div className="ro-design-grid">{readyDesigns.map(design => <DesignCard key={design.id} design={design} onChoose={chooseDesign} />)}</div>
           {upcomingDesigns.length > 0 && <div className="ro-upcoming-grid">{upcomingDesigns.map(design => <article className="ro-upcoming" key={design.id}><span className="ro-upcoming-number" aria-hidden="true">{design.number}</span><div><p className="ro-eyebrow">Design {design.number} / Coming soon</p><h3>{design.name}</h3><p>The next addition to the collection.</p></div><span className="ro-upcoming-mark" aria-hidden="true">/</span></article>)}</div>}
-          <p className="ro-demo-note">All five roofing brands are illustrative contractor concepts. Content, imagery and tools shown in the demos are examples; your final website, CRM setup and automation scope will be agreed together.</p>
+          <p className="ro-demo-note">Every roofing brand in the collection is an illustrative contractor concept. Content, imagery and tools shown in the demos are examples; your final website, CRM setup and automation scope will be agreed together.</p>
         </div>
       </section>
 
