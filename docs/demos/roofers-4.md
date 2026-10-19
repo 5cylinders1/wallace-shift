@@ -238,3 +238,18 @@ Validation:
   No deployment or physical device test was performed.
 
 Commit message: `feat: add instant prepared Halcyon roof previews`
+
+### Prepared image peak correction
+
+Repaired the front center hip roof peak in the Charcoal metal, Vermont gray
+slate and Graphite composite sample images. Both diagonal hips now meet at
+one pointed apex below the longer rear ridge, using the accepted cedar
+image as the geometry reference. Cedar and clay images were not changed.
+
+All three replacements were visually reviewed and verified in the local
+visualizer. The three prepared preview regression checks and
+`git diff --check` passed. No application logic changed and no deployment
+was performed. Exact built in image edit prompts and output paths are
+retained in ignored `output/roofers-4/roof-peak-repair-prompts.md`.
+
+Commit message: `fix: restore front roof peaks in Halcyon sample previews`
