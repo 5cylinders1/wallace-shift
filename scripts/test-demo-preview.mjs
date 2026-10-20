@@ -22,11 +22,11 @@ let server
 let origin
 let checks = 0
 
-async function walk(directory, prefix = '') {
+async function walk(directory, prefix = '', result = privateFiles) {
   for (const item of await readdir(directory, { withFileTypes: true })) {
     const path = `${prefix}/${item.name}`
-    if (item.isDirectory()) await walk(join(directory, item.name), path)
-    else if (item.name.endsWith('.html') && !path.startsWith('/roofers-offer/')) privateFiles.push(`/demos${path}`)
+    if (item.isDirectory()) await walk(join(directory, item.name), path, result)
+    else if (item.name.endsWith('.html') && !/^\/(?:roofers-offer|contractors)\//.test(path)) result.push(`/demos${path}`)
   }
 }
 function assetsFrom(html) {
@@ -81,7 +81,9 @@ try {
   }
 
   await walk(join(dist, 'demos'))
-  assert.equal(privateFiles.length, 15, 'Expected all fifteen private demo HTML outputs')
+  const sourcePrivateFiles = []
+  await walk(join(root, 'demos'), '', sourcePrivateFiles)
+  assert.deepEqual(privateFiles.toSorted(), sourcePrivateFiles.toSorted(), 'Expected every private demo HTML entry in the release output')
   const privateAssets = (await readdir(join(dist, 'demo-assets'))).filter(file => /\.(?:js|css)$/.test(file))
   assert.ok(privateAssets.some(file => file.endsWith('.js')))
   assert.ok(privateAssets.some(file => file.endsWith('.css')))
@@ -98,25 +100,26 @@ try {
   origin = `http://127.0.0.1:${address.port}`
   process.env.DEMO_ACCESS_ORIGIN = origin
 
-  const aliases = ['/northvane', '/northvane/insurance', '/northvane/prices', '/northvane/warranty', '/northvane/faq', '/alder-stone', '/alder-stone/process', '/alder-stone/insurance', '/alder-stone/cost', '/alder-stone/estimate', '/contour', '/halcyon', '/velar', '/stratum', '/roofing-dashboard']
+  const aliases = ['/northvane', '/northvane/insurance', '/northvane/prices', '/northvane/warranty', '/northvane/faq', '/alder-stone', '/alder-stone/process', '/alder-stone/insurance', '/alder-stone/cost', '/alder-stone/estimate', '/contour', '/halcyon', '/velar', '/stratum', '/roofing-dashboard', '/datum', '/datum/cracks/horizontal-crack', '/datum/report', '/tambour', '/tambour/kitchens', '/tambour/consultation', '/stillwater']
   for (const path of [...aliases, ...privateFiles]) {
     const result = await checkStatus(path, 303)
-    assert.match(result.headers.get('location'), /^\/request-demo\/\?demo=roofers(?:-\d|-dashboard)?$/)
+    assert.match(result.headers.get('location'), /^\/request-demo\/\?demo=(?:roofers(?:-\d|-dashboard)?|foundation|cabinetry|pools)$/)
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
   const privatePaths = [
     ...privateAssets.map(file => `/demo-assets/${file}`),
-    '/demos/roofers-4/estate-flight.mp4', '/demos/roofers-4/estate-poster.jpg', '/demos/roofers-4/material-slate.jpg', '/demos/roofers-2/sample-roof.svg',
+    '/demos/roofers-4/estate-flight.mp4', '/demos/roofers-4/estate-poster.jpg', '/demos/roofers-4/material-slate.jpg', '/demos/roofers-2/sample-roof.svg', '/demos/foundation/hero-poster.jpg', '/demos/cabinetry/hero/framing.webp',
     '/api/roof-suggest?q=test', '/api/roof-measure', '/api/roof-measure.ts', '/api/roof-render',
     '/%68alcyon/estate-flight.mp4', '/demo-assets%2Fprivate.js',
+    '/src/demos/pools/main.tsx', '/demos/pools/private.webp',
   ]
   for (const path of privatePaths) {
     const result = await checkStatus(path, 403)
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
 
-  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg']) await checkStatus(path, 200)
-  for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/']) {
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/pools/preview.jpg']) await checkStatus(path, 200)
+  for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/']) {
     const page = await request(path)
     for (const asset of assetsFrom(page.body)) {
       assert.equal(asset.startsWith('/demo-assets/'), false, `${path} imports a private generated asset`)
@@ -266,7 +269,7 @@ try {
   await checkStatus('/demo-assets/' + privateAssets[0], 403, { headers: { cookie: clearedOwner } })
   await checkStatus('/halcyon', 200, authorized)
   assert.equal(sends.length, 3)
-  console.log(`Demo preview HTTP integration passed: ${checks} route/asset responses; fourteen private documents; isolated public assets; manual approval; verified email; explicit NDA acceptance; persisted evidence; owner code sign-in and logout; guest/admin separation; signed cookies; no-store. Three mocked emails and modeled Redis operations; no external network or live provider calls.`)
+  console.log(`Demo preview HTTP integration passed: ${checks} route/asset responses; ${privateFiles.length} private documents; isolated public assets; manual approval; verified email; explicit NDA acceptance; persisted evidence; owner code sign-in and logout; guest/admin separation; signed cookies; no-store. Three mocked emails and modeled Redis operations; no external network or live provider calls.`)
 } finally {
   if (server) {
     server.httpServer.closeIdleConnections?.()

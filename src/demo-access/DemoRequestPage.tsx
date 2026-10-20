@@ -10,6 +10,9 @@ const demos = {
   'roofers-4': { name: 'Halcyon Roofworks', detail: 'Roofing website · Concept 04' },
   'roofers-5': { name: 'Velar Roof Atelier', detail: 'Roofing website · Concept 05' },
   'roofers-6': { name: 'Stratum Roofing Co.', detail: 'Roofing website · Concept 06' },
+  foundation: { name: 'Datum Foundation & Waterproofing', detail: 'Foundation repair website · Concept 01' },
+  cabinetry: { name: 'Tambour Cabinetry, Kitchens & Baths', detail: 'Custom cabinetry & remodeling website · Concept 01' },
+  pools: { name: 'Stillwater Pool Co.', detail: 'Pool contractor website · Concept 01' },
   'roofers-dashboard': { name: 'Roofing Dashboard', detail: 'Roofing operations · Interactive concept' },
 } as const
 

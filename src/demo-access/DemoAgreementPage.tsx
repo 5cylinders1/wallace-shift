@@ -22,6 +22,9 @@ const demoNames: Record<string, string> = {
   'roofers-4': 'Halcyon Roofworks',
   'roofers-5': 'Velar Roof Atelier',
   'roofers-6': 'Stratum Roofing Co.',
+  foundation: 'Datum Foundation & Waterproofing',
+  cabinetry: 'Tambour Cabinetry, Kitchens & Baths',
+  pools: 'Stillwater Pool Co.',
   'roofers-dashboard': 'Roofing Dashboard',
 }
 

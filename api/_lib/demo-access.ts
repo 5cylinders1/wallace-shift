@@ -20,6 +20,9 @@ export const DEMO_PATHS = {
   'roofers-4': '/halcyon',
   'roofers-5': '/velar',
   'roofers-6': '/stratum',
+  foundation: '/datum',
+  cabinetry: '/tambour',
+  pools: '/stillwater',
   'roofers-dashboard': '/roofing-dashboard',
 } as const
 export type DemoKey = keyof typeof DEMO_PATHS
@@ -30,7 +33,9 @@ export type ProofGrant = GrantBase & { kind: 'proof'; verifiedEmail: string }
 export type AdminPendingGrant = GrantBase & { kind: 'admin-pending' }
 export type AdminSessionGrant = GrantBase & { kind: 'admin-session' }
 export type DemoGrant = InviteGrant | SessionGrant | ProofGrant | AdminPendingGrant | AdminSessionGrant
-const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg'])
+const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/pools/preview.jpg'])
+/** Collection landers are public; every other demo directory is gated. */
+const PUBLIC_DEMO_DIRS = new Set(['roofers-offer', 'contractors'])
 const COUNTER_ENV = ['RATE_LIMIT_REDIS_URL', 'RATE_LIMIT_REDIS_TOKEN', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
 const counters = new Map<string, { count: number; until: number }>()
 
@@ -61,11 +66,11 @@ function protectedPath(pathname: string): { demo: DemoKey; document: boolean } |
     if (path === alias || path.startsWith(`${alias}/`)) return { demo: demo as DemoKey, document: !/\.[^/]+$/.test(path) || /\.html$/.test(path) }
   }
   const parts = path.split('/')
-  if (parts[1] === 'demos' && parts[2] !== 'roofers-offer') {
+  if (parts[1] === 'demos' && !PUBLIC_DEMO_DIRS.has(parts[2])) {
     return { demo: demoKey(parts[2]), document: !/\.[^/]+$/.test(path) || /\.html$/.test(path) }
   }
   if (path === '/demo-assets' || path.startsWith('/demo-assets/') || /^\/api\/roof-/.test(path)) return { demo: 'roofers', document: false }
-  if (/^\/src\/demos(?:\/|$)/.test(path) && !/^\/src\/demos\/roofers-offer(?:\/|$)/.test(path)) return { demo: 'roofers', document: false }
+  if (/^\/src\/demos(?:\/|$)/.test(path) && !/^\/src\/demos\/(?:roofers-offer|contractors)(?:\/|$)/.test(path)) return { demo: 'roofers', document: false }
   if (/^\/src\/roofing-dashboard(?:\/|$)/.test(path)) return { demo: 'roofers-dashboard', document: false }
   // Vite also accepts public-file and absolute-filesystem paths during local development.
   if (path.startsWith('/dist/')) return protectedPath(path.slice('/dist'.length))
@@ -177,7 +182,7 @@ export function nodeHeader(req: IncomingMessage, name: string): string | undefin
 export function nodeDemoOrigin(req: IncomingMessage): string {
   const host = nodeHeader(req, 'host') ?? ''
   const configured = demoAccessOrigin()
-  for (const origin of [configured, 'https://wallaceshift.com', 'https://www.wallaceshift.com', 'https://roofers.wallaceshift.com']) if (new URL(origin).host === host) return origin
+  for (const origin of [configured, 'https://wallaceshift.com', 'https://www.wallaceshift.com', 'https://roofers.wallaceshift.com', 'https://contractors.wallaceshift.com']) if (new URL(origin).host === host) return origin
   const localHost = /^(localhost|127\.0\.0\.1|\[::1\])(?::\d{1,5})?$/.test(host)
   const localPeer = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket?.remoteAddress ?? '')
   if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL && localHost && localPeer) return `http://${host}`

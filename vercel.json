@@ -9,6 +9,11 @@
       "destination": "/demos/roofers-offer"
     },
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "contractors.wallaceshift.com" }],
+      "destination": "/demos/contractors"
+    },
+    {
       "source": "/northvane",
       "destination": "/demos/roofers"
     },
@@ -67,6 +72,26 @@
     {
       "source": "/stratum",
       "destination": "/demos/roofers-6"
+    },
+    {
+      "source": "/datum",
+      "destination": "/demos/foundation"
+    },
+    {
+      "source": "/datum/:path*",
+      "destination": "/demos/foundation"
+    },
+    {
+      "source": "/tambour",
+      "destination": "/demos/cabinetry"
+    },
+    {
+      "source": "/tambour/:path*",
+      "destination": "/demos/cabinetry"
+    },
+    {
+      "source": "/stillwater",
+      "destination": "/demos/pools"
     }
   ]
 }

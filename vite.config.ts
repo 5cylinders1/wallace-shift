@@ -219,7 +219,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -244,12 +244,23 @@ function roofingDemoRoutes(): Plugin {
         '/halcyon': '/demos/roofers-4/index.html',
         '/velar': '/demos/roofers-5/index.html',
         '/stratum': '/demos/roofers-6/index.html',
+        '/stillwater': '/demos/pools/index.html',
       }
       if (destinations[alias]) {
         req.url = `${destinations[alias]}${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6)$/.test(url.pathname)) return next()
+      // Datum is one document with its own pages (symptoms, crack log, report).
+      if (/^\/datum(?:\/[^.]*)?$/.test(alias) || /^\/demos\/foundation\/[^.]+$/.test(alias)) {
+        req.url = `/demos/foundation/index.html${url.search}`
+        return next()
+      }
+      // Tambour is one document too (kitchens, baths, studio, workshop, ...).
+      if (/^\/tambour(?:\/[^.]*)?$/.test(alias) || /^\/demos\/cabinetry\/[^.]+$/.test(alias)) {
+        req.url = `/demos/cabinetry/index.html${url.search}`
+        return next()
+      }
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|pools|contractors)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -276,6 +287,7 @@ export default defineConfig(({ mode }): UserConfig => ({
       input: mode !== 'demos' ? {
         main: 'index.html',
         roofersOffer: 'demos/roofers-offer/index.html',
+        contractors: 'demos/contractors/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',
@@ -295,6 +307,9 @@ export default defineConfig(({ mode }): UserConfig => ({
         roofersHalcyon: 'demos/roofers-4/index.html',
         roofersVelar: 'demos/roofers-5/index.html',
         roofersStratum: 'demos/roofers-6/index.html',
+        foundationDatum: 'demos/foundation/index.html',
+        cabinetryTambour: 'demos/cabinetry/index.html',
+        poolsStillwater: 'demos/pools/index.html',
       },
     },
   },

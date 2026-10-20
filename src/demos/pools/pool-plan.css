@@ -1,0 +1,60 @@
+.sw-pool-plan {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: var(--sw-plan-opacity, 0);
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.sw-pool-plan > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow: hidden;
+  color: #dcfbff;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 2px #9de7f0c2) drop-shadow(0 0 7px #9de7f04d);
+}
+
+.sw-pool-plan path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--sw-plan-draw, 0));
+}
+
+.sw-pool-plan-rim {
+  stroke: #f0feff;
+  stroke-width: 2;
+}
+
+.sw-pool-plan-deck {
+  opacity: .7;
+  stroke-width: 1;
+}
+
+.sw-pool-plan-structure {
+  opacity: .8;
+  stroke-width: 1.2;
+}
+
+.sw-pool-plan-furniture {
+  opacity: .9;
+  stroke-width: 1.3;
+}
+
+.sw-pool-plan-surfaces {
+  fill: #b0efff;
+  fill-opacity: .035;
+  opacity: var(--sw-plan-draw, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sw-pool-plan { will-change: auto; }
+}

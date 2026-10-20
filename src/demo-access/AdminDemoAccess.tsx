@@ -9,6 +9,9 @@ const demos = [
   { id: 'roofers-4', href: '/halcyon', name: 'Halcyon Roofworks', detail: 'Website concept 04' },
   { id: 'roofers-5', href: '/velar', name: 'Velar Roof Atelier', detail: 'Website concept 05' },
   { id: 'roofers-6', href: '/stratum', name: 'Stratum Roofing Co.', detail: 'Website concept 06' },
+  { id: 'foundation', href: '/datum', name: 'Datum Foundation & Waterproofing', detail: 'Foundation repair concept 01' },
+  { id: 'cabinetry', href: '/tambour', name: 'Tambour Cabinetry, Kitchens & Baths', detail: 'Custom cabinetry concept 01' },
+  { id: 'pools', href: '/stillwater', name: 'Stillwater Pool Co.', detail: 'Pool contractor concept 01' },
   { id: 'roofers-dashboard', href: '/roofing-dashboard', name: 'Roofing Dashboard', detail: 'Interactive operations concept' },
 ] as const
 

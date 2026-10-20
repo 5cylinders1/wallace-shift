@@ -254,6 +254,24 @@ retained in ignored `output/roofers-4/roof-peak-repair-prompts.md`.
 
 Commit message: `fix: restore front roof peaks in Halcyon sample previews`
 
+### Charcoal metal seam correction — October 19, 2026
+
+Corrected the irregular standing seam beside the right edge of the front
+center roof in `sample-standing-seam-charcoal.jpg` with the built-in image
+editing tool. The pointed center apex and roof silhouette remain intact.
+The other material images and visualizer behavior are unchanged.
+
+The previous JPEG is preserved byte for byte in
+`public/demos/roofers-4/archive/sample-standing-seam-charcoal-before-seam-fix-2026-10-19.jpg`.
+The exact edit prompt and generated source path are recorded in ignored
+`output/roofers-4/metal-seam-repair/prompt.md`.
+
+The corrected 1538 × 1023 JPEG was verified in the local visualizer. All three
+prepared preview checks and `git diff --check` passed. The original archive's
+SHA-256 matches the replaced file. No deployment was performed.
+
+Commit message: `fix: clean up Halcyon charcoal roof seam`
+
 ### Landing page motion update
 
 The investment introduction now enters with a light reveal, followed by
