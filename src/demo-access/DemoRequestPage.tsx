@@ -12,6 +12,7 @@ const demos = {
   'roofers-6': { name: 'Stratum Roofing Co.', detail: 'Roofing website · Concept 06' },
   foundation: { name: 'Datum Foundation & Waterproofing', detail: 'Foundation repair website · Concept 01' },
   cabinetry: { name: 'Tambour Cabinetry, Kitchens & Baths', detail: 'Custom cabinetry & remodeling website · Concept 01' },
+  'cabinetry-2': { name: 'Mitre & Rift Cabinetmakers', detail: 'Custom cabinetry website · Concept 02' },
   pools: { name: 'Stillwater Pool Co.', detail: 'Pool contractor website · Concept 01' },
   'roofers-dashboard': { name: 'Roofing Dashboard', detail: 'Roofing operations · Interactive concept' },
 } as const

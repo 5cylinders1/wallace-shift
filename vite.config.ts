@@ -245,6 +245,7 @@ function roofingDemoRoutes(): Plugin {
         '/velar': '/demos/roofers-5/index.html',
         '/stratum': '/demos/roofers-6/index.html',
         '/stillwater': '/demos/pools/index.html',
+        '/mitre': '/demos/cabinetry-2/index.html',
       }
       if (destinations[alias]) {
         req.url = `${destinations[alias]}${url.search}`
@@ -260,7 +261,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `/demos/cabinetry/index.html${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|pools|contractors)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|contractors)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -309,6 +310,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         roofersStratum: 'demos/roofers-6/index.html',
         foundationDatum: 'demos/foundation/index.html',
         cabinetryTambour: 'demos/cabinetry/index.html',
+        cabinetryMitre: 'demos/cabinetry-2/index.html',
         poolsStillwater: 'demos/pools/index.html',
       },
     },

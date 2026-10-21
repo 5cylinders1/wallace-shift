@@ -92,6 +92,10 @@
     {
       "source": "/stillwater",
       "destination": "/demos/pools"
+    },
+    {
+      "source": "/mitre",
+      "destination": "/demos/cabinetry-2"
     }
   ]
 }

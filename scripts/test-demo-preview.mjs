@@ -100,10 +100,10 @@ try {
   origin = `http://127.0.0.1:${address.port}`
   process.env.DEMO_ACCESS_ORIGIN = origin
 
-  const aliases = ['/northvane', '/northvane/insurance', '/northvane/prices', '/northvane/warranty', '/northvane/faq', '/alder-stone', '/alder-stone/process', '/alder-stone/insurance', '/alder-stone/cost', '/alder-stone/estimate', '/contour', '/halcyon', '/velar', '/stratum', '/roofing-dashboard', '/datum', '/datum/cracks/horizontal-crack', '/datum/report', '/tambour', '/tambour/kitchens', '/tambour/consultation', '/stillwater']
+  const aliases = ['/northvane', '/northvane/insurance', '/northvane/prices', '/northvane/warranty', '/northvane/faq', '/alder-stone', '/alder-stone/process', '/alder-stone/insurance', '/alder-stone/cost', '/alder-stone/estimate', '/contour', '/halcyon', '/velar', '/stratum', '/roofing-dashboard', '/datum', '/datum/cracks/horizontal-crack', '/datum/report', '/tambour', '/tambour/kitchens', '/tambour/consultation', '/stillwater', '/mitre']
   for (const path of [...aliases, ...privateFiles]) {
     const result = await checkStatus(path, 303)
-    assert.match(result.headers.get('location'), /^\/request-demo\/\?demo=(?:roofers(?:-\d|-dashboard)?|foundation|cabinetry|pools)$/)
+    assert.match(result.headers.get('location'), /^\/request-demo\/\?demo=(?:roofers(?:-\d|-dashboard)?|foundation|cabinetry(?:-2)?|pools)$/)
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
   const privatePaths = [
@@ -118,7 +118,7 @@ try {
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
 
-  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/pools/preview.jpg']) await checkStatus(path, 200)
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg']) await checkStatus(path, 200)
   for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/']) {
     const page = await request(path)
     for (const asset of assetsFrom(page.body)) {

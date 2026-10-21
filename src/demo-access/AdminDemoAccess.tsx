@@ -11,6 +11,7 @@ const demos = [
   { id: 'roofers-6', href: '/stratum', name: 'Stratum Roofing Co.', detail: 'Website concept 06' },
   { id: 'foundation', href: '/datum', name: 'Datum Foundation & Waterproofing', detail: 'Foundation repair concept 01' },
   { id: 'cabinetry', href: '/tambour', name: 'Tambour Cabinetry, Kitchens & Baths', detail: 'Custom cabinetry concept 01' },
+  { id: 'cabinetry-2', href: '/mitre', name: 'Mitre & Rift Cabinetmakers', detail: 'Custom cabinetry concept 02' },
   { id: 'pools', href: '/stillwater', name: 'Stillwater Pool Co.', detail: 'Pool contractor concept 01' },
   { id: 'roofers-dashboard', href: '/roofing-dashboard', name: 'Roofing Dashboard', detail: 'Interactive operations concept' },
 ] as const

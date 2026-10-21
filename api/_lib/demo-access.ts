@@ -22,6 +22,7 @@ export const DEMO_PATHS = {
   'roofers-6': '/stratum',
   foundation: '/datum',
   cabinetry: '/tambour',
+  'cabinetry-2': '/mitre',
   pools: '/stillwater',
   'roofers-dashboard': '/roofing-dashboard',
 } as const
@@ -33,7 +34,7 @@ export type ProofGrant = GrantBase & { kind: 'proof'; verifiedEmail: string }
 export type AdminPendingGrant = GrantBase & { kind: 'admin-pending' }
 export type AdminSessionGrant = GrantBase & { kind: 'admin-session' }
 export type DemoGrant = InviteGrant | SessionGrant | ProofGrant | AdminPendingGrant | AdminSessionGrant
-const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/pools/preview.jpg'])
+const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg'])
 /** Collection landers are public; every other demo directory is gated. */
 const PUBLIC_DEMO_DIRS = new Set(['roofers-offer', 'contractors'])
 const COUNTER_ENV = ['RATE_LIMIT_REDIS_URL', 'RATE_LIMIT_REDIS_TOKEN', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
