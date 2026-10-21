@@ -72,20 +72,34 @@ sessionStorage. Nothing is sent anywhere.
 
 ## Generated imagery
 
-The hero's seven images are generated, not photographs, and say so (a line
-under the progress bar, the footer and `/photography`).
+The three build films are generated, not photographs, and say so (a line
+under each film's progress bar, the home room frames, the footer and
+`/photography`).
 
 - `scripts/cabinetry/generate_hero.py` calls `gpt-image-2` (1536x1024, high)
-  with the key in `.env.local`. `finished` is generated; `cabinetry`,
-  `drywall`, `roughin` and `framing` are each an edit of the stage after it;
-  `blueprint` and `wireframe` are edits of `finished`. Prompts, token usage
-  and cost for every call are in `output/cabinetry/hero/ledger.json`.
-- Approved budget $5 (Matthew, 2026-10-19). Spent: **$1.23**, seven calls, no
-  retries.
-- Alignment was measured with SIFT and affine fits: neighbouring stages agree
-  within about 1.5 px, so no warping is applied.
+  with the key in `.env.local`. For each room, `finished` is generated and each
+  earlier stage is an edit of the stage after it (kitchen: cabinetry, drywall,
+  roughin, framing; bath: vanity, drywall, roughin, framing; library:
+  cabinetry, boxes, drywall, framing). `blueprint`, `wireframe` and `evening`
+  are edits of `finished`. Prompts, token usage and cost for every call are in
+  `output/cabinetry/hero/ledger.json`.
+- Approved budget $5 (Matthew, 2026-10-19). Spent: **$4.59** over 26 calls:
+  kitchen 7 ($1.23), bath 8 ($1.41), library 11 ($1.94). The library's
+  framing, drywall and casework stages were generated twice: the first chain
+  drifted to a taller room with a smaller window, which would have reshaped
+  the wall mid-wipe. The prompts now pin the window, niche and wall
+  (`KEEP_WINDOW`); the first versions are kept as `*.v1.png`.
+- `scripts/cabinetry/align_check.py` matches each stage to `finished` (or
+  `--to` a neighbour) on SIFT features inside the window area that every stage
+  shares, and with `--fix` warps a stage more than 2 px out onto that frame
+  (`<stage>.aligned.png`). Kitchen: within 1.5 px, no warps. Bath: roughin,
+  drywall and framing warped (framing from its window box, since SIFT found
+  too little in common with bare studs). Library: boxes and drywall warped to
+  `cabinetry`, framing to the aligned drywall; afterwards the window frame
+  measures 222 px wide, centred within 1 px, in every stage.
 - `scripts/cabinetry/hero_assets.py` writes `public/demos/cabinetry/hero/*.webp`
-  (about 1.2 MB in all) and the lander `preview.jpg`.
+  (kitchen) and `hero/bath/`, `hero/library/` (about 1.2, 0.9 and 1.2 MB), using
+  the aligned version where there is one, and the lander `preview.jpg`.
 
 ## Photography and licensing
 
@@ -134,11 +148,28 @@ prices, and connect the consultation request (the state in
 
 ## Verification
 
-`npm run lint` (no new warnings), `tsc -b`, both Vite builds and
-`scripts/verify-demo-build.mjs` pass; `test-demo-access.mjs` (33),
-`test-demo-preview.mjs` and `test-demo-admin.mjs` (22) pass. Browser checks:
-every hero chapter at 1440x900 and 390x844 by timeline position, a mid-wipe
-frame, the kitchens anatomy and consultation brief, and no horizontal overflow
-on any page at 390 or 360. Not checked in a browser: the reduced-motion
-layout (CSS and JS paths reviewed only) and the scrub's feel at full frame rate
-(the browser pane was hidden, which throttles animation frames).
+Last run 2026-10-21, after the library stages were regenerated.
+
+- `npm run build` (`tsc -b`, both Vite builds, `verify-demo-build.mjs`: 19
+  documents) and `npm run lint` (no errors; the 4 warnings are in other
+  projects' files) pass; `test-demo-access.mjs` (33/33) and
+  `test-demo-preview.mjs` pass.
+- `scripts/cabinetry/motion-check.mjs` (headless Chrome over the DevTools
+  protocol; run with `node --experimental-websocket` on Node 20) scrolls six
+  pages at desktop 1x, desktop 4x CPU and phone 4x: no frame over 50 ms and no
+  long animation frame during any scroll; CLS 0 everywhere except
+  `/tambour/baths` at 0.0023; INP 32 ms desktop, phone 32 ms in isolation with
+  one 192 ms outlier in a full run (three repeats of the same sequence stayed
+  under 40 ms). Long frames remain at load: about 120 to 200 ms at 4x, the
+  first React render. Reduced motion emulated: the same text on every page,
+  and the build films' step buttons are replaced by the static chapter list.
+  Page transitions run and focus moves to the new page's heading on desktop
+  and phone (through the menu).
+- Screenshots by timeline position: every chapter and mid-wipe frame of the
+  three films at 1440x900 and 390x844, and the home room frames mid-wipe.
+- `NAV=1` / `NAV=full` time the phone menu navigation alone; `SHOTS=` takes
+  positioned screenshots (see the script header).
+
+Not checked: real phones and tablets (only emulation), Safari and Firefox
+(Chrome only; where View Transitions are missing, pages swap instantly), and
+how the motion reads to someone seeing the site cold.

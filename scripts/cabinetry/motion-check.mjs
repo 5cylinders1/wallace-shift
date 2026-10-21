@@ -14,7 +14,8 @@
  * Runs: desktop 1440x900 and phone 390x844, each at 1x and 4x CPU throttle;
  * a reduced-motion parity check; and a screencast of the home page at the
  * reel's scroll pace. Writes output/cabinetry/motion-check/report.json,
- * screenshots and screencast frames.
+ * screenshots and screencast frames. Diagnostic modes (one at a time):
+ * SHOTS=, LOAF=, PROFILE= and NAV=, each described where it is handled.
  */
 import { spawn, execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs'
@@ -76,12 +77,12 @@ const INSTRUMENT = `(() => {
   });
 })()`
 
-async function open({ width, height, mobile = false, throttle = 1, reduced = false, path = '/tambour' }) {
+async function open({ width, height, mobile = false, throttle = 1, reduced = false, path = '/tambour', dpr = mobile ? 3 : 1 }) {
   const { targetId } = await send('Target.createTarget', { url: 'about:blank' })
   const { sessionId } = await send('Target.attachToTarget', { targetId, flatten: true })
   for (const domain of ['Page', 'Runtime', 'Network']) await send(`${domain}.enable`, {}, sessionId)
   await send('Network.setCookie', { name: 'wallace_demo_admin', value: token, url: origin, path: '/' }, sessionId)
-  await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: mobile ? 3 : 1, mobile }, sessionId)
+  await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: dpr, mobile }, sessionId)
   if (mobile) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 }, sessionId)
   await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: reduced ? 'reduce' : 'no-preference' }] }, sessionId)
   await send('Emulation.setCPUThrottlingRate', { rate: throttle }, sessionId)
@@ -184,6 +185,22 @@ if (process.env.LOAF) {
   await finish()
   process.exit(0)
 }
+if (process.env.NAV) {
+  // NAV=1: the phone menu navigation alone at 4x, with the long frames around
+  // the tap; DPR overrides the emulated pixel ratio (default 3).
+  const page = await open({ width: 390, height: 844, mobile: true, throttle: 4, path: '/tambour/kitchens', dpr: Number(process.env.DPR ?? 3) })
+  // NAV=full: the lookbook viewer is opened and closed first, as in the INP run.
+  if (process.env.NAV === 'full') { await page.click('.tb-hotspot:nth-child(3)'); await page.click('.tb-lookbook-item'); await sleep(1500); await page.click('.tb-viewer-close') }
+  await page.click('.tb-menu-button')
+  const before = await page.evaluate('performance.now()')
+  await page.click('#tb-menu a[href$="/workshop"]')
+  await sleep(3000)
+  const m = await page.evaluate('__m')
+  console.log(JSON.stringify({ events: m.events.filter(e => e.duration >= 40), loaf: m.loaf.filter(f => f.start >= before && f.duration >= 40) }, null, 1))
+  await page.close()
+  await finish()
+  process.exit(0)
+}
 if (process.env.SHOTS) {
   const width = Number(process.env.WIDTH ?? 1440), height = Number(process.env.HEIGHT ?? 900)
   for (const spec of process.env.SHOTS.split(';')) {
@@ -244,7 +261,9 @@ for (const config of [configs[1], configs[2]]) {
   await kitchens.shot(`${config.name}-viewer-open`)
   await kitchens.evaluate(`window.__vt = []; const start = document.startViewTransition.bind(document); document.startViewTransition = cb => { const t = start(cb); window.__vt.push(document.documentElement.dataset.transition || 'element'); return t }`)
   await kitchens.click('.tb-viewer-close')
-  await kitchens.click('.tb-nav a[href$="/workshop"]')
+  // On a phone the page links are inside the menu.
+  if (config.mobile) { await kitchens.click('.tb-menu-button'); await kitchens.click('#tb-menu a[href$="/workshop"]') }
+  else await kitchens.click('.tb-nav a[href$="/workshop"]')
   await sleep(2000)
   const navigation = await kitchens.evaluate(`({ path: location.pathname, title: document.title, transitions: window.__vt, heading: document.activeElement && document.activeElement.textContent.slice(0, 40) })`)
   const kitchenInteractions = summarise(await kitchens.evaluate('__m'))
