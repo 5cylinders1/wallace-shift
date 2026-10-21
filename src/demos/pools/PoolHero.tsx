@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import PoolPlanOverlay from './PoolPlanOverlay'
-import PoolWater, { type PoolWaterHandle } from './PoolWater'
+import PoolFillVideo, { type PoolFillVideoHandle } from './PoolFillVideo'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -14,7 +14,7 @@ const phases = [
   { name: 'The details', title: 'Every detail, considered.', description: 'Natural stone. A thoughtful finish. Spaces that feel like you.', note: '05 / MAKE IT YOURS', point: .71 },
   { name: 'The first swim', title: 'This is what it was all for.', description: 'A place to gather, to slow down, and to make the most of home.', note: '06 / JUST ADD LIFE', point: 1 },
 ]
-const sceneFiles = ['pool-yard', 'pool-excavation', 'pool-shell', 'pool-finish', 'pool-complete']
+const sceneFiles = ['pool-yard', 'pool-excavation', 'pool-shell', 'pool-finish']
 
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const clamp = (value: number) => Math.max(0, Math.min(1, value))
@@ -50,7 +50,7 @@ export default function PoolHero() {
   const section = useRef<HTMLElement>(null)
   const scrollRange = useRef<ScrollTrigger | null>(null)
   const menuToggle = useRef<HTMLButtonElement>(null)
-  const water = useRef<PoolWaterHandle>(null)
+  const fillVideo = useRef<PoolFillVideoHandle>(null)
   const stageRef = useRef(0)
   const [reduced, setReduced] = useState(reduceMotion)
   const [stage, setStage] = useState(() => reduceMotion() ? 5 : 0)
@@ -75,15 +75,15 @@ export default function PoolHero() {
     const photoStage = root.querySelector<HTMLElement>('.sw-scene')!
     const render = (p: number) => {
       const active = [.095, .31, .445, .62, .76].filter(point => p >= point).length
-      // Water is rendered as a rising surface over the empty shell. The last
-      // photo only completes the surrounding furnishings once the pool is full.
-      const sceneOpacity = [1, smooth(.16, .24, p), smooth(.40, .49, p), smooth(.57, .67, p), smooth(.96, 1, p)]
+      // The original full-scene film takes over from the finished empty pool.
+      // Its final frame remains visible instead of dissolving to another scene.
+      const sceneOpacity = [1, smooth(.16, .24, p), smooth(.40, .49, p), smooth(.57, .67, p)]
       layers.forEach((layer, i) => {
         layer.style.opacity = String(sceneOpacity[i])
         layer.style.zIndex = String(i)
       })
-      const waterProgress = clamp((p - .74) / .20)
-      water.current?.setProgress(waterProgress)
+      const waterProgress = p >= .94 ? 1 : clamp((p - .74) / .20)
+      fillVideo.current?.setProgress(waterProgress, p >= .74)
       root.dataset.waterLevel = waterProgress.toFixed(3)
       root.style.setProperty('--sw-plan-draw', String(smooth(.045, .17, p)))
       root.style.setProperty('--sw-plan-opacity', String(smooth(.045, .09, p) * (1 - smooth(.30, .36, p))))
@@ -137,12 +137,12 @@ export default function PoolHero() {
   return <section ref={section} id="top" className={`sw-hero ${reduced ? 'sw-hero-reduced' : ''}`} aria-label="Watch a backyard become a pool">
     <div className="sw-hero-sticky">
       <div className="sw-scene" aria-hidden="true">
-        {sceneFiles.map((file, i) => <picture key={file} className="sw-scene-layer" style={{ opacity: i === (reduced ? 4 : 0) ? 1 : 0 }}>
+        {sceneFiles.map((file, i) => <picture key={file} className="sw-scene-layer" style={{ opacity: i === (reduced ? 3 : 0) ? 1 : 0 }}>
           <source media="(max-width: 700px)" srcSet={`/demos/pools/${file}-mobile.webp`} />
-          <img src={`/demos/pools/${file}.webp`} width="1672" height="941" alt="" fetchPriority={i === (reduced ? 4 : 0) ? 'high' : 'auto'} decoding="async" />
+          <img src={`/demos/pools/${file}.webp`} width="1672" height="941" alt="" fetchPriority={i === (reduced ? 3 : 0) ? 'high' : 'auto'} decoding="async" />
         </picture>)}
         <PoolPlanOverlay />
-        <PoolWater ref={water} reducedMotion={reduced} />
+        <PoolFillVideo key={reduced ? 'still' : 'film'} ref={fillVideo} sectionRef={section} reducedMotion={reduced} />
       </div>
       <div className="sw-hero-shade" />
       <header className="sw-header" onKeyDown={(event) => {
@@ -184,7 +184,7 @@ export default function PoolHero() {
         <nav className="sw-stages" aria-label="Pool construction stages">
           {phases.map((phase, i) => <button key={phase.name} type="button" className={stage === i ? 'is-current' : ''} aria-current={stage === i ? 'step' : undefined} onClick={() => goToStage(i)}><span className="sw-stage-number">0{i + 1}</span><span>{phase.name}</span><span className="sw-stage-dot" aria-hidden="true" /></button>)}
         </nav>
-        <p className="sw-hero-credit">A backyard transformation, imagined by Wallace Shift.</p>
+        <p className="sw-hero-credit">An AI concept transformation, imagined by Wallace Shift.</p>
       </div>
       <span className="sw-sr-only" aria-live="polite">Stage {stage + 1} of 6: {phases[stage].name}</span>
     </div>

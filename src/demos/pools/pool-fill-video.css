@@ -1,0 +1,5 @@
+.sw-fill-video{position:absolute;inset:0;width:100%;height:100%;z-index:10;visibility:hidden;pointer-events:none}
+.sw-fill-video[data-active="true"]{visibility:visible}
+.sw-fill-video video,.sw-fill-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;opacity:0}
+.sw-fill-video[data-complete="true"] .sw-fill-poster{opacity:1}
+.sw-fill-video[data-state="ready"] video{opacity:1}

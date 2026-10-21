@@ -13,17 +13,25 @@ spa, deck and loungers directly over the excavation. `PoolPlanOverlay.tsx`
 traces the original 1672 by 941 image coordinate system; the SVG and photographs
 share a centered cover crop so they stay registered on phones and desktop.
 
-`PoolWater.tsx` projects the completed photograph's water texture onto moving
-pool and spa surfaces. Scroll progress expands water across the floor and raises
-the surface toward the rim, with masks for the spa structure and exposed steps.
-The water is full before the last photograph completes the surrounding furniture.
-The fill is geometric rather than an opacity transition between empty and full
-photographs, and it reverses when scrolling back.
+`PoolFillVideo.tsx` plays an original complete scene video through native video
+seeking. Hero progress from 0.74 through 0.94 maps to the filling clip; its actual
+last frame remains visible through the end of the hero. Scrolling backward
+selects earlier video frames. Stopping scroll holds the current frame, including
+its water, reflections and surrounding architecture. The browser constructs no
+water surface and does not blend empty and full images to simulate filling.
 
-Subtle texture refraction and surface glints continue while the water is visible.
-Rendering is capped at 30 frames per second and device pixel ratio 1.5, pauses
-when offscreen or when the document is hidden, and becomes static for reduced
-motion. No new dependency or generated image was needed for this revision.
+The video shares the photographs' centered cover crop and common scene
+transform. It replaces the finished empty photo when filling begins. The former
+transition to `pool-complete.webp` was removed to avoid introducing furniture
+and a different final scene after the clip.
+
+The existing `useScrollVideo` hook prepares muted inline playback for mobile
+decoders and retries preparation on interaction. The component reconciles the
+latest requested time after seeking and reveals the film only after a requested
+frame is available. Loading or failed video leaves the existing empty photograph
+visible during partial filling and shows an extracted final poster at completion.
+Reduced motion renders the poster without a video element or video request.
+Manual chapter navigation remains available. No new dependency was added.
 
 ## Routes and access
 
@@ -74,6 +82,9 @@ All media lives in `public/demos/pools/`:
 | `pool-shell.webp` | Rough shotcrete shell and surrounding dirt | 1672 × 941 WebP |
 | `pool-finish.webp` | Finished plaster pool before filling | 1672 × 941 WebP |
 | `pool-complete.webp` | Completed pool and outdoor living space | 1672 × 941 WebP |
+| `pool-fill.mp4` | Original AI generated filling film | 1916 × 1080 H.264 MP4, 24 fps |
+| `pool-fill-mobile.mp4` | Smaller encoding of the same film | 960 × 542 H.264 MP4, 24 fps |
+| `pool-fill-poster.webp` | Actual final frame of the filling film | 1916 × 1080 WebP |
 | `courtyard.webp` | Intimate courtyard inspiration | 1672 × 941 WebP |
 | `organic.webp` | Curved woodland pool inspiration | 1672 × 941 WebP |
 | Each corresponding `-mobile.webp` | Responsive image variant | 1000 pixels wide |
@@ -92,9 +103,21 @@ travertine paving, trees and warm golden light. No people or text.
 Change only the pool footprint and immediate yard to depict, in turn, an
 existing grass yard, a pool excavation, a rough shotcrete shell surrounded by
 dirt, and an empty pool with its finished plaster and surrounding surfaces.
-The completed scene supplies the final water filled stage. This shared framing
-lets scrolling transition through the construction sequence without changing
-the viewpoint.
+The completed scene remains an inspiration image. The original filling film now
+supplies the hero's final water filled stage.
+
+**Original filling film:** Generated specifically for Stillwater with Kling 3.0
+through Higgsfield, using the concept's finished empty pool and a matching full
+pool endpoint. No reference video or reference website frames were used as
+replacement media. The selected second generation contains 193 complete scene
+frames over 8.041667 seconds. Both browser encodes use a six frame keyframe
+interval, no B frames and faststart metadata to support seeking.
+
+The first generation was rejected because a rectangular area of water moved
+across the floor instead of showing convincing rising depth. The second
+generation passed a standalone frame review before integration. It is still an
+AI concept, with some soft submerged edges and an early uniform water surface;
+it is not camera footage or evidence of a completed contractor project.
 
 **Courtyard inspiration:** An intimate plunge pool within white courtyard
 walls, with an olive tree and a quiet architectural setting.
@@ -142,24 +165,58 @@ October 19, 2026, completed local verification:
   native download event timed out, so native file saving remains unverified.
 - Browser console review reported no warnings or errors after a clean reload.
 
-The outline and water revision also passed a production build, TypeScript,
-scoped ESLint and diff whitespace checks. Desktop browser review confirmed water
-at 25%, 53% and 100%, then 33% when reversing from 53%. Two screenshots at a fixed
-53% fill showed changing pixels within the water and identical pixels on the
-house, confirming that surface animation continues after scrolling stops.
-Phone review checked the registered outline and partial filling at 390 by 844,
-plus the six chapter controls and outline at 320 by 568 without horizontal
-overflow. Returning to the plan cleared the water to zero.
+The earlier canvas water revision passed technical and layout checks but failed
+the user's visual review. Its texture projection and continuous surface animation
+were removed. Those earlier checks do not establish the new video's visual
+quality or playback behavior.
 
 The hero uses GSAP ScrollTrigger progress directly, including refresh updates,
 so anchor jumps and viewport changes keep the photograph and stage control in
 sync. Reduced motion uses a single viewport with manual stage buttons; that
 branch was reviewed in source but was not exercised through OS media emulation.
 
+October 20, 2026: the original second video candidate passed standalone frame
+review. The first candidate was rejected because a straight water edge advanced
+across the floor. The selected revision covers the floor before rising vertically
+against the walls and progressively covering the steps. Its early water is
+somewhat uniform and submerged step edges soften. These are visual judgments,
+not proof of physically accurate fluid behavior.
+
+The original MP4 played at normal speed in Chrome. Intermediate frames were
+inspected separately and compared with the supplied reference. A local review
+page with both playable clips, frame stepping and intermediate snapshots is at
+`output/pools/video-generation/review.html`. The reference is comparison material
+only; the generated clip uses Stillwater's own scene. Higgsfield's
+[commercial use guidance](https://higgsfield.ai/creator-hub/help-center/account/who-owns-my-generations-and-can-i-use-them-commercially)
+states that it does not restrict commercial use of outputs. Exact prompts,
+source downloads, generation records and rejected attempts remain in the ignored
+local output folder.
+
+Technical checks for the replacement:
+
+- Production build passed TypeScript, both Vite builds and the private boundary
+  check of 18 documents and 28 private JavaScript bundles.
+- Scoped pool ESLint and whitespace checks passed.
+- Actual iframe page viewports in Chrome at 1440 by 900, 390 by 844 and 320 by 568
+  passed forward, stopped and reverse seeking. The phone widths selected the
+  smaller video. No horizontal page overflow was observed.
+- At half fill, `currentTime` remained exactly unchanged during a 1.8 second
+  stopped interval in each viewport. Rapid alternating scroll positions settled
+  on the latest requested frame. Returning to the plan hid the video.
+- The final frame is held after filling; a boundary comparison avoids floating
+  point rounding at progress 0.94.
+- A clean page reload produced no new browser warnings or errors. Earlier HMR
+  messages referred to the removed water component and stylesheet.
+- These are desktop Chrome responsive viewport checks, not physical iOS or
+  Android tests. Reduced motion and failure fallback were reviewed in source;
+  OS preference emulation and network failure injection were not performed.
+
 These checks cover local access behavior and source quality. They do not record
-a production deployment, live email delivery, physical device result or native
-download verification. The planner is a local concept and has no inquiry backend.
+a production deployment, live email delivery or physical device result. The
+generated video download was verified; the planner's separate native brief
+download remains unverified. The planner is a local concept and has no inquiry
+backend.
 
 ## Commit message
 
-`feat: add projected pool plans and rising animated water`
+`feat: replace simulated pool water with original scroll driven video`
