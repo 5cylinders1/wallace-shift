@@ -115,6 +115,9 @@ export interface Room {
   em: string
   hero: string
   heroPosition?: string
+  /** A scroll-built film replaces the photo hero (see builds.ts). */
+  build?: 'bath' | 'library'
+  lede?: string
   intro: string
   facts: { label: string; value: string }[]
   lookbook: LookbookItem[]
@@ -158,6 +161,8 @@ export const rooms: Record<Room['page'], Room> = {
     em: 'built to stay dry.',
     hero: 'bath-arabescato',
     heroPosition: '50% 45%',
+    build: 'bath',
+    lede: 'Vanities, linen towers and the whole remodel around them, built to take steam every morning.',
     intro: 'A bathroom asks more of cabinetry than any other room: steam every morning, water on every edge. We build vanities, linen towers and built-in surrounds in sealed hardwoods and moisture-resistant cores, and we run the whole remodel around them, from tile to lighting.',
     facts: [
       { label: 'Vanities', value: 'Floating, furniture-style or built-in' },
@@ -185,6 +190,8 @@ export const rooms: Record<Room['page'], Room> = {
     em: 'that could work harder.',
     hero: 'builtin-library',
     heroPosition: '60% 50%',
+    build: 'library',
+    lede: 'Libraries, dressing rooms and media walls, made with the same joinery as our kitchens and scribed to your walls.',
     intro: 'Libraries, dressing rooms, mudrooms, laundry rooms and media walls, made with the same joinery and finishes as our kitchens, and scribed to walls that were never quite square.',
     facts: [
       { label: 'Rooms', value: 'Closets, libraries, laundry, mudrooms, media' },
@@ -222,20 +229,4 @@ export const specs = [
   { label: 'Hinges', value: 'Concealed and soft-close; butt hinges for inset' },
   { label: 'Paint finish', value: 'Catalyzed conversion varnish, sprayed in-house' },
   { label: 'Wood finish', value: 'Hardwax oil or matte catalyzed lacquer' },
-]
-
-export interface BuildChapter { id: string; title: string; em?: string; body: string; at: number }
-
-/**
- * The home page build film, in scroll order. `at` is where each chapter
- * starts, as a fraction of the hero's scroll; the timeline in
- * components/BuildHero.tsx is laid out against the same positions.
- */
-export const buildChapters: BuildChapter[] = [
-  { id: 'drawn', title: 'Drawn', em: 'before it’s built.', body: 'Every Tambour kitchen starts as a set of drawings: plans, elevations and a finish schedule you approve line by line.', at: 0.08 },
-  { id: 'measured', title: 'Designed', em: 'to the inch.', body: 'Measured in the room and drawn around its real walls, so every cabinet has its place before a board is cut.', at: 0.22 },
-  { id: 'rough', title: 'Rough-in.', body: 'Power, plumbing and lighting go exactly where the drawings put the sink, the range and the lanterns.', at: 0.40 },
-  { id: 'closed', title: 'Closed', em: 'and squared.', body: 'Walls hung, primed and checked for plumb before the first cabinet leaves the workshop.', at: 0.52 },
-  { id: 'cabinetry', title: 'Cabinetry.', body: 'Built in our Kansas City workshop, then installed and scribed to the walls by the people who made it.', at: 0.65 },
-  { id: 'finished', title: 'Built', em: 'to gather.', body: 'Stone, the plaster hood, the lanterns and the last door adjustment. Then it’s yours.', at: 0.80 },
 ]

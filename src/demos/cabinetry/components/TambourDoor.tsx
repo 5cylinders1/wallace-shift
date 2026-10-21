@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { useMedia } from '../hooks'
+import { DUR } from '../motion'
 import Photo from './Photo'
 
 gsap.registerPlugin(useGSAP)
@@ -37,7 +38,7 @@ export default function TambourDoor() {
     const target = open ? 1 : 0
     if (reduced) { door.style.setProperty('--open', String(target)); return }
     const state = { value: Number(getComputedStyle(door).getPropertyValue('--open')) || 0 }
-    gsap.to(state, { value: target, duration: 1.6, ease: 'power2.inOut', onUpdate: () => door.style.setProperty('--open', String(state.value)) })
+    gsap.to(state, { value: target, duration: DUR.roll * 1.15, ease: 'tambour', onUpdate: () => door.style.setProperty('--open', String(state.value)) })
   }, { scope: root, dependencies: [open, reduced] })
 
   const toggle = () => { opened.current = true; setOpen(value => !value) }

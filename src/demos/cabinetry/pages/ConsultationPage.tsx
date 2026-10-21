@@ -139,7 +139,7 @@ export default function ConsultationPage() {
     <section className="tb-page-head" aria-labelledby="tb-page-title">
       <div className="tb-wrap">
         <p className="tb-label">Design consultation</p>
-        <h1 id="tb-page-title" tabIndex={-1}>Bring the room. <em>We’ll bring the samples.</em></h1>
+        <h1 id="tb-page-title" tabIndex={-1} data-split>Bring the room. <em>We’ll bring the samples.</em></h1>
         <p className="tb-page-lede">Four short steps. We will reply within one business day to set a time to visit, measure and talk it through. Prefer to call? {business.phone}.</p>
       </div>
     </section>

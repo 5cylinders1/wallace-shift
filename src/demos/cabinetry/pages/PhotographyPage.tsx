@@ -10,7 +10,7 @@ export default function PhotographyPage() {
     <section className="tb-page-head" aria-labelledby="tb-page-title">
       <div className="tb-wrap">
         <p className="tb-label">Photography</p>
-        <h1 id="tb-page-title" tabIndex={-1}>Credits, <em>and what is real.</em></h1>
+        <h1 id="tb-page-title" tabIndex={-1} data-split>Credits, <em>and what is real.</em></h1>
         <p className="tb-page-lede">Tambour is fictional. Apart from the build sequence at the top of the home page, every photograph on this site is a real photograph of a real room or workshop, used under the Pexels license as a stand-in for a cabinetmaker’s own project photography. None of the work shown was built by Tambour.</p>
       </div>
     </section>

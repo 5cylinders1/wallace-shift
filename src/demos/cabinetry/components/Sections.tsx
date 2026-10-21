@@ -2,13 +2,14 @@ import type { ReactNode } from 'react'
 import { faqs, process, workshopChapters } from '../content'
 import { estimate, examples, moneyShort } from '../pricing'
 import { href, onLink } from '../routes'
+import Odometer from './Odometer'
 import Photo from './Photo'
 
 export function SectionHead({ kicker, title, em, children, id, light = false }: { kicker: string; title: string; em?: string; children?: ReactNode; id?: string; light?: boolean }) {
-  return <div className={`tb-section-head ${light ? 'is-light' : ''}`} data-reveal>
-    <p className="tb-label">{kicker}</p>
-    <h2 id={id}>{title}{em && <> <em>{em}</em></>}</h2>
-    {children && <div className="tb-section-lede">{children}</div>}
+  return <div className={`tb-section-head ${light ? 'is-light' : ''}`}>
+    <p className="tb-label" data-reveal>{kicker}</p>
+    <h2 id={id} data-split>{title}{em && <> <em>{em}</em></>}</h2>
+    {children && <div className="tb-section-lede" data-reveal>{children}</div>}
   </div>
 }
 
@@ -20,11 +21,13 @@ export function WorkshopStrip() {
       </SectionHead>
     </div>
     <ol className="tb-strip" aria-label="How a cabinet is made">
-      {workshopChapters.map((chapter, n) => <li key={chapter.slug} className="tb-strip-item" data-reveal>
-        <div className="tb-strip-image"><Photo slug={chapter.slug} sizes="(min-width: 900px) 30vw, 80vw" /></div>
-        <p className="tb-strip-n">{String(n + 1).padStart(2, '0')}</p>
-        <h3>{chapter.title}</h3>
-        <p>{chapter.body}</p>
+      {workshopChapters.map((chapter, n) => <li key={chapter.slug} className="tb-strip-item">
+        <div className="tb-strip-image" data-uncover data-drift><Photo slug={chapter.slug} sizes="(min-width: 900px) 30vw, 80vw" /></div>
+        <div data-reveal>
+          <p className="tb-strip-n">{String(n + 1).padStart(2, '0')}</p>
+          <h3>{chapter.title}</h3>
+          <p>{chapter.body}</p>
+        </div>
       </li>)}
     </ol>
     <div className="tb-wrap tb-strip-foot">
@@ -39,8 +42,9 @@ export function ProcessSection({ dark = false }: { dark?: boolean }) {
       <SectionHead kicker="How it works" title="Five steps," em="one team from start to finish." id="tb-process-title" light={dark}>
         <p>Timelines are typical for the work we take on, not promises. Your proposal sets your schedule.</p>
       </SectionHead>
-      <ol className="tb-process">
-        {process.map((step, n) => <li key={step.title} data-reveal>
+      <span className="tb-process-line" aria-hidden="true"><i /></span>
+      <ol className="tb-process" data-process>
+        {process.map((step, n) => <li key={step.title}>
           <span className="tb-process-n" aria-hidden="true">{n + 1}</span>
           <h3>{step.title}</h3>
           <p className="tb-process-time">{step.time}</p>
@@ -62,7 +66,7 @@ export function InvestmentTeaser() {
           const result = estimate(...example.args)
           return <li key={example.label} data-reveal>
             <div><h3>{example.label}</h3><p>{example.note}</p></div>
-            <p className="tb-invest-range">{moneyShort(result.low)} <span aria-hidden="true">–</span><span className="tb-visually-hidden">to</span> {moneyShort(result.high)}</p>
+            <p className="tb-invest-range"><Odometer value={moneyShort(result.low)} /> <span aria-hidden="true">–</span><span className="tb-visually-hidden">to</span> <Odometer value={moneyShort(result.high)} /></p>
           </li>
         })}
       </ul>
@@ -79,7 +83,7 @@ export function FaqSection() {
     <div className="tb-wrap tb-faq">
       <SectionHead kicker="Questions" title="What people ask" em="before the first visit." id="tb-faq-title" />
       <div className="tb-faq-list">
-        {faqs.map(item => <details key={item.q} data-reveal>
+        {faqs.map(item => <details key={item.q}>
           <summary>{item.q}</summary>
           <p>{item.a}</p>
         </details>)}
@@ -90,12 +94,12 @@ export function FaqSection() {
 
 export function ClosingCta() {
   return <section className="tb-closing" aria-labelledby="tb-closing-title">
-    <Photo slug="bath-walnut-brass" className="tb-closing-photo" sizes="100vw" decorative />
-    <div className="tb-wrap tb-closing-inner" data-reveal>
-      <p className="tb-label">Design consultation</p>
-      <h2 id="tb-closing-title">Bring the room. <em>We’ll bring the samples.</em></h2>
-      <p>Tell us about the space and what is not working. We will come measure, listen and bring the finishes you picked.</p>
-      <a className="tb-button tb-button-brass" href={href.page('consultation')} onClick={onLink}>Book a design consultation</a>
+    <div className="tb-closing-media" data-settle><Photo slug="bath-walnut-brass" className="tb-closing-photo" sizes="100vw" decorative /></div>
+    <div className="tb-wrap tb-closing-inner">
+      <p className="tb-label" data-reveal>Design consultation</p>
+      <h2 id="tb-closing-title" data-split>Bring the room. <em>We’ll bring the samples.</em></h2>
+      <p data-reveal>Tell us about the space and what is not working. We will come measure, listen and bring the finishes you picked.</p>
+      <a className="tb-button tb-button-brass" href={href.page('consultation')} onClick={onLink} data-reveal>Book a design consultation</a>
     </div>
   </section>
 }

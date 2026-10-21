@@ -79,6 +79,66 @@ STEPS = {
         'shading, no floor or wall detail.'),
 }
 
+KEEP_WINDOW = (' Keep the window, its black steel frame and grille, the arched niche around it and the window seat opening '
+               'exactly the same size, shape and position as in the reference, and keep every cabinet bay, shelf line and the '
+               'width of the wall exactly where they are. ')
+BATH = ('A newly completed primary bathroom in a custom-built home, photographed straight on from the doorway at standing eye '
+        'level, one-point perspective with perfectly vertical lines. Centered on the back wall, a tall black steel-framed '
+        'window with soft daylight, and in front of it a freestanding white stone bathtub with a brass floor-mounted filler. '
+        'Along the left wall, a long floating double vanity in rift-sawn white oak with a thick honed white marble top, two '
+        'sinks, unlacquered brass faucets, two arched mirrors and brass wall sconces. On the right, a frameless glass shower '
+        'lined in honed marble slab with a brass rain head, and a tall rift-oak linen cabinet. Warm white plaster walls, '
+        'large-format honed marble floor, a soft plaster cove at the ceiling. Calm morning light. ' + LOOK)
+LIBRARY = ('A newly completed home library and study in a custom-built home, photographed straight on at standing eye level, '
+           'one-point perspective with perfectly vertical lines. The whole back wall is floor-to-ceiling built-in cabinetry '
+           'painted deep forest green: inset-door base cabinets with unlacquered brass knobs, open shelves above lined with '
+           'books and a few objects, a brass picture light over each bay, and a centered arched niche framing a black '
+           'steel-framed window with a cushioned window seat. A brass library ladder on a rail spans the shelves. In the '
+           'foreground, a walnut writing desk with a cognac leather chair. Wide-plank white oak floor, a plaster ceiling with '
+           'one painted beam. Calm daylight. ' + LOOK)
+STEPS.update({
+    'bath/finished': (None, BATH),
+    'bath/vanity': ('finished', SAME + ' Stage: about two weeks before completion. The marble slab walls and floor tile are '
+        'installed and the oak vanity cabinet is hung, but it has no countertop, sinks or faucets yet; no mirrors, sconces '
+        'or shower glass, only capped wires in wall boxes; the tub is in place wrapped in protective film; protective board '
+        'on part of the floor; a tripod LED work light. Realistic jobsite photograph, same daylight. ' + LOOK),
+    'bath/drywall': ('vanity', SAME + ' Stage: earlier. Walls are primed drywall and cement backer board with taped seams; '
+        'the shower walls are coated in blue-green liquid waterproofing membrane; a mortar bed slopes to the shower drain. '
+        'No tile, no stone, no vanity, no tub; capped supply stubs and a drain where the vanity, tub and shower will go. '
+        'Bare plywood subfloor with dust, a tripod work light. Same daylight. ' + LOOK),
+    'bath/roughin': ('drywall', SAME + ' Stage: rough plumbing. No drywall: exposed wood studs; red and blue PEX supply '
+        'lines and copper fittings to the vanity and the shower valve, the rain-head riser strapped in the framing; black '
+        'drain pipes and the tub drain stub in the subfloor; blue electrical boxes for the sconces. Plywood subfloor. Same '
+        'daylight through the window. ' + LOOK),
+    'bath/framing': ('roughin', SAME + ' Stage: the earliest, bare framing. Only the wood structure: studs, headers and '
+        'joists with OSB sheathing visible on the exterior wall. No plumbing, no wiring, no drywall. Plywood subfloor with '
+        'sawdust and a few offcuts. Warm sunlight through the window casting stud shadows. ' + LOOK),
+    'bath/evening': ('finished', 'Show this exact photograph at dusk, same camera and everything in place: deep blue twilight '
+        'outside the window, the brass sconces and a hidden LED cove at the ceiling glowing warm, soft warm reflections on '
+        'the marble, the room otherwise unchanged. Photorealistic. ' + LOOK),
+    'bath/wireframe': ('finished', STEPS['wireframe'][1].replace('cabinets and their door panels, the glass uppers, the range hood, the range, the island and its stools, the three lantern pendants', 'vanity and its drawers, the marble top and sinks, the mirrors and sconces, the bathtub, the shower glass and rain head, the linen cabinet')),
+    'bath/blueprint': ('finished', STEPS['blueprint'][1].replace('the cabinet door panels, the glass uppers, the range hood, the range, the island with its stools, the three lantern pendants', 'the vanity with its drawers and mirrors, the sconces, the bathtub, the shower with its glass and rain head, the linen cabinet')),
+    'library/finished': (None, LIBRARY),
+    'library/cabinetry': ('finished', SAME + ' Stage: about two weeks before completion. The green cabinetry and shelves '
+        'are installed and painted, but the shelves are empty with no books or objects, the brass hardware is not fitted, '
+        'the picture lights are not installed (wires capped), the window seat has no cushion, there is no ladder, desk or '
+        'chair; drop cloths on the floor, a pair of sawhorses and a tripod work light. Same daylight. ' + LOOK),
+    'library/boxes': ('cabinetry', SAME + KEEP_WINDOW + ' Stage: earlier. Raw unpainted maple plywood cabinet carcasses and face frames '
+        'are being set against the back wall; no doors, no shelves, no paint; the arched niche is framed in raw wood. Walls '
+        'and ceiling are primed drywall. Plywood subfloor with sawdust, clamps and a level on the floor. Same daylight. ' + LOOK),
+    'library/drywall': ('boxes', SAME + KEEP_WINDOW.replace(', and keep every cabinet bay, shelf line and the width of the wall exactly where they are', '') + ' Stage: earlier still. An empty room of primed drywall with taped seams and '
+        'electrical boxes along the back wall where the picture lights will go; the arched opening around the window is '
+        'framed and drywalled; no cabinetry at all. Bare plywood subfloor, a tripod work light. Same daylight. ' + LOOK),
+    'library/framing': ('drywall', SAME + KEEP_WINDOW.replace(', and keep every cabinet bay, shelf line and the width of the wall exactly where they are', '') + ' Stage: the earliest, bare framing. Only the wood structure: studs, headers, '
+        'the framed arch and ceiling joists, OSB sheathing on the exterior wall. No drywall, no wiring. Plywood subfloor '
+        'with sawdust. Warm sunlight through the window casting stud shadows. ' + LOOK),
+    'library/evening': ('finished', 'Show this exact photograph in the evening, same camera and everything in place: '
+        'dark blue night outside the window, every brass picture light glowing warm on the books, a desk lamp lit, warm '
+        'pools of light on the green cabinetry, the room otherwise unchanged. Photorealistic. ' + LOOK),
+    'library/wireframe': ('finished', STEPS['wireframe'][1].replace('cabinets and their door panels, the glass uppers, the range hood, the range, the island and its stools, the three lantern pendants', 'built-in cabinets and their door panels, the shelves, the arched niche and window seat, the library ladder and rail, the picture lights, the desk and chair')),
+    'library/blueprint': ('finished', STEPS['blueprint'][1].replace('the cabinet door panels, the glass uppers, the range hood, the range, the island with its stools, the three lantern pendants', 'the built-in cabinets with their doors, the shelves, the arched niche and window seat, the library ladder, the picture lights, the desk')),
+})
+
 
 def api_key() -> str:
     with open(os.path.join(ROOT, '.env.local')) as handle:
@@ -100,31 +160,46 @@ def cost(usage: dict) -> float:
 
 def call(step: str) -> None:
     source, prompt = STEPS[step]
+    room = os.path.dirname(step)
+    folder = os.path.join(HERO, room)
+    os.makedirs(folder, exist_ok=True)
+    name = os.path.basename(step)
     spent = sum(entry['cost'] for entry in ledger())
     if spent + WORST_CASE > BUDGET:
         raise SystemExit(f'Budget guard: ${spent:.2f} spent of ${BUDGET:.2f}; not calling.')
     body = {'model': MODEL, 'prompt': prompt, 'size': SIZE, 'quality': 'high', 'n': 1, 'output_format': 'png'}
     endpoint = 'generations'
     if source:
-        with open(os.path.join(HERO, f'{source}.png'), 'rb') as handle:
+        with open(os.path.join(folder, f'{source}.png'), 'rb') as handle:
             body['images'] = [{'image_url': 'data:image/png;base64,' + base64.b64encode(handle.read()).decode()}]
         endpoint = 'edits'
-    request = urllib.request.Request(f'https://api.openai.com/v1/images/{endpoint}', data=json.dumps(body).encode(),
-                                     headers={'Authorization': f'Bearer {api_key()}', 'Content-Type': 'application/json'})
     started = time.time()
+    if source:
+        body['input_fidelity'] = 'high'
+    def post(payload):
+        req = urllib.request.Request(f'https://api.openai.com/v1/images/{endpoint}', data=json.dumps(payload).encode(),
+                                     headers={'Authorization': f'Bearer {api_key()}', 'Content-Type': 'application/json'})
+        return json.load(urllib.request.urlopen(req, timeout=300))
     try:
-        response = json.load(urllib.request.urlopen(request, timeout=300))
+        try:
+            response = post(body)
+        except urllib.error.HTTPError as error:
+            message = error.read().decode()
+            if error.code == 400 and 'input_fidelity' in message:
+                body.pop('input_fidelity'); response = post(body)
+            else:
+                raise SystemExit(f'{step}: HTTP {error.code} {message[:400]}')
     except urllib.error.HTTPError as error:
         raise SystemExit(f'{step}: HTTP {error.code} {error.read().decode()[:400]}')
     image = base64.b64decode(response['data'][0]['b64_json'])
     version = 1 + sum(1 for entry in ledger() if entry['step'] == step)
-    path = os.path.join(HERO, f'{step}.png')
+    path = os.path.join(folder, f'{name}.png')
     if os.path.exists(path):
-        os.replace(path, os.path.join(HERO, f'{step}.v{version - 1}.png'))
+        os.replace(path, os.path.join(folder, f'{name}.v{version - 1}.png'))
     with open(path, 'wb') as handle:
         handle.write(image)
     usage = response.get('usage') or {}
-    entry = {'step': step, 'version': version, 'source': source, 'endpoint': endpoint, 'model': MODEL, 'size': SIZE,
+    entry = {'step': step, 'version': version, 'source': source, 'endpoint': endpoint, 'model': MODEL, 'size': SIZE, 'input_fidelity': body.get('input_fidelity'),
              'prompt': prompt, 'usage': usage, 'cost': round(cost(usage), 4), 'seconds': round(time.time() - started, 1)}
     json.dump(ledger() + [entry], open(LEDGER, 'w'), indent=1)
     total = sum(item['cost'] for item in ledger())

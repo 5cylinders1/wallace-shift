@@ -1,42 +1,40 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { SplitText } from 'gsap/SplitText'
 import { useGSAP } from '@gsap/react'
-import { buildChapters } from '../content'
+import { buildSrc, type Build } from '../builds'
+import { DUR, MOTION_OK, STAGGER } from '../motion'
 import { href, onLink } from '../routes'
 
-gsap.registerPlugin(useGSAP, ScrollTrigger)
-
-const SRC = (name: string) => `/demos/cabinetry/hero/${name}.webp`
-/** Construction stages, bottom to top. Each later stage wipes in over the one before. */
-const STAGES = ['framing', 'roughin', 'drywall', 'cabinetry', 'finished'] as const
-/** Where each later stage's wipe runs, as fractions of the hero's scroll. */
-const WIPES: Record<string, [number, number]> = { roughin: [0.33, 0.43], drywall: [0.49, 0.59], cabinetry: [0.62, 0.72], finished: [0.78, 0.88] }
-const STAGE_ALT: Record<string, string> = {
-  framing: 'Bare wood framing',
-  roughin: 'Insulation, wiring and plumbing stubs',
-  drywall: 'Primed drywall and the first cabinet boxes',
-  cabinetry: 'Cabinets and the navy island installed, hood frame in raw wood',
-  finished: 'The finished kitchen',
-}
+gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText)
 
 /** The stacked phone and portrait-tablet layout; keep in sync with tambour.css. */
 const STACKED = '(max-width: 760px), (orientation: portrait) and (max-width: 1100px)'
 
-function chapterAt(progress: number): number {
+function chapterAt(build: Build, progress: number): number {
   let index = -1
-  buildChapters.forEach((chapter, n) => { if (progress >= chapter.at) index = n })
+  build.chapters.forEach((chapter, n) => { if (progress >= chapter.at) index = n })
   return index
 }
 
+interface Props {
+  build: Build
+  /** The intro shown before the build starts: kicker, h1 (with `titleId`), lede and actions. */
+  intro: ReactNode
+  titleId: string
+  /** Room pages run a shorter film than the home page. */
+  short?: boolean
+}
+
 /**
- * The home page hero: a kitchen built in stages as the visitor scrolls, from a
- * blueprint over bare studs, through a wireframe of the finished room, to the
- * kitchen itself. The stage is sticky inside a tall section; one GSAP timeline
- * is scrubbed by ScrollTrigger. Reduced motion gets the finished kitchen and a
- * list of the stages instead.
+ * A room built in stages as the visitor scrolls, from a blueprint over bare
+ * studs, through a wireframe of the finished room, to the room itself. The
+ * stage is sticky inside a tall section; one GSAP timeline is scrubbed by
+ * ScrollTrigger. Reduced motion gets the finished room and a list of the
+ * chapters, each with its still.
  */
-export default function BuildHero() {
+export default function BuildFilm({ build, intro, titleId, short = false }: Props) {
   const root = useRef<HTMLElement>(null)
   const [chapter, setChapter] = useState(-1)
 
@@ -85,7 +83,7 @@ export default function BuildHero() {
           invalidateOnRefresh: true,
         },
         onUpdate() {
-          const next = chapterAt(timeline.progress())
+          const next = chapterAt(build, timeline.progress())
           if (next !== shown) { shown = next; setChapter(next) }
         },
       })
@@ -93,26 +91,44 @@ export default function BuildHero() {
         .to(q('.tb-build-media'), { scale: 1.06, duration: 1 }, 0)
         .to(q('.tb-build-fill'), { scaleX: 1, duration: 1 }, 0)
         .to(q('.tb-build-shade'), { autoAlpha: 0.35, duration: 0.1 }, 0.03)
-        .to(card, { xPercent: 0, yPercent: 0, scale: 1, rotationY: 0, rotationX: 0, rotationZ: 0, duration: 0.14, ease: 'power1.inOut' }, 0.06)
+        .to(card, { xPercent: 0, yPercent: 0, scale: 1, rotationY: 0, rotationX: 0, rotationZ: 0, duration: 0.14, ease: 'hinge' }, 0.06)
         .to(card, { autoAlpha: 0, duration: 0.07 }, 0.19)
         .to(q('.tb-build-wireframe'), { autoAlpha: 1, duration: 0.05 }, 0.17)
-        .to(draw, { v: 1, duration: 0.18, ease: 'power1.inOut', onUpdate: write(wireframe, '--d', draw) }, 0.18)
+        .to(draw, { v: 1, duration: 0.18, ease: 'tambour', onUpdate: write(wireframe, '--d', draw) }, 0.18)
         .to(q('.tb-build-wireframe'), { autoAlpha: 0, duration: 0.06 }, 0.41)
         .to(q('.tb-build-shade'), { autoAlpha: 0.15, duration: 0.2 }, 0.6)
-      for (const [stage, [from, to]] of Object.entries(WIPES)) {
-        const layer = q(`.tb-build-wipe.is-${stage}`)[0] as HTMLElement | undefined
+      for (const stage of build.stages) {
+        if (!stage.wipe) continue
+        const [from, to] = stage.wipe
+        const layer = q(`.tb-build-wipe.is-${stage.id}`)[0] as HTMLElement | undefined
         const wipe = variable(layer, '--w')
-        timeline.to(wipe, { v: 1, duration: to - from, ease: 'power1.inOut', onUpdate: write(layer, '--w', wipe) }, from)
+        timeline.to(wipe, { v: 1, duration: to - from, ease: 'tambour', onUpdate: write(layer, '--w', wipe) }, from)
       }
       timeline.set({}, {}, 1)
       // Lets the frames be checked at exact positions in development.
-      if (import.meta.env.DEV) (window as unknown as { tambourBuild?: gsap.core.Timeline }).tambourBuild = timeline
+      if (import.meta.env.DEV) ((window as unknown as { tambourBuilds?: Record<string, gsap.core.Timeline> }).tambourBuilds ??= {})[build.id] = timeline
       return () => {
         for (const item of vars) item.el.style.removeProperty(item.name)
         setChapter(-1)
       }
     })
   }, { scope: root })
+
+  // Chapter titles are split into lines once; each time a chapter becomes
+  // active its lines rise into place, the way a drawer settles.
+  const splits = useRef<SplitText[]>([])
+  useGSAP(() => {
+    const mm = gsap.matchMedia()
+    mm.add(MOTION_OK, () => {
+      splits.current = gsap.utils.toArray<HTMLElement>('.tb-build-chapters h2', root.current).map(title => SplitText.create(title, { type: 'lines', mask: 'lines', linesClass: 'tb-line' }))
+      return () => { splits.current = [] }
+    })
+  }, { scope: root })
+  useGSAP(() => {
+    const split = splits.current[chapter]
+    if (!split) return
+    gsap.fromTo(split.lines, { yPercent: 110 }, { yPercent: 0, duration: DUR.rise, ease: 'drawer', stagger: STAGGER.lines, overwrite: true })
+  }, { scope: root, dependencies: [chapter] })
 
   const jump = (progress: number) => {
     const section = root.current
@@ -123,20 +139,22 @@ export default function BuildHero() {
     window.scrollTo({ top: top + run * progress + 2, behavior: 'smooth' })
   }
 
-  const last = buildChapters.length - 1
-  return <section ref={root} className={`tb-build ${chapter >= 0 ? 'is-playing' : ''}`} aria-labelledby="tb-hero-title">
+  const chapters = build.chapters
+  const last = chapters.length - 1
+  const count = (n: number) => <p className="tb-build-count"><span>{String(n + 1).padStart(2, '0')}</span> / {String(chapters.length).padStart(2, '0')}</p>
+  return <section ref={root} className={`tb-build ${short ? 'is-short' : ''} ${chapter >= 0 ? 'is-playing' : ''}`} aria-labelledby={titleId}>
     <div className="tb-build-stage">
       <div className="tb-build-frame">
-        <div className="tb-build-media" role="img" aria-label="A kitchen built in stages as you scroll: bare framing, rough-in, drywall, cabinetry and the finished room">
+        <div className="tb-build-media" role="img" aria-label={build.label}>
           <div className="tb-build-image">
-            {STAGES.map((stage, n) => <img key={stage} className={`tb-build-layer ${n ? `tb-build-wipe is-${stage}` : ''}`} src={SRC(stage)} alt=""
+            {build.stages.map((stage, n) => <img key={stage.id} className={`tb-build-layer ${n ? `tb-build-wipe is-${stage.id}` : ''}`} src={buildSrc(build, stage.id)} alt=""
               width="1536" height="1024" decoding="async" fetchPriority={n ? 'low' : 'high'} draggable={false} />)}
             <div className="tb-build-wireframe" aria-hidden="true">
-              <img src={SRC('wireframe')} alt="" width="1536" height="1024" decoding="async" draggable={false} />
+              <img src={buildSrc(build, 'wireframe')} alt="" width="1536" height="1024" decoding="async" draggable={false} />
               <span className="tb-build-scan" />
             </div>
             <div className="tb-build-blueprint" aria-hidden="true">
-              <img src={SRC('blueprint')} alt="" width="1536" height="1024" decoding="async" draggable={false} />
+              <img src={buildSrc(build, 'blueprint')} alt="" width="1536" height="1024" decoding="async" draggable={false} />
             </div>
           </div>
         </div>
@@ -145,23 +163,17 @@ export default function BuildHero() {
 
       <div className="tb-build-copy">
         <div className={`tb-build-intro ${chapter < 0 ? 'is-active' : ''}`}>
-          <p className="tb-label">Custom cabinetry · Kitchen &amp; bath remodels · Kansas City</p>
-          <h1 id="tb-hero-title" tabIndex={-1}>Made for one room. <em>Yours.</em></h1>
-          <p className="tb-build-lede">Tambour designs, builds and installs custom cabinetry, and remodels the kitchens and baths around it. Every piece is drawn for your walls and made in our Kansas City workshop.</p>
-          <div className="tb-actions">
-            <a className="tb-button tb-button-brass" href={href.page('consultation')} onClick={onLink}>Book a design consultation</a>
-            <a className="tb-button tb-button-line is-light" href={href.page('kitchens')} onClick={onLink}>See kitchens</a>
-          </div>
+          {intro}
           <p className="tb-build-cue" aria-hidden="true"><span /> Scroll to watch it built</p>
         </div>
-        <ol className="tb-build-chapters" aria-label="How a Tambour kitchen is built">
-          {buildChapters.map((item, n) => <li key={item.id} className={n === chapter ? 'is-active' : ''}>
-            <p className="tb-build-count"><span>{String(n + 1).padStart(2, '0')}</span> / {String(buildChapters.length).padStart(2, '0')}</p>
+        <ol className="tb-build-chapters" aria-label={build.listLabel}>
+          {chapters.map((item, n) => <li key={item.id} className={n === chapter ? 'is-active' : ''}>
+            {count(n)}
             <h2>{item.title}{item.em && <> <em>{item.em}</em></>}</h2>
             <p>{item.body}</p>
             {n === last && <div className="tb-actions">
-              <a className="tb-button tb-button-brass" href={href.page('consultation')} onClick={onLink} tabIndex={n === chapter ? 0 : -1}>Start your kitchen</a>
-              <a className="tb-button tb-button-line is-light" href={href.page('kitchens')} onClick={onLink} tabIndex={n === chapter ? 0 : -1}>See kitchens</a>
+              <a className="tb-button tb-button-brass" href={href.page('consultation')} onClick={onLink} tabIndex={n === chapter ? 0 : -1}>Book a design consultation</a>
+              {build.cta.page !== 'consultation' && <a className="tb-button tb-button-line is-light" href={href.page(build.cta.page)} onClick={onLink} tabIndex={n === chapter ? 0 : -1}>{build.cta.label}</a>}
             </div>}
           </li>)}
         </ol>
@@ -170,10 +182,10 @@ export default function BuildHero() {
       <div className="tb-build-progress">
         <div className="tb-build-track" aria-hidden="true"><span className="tb-build-fill" /></div>
         <ol className="tb-build-ticks">
-          {buildChapters.map((item, n) => <li key={item.id} style={{ left: `${item.at * 100}%` }}>
+          {chapters.map((item, n) => <li key={item.id} style={{ left: `${item.at * 100}%` }}>
             <button type="button" className={n === chapter ? 'is-active' : n < chapter ? 'is-done' : ''} onClick={() => jump(item.at + 0.02)}
               aria-current={n === chapter ? 'step' : undefined}>
-              <span className="tb-visually-hidden">Go to step {n + 1}: </span>{item.title.replace(/\.$/, '')}
+              <span className="tb-visually-hidden">Go to step {n + 1}: </span>{item.title.replace(/[.,]$/, '')}
             </button>
           </li>)}
         </ol>
@@ -181,8 +193,15 @@ export default function BuildHero() {
       </div>
     </div>
 
-    <ol className="tb-build-static" aria-label="From framing to finished">
-      {STAGES.map(stage => <li key={stage}><img src={SRC(stage)} alt={STAGE_ALT[stage]} width="1536" height="1024" loading="lazy" decoding="async" /><span>{STAGE_ALT[stage]}</span></li>)}
+    <ol className="tb-build-static" aria-label={build.listLabel}>
+      {chapters.map((item, n) => <li key={item.id}>
+        <img src={buildSrc(build, item.still)} alt={build.stages.find(stage => stage.id === item.still)?.alt ?? 'A blueprint perspective drawing of the room'}
+          width="1536" height="1024" loading="lazy" decoding="async" />
+        {count(n)}
+        <h3>{item.title}{item.em && <> <em>{item.em}</em></>}</h3>
+        <p>{item.body}</p>
+      </li>)}
+      <li className="tb-build-static-note"><p className="tb-build-note-static">Illustrative build sequence · generated imagery</p></li>
     </ol>
   </section>
 }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { savePlan, useBrief } from '../brief'
 import { href, onLink } from '../routes'
 import { estimate, money, roomOptions, scopes, sizes, tiers, type RoomId, type ScopeId, type TierId } from '../pricing'
+import Odometer from '../components/Odometer'
 import { ClosingCta, SectionHead } from '../components/Sections'
 
 function Segmented<T extends string>({ legend, name, value, options, onChange }: { legend: string; name: string; value: T; options: { id: T; label: string; detail: string }[]; onChange: (id: T) => void }) {
@@ -53,7 +54,7 @@ export default function InvestmentPage() {
     <section className="tb-page-head" aria-labelledby="tb-page-title">
       <div className="tb-wrap">
         <p className="tb-label">Investment</p>
-        <h1 id="tb-page-title" tabIndex={-1}>A planning range <em>for your room.</em></h1>
+        <h1 id="tb-page-title" tabIndex={-1} data-split>A planning range <em>for your room.</em></h1>
         <p className="tb-page-lede">Four questions, one range. It is built from the same per-foot figures we use to plan real projects, and it is not a quote: your proposal comes after we have measured the room.</p>
       </div>
     </section>
@@ -69,7 +70,7 @@ export default function InvestmentPage() {
 
         <div className="tb-planner-result" aria-live="polite">
           <p className="tb-label">Planning range</p>
-          <p className="tb-planner-range">{money(result.low)} <span>to</span> {money(result.high)}</p>
+          <p className="tb-planner-range"><Odometer value={money(result.low)} trigger="change" /> <span>to</span> <Odometer value={money(result.high)} trigger="change" /></p>
           <p className="tb-planner-label">{label}</p>
           <ul className="tb-planner-parts">
             {result.parts.map(part => <li key={part.label}>

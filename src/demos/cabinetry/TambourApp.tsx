@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { titles } from './content'
-import { useReveal } from './hooks'
-import { usePage } from './routes'
+import { usePageMotion } from './motion'
+import { scrollToHash, usePage } from './routes'
 import { DemoStrip, Footer, Header } from './components/Chrome'
 import ConsultationPage from './pages/ConsultationPage'
 import Home from './pages/Home'
@@ -18,11 +18,11 @@ export default function TambourApp() {
     document.title = titles[page.kind]
     // After an in-document navigation, move focus to the new page's heading
     // so keyboard and screen reader users land where sighted users do.
-    if (first.current) { first.current = false; return }
+    if (first.current) { first.current = false; if (window.location.hash) scrollToHash(window.location.hash); return }
     if (!window.location.hash) document.querySelector<HTMLElement>('main h1')?.focus({ preventScroll: true })
   }, [page.kind])
 
-  useReveal(page.kind)
+  usePageMotion(page.kind)
 
   return <div className={`tb-site is-${page.kind}`}>
     <a className="tb-skip" href="#main">Skip to content</a>

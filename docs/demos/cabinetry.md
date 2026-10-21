@@ -28,38 +28,47 @@ palette brief and scripts are gone.
 
 All one document (`routes.ts`), on `/tambour` or `/demos/cabinetry`:
 
-- `/` home: the build hero (`components/BuildHero.tsx`), brand statement,
-  kitchens/baths/built-ins chapters, the tambour door, workshop strip, material
-  library with a sample box, process, planning prices, FAQ, consultation CTA.
+- `/` home: the kitchen build film (`components/BuildFilm.tsx`), brand
+  statement, kitchens/baths/built-ins chapters (the bath and built-ins frames
+  build in place as they scroll, `components/FrameBuild.tsx`), the tambour
+  door, workshop strip, material library with a sample box, process, planning
+  prices, FAQ, consultation CTA.
 - `/kitchens`, `/baths`, `/built-ins`: one template (`pages/RoomPage.tsx`,
-  copy in `content.ts`). Kitchens adds an eight-point anatomy on a real photo
-  and the appliance-garage tambour.
+  copy in `content.ts`). Baths and built-ins open with their own build film
+  (a primary bath; a library wall). Kitchens keeps a photo hero and adds an
+  eight-point anatomy on a real photo and the appliance-garage tambour.
 - `/workshop`, `/investment` (planner), `/consultation` (four-step request,
   samples and planning range attached, unsent preview), `/photography`.
+
+Motion across the site follows `docs/demos/cabinetry-motion.md` (reel study,
+easing curves from cabinet hardware, motion map, measurements).
 
 `brief.ts` carries the samples and planning range between pages in
 sessionStorage. Nothing is sent anywhere.
 
-## Build hero
+## Build films
 
-- Section 560vh tall (470vh stacked), stage `position: sticky` under the
-  header. One GSAP timeline, scrubbed by ScrollTrigger (`scrub: 0.8`), laid out
-  on 0–1; `buildChapters` in `content.ts` gives each chapter's start.
-- Layers in one 3:2 box sized like `object-fit: cover` with container
-  queries: framing, then roughin, drywall, cabinetry, finished, each revealed
-  by a feathered diagonal mask (`--w`); the wireframe (`mix-blend-mode:
-  screen`) draws upward with a scan line (`--d`); the blueprint is a 3D card
-  that tweens from held to full frame and fades. The mask variables are
-  tweened as plain numbers and written in `onUpdate`, because GSAP did not
-  keep them through StrictMode revert and refresh.
+- Three rooms, configured in `builds.ts` (stages, wipe positions, chapters and
+  their stills): kitchen on the home page (560vh, 470vh stacked), bath and
+  library on their room pages (460vh, 400vh stacked). One pinned film per page.
+- The stage is `position: sticky` under the header. One GSAP timeline, scrubbed
+  by ScrollTrigger (`scrub: 0.8`), laid out on 0–1 against the config.
+- Layers sit in one 3:2 box sized like `object-fit: cover` with container
+  queries. Each later stage is revealed by a feathered diagonal mask (`--w`);
+  the wireframe (`mix-blend-mode: screen`) draws upward with a scan line (`--d`,
+  moved with a transform); the blueprint is a 3D card that tweens from held to
+  full frame and fades. Bath and library end on an evening "lights on" frame,
+  as the reel's rooms do. Mask variables are tweened as plain numbers and
+  written in `onUpdate`, so a revert or refresh never leaves a stage unmasked.
+- Chapter titles are split into lines once and rise each time a chapter
+  becomes active.
 - Stacked layout (phones, portrait tablets up to 1100px): film on top, words
-  below. `STACKED` in BuildHero.tsx and the media query in `tambour.css` must
+  below. `STACKED` in BuildFilm.tsx and the media query in `tambour.css` must
   match.
-- Reduced motion: no pinning or timeline; the finished kitchen with the intro,
-  and a row of the five stages beneath.
-- Development only: `window.tambourBuild` is the timeline, so frames can be
-  checked with `tambourBuild.scrollTrigger.disable(false); tambourBuild.progress(p)`
-  (the hidden browser pane throttles the scrub).
+- Reduced motion: no timeline; the finished room with the intro, then every
+  chapter as a still with its text, and the generated-imagery note.
+- Development only: `window.tambourBuilds.<id>` is each timeline, so frames can
+  be checked with `.scrollTrigger.disable(false); .progress(p)`.
 
 ## Generated imagery
 

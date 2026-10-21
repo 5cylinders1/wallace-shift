@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 
 /**
  * Tambour is one document with several pages. On the contractors host it
@@ -32,10 +33,28 @@ export function navigate(to: string) {
     document.getElementById(url.hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     return
   }
-  window.history.pushState(null, '', url)
-  window.dispatchEvent(new PopStateEvent('popstate'))
-  if (url.hash) requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById(url.hash.slice(1))?.scrollIntoView({ block: 'start' })))
-  else window.scrollTo({ top: 0 })
+  // The new page is rendered synchronously inside the update, so the
+  // transition captures it at the top: it rolls up over the old page.
+  const swap = () => {
+    flushSync(() => {
+      window.history.pushState(null, '', url)
+      window.dispatchEvent(new PopStateEvent('popstate'))
+    })
+    if (!url.hash) window.scrollTo({ top: 0 })
+  }
+  const root = document.documentElement
+  if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    root.dataset.transition = 'page'
+    document.startViewTransition(swap).finished.finally(() => { delete root.dataset.transition })
+  } else swap()
+  if (url.hash) scrollToHash(url.hash)
+}
+
+/** Scrolls to an anchor once it exists: parts of a page can render a moment after it. */
+export function scrollToHash(hash: string, tries = 90) {
+  const target = document.getElementById(hash.slice(1))
+  if (target) { requestAnimationFrame(() => target.scrollIntoView({ block: 'start' })); return }
+  if (tries > 0) requestAnimationFrame(() => scrollToHash(hash, tries - 1))
 }
 
 export function usePage(): Page {
