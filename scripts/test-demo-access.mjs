@@ -75,6 +75,7 @@ beforeEach(async () => {
   process.env.DEMO_ACCESS_SECRET = 'fixture-secret-not-a-real-secret-0123456789'
   process.env.RESEND_API_KEY = 'fixture-resend-key'
   process.env.CONTACT_TO_EMAIL = 'review@example.test'
+  process.env.DEMO_REQUEST_TO_EMAIL = 'demo-review@example.test'
   process.env.CONTACT_FROM_EMAIL = 'Wallace Shift <site@example.test>'
   sends = []; providerStatus = 200; failFetch = false; redisMode = 'ok'; store = createAgreementTestStore()
   console.error = () => undefined
@@ -170,7 +171,7 @@ test('successful request emails only reviewer and returns no invitation, secret,
   assert.equal(response.statusCode, 200)
   assert.deepEqual(response.body, { ok: true })
   assert.equal(response.headers['set-cookie'], undefined)
-  assert.deepEqual(sends[0].to, ['review@example.test'])
+  assert.deepEqual(sends[0].to, ['demo-review@example.test'])
   assert.equal(sends[0].reply_to, payload().email)
   const token = getInvite()
   assert.ok(token)

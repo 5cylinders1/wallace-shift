@@ -41,7 +41,7 @@ Signing in as the owner creates no visitor agreement acceptance record.
 
 1. A visitor follows a demo link to `/request-demo/` and submits their name,
    business, email, optional website/message, and requested demo.
-2. The form emails `CONTACT_TO_EMAIL` with those details and a private invitation.
+2. The form emails `DEMO_REQUEST_TO_EMAIL` with those details and a private invitation. If that dedicated setting is absent, it falls back to `CONTACT_TO_EMAIL` for compatibility.
 3. Review the request. If approved, manually send that invitation to the approved
    email address. The application does not automatically invite the prospect.
 4. The recipient opens `/demo-agreement/`, verifies the approved email with a
@@ -86,6 +86,7 @@ Set these server-only values before production use:
 | `RESEND_API_KEY` | Email provider credential. |
 | `CONTACT_FROM_EMAIL` | Verified sender address for requests and verification codes. |
 | `CONTACT_TO_EMAIL` | Owner inbox receiving requests and invitations for manual approval. |
+| `DEMO_REQUEST_TO_EMAIL` | Inbox receiving demo access requests for manual approval. Set this to `matthew@wallaceshift.com`; defaults to `CONTACT_TO_EMAIL` when unset. |
 | `DEMO_AUDIT_REDIS_URL` | HTTPS origin of a Redis REST service supporting `/pipeline` and `EVAL`. |
 | `DEMO_AUDIT_REDIS_TOKEN` | Corresponding server-only read/write token. |
 

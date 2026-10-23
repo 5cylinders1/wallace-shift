@@ -61,7 +61,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     const demo = demoKey(body.demo)
     const apiKey = process.env.RESEND_API_KEY?.trim()
-    const to = process.env.CONTACT_TO_EMAIL?.trim()
+    const to = (process.env.DEMO_REQUEST_TO_EMAIL ?? process.env.CONTACT_TO_EMAIL)?.trim()
     const from = process.env.CONTACT_FROM_EMAIL?.trim()
     if (!apiKey || !to || !from || /[\r\n]/.test(to + from)) throw new DemoError('not_configured', 503)
     const token = createDemoInvite(demo, email)
