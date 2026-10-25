@@ -70,11 +70,22 @@ test('published article contains complete crawlable text and unique canonical me
   assert.doesNotMatch(html, /<script(?! type="application\/ld\+json")/)
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])
   const post = schema['@graph'].find(item => item['@type'] === 'BlogPosting')
+  assert.equal(post.author['@type'], 'Person')
   assert.equal(post.author.name, 'Matthew Wallace')
   assert.equal(post.author.url, 'https://wallaceshift.com/about')
   assert.equal(post.datePublished, '2026-10-23T09:00:00-05:00')
   assert.equal(post.dateModified, undefined)
   assert.ok(schema['@graph'].some(item => item['@type'] === 'BreadcrumbList'))
+})
+
+test('organizational authors retain their identity in the byline and article schema', async () => {
+  const { postsDir } = await fixture({ 'organization.md': article({ author: { name: 'Wallace Shift', url: '/about', type: 'Organization' } }) })
+  const posts = await loadPosts(postsDir, now)
+  const html = postDocument(posts[0], posts, '/style.css')
+  const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])
+  const post = schema['@graph'].find(item => item['@type'] === 'BlogPosting')
+  assert.deepEqual(post.author, { '@type': 'Organization', name: 'Wallace Shift', url: 'https://wallaceshift.com/about' })
+  assert.match(html, /By Wallace Shift/)
 })
 
 test('hub becomes indexable when the first article is published', async () => {
@@ -104,6 +115,7 @@ test('invalid status, metadata, slugs, and dates fail with actionable errors', a
     [{ publishedAt: '2026-10-23' }, /timezone/], [{ publishedAt: '2026-02-30T09:00:00Z' }, /calendar/],
     [{ updatedAt: '2026-10-22T09:00:00Z' }, /cannot precede/], [{ updatedAt: '2099-01-01T09:00:00Z' }, /cannot be in the future/],
     [{ author: { name: 'Someone', url: 'javascript:alert(1)' } }, /profile URL/],
+    [{ author: { name: 'Someone', url: '/about', type: 'Thing' } }, /author.type/],
     [{ image: { src: '//example.test/image.jpg', alt: 'image' } }, /image.src/],
   ]) {
     const { postsDir } = await fixture({ 'invalid.md': article(overrides) })

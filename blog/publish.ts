@@ -72,7 +72,7 @@ export function postDocument(post: BlogPost, posts: BlogPost[], cssPath: string)
     schema: [
       { '@type': 'BlogPosting', '@id': `${url}#article`, url, mainEntityOfPage: { '@type': 'WebPage', '@id': url }, headline: post.title, description: post.description,
         abstract: post.answer, articleSection: post.category, inLanguage: 'en', datePublished: post.publishedAt, ...(post.updatedAt ? { dateModified: post.updatedAt } : {}),
-        ...(post.image ? { image: [absolute(post.image.src)] } : {}), author: { '@type': 'Person', name: post.author.name, url: absolute(post.author.url) }, publisher: organization,
+        ...(post.image ? { image: [absolute(post.image.src)] } : {}), author: { '@type': post.author.type ?? 'Person', name: post.author.name, url: absolute(post.author.url) }, publisher: organization,
         isPartOf: { '@type': 'Blog', '@id': `${BLOG_ORIGIN}/blog#blog` } },
       { '@type': 'BreadcrumbList', itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: BLOG_ORIGIN },
