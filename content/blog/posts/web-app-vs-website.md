@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: web-app-vs-website
 title: "Web App vs. Website: What Does Your Business Actually Need?"
 description: "Compare websites, web apps, and existing software by the work they need to support. Includes a decision guide and a practical project brief."
@@ -77,6 +78,8 @@ Low-code tools are another implementation option within that evaluation. For exa
 For every route, record the same things: required behavior, unresolved gaps, implementation work, ongoing ownership, and an exit plan. Avoid comparing a basic subscription with a custom proposal that includes migration, training, support, and several integrations as if the scopes were equivalent.
 
 Our [automation starting guide](/blog/save-time-with-automation-stop-losing-hours-to-busy-work) can help when the main difficulty is a repeated handoff between tools rather than the absence of a system.
+
+Once that workflow is defined, use the [automation tool comparison](/blog/small-business-automation-tools) to test connectors, exceptions, and operating responsibilities.
 
 ## A worked example: keep the website, solve the dispatch problem
 

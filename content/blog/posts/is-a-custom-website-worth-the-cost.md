@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: is-a-custom-website-worth-the-cost
 title: "Is a Custom Website Worth the Cost? A Practical Comparison"
 description: "Evaluate a custom website using comparable scope, operating costs, internal time, and realistic assumptions. Includes a total-cost worksheet and example."
@@ -34,6 +35,8 @@ Set a shared brief covering:
 Then list optional differences separately. Original art direction may be valuable, but it should be visible as a choice. A customer portal is a different capability and should not be hidden inside a vague “premium design” comparison.
 
 Custom visual design also does not necessarily mean a custom backend. Ask what is actually being created, adapted, or connected. A design built on an existing CMS can have a different cost structure from a business application with accounts and operational data.
+
+Our [custom-versus-template guide](/blog/custom-website-vs-template) helps separate essential requirements from optional tailoring before you compare quotes.
 
 ## Identify the problem the extra spending addresses
 

@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: web-design-agency-vs-freelancer
 title: "Web Design Agency vs. Freelancer: Which Fits Your Project?"
 description: "Compare a web design agency and a freelancer by delivery responsibilities, coordination, continuity, ownership, and support—not labels alone."
@@ -33,6 +34,8 @@ Useful questions include:
 - Will the people shown in the proposal be available for this project?
 
 Treat an unnamed future resource as an open question. A list of capabilities on a company website is not the same as a commitment to provide them on your project.
+
+Once delivery responsibilities are clear, use our [provider evaluation guide](/blog/how-to-choose-a-web-design-agency) to compare relevant work, scope, and handover evidence.
 
 ## Match the delivery model to the work
 

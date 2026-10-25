@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: automate-client-onboarding
 title: "How to Automate Client Onboarding Without Losing the Human Handoff"
 description: "Map client onboarding from an agreed start to a verified handoff. Includes prerequisites, failure handling, a worked example, and a copyable workflow brief."
@@ -138,6 +139,8 @@ Have the people who sell, administer, and deliver the service review the same br
 ### Do we need a separate onboarding platform?
 
 Not necessarily. Your existing CRM, project system, forms, and scheduling tool may support the required steps. Confirm the exact actions, permissions, and failure visibility before adding another platform. More connections also create more handoffs to maintain.
+
+Use the [automation tool acceptance test](/blog/small-business-automation-tools) to compare those capabilities against the onboarding workflow you have defined.
 
 ### Can onboarding be completely automatic?
 

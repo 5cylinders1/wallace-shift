@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: custom-website-vs-template
 title: "Custom Website vs. Template: Choose Around Your Requirements"
 description: "Compare custom and template websites by content, design, editing, functionality, and portability. Use a requirements worksheet to choose what fits."
@@ -72,6 +73,8 @@ For each difficult requirement, ask:
 
 A clearer service comparison might need content and component work. A customer portal with private job records introduces separate questions about identity, access, data, and ongoing operation. It should not appear in a website proposal as an incidental design feature.
 
+Use the [website-or-web-app decision guide](/blog/web-app-vs-website) to separate public-facing pages from ongoing operational work.
+
 When assessing integrations, demonstrate the whole task. Submitting a form is only one step if the business also needs a correctly assigned record in its CRM. Our [guide to reducing repetitive work](/blog/save-time-with-automation-stop-losing-hours-to-busy-work) explains how to map that handoff before choosing tools.
 
 ## Evaluate the result, including its quality checks
@@ -108,6 +111,8 @@ For each requirement, record why it matters and whether it is essential or optio
 | Support a future handover | Explain access, export, and operating dependencies |
 
 Add a “cost of meeting the requirement” note beside any gap. If a template needs extensive alterations to meet several essential requirements, compare that actual implementation scope with an original design. Do not compare an unmodified demo price with a completed custom project.
+
+The [custom website cost guide](/blog/is-a-custom-website-worth-the-cost) shows how to compare those proposals over the same period.
 
 ## A hypothetical worked example
 

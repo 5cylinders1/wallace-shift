@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: rebrand-or-redesign-website
 title: "Should You Rebrand or Redesign Your Website? Start With What Changed"
 description: "Separate a brand problem from a website problem before setting the scope. Includes examples, a decision worksheet, and questions for your project brief."
@@ -88,6 +89,8 @@ Clarifying the offer and intended buyer should come before the detailed page des
 A fictional maintenance company uses three versions of its logo and conflicting colors across its website, proposals, and vehicles. Customers understand the service, and the team wants to remain in the same market.
 
 A visual identity refresh and a simple usage guide may address the inconsistency. Scope the affected website components without assuming every page, URL, and system needs replacement.
+
+The [website credibility review](/blog/website-credibility-and-trust) can help separate presentation inconsistencies from gaps in the evidence supporting your claims.
 
 These examples illustrate decisions, not measured customer outcomes.
 

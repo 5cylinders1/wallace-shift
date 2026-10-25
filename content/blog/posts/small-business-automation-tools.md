@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: small-business-automation-tools
 title: "Small Business Automation Tools: How to Choose What Fits"
 description: "Compare native automation, Zapier, Make, n8n, and custom integrations by workflow fit, usage, maintenance, and recovery when something fails."
@@ -124,6 +125,8 @@ Use one copy per candidate. Record evidence rather than a score based on impress
 | Decision | Keep, change, or reject, with the unresolved reason |
 
 Do the review with the person who will own the daily process. Their ability to find an exception matters as much as the builder's ability to make a demonstration succeed.
+
+For a complete process to apply the test to, use the [client onboarding workflow guide](/blog/automate-client-onboarding), including its duplicate and partial-failure checks.
 
 ## Common questions
 

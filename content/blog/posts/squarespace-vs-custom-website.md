@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: squarespace-vs-custom-website
 title: "Squarespace vs. a Custom Website: Should Your Business Move?"
 description: "Decide whether to improve your Squarespace site, extend it, or commission custom development using real requirements, costs, and a practical trial."
@@ -49,6 +50,8 @@ An existing Squarespace website can also sit alongside another application. Keep
 
 Do not let the proposal blur a visual redesign with a business-system build. List the pages, actions, integrations, and administrative controls the finished work must include. If independent editing matters, specify exactly which changes the business owner needs to make without contacting a developer.
 
+Our [custom-versus-template requirements guide](/blog/custom-website-vs-template) helps distinguish design choices from platform and functionality constraints.
+
 ## Check Squarespace's actual boundaries
 
 Squarespace supports code blocks, code injection, custom CSS, and embedded content, with availability depending on the feature and plan. It does not support running your own server-side code inside the platform. The same documentation says custom-code modifications fall outside Squarespace's support scope. [Squarespace's custom-code guidance](https://support.squarespace.com/hc/en-us/articles/205815928-Add-custom-code-to-your-site)
@@ -96,6 +99,8 @@ These are decision examples, not customer stories or claims about a tested integ
 Request estimates against the same requirements and time period. Account for discovery, design, development, content work, integrations, migration, hosting or subscriptions, maintenance, and ongoing changes.
 
 Include the work your own team will do. Someone must supply accurate content, review the result, make decisions, and learn the new process. A cheaper proposal can simply leave more of that work outside its scope.
+
+Use the [website cost comparison worksheet](/blog/is-a-custom-website-worth-the-cost) to record those assumptions and compare equivalent scopes over the same period.
 
 Ask what support covers. Is it failure recovery, routine updates, minor adjustments, or new functionality? Who pays for connected services? What happens if the original developer becomes unavailable? Answers should be written into the engagement.
 

@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: why-your-website-is-not-generating-inquiries
 title: "Why Your Website Is Not Generating Inquiries: Find the Actual Bottleneck"
 description: "Trace the gap between website visits and suitable inquiries. Check traffic, measurement, forms, and follow-up with a copyable diagnostic worksheet."
@@ -68,6 +69,8 @@ Open an important landing page as someone with the relevant customer problem. Id
 Ask someone unfamiliar with the business to explain those things after reading the page. Avoid prompting them toward the answer. Record what they say and where they hesitate; a small feedback exercise helps find questions, even though it does not represent every visitor.
 
 Check the transition from the page that brought them there. A link promising emergency repairs should not arrive on a broad page that requires hunting for availability. A commercial service should not rely entirely on residential examples.
+
+Where the hesitation concerns who does the work or why a claim should be believed, use the [website credibility review](/blog/website-credibility-and-trust) to identify the missing evidence.
 
 For guidance on building the underlying offer, proof, and contact path, see our [service-business website inquiry guide](/blog/what-your-service-website-must-have-to-get-more-inquiries). Here, the task is to identify which part of that journey has evidence of a problem.
 

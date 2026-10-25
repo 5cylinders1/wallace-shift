@@ -1,6 +1,7 @@
 ---
 status: published
 publishedAt: "2026-10-25T06:34:58Z"
+updatedAt: "2026-10-25T18:58:05Z"
 slug: what-your-service-website-must-have-to-get-more-inquiries
 title: "What Should a Service Business Website Include to Get More Inquiries?"
 description: "A practical guide to clear service pages, credible proof, contact forms, mobile usability, and reliable follow-up. Includes a printable website checklist."
@@ -38,6 +39,21 @@ Use this guide to review the whole journey before deciding what to change. The g
 
 These are review areas, not a formula that guarantees more leads. Your results also depend on the audience reaching the site, your offer, demand, and the way your business handles inquiries.
 
+## How to build the inquiry journey in order
+
+Start with the customer you want to help and the request your team can handle. Write down what counts as a suitable inquiry: the service needed, the area covered, and any essential information required before you can respond.
+
+Then build the journey in this order:
+
+1. **Plan the route.** Identify the page people will enter through, the questions it must answer, and the contact action it leads to.
+2. **Prepare the explanation and proof.** Write the service scope and gather accurate examples, photographs, or qualifications that support it.
+3. **Build the page and contact task together.** The form or booking flow should match the promise on the page and ask for information the team actually needs.
+4. **Connect the destination.** Decide where the request goes, who owns it, and how missing or duplicate information is handled.
+5. **Test the complete task.** Follow an ordinary request on a phone and a computer, then verify receipt and the next action with the responsible person.
+6. **Measure suitable completed inquiries.** Keep unsuccessful attempts, duplicate contacts, and unrelated messages distinguishable from the opportunities the website is meant to support.
+
+Work through the sections below as you complete each stage. You can apply the sequence to a new website or a focused improvement to an existing one.
+
 ## 1. Make your offer clear at the top of the page
 
 Start with a headline that identifies the service and the people it is for. Include your service area when location affects whether you can take the job. Supporting text can explain the outcome, the scope, or a useful point of difference.
@@ -65,6 +81,8 @@ For project examples, explain:
 A detailed description can be useful even when you do not have a measured financial result. Label concepts and demonstrations clearly. Avoid presenting a mockup as completed client work or adding a percentage improvement that was never measured.
 
 Place a relevant example near the service or decision it supports. A testimonials or portfolio page can still be useful as a fuller collection; visitors should also encounter helpful evidence while reading about the work they need.
+
+For a closer review of the claims, evidence, and presentation on your pages, use our [website credibility and trust guide](/blog/website-credibility-and-trust).
 
 ## 3. Ask for the information you need to handle the inquiry
 
@@ -134,6 +152,8 @@ Choose a consistent definition and record enough information to distinguish spam
 For illustration, if 500 measured sessions produce five completed inquiries, that is one inquiry per 100 sessions. Fifteen inquiries from the same number of sessions would be three per 100. These are hypothetical numbers to explain the calculation, not an industry benchmark or a forecast. They also do not account for inquiry quality.
 
 Compare periods using the same measurement method, and consider changes in traffic sources, seasonality, advertising, or your offer. With low volumes, a small number of inquiries can noticeably change the percentage.
+
+If the numbers and the requests your team receives do not line up, our [guide to diagnosing missing website inquiries](/blog/why-your-website-is-not-generating-inquiries) helps trace the gap from traffic through submission, delivery, and follow-up.
 
 ## Choose the next fixes before deciding on a redesign
 

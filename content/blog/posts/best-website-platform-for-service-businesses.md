@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: best-website-platform-for-service-businesses
 title: "What Is the Best Website Platform for a Service Business?"
 description: "Choose a website platform around your service business, editing team, inquiry process, maintenance needs, and ability to move later."
@@ -62,6 +63,8 @@ Wix documents that its sites operate on Wix's infrastructure. Owning your conten
 
 Neither point makes the product unsuitable. They help you decide whether the operating model fits your plans.
 
+If you already use Squarespace, the [stay, extend, or rebuild guide](/blog/squarespace-vs-custom-website) helps evaluate whether a particular limitation warrants a move.
+
 ### Webflow: evaluate the content model as well as the design
 
 For repeated content such as articles or team profiles, Webflow uses CMS Collections with shared fields and templates. [Webflow's CMS introduction](https://help.webflow.com/hc/en-us/articles/33961307099027-Intro-to-the-Webflow-CMS)
@@ -73,6 +76,8 @@ In a demonstration, ask someone to add the next real item rather than merely rep
 WordPress.com includes managed hosting, while independently hosted WordPress uses a hosting provider you choose. Specify which configuration a proposal means before comparing responsibility or cost. [WordPress.com and WordPress.org explained](https://wordpress.com/support/com-vs-org/)
 
 For an independently hosted proposal, ask for the host, theme, major extensions, editor, and maintenance arrangement. Two proposals labeled “WordPress” can create very different daily experiences.
+
+If Webflow and WordPress make your shortlist, use the [same-task platform comparison](/blog/webflow-vs-wordpress-for-small-business) to test editing, inquiry delivery, and ownership.
 
 ### Custom development: define the service behind the code
 

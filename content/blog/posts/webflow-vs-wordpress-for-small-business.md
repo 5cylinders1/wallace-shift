@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: webflow-vs-wordpress-for-small-business
 title: "Webflow vs. WordPress for a Small Business: Which Fits Your Team?"
 description: "Compare Webflow and WordPress through everyday editing, forms, maintenance, recovery, portability, and a practical trial using the same website tasks."
@@ -19,6 +20,8 @@ A small business choosing between Webflow and WordPress needs more than a design
 Our recommendation is to compare the complete proposed setups through those everyday tasks. A well-built site with clear ownership is a different proposition from a demonstration that only its creator understands.
 
 This guide uses a Webflow-hosted website and independently hosted WordPress as the main comparison. WordPress.com is a separate managed-hosting option; it should be evaluated under its own plan and service terms rather than assumed to have the same operating arrangement. [WordPress.com versus WordPress.org](https://wordpress.com/support/com-vs-org/)
+
+If your shortlist is still open, first [compare website platforms against your business requirements](/blog/best-website-platform-for-service-businesses).
 
 Wallace Shift builds custom websites and software. The framework below is intended to help you assess either proposal without assuming a custom build or a particular platform is automatically preferable.
 

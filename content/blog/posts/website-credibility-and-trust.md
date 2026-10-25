@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: website-credibility-and-trust
 title: "Website Credibility and Trust: What Makes a Business Look Reliable?"
 description: "Review the claims, evidence, business details, and interactions that help visitors judge your website. Includes a copyable credibility worksheet."
@@ -137,4 +138,8 @@ Only if the existing structure prevents the needed improvements. Missing details
 
 ## Turn the findings into a clear scope
 
-Choose the page with the clearest customer question, complete the worksheet, and identify the evidence or behavior that needs attention. If you want help turning those findings into website improvements, [tell Wallace Shift what needs to change](/contact).
+Choose the page with the clearest customer question, complete the worksheet, and identify the evidence or behavior that needs attention.
+
+If your concern is a shortage of inquiries, [diagnose the inquiry journey](/blog/why-your-website-is-not-generating-inquiries) before attributing the result to appearance.
+
+If you want help turning those findings into website improvements, [tell Wallace Shift what needs to change](/contact).

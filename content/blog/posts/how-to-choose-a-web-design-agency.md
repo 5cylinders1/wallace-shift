@@ -1,5 +1,6 @@
 ---
-status: draft
+status: published
+publishedAt: "2026-10-25T19:14:48Z"
 slug: how-to-choose-a-web-design-agency
 title: "How to Choose a Web Design Agency: A Practical Evaluation Guide"
 description: "Choose a web design agency using a clear brief, evidence, comparable proposals, and ownership checks. Includes a reusable evaluation worksheet."
@@ -58,6 +59,8 @@ Ask how decisions are recorded and where feedback goes. A useful answer describe
 
 Also discuss your side of the process. If your team cannot provide photographs or approve content before a fixed date, that dependency belongs in the plan. An agency cannot remove it merely by promising a quick launch.
 
+To compare delivery arrangements, see [how an agency and a freelancer divide the work](/blog/web-design-agency-vs-freelancer).
+
 ## Ask what quality means in the scope
 
 Words such as “responsive,” “accessible,” and “SEO-ready” need a practical definition. Request the work and evidence behind each claim.
@@ -85,6 +88,8 @@ Give each shortlisted agency the same core brief, then record where the proposal
 Ask for exclusions as well as inclusions. A proposal may include an inquiry form but exclude a CRM integration. Another may assume you will upload all content. Neither is automatically unreasonable; both affect your workload and total cost.
 
 Discuss changes before they happen. How is a new requirement estimated? Who approves it? Can the launch proceed without it? A written change process helps keep a useful idea from silently becoming an unexpected obligation.
+
+For a worked comparison that includes recurring costs and internal time, use the [website cost worksheet](/blog/is-a-custom-website-worth-the-cost).
 
 ## Check ownership, access, and the exit route
 
