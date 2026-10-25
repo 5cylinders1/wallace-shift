@@ -196,7 +196,7 @@ export function DemoAgreementPage() {
       <header className="demo-access__header">
         <a className="demo-access__brand" href="https://www.wallaceshift.com/" aria-label="Wallace Shift home">
           <img src="/brand/wallace-shift-logo-white.svg" alt="" width="66" height="40" />
-          <span>WALLACE SHIFT<span>Design. Technology. Momentum.</span></span>
+          <span>WALLACE SHIFT<span>Software. Workflows. Progress.</span></span>
         </a>
         <a className="demo-access__back" href="/request-demo/">Request a demo <span aria-hidden="true">↗</span></a>
       </header>

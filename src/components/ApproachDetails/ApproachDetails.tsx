@@ -108,7 +108,7 @@ export function ApproachDetails() {
             <Reveal className="approach-details__studio-intro">
               <p className="approach-details__eyebrow">{approachProof.eyebrow}</p>
               <h2 id={`${tabId}-studio-heading`} className="approach-details__heading">
-                Two people.<br /><span className="accent-serif">The whole studio.</span>
+                Two people.<br /><span className="accent-serif">Direct involvement.</span>
               </h2>
               <p className="approach-details__studio-note">{approachProof.paragraphs[1]}</p>
               <PageLink href={approachProof.proofHref} className="approach-details__text-link">
@@ -148,7 +148,7 @@ export function ApproachDetails() {
                     onError={() => setFailedSamples(current => [...current, sample.href])}
                   />
                   <span className="approach-details__work-copy">
-                    <span className="approach-details__eyebrow">A recent build</span>
+                    <span className="approach-details__eyebrow">Our own venture</span>
                     <strong>{sample.name}</strong>
                     <span>{sample.kind}</span>
                   </span>
@@ -179,7 +179,7 @@ export function ApproachDetails() {
           <Reveal className="approach-details__closing">
             <div>
               <p className="approach-details__eyebrow">Your next move</p>
-              <h2>What could<br /><span className="accent-serif">shift for you?</span></h2>
+              <h2>Where does<br /><span className="accent-serif">work get stuck?</span></h2>
             </div>
             <div className="approach-details__closing-copy">
               <p>{approachCta.supporting}</p>

@@ -17,8 +17,8 @@ export function AboutPage() {
         <div className="container">
           <Reveal className="about-section-head">
             <p className="about-kicker">01 / Your people</p>
-            <h2 id="about-people-title">You know our names.<br /><span className="accent-serif">We know your project.</span></h2>
-            <p>From the first conversation to the final detail, you work directly with the people responsible for the result.</p>
+            <h2 id="about-people-title">Know your people.<br /><span className="accent-serif">Understand your system.</span></h2>
+            <p>From the first conversation through the build and handover, you work directly with the people responsible for your project.</p>
           </Reveal>
           <div className="about-people__grid">
             {aboutPeople.map((person) => (
@@ -47,8 +47,8 @@ export function AboutPage() {
           </div>
           <div className="about-story__grid">
             <Reveal className="about-story__statement">
-              <h2 id="about-story-title">The size is<br /><span className="accent-serif">the point.</span></h2>
-              <p>A direct line to the people<br />who care about the details.</p>
+              <h2 id="about-story-title">Close to<br /><span className="accent-serif">the work.</span></h2>
+              <p>A direct line from your process<br />to the person building the system.</p>
               <div className="about-story__mark" aria-hidden="true"><span /><span /></div>
             </Reveal>
             <div className="about-story__prose">
@@ -99,8 +99,8 @@ export function AboutPage() {
             <h2 id="about-close-title">What are you<br /><span className="accent-serif">working toward?</span></h2>
           </Reveal>
           <Reveal className="about-close__aside" delay={0.1}>
-            <p>You know what is not working better than we do. Start there.</p>
-            <PageLink href="/contact" className="about-close__button">Start a conversation <span aria-hidden="true">↗</span></PageLink>
+            <p>Start with a missed follow-up, a repeated task, or information your team cannot easily find. We can work through what the system needs to do.</p>
+            <PageLink href="/contact" className="about-close__button">Discuss your workflow <span aria-hidden="true">↗</span></PageLink>
             <PageLink href="/services" className="about-text-link">Explore what we do <span aria-hidden="true">↗</span></PageLink>
           </Reveal>
         </div>

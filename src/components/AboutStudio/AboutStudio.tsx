@@ -148,14 +148,14 @@ export function AboutStudio() {
           </div>
           {cinematic && <>
             <div className="about-journey__chapter about-journey__chapter--detail" aria-hidden={visibleChapter !== 1} inert={visibleChapter !== 1}>
-              <p className="about-kicker">Different perspectives. Shared direction.</p>
+              <p className="about-kicker">Your process. Our starting point.</p>
               <h2>Connected<br /><span className="accent-serif">by the work.</span></h2>
-              <p className="about-journey__lead">The conversation and the craft. Always in direct contact.</p>
+              <p className="about-journey__lead">Understand the handoffs, the tools, and the information your team needs.</p>
             </div>
             <div className="about-journey__chapter about-journey__chapter--alignment" aria-hidden={visibleChapter !== 2} inert={visibleChapter !== 2}>
-              <p className="about-kicker">Two people. One studio.</p>
+              <p className="about-kicker">Two people. One software company.</p>
               <h2>One shared<br /><span className="accent-serif">standard.</span></h2>
-              <p className="about-journey__lead">Different strengths, working as one. Meet the people behind Wallace Shift.</p>
+              <p className="about-journey__lead">Clear scope, working software, and a plan for what comes next.</p>
               <a className="about-text-link" href="#people">The people behind it <span aria-hidden="true">↓</span></a>
             </div>
           </>}
@@ -165,7 +165,7 @@ export function AboutStudio() {
               <span className="about-journey__chapter-label"><b>0{chapter + 1}</b> / {CHAPTERS[chapter]}</span>
               <span className="about-journey__scroll">Scroll to explore <span aria-hidden="true">↓</span></span>
               <span className="about-journey__progress" aria-hidden="true" />
-            </> : <span>Design × Technology</span>}
+            </> : <span>People × Systems</span>}
           </div>
         </div>
       </div>

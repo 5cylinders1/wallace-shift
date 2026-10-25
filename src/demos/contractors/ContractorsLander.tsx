@@ -55,12 +55,12 @@ export default function ContractorsLander() {
       <main id="main">
         <section className="ct-wrap ct-hero" aria-labelledby="ct-title">
           <div className="ct-hero-copy">
-            <p className="ct-eyebrow">Website demos for high-ticket trades</p>
-            <h1 id="ct-title">Websites that explain the work <em>before the first call.</em></h1>
-            <p className="ct-lede">Each demo is a working website for one trade, built around the questions its customers ask before they pick up the phone. Explore the collection, then request private access to the one that fits your business.</p>
+            <p className="ct-eyebrow">Business systems for contractors / Demos</p>
+            <h1 id="ct-title">Connect the first inquiry <em>to the work ahead.</em></h1>
+            <p className="ct-lede">Wallace Shift builds custom CRMs, practical AI integrations and workflow automation. These website and CRM concepts show parts of that wider system: helping customers explain what they need and helping your team see the next step.</p>
             <div className="ct-actions">
               <a className="ct-button" href="#demos">See the demos <Arrow /></a>
-              <a className="ct-button ct-button-line" href={accessHref(featured)}>Request access</a>
+              <a className="ct-button ct-button-line" href={`${STUDIO}/contact`}>Discuss your workflow</a>
             </div>
           </div>
           <a className="ct-hero-feature" href={demoHref(featured, host)}>
@@ -75,13 +75,13 @@ export default function ContractorsLander() {
       <div className="ct-wrap">
         <div className="ct-section-head">
           <p className="ct-eyebrow">The collection</p>
-          <h2 id="demos-title">One working demo per trade, <em>and growing.</em></h2>
+          <h2 id="demos-title">Explore the customer side <em>of the system.</em></h2>
         </div>
         <div className="ct-demos">{trades.map(demo => <DemoCard key={demo.id} demo={demo} host={host} />)}</div>
         <div className="ct-next">
-          <p className="ct-eyebrow">Next in the collection</p>
+          <p className="ct-eyebrow">Planned for the collection</p>
           <ul>{nextTrades.map(trade => <li key={trade}>{trade}</li>)}</ul>
-          <p className="ct-next-ask">Don’t see your trade? <a href={`${STUDIO}/contact`}>Tell us what you do <Arrow diagonal /></a></p>
+          <p className="ct-next-ask">Demo brands and project records are fictional. Live connections and automations require an agreed implementation. <a href={`${STUDIO}/contact`}>Tell us how your business works <Arrow diagonal /></a></p>
         </div>
       </div>
     </section>
@@ -89,13 +89,13 @@ export default function ContractorsLander() {
     <section id="built" className="ct-light ct-section ct-section-rule" aria-labelledby="built-title">
       <div className="ct-wrap">
         <div className="ct-section-head">
-          <p className="ct-eyebrow">What every demo is built to do</p>
-          <h2 id="built-title">Turn a worried search into a <em>booked visit.</em></h2>
+          <p className="ct-eyebrow">From customer questions to team action</p>
+          <h2 id="built-title">A clearer request. <em>A defined next step.</em></h2>
         </div>
         <ol className="ct-columns">
-          <li><span>01</span><h3>Show what customers can’t see</h3><p>The problem behind the wall, under the floor or up on the roof, made visible: live 3D sections, before-and-after views, previews on their own home.</p></li>
-          <li><span>02</span><h3>Answer the first question</h3><p>“Is this serious?” and “What will it cost?” answered on the page, with decoders, estimators and planning prices, so the next step is obvious.</p></li>
-          <li><span>03</span><h3>Make the request easy</h3><p>Short, stepped requests with photos attached, and room for the automations behind them: instant replies, reminders and follow-up.</p></li>
+          <li><span>01</span><h3>Help customers explain the need</h3><p>Trade-specific guides, visualizers and planning tools help customers describe the property, problem or project before the first conversation.</p></li>
+          <li><span>02</span><h3>Make the handoff clear</h3><p>Plan how enquiry details should reach the right customer record and team member. The roofing dashboard demonstrates a sample worklist and inspection workflow.</p></li>
+          <li><span>03</span><h3>Build around the next step</h3><p>We scope the connections, reminders and follow-up around your existing tools. Monitoring keeps agreed workflows working; new capabilities are scoped as the business changes.</p></li>
         </ol>
       </div>
     </section>
@@ -104,12 +104,12 @@ export default function ContractorsLander() {
       <div className="ct-wrap ct-access">
         <div>
           <p className="ct-eyebrow">How access works</p>
-          <h2 id="access-title">The demos are private. <em>Access takes a minute.</em></h2>
+          <h2 id="access-title">See how it could fit. <em>Request a closer look.</em></h2>
         </div>
         <ol className="ct-steps">
-          <li><span>1</span><div><h3>Request access</h3><p>Tell us your name, business and email.</p></div></li>
-          <li><span>2</span><div><h3>Verify and agree</h3><p>Confirm your email and accept a short evaluation and confidentiality agreement.</p></div></li>
-          <li><span>3</span><div><h3>Explore</h3><p>Your access lasts 72 hours, across every demo on that site.</p></div></li>
+          <li><span>1</span><div><h3>Request access</h3><p>Tell us your name, business and email. We review each request personally.</p></div></li>
+          <li><span>2</span><div><h3>Verify and agree</h3><p>If approved, use your invitation to verify your email and accept the evaluation and confidentiality agreement.</p></div></li>
+          <li><span>3</span><div><h3>Explore</h3><p>Invitations expire 72 hours after issue. Explore the examples, then discuss the workflow your business needs.</p></div></li>
         </ol>
         <a className="ct-button" href="/request-demo/">Request access <Arrow diagonal /></a>
       </div>
@@ -118,9 +118,9 @@ export default function ContractorsLander() {
     <footer className="ct-dark ct-footer">
       <div className="ct-wrap ct-footer-inner">
         <Wordmark />
-        <p>Design. Technology. Momentum.</p>
+        <p>Custom systems. Connected work.</p>
         <nav aria-label="Footer">
-          <a href={`${STUDIO}/`}>Studio</a>
+          <a href={`${STUDIO}/`}>Wallace Shift</a>
           <a href={`${STUDIO}/services`}>Services</a>
           <a href={`${STUDIO}/contact`}>Contact</a>
         </nav>

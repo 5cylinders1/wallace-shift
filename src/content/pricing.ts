@@ -16,7 +16,7 @@ export const pricingHero = {
   headlineLines: ['What a shift'],
   headlineAccent: 'costs.',
   supporting:
-    'The price changes with the complexity — not the quality. Published so you can judge fit before spending an hour on a call.',
+    'Custom CRMs, connected workflows and ongoing development start with a clear scope. Use these prices to judge fit, then tell us where work gets held up.',
   note: 'All figures in USD. Nothing here is a quote until we have seen the work.',
 }
 
@@ -24,9 +24,9 @@ export const pricingHero = {
 export const pricingNav = {
   label: 'Pricing sections',
   items: [
+    { id: 'web-apps', label: 'Systems' },
+    { id: 'automation', label: 'AI & automation' },
     { id: 'websites', label: 'Websites' },
-    { id: 'web-apps', label: 'Web Apps' },
-    { id: 'automation', label: 'Automation' },
   ],
 } as const
 
@@ -64,26 +64,26 @@ export const siteTiers: {
   tiers: SiteTier[]
 } = {
   eyebrow: 'Websites',
-  headingLines: ['Three levels of', 'the same standard.'],
+  headingLines: ['The customer-facing', 'part of your business.'],
   supporting:
-    'Every Wallace Shift site is designed, written, and built with the same care. Pricing changes with the complexity—not the quality.',
+    'Help customers understand your services and make an inquiry. A website can stand on its own or connect to a wider business system, with integrations scoped separately.',
   tiers: [
     {
       id: 'foundation',
       index: '01',
       name: 'Foundation',
       category: 'Essential business website',
-      tagline: 'The essential shift.',
+      tagline: 'Make the first inquiry easy.',
       price: '1,000',
       startsAt: true,
       delivery: ['First working version in as little as 24 hours.'],
       description:
-        'A clear, polished website for businesses that need to look credible, explain what they do, and make it easy for customers to respond.',
+        'A clear website that explains your services and gives customers a straightforward way to get in touch.',
       bestFor:
         'Businesses replacing a dated, templated, DIY, or nonexistent website.',
       scope: [
         'One conversion-focused page',
-        'Responsive custom presentation using Wallace Shift’s proven layout system',
+        'Responsive custom presentation using Wallace Shift’s layout system',
         'Content structure and light copy refinement',
         'Enquiry form and clear conversion path',
         'One consolidated revision round',
@@ -99,7 +99,7 @@ export const siteTiers: {
       index: '02',
       name: 'Motion',
       category: 'Signature animated website',
-      tagline: 'The signature shift.',
+      tagline: 'Explain your work with motion.',
       price: '5,000',
       startsAt: true,
       delivery: [
@@ -107,9 +107,9 @@ export const siteTiers: {
         'Typical launch in 5–10 business days.',
       ],
       description:
-        'Custom art direction and controlled motion for businesses that need their website to be part of what makes them memorable.',
+        'Custom art direction and controlled motion that help customers explore your work and understand the service before making an inquiry.',
       bestFor:
-        'Businesses in a crowded market that need to become the one customers remember.',
+        'Businesses whose work benefits from a more visual explanation and a distinctive presentation.',
       scope: [
         'Everything in Foundation',
         'Up to approximately five pages at the starting scope',
@@ -122,7 +122,6 @@ export const siteTiers: {
         '30-day launch warranty',
       ],
       ctaLabel: 'Start a Motion project',
-      badge: 'Most chosen',
       proof: 'This site is a Motion build.',
       barScale: 0.67,
     },
@@ -131,12 +130,12 @@ export const siteTiers: {
       index: '03',
       name: 'Dimension',
       category: 'Immersive 3D experience',
-      tagline: 'The immersive shift.',
+      tagline: 'Show what is hard to explain.',
       price: '10,000',
       startsAt: true,
       delivery: ['Typically 3–6 weeks.'],
       description:
-        'Interactive 3D experiences for products, spaces, and processes that become more convincing when customers can explore them.',
+        'Interactive 3D experiences that let customers explore a product, space or process before taking the next step.',
       bestFor:
         'Businesses selling something physical, spatial, or complex enough to be worth exploring.',
       scope: [
@@ -194,14 +193,12 @@ export interface EngagementItem {
   window: string
   note?: string
   /**
+   * Original package-detail provenance:
    * DRAFTED BY CLAUDE ON 2026-09-12 — NOT YET APPROVED.
    *
-   * The four fields the website tiers carry and these did not, added so the
-   * three areas present identically. `scope` lines are deliberately near
-   * restatements of each item's own approved `description` and `note` rather
-   * than new commitments; `category`, `tagline` and `bestFor` are new
-   * positioning. No warranty, response time, or capability not already
-   * claimed elsewhere on the site appears in them. Review before launch.
+   * Editorial updates preserve the existing prices, scope, exclusions and
+   * terms. They do not constitute approval of new commercial commitments.
+   * Keep this flag until the package details have had commercial review.
    */
   category?: string
   tagline?: string
@@ -223,29 +220,29 @@ export interface EngagementGroup {
 export const engagementGroups: EngagementGroup[] = [
   {
     id: 'web-apps',
-    label: 'Web apps',
-    heading: 'Priced around the problem—not the page count.',
+    label: 'Custom CRMs & business systems',
+    heading: 'Start with the workflow. Build from there.',
     supporting:
-      'Every app begins with definition. We map the users, workflows, integrations, and edge cases before committing to a build price.',
+      'We map how your team handles customers, work and information before agreeing a build price. The focused build below covers one primary workflow; a broader CRM needs its own agreed scope.',
     items: [
       {
         index: '01',
-        title: 'Product definition sprint',
+        title: 'System definition sprint',
         description:
-          'We map the users, workflows, roles, integrations, edge cases, and technical approach before anyone commits to a full build.',
+          'We map the people, steps, permissions, tool connections and exceptions in your process, then define the technical approach before you commit to a build.',
         price: '2,500',
         startsAt: false,
         window: '1 week',
         note: 'Applied to the project total when the build begins within 30 days.',
         category: 'Discovery and technical plan',
-        tagline: 'The clarifying shift.',
+        tagline: 'Understand the work first.',
         bestFor:
-          'Businesses with a product idea that needs a defined shape before anyone commits a budget to building it.',
+          'Businesses that need to define what a system should do, who will use it and how it will fit the tools already in place.',
         scope: [
-          'User and role mapping',
+          'People and permissions mapped',
           'Workflow mapping',
-          'Integration requirements',
-          'Edge cases identified',
+          'Required tool connections identified',
+          'Exceptions and failure points identified',
           'Technical approach defined',
           'Costed build plan',
         ],
@@ -253,14 +250,14 @@ export const engagementGroups: EngagementGroup[] = [
       },
       {
         index: '02',
-        title: 'Focused web app',
+        title: 'Focused system build',
         description:
           'A focused customer portal, booking system, internal tool, or dashboard built around one primary business workflow.',
         price: '18,000',
         startsAt: true,
         window: '6–10 weeks',
         category: 'Custom portal, tool, or dashboard',
-        tagline: 'The working shift.',
+        tagline: 'Put one workflow in order.',
         bestFor:
           'Businesses running a core workflow on spreadsheets, email, or software that was never meant for it.',
         scope: [
@@ -270,40 +267,40 @@ export const engagementGroups: EngagementGroup[] = [
           'Interface designed around the people who use it',
           'Responsive across desktop and mobile',
         ],
-        ctaLabel: 'Start a web app project',
+        ctaLabel: 'Discuss a system build',
         note: 'Multi-tenant SaaS, extensive user roles, legacy data migration, native mobile apps, advanced compliance such as HIPAA or PCI, complex AI systems, and large integration counts are scoped separately.',
       },
       {
         index: '03',
-        title: 'Ongoing product partnership',
+        title: 'Ongoing development',
         description:
-          'Reserved design and development capacity for a product that continues to evolve.',
+          'Reserved design and development capacity to refine your system and add agreed features as the way you work changes.',
         price: '4,500',
         startsAt: true,
         priceUnit: '/month',
         window: '3-month initial term',
         note: 'Rolling monthly after the initial term, with 30 days’ notice.',
         category: 'Reserved ongoing capacity',
-        tagline: 'The continuing shift.',
+        tagline: 'Keep improving the system.',
         bestFor:
-          'Businesses whose product keeps changing and needs steady hands rather than another one-off project.',
+          'Businesses that need regular improvements and feature development as their processes evolve.',
         scope: [
           'Reserved design and development capacity',
           'Continued feature work and refinement',
-          'Maintenance as the product evolves',
+          'Maintenance as the system evolves',
           'Rolling monthly after the initial term',
         ],
-        ctaLabel: 'Start a product partnership',
+        ctaLabel: 'Discuss ongoing development',
       },
     ],
     note: 'Hosting, third-party subscriptions, API usage, payment-processing fees, and advanced compliance requirements are quoted separately.',
   },
   {
     id: 'automation',
-    label: 'Automation',
-    heading: 'Priced against the hours it gives back.',
+    label: 'AI integrations & workflow automation',
+    heading: 'Find the repeated work. Connect the steps.',
     supporting:
-      'We start by measuring the repetitive work and the cost it creates. If the savings do not justify a build, we will say so—and the map is still yours.',
+      'Start with repetitive admin, missed follow-up and disconnected tools. For AI integrations, we confirm the task, data access and human review needed before quoting.',
     items: [
       {
         index: '01',
@@ -315,7 +312,7 @@ export const engagementGroups: EngagementGroup[] = [
         window: '3–5 business days',
         note: 'Credited toward qualifying automation builds of $5,000 or more.',
         category: 'Measured opportunity report',
-        tagline: 'The honest shift.',
+        tagline: 'Know where to start.',
         bestFor:
           'Businesses that know work is being repeated but not what it costs or where to start.',
         scope: [
@@ -335,7 +332,7 @@ export const engagementGroups: EngagementGroup[] = [
         startsAt: true,
         window: '1–3 weeks',
         category: 'One connected workflow',
-        tagline: 'The practical shift.',
+        tagline: 'Connect one repeatable process.',
         bestFor:
           'Businesses losing hours to one repeatable process, or losing customers to follow-up that never happens.',
         scope: [
@@ -357,9 +354,9 @@ export const engagementGroups: EngagementGroup[] = [
         priceUnit: '/month',
         window: 'Rolling',
         category: 'Monitoring and upkeep',
-        tagline: 'The dependable shift.',
+        tagline: 'Keep existing workflows working.',
         bestFor:
-          'Businesses already running automations that the business cannot afford to have quietly fail.',
+          'Businesses that need someone to monitor and maintain the automations they already use.',
         scope: [
           'Monitoring of running workflows',
           'Maintenance as connected systems change',
@@ -379,24 +376,24 @@ export const pricingFaq = {
   heading: 'The questions worth asking first.',
   items: [
     {
-      question: 'Why does everything say "Starts at"?',
+      question: 'What does a starting price cover?',
       answer:
-        'A one-page site for a single service and a ten-page site for six locations are not the same job. The starting price is a genuine floor rather than bait — it buys a complete, launched site at that level. Anything beyond it is scope we agree on together, in writing, before it is built.',
+        'It covers the scope listed for that engagement. A focused system build covers one primary workflow, while a broader CRM or a more involved integration needs a separate scope. We agree requirements and the final price in writing before building. The definition sprint and automation audit are fixed-fee engagements.',
     },
     {
-      question: 'What does "a first working version in 24 hours" mean?',
+      question: 'Do the website timelines apply to custom systems?',
       answer:
-        'A real, viewable site at a private link — structure, design, and your content in place — not a mockup. It is the start of the conversation, not the launch. Going live still depends on your content, your domain and hosting access, and your approval.',
+        'No. Each engagement has its own delivery window. For the website packages, a first working version means a viewable site at a private link with structure, design and content in place. Launch still depends on your content, domain and hosting access, and approval.',
     },
     {
-      question: 'What does the launch warranty cover?',
+      question: 'What does the website launch warranty cover?',
       answer:
-        'Defects. If something we built is broken, behaves incorrectly, or breaks on a device it should support, we fix it inside the warranty window at no cost. New features, redesign requests, and ongoing content changes are separate work, quoted before we start.',
+        'Defects in the website we built, within the warranty window listed for that package. We fix those at no cost. New features, redesign requests and ongoing content changes are separate work, quoted before we start.',
     },
     {
-      question: 'Can I start at one level and move up later?',
+      question: 'How does support differ from ongoing development?',
       answer:
-        'Yes. Every level is built on the same foundations, so adding pages, motion, or a 3D section afterwards is an extension of what exists rather than a rebuild.',
+        'Managed automation covers monitoring, maintenance, failure recovery and minor adjustments to existing workflows. New workflows and substantial changes are scoped separately. Ongoing development reserves design and development capacity for agreed feature work and continued refinement.',
     },
     {
       question: 'How does payment work?',
@@ -409,9 +406,9 @@ export const pricingFaq = {
 export type FaqItem = (typeof pricingFaq.items)[number]
 
 export const pricingCta = {
-  headlineLines: ['Not sure which', 'level fits?'],
+  headlineLines: ['Start with the work', 'that gets held up.'],
   supporting:
-    'Tell us what is not working and what you are working with. We will tell you which level makes sense — or that you do not need us yet.',
-  ctaLabel: 'Start a project',
+    'Tell us where follow-up, handoffs or admin slow your team down, and which tools you use today. We’ll help define a useful starting scope.',
+  ctaLabel: 'Discuss your workflow',
   ctaHref: '/contact',
 }

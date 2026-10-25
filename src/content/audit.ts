@@ -18,15 +18,15 @@
 export type Band = 'good' | 'mixed' | 'attention'
 
 export const auditCopy = {
-  eyebrow: 'Stage 01',
-  heading: 'Find the friction.',
+  eyebrow: 'Optional website check',
+  heading: 'Check the customer-facing page.',
   summary:
-    'What customers need, where trust is being lost, and what is slowing the business down. It starts as a conversation — but you can start it yourself, right now.',
+    'A website can be the entry point to your business system. This check looks at that public page; it does not assess your CRM or internal workflows.',
   supporting:
     'Enter your current website and we will load it on a simulated phone, the way a customer would. Keep reading while it runs — the result is waiting at the end of this page. No contact details needed.',
   inputLabel: 'Your website address',
   placeholder: 'yourbusiness.com',
-  submit: 'Run the first check',
+  submit: 'Check this website',
   resubmit: 'Check another site',
 
   /* Shown beside the input before anything runs, so the section is not a
@@ -42,9 +42,9 @@ export const auditCopy = {
   /* The tool only works for an existing public site. These keep the other
      two services from feeling excluded by the page's own centrepiece. */
   alternatives: [
-    { label: 'No website yet? Book a free fit call.', href: '/contact' },
+    { label: 'No website yet? Discuss your plans.', href: '/contact' },
     {
-      label: 'Planning an app or automation? Tell us what is getting in the way.',
+      label: 'For CRM, AI, or workflow work, tell us where the process gets stuck.',
       href: '/contact',
     },
   ],
@@ -74,7 +74,7 @@ export const auditCopy = {
   pillJump: 'Jump to it',
   pillJumpError: 'See why',
 
-  reportEyebrow: 'Your first check',
+  reportEyebrow: 'Your website check',
   /** Never leads with a number. The subject is their site, not a score. */
   reportHeading: 'as a phone sees it.',
   reportLead:

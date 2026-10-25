@@ -22,10 +22,10 @@ export function PricingPage() {
       <div className="pricing-sections">
         <PricingDeck
           panels={[
-            <TierTable key="websites" />,
             ...engagementGroups.map((group) => (
               <EngagementPanel key={group.id} group={group} />
             )),
+            <TierTable key="websites" />,
           ]}
         />
       </div>

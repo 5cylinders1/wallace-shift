@@ -1,4 +1,7 @@
 .git
+
+# Local OAuth credentials are never deployment inputs.
+/client_secret_*.json
 .claude
 node_modules
 dist

@@ -1,8 +1,11 @@
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { pricingHero, siteTiers } from '../../content/pricing'
+import { engagementGroups, pricingHero } from '../../content/pricing'
 import './PricingHero.css'
+
+const systemPricing = engagementGroups.find((group) => group.id === 'web-apps')
+const stageLabels = ['Define', 'Build', 'Improve']
 
 export function PricingHero() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -72,17 +75,17 @@ export function PricingHero() {
             assistive technology precisely because it is a restatement —
             the real table carries the same figures with full context. */}
         <div className="pricing-hero__index" aria-hidden="true">
-          <p className="pricing-hero__index-label">Websites start at</p>
+          <p className="pricing-hero__index-label">Systems engagements</p>
           <ul>
-            {siteTiers.tiers.map((tier) => (
-              <li className="pricing-hero__index-row" key={tier.id}>
+            {systemPricing?.items.map((item, index) => (
+              <li className="pricing-hero__index-row" key={item.index}>
                 <span
                   className="pricing-hero__index-rule"
-                  style={{ width: `${tier.barScale * 100}%` }}
+                  style={{ width: `${((index + 1) / systemPricing.items.length) * 100}%` }}
                 />
-                <span className="pricing-hero__index-name">{tier.name}</span>
+                <span className="pricing-hero__index-name">{stageLabels[index]}</span>
                 <span className="pricing-hero__index-price">
-                  ${tier.price}
+                  {item.startsAt ? 'From ' : ''}${item.price}{item.priceUnit}
                 </span>
               </li>
             ))}

@@ -15,9 +15,9 @@ import './InteriorPage.css'
 import './ApproachPage.css'
 
 const checkpoints = [
-  { id: 'approach-start', label: 'Find the friction' },
-  { id: 'approach-build', label: 'Make the shift' },
-  { id: 'approach-launch', label: 'Launch with momentum' },
+  { id: 'approach-start', label: 'Find the gaps' },
+  { id: 'approach-build', label: 'Build around the work' },
+  { id: 'approach-launch', label: 'Support the next step' },
 ]
 
 function CheckpointNav({ current }: { current: number }) {
@@ -149,14 +149,14 @@ export function ApproachPage() {
           <div className="approach-intro__grid">
             <div className="approach-intro__copy">
               <p className="eyebrow">The approach / 3 clear steps</p>
-              <h1 id="approach-heading">Less friction.<br />More <span className="accent-serif">forward.</span></h1>
-              <p className="approach-intro__lead">A clear path from what’s holding you back to what comes next. See how we work. Start with your own site.</p>
-              <a className="approach-intro__scroll" href="#approach-stages">Follow the process <span aria-hidden="true">↓</span></a>
+              <h1 id="approach-heading">Map the work.<br />Build the <span className="accent-serif">system.</span></h1>
+              <p className="approach-intro__lead">We start with the gaps: where enquiries arrive, who follows up, and where work stalls. Together we map the tools, handoffs, and information involved before deciding what to adapt, connect, or build.</p>
+              <a className="approach-intro__scroll" href="/contact">Discuss your workflow <span aria-hidden="true">↗</span></a>
             </div>
             <div className="first-check">
-              <div className="first-check__eyebrow"><span>01 / Start right here</span><span className="first-check__free">Free · No signup</span></div>
-              <h2>Find the <span className="accent-serif">friction.</span></h2>
-              <p>See how your website loads on a simulated phone, and what might be getting in the way.</p>
+              <div className="first-check__eyebrow"><span>Optional / Website check</span><span className="first-check__free">Free · No signup</span></div>
+              <h2>Check your <span className="accent-serif">front door.</span></h2>
+              <p>If your website is part of the problem, see how it loads on a simulated phone. This checks the public page; understanding your CRM and internal workflow starts with a conversation.</p>
               <SiteAudit compact state={audit} continueTo="approach-stages" reportId="audit-report" />
             </div>
           </div>
@@ -200,7 +200,7 @@ export function ApproachPage() {
                 <div className="approach-chapter__inner">
                   <div className="approach-chapter__copy">
                     <p className="approach-chapter__kicker">{index === 0 ? 'From insight to a working system' : 'From working build to what’s next'}</p>
-                    <h2 id={`chapter-title-${stage.index}`}>{index === 0 ? <>Make the <span className="accent-serif">shift.</span></> : <>Launch with <span className="accent-serif">momentum.</span></>}</h2>
+                    <h2 id={`chapter-title-${stage.index}`}>{index === 0 ? <>Build around <span className="accent-serif">the work.</span></> : <>Support the <span className="accent-serif">next step.</span></>}</h2>
                     <p className="approach-chapter__summary">{stage.summary}</p>
                     <dl className="approach-chapter__fields">
                       {stage.fields.map((field) => (
@@ -209,9 +209,9 @@ export function ApproachPage() {
                     </dl>
                   </div>
                   <div className="chapter-art">
-                    <div className="chapter-art__heading"><span className="chapter-art__number" aria-hidden="true">{stage.index}</span><span>{index === 0 ? 'Ideas take shape.' : 'Ready for the real world.'}</span></div>
+                    <div className="chapter-art__heading"><span className="chapter-art__number" aria-hidden="true">{stage.index}</span><span>{index === 0 ? 'Review as it takes shape.' : 'Launch with a clear handover.'}</span></div>
                     <StageWorkbench compact variant={index === 0 ? 'structure' : 'launch'} />
-                    <div className="chapter-art__footer"><span>{index === 0 ? 'Structure → Design → Build' : 'Refine → Launch → Handover'}</span><span aria-hidden="true">↗</span></div>
+                    <div className="chapter-art__footer"><span>{index === 0 ? 'Workflow → Scope → Build' : 'Test → Handover → Support'}</span><span aria-hidden="true">↗</span></div>
                   </div>
                 </div>
                 <div className="approach-chapter__next">

@@ -16,13 +16,13 @@ export type EnquiryOption = { value: string; label: string }
 const UNSURE = { value: 'unsure', label: 'Not sure yet' }
 
 export const enquiryServices: EnquiryOption[] = [
-  ...services.items.map(item => ({ value: item.label.toLowerCase(), label: `${item.label} — ${item.title}` })),
+  ...services.items.map(item => ({ value: item.enquiryValue, label: `${item.label} — ${item.title}` })),
   UNSURE,
 ]
 
 export const enquiryPackages: EnquiryOption[] = [
-  ...siteTiers.tiers.map(tier => ({ value: tier.id, label: `${tier.name} — ${tier.category}` })),
   ...engagementGroups.map(group => ({ value: group.id, label: group.label })),
+  ...siteTiers.tiers.map(tier => ({ value: tier.id, label: `${tier.name} — ${tier.category}` })),
   UNSURE,
 ]
 
@@ -38,13 +38,13 @@ export const enquiryBudgets: EnquiryOption[] = [
 ]
 
 export const enquiryCopy = {
-  websiteLabel: 'Current website',
+  websiteLabel: 'Website, if relevant',
   websitePlaceholder: 'yourbusiness.com',
   noWebsiteLabel: "I don't have one yet",
-  serviceLabel: 'What are you after?',
-  packageLabel: 'Package of interest',
+  serviceLabel: 'What needs attention?',
+  packageLabel: 'Engagement, if known',
   budgetLabel: 'Budget',
   choosePlaceholder: 'Select one',
-  messageLabel: 'What is not working?',
-  messagePlaceholder: "What isn't working right now?",
+  messageLabel: 'Where is work getting stuck?',
+  messagePlaceholder: 'What tools do you use, where does work get missed or repeated, and what would you like to change?',
 } as const

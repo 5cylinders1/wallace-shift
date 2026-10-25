@@ -76,7 +76,7 @@ export function DemoRequestPage() {
       <header className="demo-access__header">
         <a className="demo-access__brand" href={studioUrl} aria-label="Wallace Shift home">
           <img src="/brand/wallace-shift-logo-white.svg" alt="" width="66" height="40" />
-          <span>WALLACE SHIFT<span>Design. Technology. Momentum.</span></span>
+          <span>WALLACE SHIFT<span>Custom systems. Connected work.</span></span>
         </a>
         <a className="demo-access__back" href={studioUrl}>Back to the studio <Arrow diagonal /></a>
       </header>
@@ -86,8 +86,8 @@ export function DemoRequestPage() {
           <p className="demo-access__eyebrow"><span />Private demo access</p>
           <h1 id="demo-heading">Take a<br />closer <em>look.</em></h1>
           <p className="demo-access__description">
-            See what a thoughtful website or client experience could do for your business.
-            Request a private demo to explore the possibilities.
+            Explore CRM workflows and customer-facing website concepts.
+            See how the pieces could support your business, then discuss the system you need.
           </p>
 
           <div className="demo-access__concept">
@@ -97,7 +97,7 @@ export function DemoRequestPage() {
             <div>
               <p className="demo-access__small-label">{demo ? 'Your selected demo' : 'The Wallace Shift collection'}</p>
               <h2>{demo?.name ?? 'Find the right fit'}</h2>
-              <p className="demo-access__concept-detail">{demo?.detail ?? 'Websites, web apps & client experiences'}</p>
+              <p className="demo-access__concept-detail">{demo?.detail ?? 'CRM workflows & customer-facing websites'}</p>
             </div>
           </div>
 
@@ -111,7 +111,7 @@ export function DemoRequestPage() {
           <div className="demo-access__card-heading">
             <span className="demo-access__card-index" aria-hidden="true">LET’S TALK</span>
             <h2 id="request-heading">Request a demo</h2>
-            <p>Tell us a little about your business. We’ll review your request and follow up by email.</p>
+            <p>Tell us about your business and what you want to improve. We’ll review your request and follow up by email.</p>
           </div>
 
           {status !== 'sent' && (
@@ -138,8 +138,8 @@ export function DemoRequestPage() {
                   <input id="demo-website" name="website" type="text" inputMode="url" autoComplete="url" maxLength={500} placeholder="yourbusiness.com" />
                 </div>
                 <div className="demo-access__field">
-                  <label htmlFor="demo-message">What are you looking for? <span>(optional)</span></label>
-                  <textarea id="demo-message" name="message" rows={3} maxLength={5000} placeholder="A new website, a better client experience, or something else…" />
+                  <label htmlFor="demo-message">What work would you like to improve? <span>(optional)</span></label>
+                  <textarea id="demo-message" name="message" rows={3} maxLength={5000} placeholder="Tell us about your current tools, missed follow-up or repeated admin, and what you would like to explore." />
                 </div>
                 <div className="demo-access__honeypot" aria-hidden="true">
                   <label htmlFor="demo-company">Company</label>
@@ -189,7 +189,7 @@ export function DemoRequestPage() {
       <footer className="demo-access__footer">
         <p>© {new Date().getFullYear()} Wallace Shift</p>
         <a href={`/demo-admin/${demoKey ? `?demo=${encodeURIComponent(demoKey)}` : ''}`}>Admin sign in</a>
-        <p>Distinctive by design. Built to move you forward.</p>
+        <p>Illustrative demos. Real workflows to discuss.</p>
       </footer>
     </div>
   )

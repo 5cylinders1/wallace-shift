@@ -118,8 +118,8 @@ export function SiteAudit({ state, continueTo, reportId, compact = false }: Site
                 <PageLink href={alt.href}>
                   {compact
                     ? index === 0
-                      ? 'No website? Book a free fit call.'
-                      : 'App or automation? Tell us about it.'
+                      ? 'No website? Discuss your plans.'
+                      : 'CRM, AI or workflow? Tell us about it.'
                     : alt.label}
                 </PageLink>
               </li>

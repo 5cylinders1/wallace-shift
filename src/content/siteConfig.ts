@@ -1,9 +1,9 @@
 export const siteMeta = {
   name: 'Wallace Shift',
-  tagline: 'Design. Technology. Momentum.',
-  title: 'Wallace Shift | Websites, Web Apps & Automation',
+  tagline: 'Software. Workflows. Progress.',
+  title: 'Wallace Shift | Custom CRMs, AI & Automation',
   description:
-    'Wallace Shift creates distinctive websites, web apps, and automations that help growing businesses earn trust and move forward.',
+    'Custom CRM systems, practical AI integrations, and workflow automation built around your business. Connect enquiries, follow-up, and daily operations.',
 }
 
 /**
@@ -48,21 +48,21 @@ export const business = {
 }
 
 export const hero = {
-  eyebrow: 'Websites · Web apps · Automation',
-  headlineLines: ['Shift how', 'your business', 'is'],
-  headlineAccent: 'seen.',
+  eyebrow: 'Custom CRMs · AI integrations',
+  headlineLines: ['Software for', 'the way', 'you'],
+  headlineAccent: 'work.',
   supporting:
-    'Strategy, design, and motion for businesses shifting to their new era.',
-  primaryCta: { label: 'Start your shift', href: '/contact' },
+    'Capture enquiries, keep follow-up moving, and connect daily operations with custom software and practical automation.',
+  primaryCta: { label: 'Discuss your system', href: '/contact' },
   secondaryCta: { label: 'Explore our services', href: '/services' },
 }
 
 export const brandStatement = {
-  body: 'Your business may already do exceptional work. We align how it looks, works, and communicates so customers recognize that value immediately.',
+  body: 'When customer details, follow-up, and job updates live in different places, work gets missed. We build systems that bring the next action and the current picture together.',
 }
 
 export const services = {
-  headingLines: ['Built to move your', 'business forward.'],
+  headingLines: ['Connect the work.', 'See what’s next.'],
   /* The two questions a reader has after "what can I hire you to build?" —
      each gets its own exit rather than a pair of trailing text links. */
   detailLink: {
@@ -78,27 +78,30 @@ export const services = {
   items: [
     {
       index: '01',
-      label: 'Presence',
-      title: 'Websites that earn trust',
+      label: 'Systems',
+      enquiryValue: 'experience',
+      title: 'Custom CRMs built around your work',
       description:
-        'Positioning, copy, design, and development built to create the right first impression and turn attention into action.',
-      outcomeWord: 'TRUST',
-    },
-    {
-      index: '02',
-      label: 'Experience',
-      title: 'Web apps that remove friction',
-      description:
-        'Portals, internal tools, and customer experiences that make complex work feel simple.',
+        'Bring enquiries, customer records, follow-up, and work in progress into a system your team can use and your business can grow with.',
       outcomeWord: 'FLOW',
     },
     {
-      index: '03',
-      label: 'Operations',
-      title: 'Automation that gives time back',
+      index: '02',
+      label: 'AI & automation',
+      enquiryValue: 'operations',
+      title: 'AI and workflows with a clear job',
       description:
-        'Connected workflows that remove repetitive work, prevent missed follow-up, and keep the business moving.',
+        'Connect tools to reduce re-entry and missed handoffs. Add AI to a defined task, with a clear way for people to review its output.',
       outcomeWord: 'TIME',
+    },
+    {
+      index: '03',
+      label: 'Websites',
+      enquiryValue: 'presence',
+      title: 'Websites connected to your business',
+      description:
+        'Give customers a clear place to understand your work and get in touch. Plan how each enquiry reaches the people and systems handling it.',
+      outcomeWord: 'TRUST',
     },
   ],
 } as const
@@ -111,29 +114,29 @@ export const approachPageHero = {
   headlineLines: ['How the work', 'actually'],
   headlineAccent: 'runs.',
   supporting:
-    'Every engagement follows the same three checkpoints. The work inside them adapts to the problem. You always know what we are solving, what you need to approve, what it costs, and what happens next.',
+    'We start with how work happens today, agree what the system needs to do, then build and test it with you. Support and further improvements have a clear scope from the start.',
 }
 
 export const approach = {
-  headingLines: ['A clear shift, from', 'first idea to launch.'],
+  headingLines: ['Understand. Build.', 'Keep improving.'],
   steps: [
     {
       index: '01',
-      title: 'Find the friction',
+      title: 'Find the gaps',
       description:
-        'Understand what customers need, where trust is being lost, and what is slowing the business down.',
+        'Trace an enquiry through your team and tools. Find missed follow-up, repeated work, and information that owners cannot easily see.',
     },
     {
       index: '02',
-      title: 'Make the shift',
+      title: 'Build around the work',
       description:
-        'Create the strategy, identity, experience, and technology as one coherent system.',
+        'Agree the workflow, connect the right tools, and test the system with the people who will use it.',
     },
     {
       index: '03',
-      title: 'Launch with momentum',
+      title: 'Support the next step',
       description:
-        'Refine, test, launch, and leave the business with a platform built to keep working.',
+        'Launch with documentation and a support plan. Scope new workflows and larger improvements as your needs change.',
     },
   ],
 } as const
@@ -142,17 +145,17 @@ export type ProcessStep = (typeof approach.steps)[number]
 
 export const standards = {
   eyebrow: 'The Wallace Shift Standard',
-  headline: 'Ambition, with restraint.',
+  headline: 'Useful in the daily work.',
   principles: [
     {
       number: '01',
-      title: 'Distinctive, never confusing.',
-      description: 'Distinctive enough to be remembered. Clear enough to trust and use.',
+      title: 'Built around the people using it.',
+      description: 'Clear records, responsibilities, and next steps for the team doing the work.',
     },
     {
       number: '02',
-      title: 'Fast where it matters.',
-      description: 'Quick to load, easy to navigate, and delivered without avoidable delay.',
+      title: 'A scope you can understand.',
+      description: 'Know what is included, what depends on other tools, and what happens after launch.',
     },
     {
       number: '03',
@@ -165,9 +168,9 @@ export const standards = {
 export type StandardPrincipleItem = (typeof standards.principles)[number]
 
 export const contactCta = {
-  headlineLines: ['Ready to stop', 'being overlooked?'],
-  supporting: 'Tell us what is not working. We will show you what can shift.',
-  primaryCtaLabel: 'Start a project',
+  headlineLines: ['Where is work', 'getting stuck?'],
+  supporting: 'Tell us about the tools you use, the handoffs that fail, and what your team needs to see.',
+  primaryCtaLabel: 'Send project details',
   /** Real alternatives for a reader who does not want to fill in a form.
    *  Both destinations already exist, and nothing here promises a response
    *  time or anything else that is not already true. The email link is
@@ -181,5 +184,5 @@ export const contactCta = {
 }
 
 export const footer = {
-  tagline: 'Design. Technology. Momentum.',
+  tagline: 'Software. Workflows. Progress.',
 }

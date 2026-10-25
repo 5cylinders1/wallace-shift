@@ -39,7 +39,7 @@ function JourneyVisual({ frame, nearby, onFailure }: {
   </div>
 }
 
-const processPhases = ['Identify', 'Transform', 'Resolve']
+const processPhases = ['Understand', 'Build', 'Improve']
 const processPanels: JourneyStage[] = ['find', 'make', 'launch']
 
 /** One production-only visual spans the story. All copy and forms remain

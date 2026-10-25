@@ -11,9 +11,9 @@ export function BrandStatementContent({ headlineRef, bodyRef, headingId }: Brand
   const headline = (
     <h2 className="shift-wipe__headline" id={headingId}>
       <span className="shift-wipe__line">
-        From <span className="shift-wipe__word">overlooked</span> to
+        From <span className="shift-wipe__word">scattered</span> to
       </span>
-      <span className="shift-wipe__line">unforgettable.</span>
+      <span className="shift-wipe__line">connected.</span>
     </h2>
   )
 

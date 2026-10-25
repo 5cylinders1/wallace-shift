@@ -24,7 +24,7 @@ export function ContactPage() {
         eyebrow="Start a project"
         headlineLines={['Tell us what', 'is not']}
         headlineAccent="working."
-        supporting="You do not need to know which service you need, or have a budget in mind. Describe the problem and we will tell you what we would do about it."
+        supporting="Tell us how your team handles enquiries, customers, and daily work. Describe the gap you want to fix; we will discuss the right first step and how to scope it."
       />
 
       <section className="interior contact-page">
@@ -48,7 +48,7 @@ export function ContactPage() {
             <ContactForm
               key={handoff?.key ?? 'none'}
               idPrefix="contact-page"
-              submitLabel="Send message"
+              submitLabel="Send project details"
               handoff={handoff}
             />
           </div>
@@ -62,12 +62,12 @@ export function ContactPage() {
                     We read it properly and reply {business.responseTime}.
                   </li>
                   <li>
-                    A short call — what is not working, and what you are
-                    working with. No deck, no pitch.
+                    A conversation about your workflow, current tools,
+                    and what needs to change.
                   </li>
                   <li>
-                    A written scope and a fixed starting price before anything
-                    is built.
+                    An agreed first step, with scope and cost in writing.
+                    Systems and automation begin with paid definition or audit work.
                   </li>
                 </ol>
               </div>
@@ -106,9 +106,9 @@ export function ContactPage() {
               <div className="contact-page__block">
                 <p className="service-block__label">Before you write</p>
                 <p className="contact-page__hint">
-                  It helps to know what you already have — a current website,
-                  the tools you run on, and what prompted you to look now.
-                  None of it is required.
+                  A useful starting point is one real example: where an enquiry
+                  arrives, who follows up, which tools hold the details, and
+                  where the process gets stuck. You do not need a technical brief.
                 </p>
                 <PageLink href="/pricing" className="contact-page__link">
                   See what things cost

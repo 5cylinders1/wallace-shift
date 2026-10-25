@@ -20,9 +20,9 @@ export function HeroContactCard() {
         </span>
       </div>
       <h2 className="hero-contact-card__heading">
-        Let's start
+        Let's talk
         <br />
-        your shift.
+        about the work.
       </h2>
 
       <form

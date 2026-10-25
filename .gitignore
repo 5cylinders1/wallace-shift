@@ -59,6 +59,9 @@ dist-ssr
 /public/media/wallace-shift-hero.webm
 .vercel
 
+# Local OAuth credentials must never be committed or uploaded.
+/client_secret_*.json
+
 # Local review artifacts and temporary files.
 /output/
 /review-assets/

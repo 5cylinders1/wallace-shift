@@ -131,8 +131,8 @@ export function StageWorkbench({ variant, compact = false }: StageWorkbenchProps
       <p className="workbench__caption">
         {compact
           ? variant === 'structure'
-            ? 'A real layout, adapting to its space. Your project takes shape in a working preview you can review.'
-            : 'The pre-launch checklist. Your domain, your accounts, and a full handover.'
+            ? 'An interface layout demonstration. Your own system takes shape in a working preview you can review.'
+            : 'Review areas for the agreed build, including website checks where relevant. An illustration of the process, not a live test report.'
           : data.caption}
       </p>
     </div>

@@ -10,7 +10,6 @@ import {
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { shiftHandoffHref } from '../../lib/quizHandoff'
-import { navigate } from '../../lib/router'
 import { SpotlightMedia, type SpotlightMediaHandle } from './SpotlightMedia'
 import { QuizQuestion } from './QuizQuestion'
 import { QuizResult } from './QuizResult'
@@ -207,12 +206,6 @@ export function ShiftQuiz({ showSpotlight = true, onProgress }: {
     mediaRef.current?.resetToNeutral()
   }
 
-  // Carries the result to the contact page in the URL, so the
-  // recommendation survives the navigation and stays linkable.
-  const handlePrimaryCta = () => {
-    navigate(shiftHandoffHref(getRecommendation(answers).key))
-  }
-
   return (
     <section id="shift-finder" className="shift-quiz" ref={sectionRef}>
       {showSpotlight && !isMobile && (
@@ -249,7 +242,7 @@ export function ShiftQuiz({ showSpotlight = true, onProgress }: {
               <QuizResult
                 ref={headingRef}
                 recommendation={getRecommendation(answers)}
-                onPrimaryCta={handlePrimaryCta}
+                primaryHref={shiftHandoffHref(getRecommendation(answers).key)}
                 onStartOver={handleStartOver}
               />
             ) : (

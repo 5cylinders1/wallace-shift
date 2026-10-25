@@ -152,7 +152,7 @@ export function SiteHeader() {
         </nav>
 
         <PageLink href="/contact" className="site-header__cta">
-          Book a free fit call
+          Discuss your system
           <span className="site-header__cta-arrow" aria-hidden="true">
             &#8599;
           </span>
@@ -208,7 +208,7 @@ export function SiteHeader() {
           className="mobile-menu__cta"
           onClick={closeMenu}
         >
-          Book a free fit call
+          Discuss your system
         </PageLink>
       </div>
     </header>

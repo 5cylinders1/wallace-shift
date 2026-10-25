@@ -14,7 +14,8 @@ export function PageLink({ href, onClick, children, ...rest }: PageLinkProps) {
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(event)
 
-    if (!href.startsWith('/')) return
+    // Blog pages are complete static documents and need a browser navigation.
+    if (!href.startsWith('/') || /^\/blog(?:[/?#]|$)/.test(href)) return
     // Modified clicks (new tab, new window, download) belong to the browser.
     if (
       event.defaultPrevented ||

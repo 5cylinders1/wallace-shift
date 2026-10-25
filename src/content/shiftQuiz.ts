@@ -3,6 +3,7 @@ export type ServiceKey =
   | 'conversion-redesign'
   | 'custom-web-app'
   | 'automation-integration'
+  | 'ai-integration'
 
 export type QuizAnswer = {
   id: string
@@ -25,11 +26,11 @@ export type ServiceRecommendation = {
 
 export const shiftQuizCopy = {
   eyebrow: 'The Shift Finder',
-  headline: 'What should we shift first?',
+  headline: 'Where does the work get stuck?',
   supporting:
-    "Answer three quick questions and we'll point you in the right direction.",
-  resultEyebrow: 'Your best first shift',
-  primaryCtaLabel: 'Talk through your shift',
+    'Three questions to find a starting point for the conversation. We will agree the scope together.',
+  resultEyebrow: 'A starting point to discuss',
+  primaryCtaLabel: 'Discuss this with us',
   secondaryCtaLabel: 'Start over',
   chooseOneLabel: 'Choose one',
   backLabel: 'Back',
@@ -38,27 +39,27 @@ export const shiftQuizCopy = {
 export const quizQuestions: QuizQuestionData[] = [
   {
     id: 'friction',
-    question: 'What feels most broken right now?',
+    question: 'What needs the most attention?',
     answers: [
       {
-        id: 'friction-website',
-        label: 'My website feels outdated',
-        service: 'website-transformation',
-      },
-      {
-        id: 'friction-action',
-        label: "People visit but don't take action",
-        service: 'conversion-redesign',
-      },
-      {
         id: 'friction-tool',
-        label: 'I need a custom online tool',
+        label: 'Customer details and next steps are scattered',
         service: 'custom-web-app',
       },
       {
+        id: 'friction-ai',
+        label: 'I have a specific task to explore with AI',
+        service: 'ai-integration',
+      },
+      {
         id: 'friction-time',
-        label: 'Repetitive work is eating my time',
+        label: 'Re-entry and missed handoffs slow us down',
         service: 'automation-integration',
+      },
+      {
+        id: 'friction-website',
+        label: 'Customers struggle to understand or enquire online',
+        service: 'website-transformation',
       },
     ],
   },
@@ -67,24 +68,24 @@ export const quizQuestions: QuizQuestionData[] = [
     question: 'What would make the biggest difference?',
     answers: [
       {
-        id: 'impact-credible',
-        label: 'Looking more credible online',
-        service: 'website-transformation',
-      },
-      {
-        id: 'impact-leads',
-        label: 'Generating more qualified leads',
-        service: 'conversion-redesign',
-      },
-      {
         id: 'impact-experience',
-        label: 'Giving customers a better experience',
+        label: 'Seeing customers, follow-up, and work in one place',
         service: 'custom-web-app',
       },
       {
+        id: 'impact-ai',
+        label: 'Knowing whether AI can help with that task',
+        service: 'ai-integration',
+      },
+      {
         id: 'impact-time',
-        label: 'Saving time behind the scenes',
+        label: 'Connecting tools and reducing repeated admin',
         service: 'automation-integration',
+      },
+      {
+        id: 'impact-credible',
+        label: 'A clearer website and enquiry process',
+        service: 'website-transformation',
       },
     ],
   },
@@ -104,27 +105,35 @@ export const serviceRecommendations: Record<ServiceKey, ServiceRecommendation> =
   {
     'website-transformation': {
       key: 'website-transformation',
-      title: 'Website Transformation',
+      title: 'Website & enquiry journey',
       description:
-        'A rebuilt website that looks and feels as credible as the business you actually run.',
+        'A clear customer-facing site and a planned handoff for enquiries. We will discuss the website and any connections it needs.',
     },
+    // Keep existing shared links useful even though the quiz now offers
+    // one website path alongside systems, AI, and workflow automation.
     'conversion-redesign': {
       key: 'conversion-redesign',
-      title: 'Conversion-Focused Redesign',
+      title: 'Website enquiry improvements',
       description:
-        'Sharper structure and messaging that turns more visitors into real inquiries.',
+        'Review how customers understand your offer, get in touch, and reach the right person or system for follow-up.',
     },
     'custom-web-app': {
       key: 'custom-web-app',
-      title: 'Custom Web App',
+      title: 'Custom CRM & business system',
       description:
-        'A focused tool or portal built around exactly how your customers and team work.',
+        'Map your customer records, follow-up, and daily work before deciding what to build or connect. A definition sprint establishes the scope.',
     },
     'automation-integration': {
       key: 'automation-integration',
-      title: 'Automation & Integration',
+      title: 'Connected workflows',
       description:
-        'Practical workflows that remove repetitive tasks and missed follow-up.',
+        'Trace repeated tasks and handoffs, then scope connections and follow-up rules. An automation audit establishes the priorities.',
+    },
+    'ai-integration': {
+      key: 'ai-integration',
+      title: 'A practical AI integration',
+      description:
+        'Start with one task, examples of its inputs, and how you would judge a useful result. We will assess fit and scope the work before building.',
     },
   }
 
@@ -144,7 +153,7 @@ export function getRecommendation(
     }
   }
 
-  let winner: ServiceKey = answers[0]?.service ?? 'website-transformation'
+  let winner: ServiceKey = answers[0]?.service ?? 'custom-web-app'
   let best = -1
 
   for (const key of Object.keys(scores) as ServiceKey[]) {

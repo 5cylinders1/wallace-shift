@@ -127,7 +127,7 @@ export function BrandStatement() {
       <section className="brand-statement brand-statement--static" ref={sectionRef}>
         <div className="container brand-statement__inner">
           <h2 className="brand-statement__headline">
-            From overlooked to unforgettable.
+            From scattered to connected.
           </h2>
           <p className="brand-statement__body">{brandStatement.body}</p>
         </div>

@@ -42,16 +42,16 @@ export const PIT_STOP_EXPERIMENT_PATH = '/experiments/pit-stop'
 export const routeMeta: RouteMeta[] = [
   {
     path: '/',
-    title: 'Wallace Shift | Websites, Web Apps & Automation',
+    title: 'Wallace Shift | Custom CRMs, AI & Automation',
     description:
-      'Wallace Shift creates distinctive websites, web apps, and automations that help growing businesses earn trust and move forward.',
+      'Custom CRM systems, practical AI integrations, and workflow automation built around your business. Connect enquiries, follow-up, and daily operations.',
     priority: 1.0,
   },
   {
     path: '/services',
-    title: 'Services | Wallace Shift',
+    title: 'CRM, AI & Automation Services | Wallace Shift',
     description:
-      'Websites that earn trust, web apps that remove friction, and automation that gives time back. What each one involves, who it suits, and what you get.',
+      'Custom CRMs, AI integrations, and connected workflows for customer records, follow-up, and operations. Websites support the customer-facing journey.',
     navLabel: 'Services',
     priority: 0.9,
   },
@@ -59,7 +59,7 @@ export const routeMeta: RouteMeta[] = [
     path: '/pricing',
     title: 'Pricing | Wallace Shift',
     description:
-      'Wallace Shift pricing for websites, web apps, and automation. Three website levels starting at $1,000, plus product definition and workflow engagements.',
+      'Explore system definition, software builds, ongoing development, and automation engagements. See the scope, support terms, and supporting website packages.',
     navLabel: 'Pricing',
     priority: 0.9,
   },
@@ -67,7 +67,7 @@ export const routeMeta: RouteMeta[] = [
     path: '/approach',
     title: 'Approach | Wallace Shift',
     description:
-      'How a Wallace Shift project runs, from finding the friction to launching with momentum — and the standards every build is held to.',
+      'How we map your workflow, define the right system, build and test it with you, and plan support and further improvements.',
     navLabel: 'Approach',
     priority: 0.7,
   },
@@ -75,15 +75,15 @@ export const routeMeta: RouteMeta[] = [
     path: '/about',
     title: 'About | Wallace Shift',
     description:
-      'Wallace Shift is a two-person studio: one engineer who builds every project, and one person you talk to first. No account managers, no subcontractors.',
+      'Meet the two people behind Wallace Shift, a software company building custom CRMs, AI integrations, and connected business workflows.',
     navLabel: 'About',
     priority: 0.7,
   },
   {
     path: '/contact',
-    title: 'Start a project | Wallace Shift',
+    title: 'Discuss Your Business System | Wallace Shift',
     description:
-      'Tell us what is not working. We will show you what can shift. Answer three quick questions or send a message directly.',
+      'Tell us about your current tools, missed follow-up, or repeated admin. Discuss a custom CRM, AI integration, workflow, or connected website with Wallace Shift.',
     navLabel: 'Contact',
     priority: 0.8,
   },
@@ -128,5 +128,16 @@ export function findRoute(path: string): RouteMeta | undefined {
   return routeMeta.find((route) => route.path === path)
 }
 
+/** The blog owns static HTML documents, outside the React route/build table. */
+const blogNavigation: RouteMeta = {
+  path: '/blog',
+  title: 'Business Software & Automation Blog | Wallace Shift',
+  description: 'Practical answers to questions about CRMs, AI, automation, and business websites.',
+  navLabel: 'Blog',
+  priority: 0.7,
+}
+
 /** Header and footer navigation, in order. */
-export const navRoutes = routeMeta.filter((route) => route.navLabel)
+export const navRoutes = routeMeta
+  .filter((route) => route.navLabel)
+  .flatMap((route) => route.path === '/contact' ? [blogNavigation, route] : [route])

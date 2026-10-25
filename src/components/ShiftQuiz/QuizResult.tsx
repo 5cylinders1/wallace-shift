@@ -5,13 +5,13 @@ import './QuizResult.css'
 
 type QuizResultProps = {
   recommendation: ServiceRecommendation
-  onPrimaryCta: () => void
+  primaryHref: string
   onStartOver: () => void
 }
 
 export const QuizResult = forwardRef<HTMLHeadingElement, QuizResultProps>(
   function QuizResult(
-    { recommendation, onPrimaryCta, onStartOver },
+    { recommendation, primaryHref, onStartOver },
     headingRef,
   ) {
     return (
@@ -26,13 +26,12 @@ export const QuizResult = forwardRef<HTMLHeadingElement, QuizResultProps>(
           {recommendation.description}
         </p>
         <div className="quiz-result__actions">
-          <button
-            type="button"
+          <a
+            href={primaryHref}
             className="quiz-result__primary"
-            onClick={onPrimaryCta}
           >
             {shiftQuizCopy.primaryCtaLabel}
-          </button>
+          </a>
           <button
             type="button"
             className="quiz-result__secondary"

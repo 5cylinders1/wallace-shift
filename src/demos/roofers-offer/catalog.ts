@@ -63,8 +63,8 @@ export const roofingDesigns: RoofingDesign[] = [
     name: 'Halcyon Roofworks',
     status: 'available',
     character: 'Cinematic. Luxurious. Transparent.',
-    description: 'A drone-film experience for luxury estates, with a roof visualizer that tries materials on the owner\u2019s own home and a client ledger for every project.',
-    features: ['Scroll-driven drone film', 'Photo roof visualizer with pricing', 'Client project ledger'],
+    description: 'A drone-film concept with an AI roof visualizer for a homeowner’s photo, illustrative planning prices and a preview of a proposed client ledger.',
+    features: ['Scroll-driven concept drone film', 'AI roof preview with planning prices', 'Client ledger concept preview'],
     thumbnail: '/demos/roofers-4/preview.jpg',
     thumbnailAlt: 'Halcyon Roofworks website with a drone view of a luxury estate and its standing-seam metal roof',
     localPath: '/demos/roofers-4/',
@@ -73,8 +73,8 @@ export const roofingDesigns: RoofingDesign[] = [
   {
     id: 'velar', number: '05', name: 'Velar Roof Atelier', status: 'available',
     character: 'Sculptural. Coastal. Bespoke.',
-    description: 'A luxury roofing experience with a cinematic estate film, an AI photo design studio, sourced investment insights and an interactive owner portal.',
-    features: ['Cinematic luxury estates', 'AI roof design studio & planning prices', 'Interactive homeowner portal'],
+    description: 'A luxury roofing concept with an AI photo design studio, planning prices and an interactive sample owner portal. It shows how customer choices and project information could fit together.',
+    features: ['Cinematic concept estates', 'AI roof design studio & planning prices', 'Sample homeowner portal'],
     thumbnail: '/demos/roofers-5/hero-poster.jpg',
     thumbnailAlt: 'Velar Roof Atelier cinematic luxury roofing concept',
     localPath: '/demos/roofers-5/', productionPath: '/velar',
@@ -90,7 +90,7 @@ export const roofingDesigns: RoofingDesign[] = [
   },
 ]
 
-export const roofingOffer = 'Motion website + roofing CRM included with a 12-month managed automation plan'
+export const roofingOffer = 'Roofing CRM + Motion website included with a 12-month managed automation plan'
 export const roofingMonthlyMinimum = 750
 export const roofingCommitmentMonths = 12
 export const roofingContactEmail = 'bella@wallaceshift.com'

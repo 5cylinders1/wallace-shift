@@ -110,11 +110,11 @@
     border-top: 1px solid var(--service-rule);
   }
 
-  .services-panels .service-detail--web-apps {
+  .services-panels .service-detail--automation {
     z-index: 2;
   }
 
-  .services-panels .service-detail--automation {
+  .services-panels .service-detail--websites {
     z-index: 3;
   }
 }

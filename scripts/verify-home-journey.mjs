@@ -590,8 +590,8 @@ await test('static/mobile journey restores the three service media panels while 
     assert.ok(html.includes(`poster="${homeServiceMedia[word].poster}"`), `${word} receives its cool poster`)
     assert.ok(html.includes(`src="${homeServiceMedia[word].video}"`), `${word} receives its cool loop`)
   }
-  for (const text of ['Websites that earn trust', 'Web apps that remove friction', 'Automation that gives time back',
-    'Find the friction', 'Make the shift', 'Launch with momentum']) assert.ok(html.includes(text), text)
+  for (const text of ['Custom CRMs built around your work', 'AI and workflows with a clear job', 'Websites connected to your business',
+    'Find the gaps', 'Build around the work', 'Support the next step']) assert.ok(html.includes(text), text)
   for (const id of ['home-contact-name', 'home-contact-email', 'home-contact-message']) {
     assert.ok(html.includes(`for="${id}"`))
     assert.ok(html.includes(`id="${id}"`))

@@ -78,6 +78,12 @@ export function ServicesPage() {
                     {service.pricingLabel}
                     <span aria-hidden="true">&#8599;</span>
                   </PageLink>
+                  {service.example && (
+                    <a href={service.example.href} className="service-detail__pricing">
+                      {service.example.label}
+                      <span aria-hidden="true">&#8599;</span>
+                    </a>
+                  )}
                 </div>
 
                 <div className="service-detail__body">

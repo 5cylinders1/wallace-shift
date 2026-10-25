@@ -58,6 +58,16 @@ export function useDocumentMeta(
       description,
     )
 
+    // Match the build-time social tags when a visitor follows an internal
+    // link; otherwise Twitter metadata keeps the previous route's copy.
+    for (const [name, value] of [['twitter:title', title], ['twitter:description', description]]) {
+      setMeta(`meta[name="${name}"]`, () => {
+        const el = document.createElement('meta')
+        el.name = name
+        return el
+      }, value)
+    }
+
     if (path) {
       const canonical = `${SITE_ORIGIN}${path === '/' ? '/' : path}`
 
