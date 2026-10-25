@@ -65,3 +65,22 @@ The blog's styling and navigation are static; Markdown authoring does not load
 the site's WebGL or animation bundles. `blog/vite-plugin.ts` serves local blog
 documents and writes production files after the main site's sitemap step. The
 private demo build does not run the blog plugin.
+
+## Reviewing an unpublished draft locally
+
+Run `npm run blog:preview -- content/blog/posts/your-article.md` and open the
+printed loopback URL. Add `--port 4176` if the default port is occupied. The page
+shows a draft banner and omits publication dates and structured article data.
+It is marked `noindex, nofollow`; the server listens only on `127.0.0.1`.
+
+The source stays unchanged and unpublished. This command never writes to `dist`
+or deploys anything. It serves one review snapshot, so stop with Ctrl+C and
+restart after editing. Ordinary navigation links open the production site.
+
+Keep unpublished images and PDFs in `content/blog/assets/<article-slug>/`.
+Front matter can still use the intended `/media/blog/filename.webp` image URL,
+and Markdown can link to `/resources/filename.pdf`. The preview serves those
+specific files from the draft directory when they do not exist in `public`.
+It does not expose other files or private demos. On approval, copy the chosen
+assets into their intended `public/media/blog/` and `public/resources/` locations
+as part of publishing the article; draft assets never enter the normal build.
