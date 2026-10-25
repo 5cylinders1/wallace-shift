@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && vite build --mode demos && node scripts/verify-demo-build.mjs && node scripts/verify-blog-build.mjs",
-    "test:blog": "node scripts/test-blog.mjs",
+    "test:blog": "node scripts/test-blog.mjs && node scripts/test-blog-preview.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "demo:invite": "node scripts/create-demo-invite.mjs"
+    "demo:invite": "node scripts/create-demo-invite.mjs",
+    "blog:preview": "node scripts/preview-blog-post.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
