@@ -1,6 +1,7 @@
 ---
 status: published
 publishedAt: "2026-10-25T06:34:58Z"
+updatedAt: "2026-10-25T18:58:05Z"
 slug: website-redesign-strategy-what-to-prioritize-first
 title: "Website Redesign Strategy: What to Prioritize First"
 description: "Plan a website redesign around evidence, useful content, clear responsibilities, and a safe launch. Includes a downloadable redesign planning worksheet."
@@ -37,6 +38,8 @@ Write a short brief with four parts:
 A hypothetical landscaping company might write: “Customers cannot tell which maintenance plans cover their property. We need clearer plan information and an inquiry process that captures the address and service needed. Keep the existing booking system.”
 
 That brief gives the team decisions to make. It also makes exclusions easier: a customer portal might be useful later, but it does not automatically belong in this redesign.
+
+If the audience or offer itself has changed, start by [deciding between a rebrand and a website redesign](/blog/rebrand-or-redesign-website). Clarifying the business message may need to come before the page design.
 
 ## 2. Record what works before changing it
 
@@ -155,6 +158,8 @@ Choose a monitoring frequency that fits the risk and volume. Record who will inv
 
 Only when the requirements justify it. Check whether the existing platform can support the content, editing, accessibility, performance, and integrations you need. Compare the cost and disruption of improving it with the cost of moving before choosing.
 
+Our [website platform comparison for service businesses](/blog/best-website-platform-for-service-businesses) provides a requirements worksheet for making that choice.
+
 ### How long should redirects remain in place?
 
 For site moves, Google recommends keeping redirects as long as possible, generally at least a year. Keeping useful redirects longer can also help visitors following old links. [Google's redirect-retention guidance](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes).
@@ -162,6 +167,8 @@ For site moves, Google recommends keeping redirects as long as possible, general
 ## Bring a clear brief to the next conversation
 
 Start with the worksheet, an inventory of important pages, and a short list of observed problems.
+
+When you are ready to discuss that brief with a provider, use our [guide to evaluating a web design agency and its proposal](/blog/how-to-choose-a-web-design-agency) to compare scope, responsibilities, and evidence of fit.
 
 Wallace Shift's [free website first check](/approach#approach-start) covers simulated mobile loading and basic technical checks. It does not assess your offer or replace a redesign review. The [Shift Finder](/#shift-finder) is a separate three-question quiz that suggests a starting direction.
 

@@ -14,7 +14,7 @@ export interface BlogPost {
   question: string
   answer: string
   category: string
-  author: { name: string; url: string }
+  author: { name: string; url: string; type?: 'Person' | 'Organization' }
   publishedAt: string
   updatedAt?: string
   html: string
@@ -119,6 +119,8 @@ export async function loadPosts(directory: string, now = new Date()): Promise<Bl
     const authorName = requiredString(author, 'name', file)
     const authorUrl = requiredString(author, 'url', file)
     if (!safeUrl(authorUrl) || !/^(https?:\/\/|\/)/.test(authorUrl)) throw new Error(`${file}: author.url must be a profile URL`)
+    const authorType = author.type === undefined ? 'Person' : author.type
+    if (authorType !== 'Person' && authorType !== 'Organization') throw new Error(`${file}: author.type must be Person or Organization`)
     let image: BlogPost['image']
     if (data.image !== undefined) {
       if (!data.image || typeof data.image !== 'object') throw new Error(`${file}: image must include src and alt`)
@@ -126,10 +128,10 @@ export async function loadPosts(directory: string, now = new Date()): Promise<Bl
       image = { src: requiredString(imageData, 'src', file), alt: requiredString(imageData, 'alt', file) }
       if (!safeUrl(image.src, true)) throw new Error(`${file}: image.src must be a public HTTP(S) URL or root-relative path`)
     }
-    const metadata = {
+    const metadata: Omit<BlogPost, 'html' | 'toc' | 'readingMinutes'> = {
       slug, title: requiredString(data, 'title', file), description: requiredString(data, 'description', file),
       question: requiredString(data, 'question', file), answer: requiredString(data, 'answer', file), category: requiredString(data, 'category', file),
-      author: { name: authorName, url: authorUrl }, publishedAt, updatedAt, image,
+      author: { name: authorName, url: authorUrl, type: authorType }, publishedAt, updatedAt, image,
     }
     if (!content.trim()) throw new Error(`${file}: published articles require a Markdown body`)
     const rendered = renderMarkdown(content, file)
