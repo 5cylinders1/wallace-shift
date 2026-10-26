@@ -90,7 +90,7 @@ export const roofingDesigns: RoofingDesign[] = [
   },
 ]
 
-export const roofingOffer = 'Free Motion website with purchase of a roofing CRM plan'
+export const roofingOffer = 'Free website with purchase of a CRM integrated with AI'
 export const roofingMonthlyMinimum = 750
 export const roofingCommitmentMonths = 12
 export const roofingContactEmail = 'bella@wallaceshift.com'

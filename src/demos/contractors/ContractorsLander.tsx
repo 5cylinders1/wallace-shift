@@ -76,10 +76,10 @@ export default function ContractorsLander() {
       <div className="ct-wrap ct-offer-inner">
         <div>
           <p className="ct-eyebrow">Contractor launch offer</p>
-          <h2 id="offer-title">A free website <em>when you purchase an AI-integrated CRM.</em></h2>
+          <h2 id="offer-title">A free website <em>when you purchase a CRM integrated with AI.</em></h2>
         </div>
         <div className="ct-offer-detail">
-          <p>Get a customer-facing website designed around the same workflow as your CRM, so the first inquiry and the team’s next action have a clearer handoff.</p>
+          <p>Get a customer website designed around the same workflow as your CRM, so the first inquiry and the team’s next action have a clearer handoff.</p>
           <p className="ct-offer-note">CRM configuration, AI connections, platform costs and any work outside the agreed website scope are discussed and scoped separately.</p>
           <a className="ct-button" href={`${STUDIO}/contact`}>Discuss the offer <Arrow diagonal /></a>
         </div>

@@ -106,16 +106,16 @@ export function RoofersOffer() {
       email,
       company: honeypot,
       website,
-      service: 'Roofing CRM plan + free Motion website',
+      service: 'CRM integrated with AI + free website',
       package: design ? `Roofing collection: ${design.name}` : 'Roofing collection: design undecided',
       message: [
         `Roofing company: ${company}`,
         `Requested design: ${design?.name ?? 'No design selected; discuss the workflow first'}`,
         `Offer: ${roofingOffer}`,
-        `Acknowledged: the free website requires purchase of a roofing CRM plan with ${roofingCommitmentMonths} months of managed automation starting at ${monthlyMinimum}/month, with scope and final pricing agreed in writing before commitment.`,
+        `Acknowledged: the free website requires purchase of a CRM integrated with AI with ${roofingCommitmentMonths} months of managed automation starting at ${monthlyMinimum}/month, with scope and final pricing agreed in writing before commitment.`,
         '',
         'What the business needs:',
-        message || 'I would like to discuss a roofing CRM plan and the free Motion website offer.',
+        message || 'I would like to discuss a CRM integrated with AI and the free website offer.',
       ].join('\n'),
     })
     if (result.ok) {
@@ -144,7 +144,7 @@ export function RoofersOffer() {
           <div className="ro-offer-card">
             <p className="ro-eyebrow">A limited collection. Five client places.</p>
             <h2><span>Free Motion</span><em>website.</em></h2>
-            <p className="ro-offer-condition">With purchase of a roofing CRM plan.</p>
+            <p className="ro-offer-condition">With purchase of a CRM integrated with AI.</p>
             <p className="ro-offer-note">Your plan covers CRM setup and managed automation for {roofingCommitmentMonths} months. The website build is free within the agreed scope.</p>
             <p className="ro-offer-price"><span>CRM + managed automation starts at</span><strong>{monthlyMinimum}<small>/month</small></strong></p>
             <div className="ro-offer-rule"><span>Final price depends on your workflows, integrations and support needs.</span><a href="#offer">See plan details <Arrow /></a></div>
@@ -211,7 +211,7 @@ export function RoofersOffer() {
       </section>
 
       <section className="ro-plan ro-wrap" id="offer" aria-labelledby="offer-heading">
-        <div className="ro-terms"><div><p className="ro-eyebrow">04 / How the offer works</p><h2 id="offer-heading">Purchase your roofing CRM.<br /><em>Get the website free.</em></h2><p className="ro-plan-price">CRM and managed automation from <strong>{monthlyMinimum}/month</strong> for {roofingCommitmentMonths} months.</p><p className="ro-plan-note">{commitmentMinimum} minimum service commitment at the starting price. The Motion website build is free with your CRM plan. Your final monthly fee depends on workflow complexity, integrations and support. Ad spend, platform subscriptions and third party usage are separate.</p></div><ol><li><span>01</span><div><strong>Map the work</strong><p>Show us how inquiries become estimates and jobs, which tools you use and where follow up gets held up.</p></div></li><li><span>02</span><div><strong>Agree on the complete scope</strong><p>We confirm your paid CRM plan, the free website build, initial automations, ongoing support and final monthly price in writing.</p></div></li><li><span>03</span><div><strong>Launch, then keep it working</strong><p>We configure your CRM and agreed workflows, adapt the site to your business, then monitor and maintain the system. New workflows and substantial changes are scoped separately.</p></div></li></ol></div>
+        <div className="ro-terms"><div><p className="ro-eyebrow">04 / How the offer works</p><h2 id="offer-heading">Purchase a CRM integrated with AI.<br /><em>Get the website free.</em></h2><p className="ro-plan-price">CRM and managed automation from <strong>{monthlyMinimum}/month</strong> for {roofingCommitmentMonths} months.</p><p className="ro-plan-note">{commitmentMinimum} minimum service commitment at the starting price. The website build is free with your CRM plan. Your final monthly fee depends on workflow complexity, integrations and support. Ad spend, platform subscriptions and third party usage are separate.</p></div><ol><li><span>01</span><div><strong>Map the work</strong><p>Show us how inquiries become estimates and jobs, which tools you use and where follow up gets held up.</p></div></li><li><span>02</span><div><strong>Agree on the complete scope</strong><p>We confirm your paid CRM plan, the free website build, initial automations, ongoing support and final monthly price in writing.</p></div></li><li><span>03</span><div><strong>Launch, then keep it working</strong><p>We configure your CRM and agreed workflows, adapt the site to your business, then monitor and maintain the system. New workflows and substantial changes are scoped separately.</p></div></li></ol></div>
       </section>
 
       <section className="ro-enquire" id="enquire" aria-labelledby="enquire-heading">
@@ -224,7 +224,7 @@ export function RoofersOffer() {
               <label htmlFor="ro-design">Website direction <span className="ro-optional">(optional)</span><select id="ro-design" name="design" value={selectedDesign} onChange={event => setSelectedDesign(event.target.value)} disabled={status === 'submitting'}><option value="">Let’s discuss the workflow first</option>{availableDesigns.map(design => <option key={design.id} value={design.id}>{design.number} — {design.name}</option>)}</select></label>
               <label htmlFor="ro-message">Where is work getting held up? <span className="ro-optional">(optional)</span><textarea id="ro-message" name="message" rows={3} maxLength={3000} placeholder="Which tools do you use? Where do calls, estimates or job updates need someone to chase the next step?" disabled={status === 'submitting'} /></label>
               <div className="ro-honeypot" aria-hidden="true"><label htmlFor="ro-company-check">Company<input id="ro-company-check" name="company" value={honeypot} onChange={event => setHoneypot(event.target.value)} tabIndex={-1} autoComplete="off" /></label></div>
-              <label className="ro-acknowledgement"><input name="acknowledged" type="checkbox" required disabled={status === 'submitting'} /><span>I understand the free website requires purchase of a roofing CRM plan with {roofingCommitmentMonths} months of managed automation starting at {monthlyMinimum}/month, with scope and final pricing agreed before I commit.</span></label>
+              <label className="ro-acknowledgement"><input name="acknowledged" type="checkbox" required disabled={status === 'submitting'} /><span>I understand the free website requires purchase of a CRM integrated with AI with {roofingCommitmentMonths} months of managed automation starting at {monthlyMinimum}/month, with scope and final pricing agreed before I commit.</span></label>
               <button className="ro-button ro-button-dark ro-submit" type="submit" disabled={status === 'submitting'}>{status === 'submitting' ? 'Sending your inquiry…' : 'Ask about the offer'}<Arrow /></button>
               <p id="ro-form-terms" className="ro-form-terms">No payment is collected here. We’ll use your details to respond to this inquiry. <a href="https://www.wallaceshift.com/privacy">Privacy policy</a></p>
               <div className="ro-form-feedback" aria-live="polite">{status === 'invalid' && <p role="alert">Please check your name, email and company. If you selected a design, it must still be available.</p>}{(status === 'not_configured' || status === 'error') && <p role="alert">Your inquiry hasn’t been sent. Please try again or email <a href={`mailto:${roofingContactEmail}`}>{roofingContactEmail}</a>.</p>}</div>
