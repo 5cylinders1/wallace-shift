@@ -185,4 +185,13 @@ export const contactCta = {
 
 export const footer = {
   tagline: 'Software. Workflows. Progress.',
+  // Google's official deeplink and dark English badge keep the same button
+  // available in the React site and the script-free blog. Always target the
+  // published domain, including when a reader is viewing a local preview.
+  // https://developers.google.com/search/docs/appearance/preferred-sources
+  preferredSource: {
+    href: 'https://www.google.com/preferences/source?q=wallaceshift.com',
+    badge: '/brand/google-preferred-source-dark-en.png',
+    label: 'Add Wallace Shift as a preferred source on Google (opens in a new tab)',
+  },
 }

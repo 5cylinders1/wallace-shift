@@ -1,11 +1,12 @@
 # Roofing website + CRM collection and offer
 
-The offer is **Motion website + roofing CRM included with a 12-month managed
-automation plan**. Managed automation starts at **$750/month**, a **$9,000 minimum
-service commitment** over the initial year, before separate vendor costs. The
-website build and CRM setup are included at no additional charge. The final fee
-depends on workflow complexity, integrations and support needs, with the initial
-implementation and ongoing scope agreed in writing before commitment.
+The offer is **Free Motion website with purchase of a roofing CRM plan**. The
+paid CRM plan covers CRM setup and managed automation, starting at **$750/month**
+for **12 months**, a **$9,000 minimum service commitment** over the initial year,
+before separate vendor costs. The website build is free within the agreed scope;
+the CRM is the paid service. The final fee depends on workflow complexity,
+integrations and support needs, with the initial implementation and ongoing
+scope agreed in writing before commitment.
 
 The collection currently has six available demo designs and five client places.
 Demo 06 (Stratum) was added without changing the number of client places;
@@ -29,7 +30,7 @@ price is $5,000, but there is no established standalone price for this combined
 roofing package. Do not invent a higher bundle valuation or add the custom-app
 price to the reusable CRM offering.
 
-The page keeps the website collection first, followed by included CRM tools,
+The page keeps the website collection first, followed by the paid CRM tools,
 six practical automation starting points and service terms. A hero link jumps
 directly to the automation examples. Featured workflows cover
 lead response, estimates, inspections, customer progress, reviews and storm
@@ -49,10 +50,10 @@ are separately scoped services. Ad spend, platform subscriptions and third-party
 usage are separate. The dashboard preview remains labeled as sample data and
 illustrates part of the CRM; it is not proof of deployed customer integrations.
 
-This roofing promotion includes an agreed initial implementation and has a
-12-month commitment. It is distinct from the general studio rolling maintenance
-offer. New workflows and substantial changes after the agreed launch scope are
-quoted separately.
+This roofing promotion provides a free website build with a paid CRM plan and
+an agreed initial implementation. It has a 12 month commitment and is distinct
+from the general studio rolling maintenance offer. New workflows and substantial
+changes after the agreed launch scope are quoted separately.
 
 ## URL map
 
@@ -87,8 +88,8 @@ the `company`, `city` and `phone` parameters from page to page. Its footer links
 
 ## Catalog and availability
 
-`src/demos/roofers-offer/catalog.ts` is the manual source of truth for all five
-tiles and their `available`, `claimed` or `coming-soon` status. All five currently
+`src/demos/roofers-offer/catalog.ts` is the manual source of truth for all six
+tiles and their `available`, `claimed` or `coming-soon` status. All six currently
 have demo links. The upcoming-design grid is hidden when no designs are marked
 coming soon.
 
@@ -107,7 +108,7 @@ These notes document configuration, not a completed deployment. Before announcin
 the release:
 
 - Build the gallery and all demo documents, and inspect the published metadata.
-- On the deployed roofing hostname, check root, all five demo homepages and every
+- On the deployed roofing hostname, check root, all six demo homepages and every
   Alder & Stone guide with a direct refresh. Confirm studio root still serves
   Wallace Shift; local Vite paths do not establish production host routing.
 - Check gallery tiles and links, mobile navigation, poster/video loads, and
@@ -118,8 +119,9 @@ the release:
 - Check the manually maintained availability status before sharing the offer.
 - Check the six featured workflows and the full 24-item disclosure on desktop and
   mobile, including keyboard expand/collapse and the design-to-inquiry selection.
-- Confirm website + CRM wording and the monthly/12-month terms match in the hero,
-  offer details, form acknowledgment, inquiry payload and metadata.
+- Confirm the free website requires a paid CRM plan and that the monthly price
+  and 12 month terms match in the hero, offer details, form acknowledgment,
+  inquiry payload and metadata.
 
 ## Local verification — 2026-10-13
 

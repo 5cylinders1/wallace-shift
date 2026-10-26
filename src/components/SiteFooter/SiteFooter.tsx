@@ -45,18 +45,35 @@ export function SiteFooter() {
             )}
           </div>
 
-          <nav aria-label="Footer" className="site-footer__nav">
-            <ul>
-              {navRoutes.map((route) => (
-                <li key={route.path}>
-                  <PageLink href={route.path}>{route.navLabel}</PageLink>
+          <div className="site-footer__links">
+            <nav aria-label="Footer" className="site-footer__nav">
+              <ul>
+                {navRoutes.map((route) => (
+                  <li key={route.path}>
+                    <PageLink href={route.path}>{route.navLabel}</PageLink>
+                  </li>
+                ))}
+                <li>
+                  <PageLink href="/contact">Start a project</PageLink>
                 </li>
-              ))}
-              <li>
-                <PageLink href="/contact">Start a project</PageLink>
-              </li>
-            </ul>
-          </nav>
+              </ul>
+            </nav>
+            <a
+              className="site-footer__preferred-source"
+              href={footer.preferredSource.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src={footer.preferredSource.badge}
+                alt={footer.preferredSource.label}
+                width={676}
+                height={213}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </div>
         </div>
 
         <div className="site-footer__legal">
