@@ -45,41 +45,35 @@ export function SiteFooter() {
             )}
           </div>
 
-          <div className="site-footer__links">
-            <nav aria-label="Footer" className="site-footer__nav">
-              <ul>
-                {navRoutes.map((route) => (
-                  <li key={route.path}>
-                    <PageLink href={route.path}>{route.navLabel}</PageLink>
-                  </li>
-                ))}
-                <li>
-                  <PageLink href="/contact">Start a project</PageLink>
+          <nav aria-label="Footer" className="site-footer__nav">
+            <ul>
+              {navRoutes.map((route) => (
+                <li key={route.path}>
+                  <PageLink href={route.path}>{route.navLabel}</PageLink>
                 </li>
-              </ul>
-            </nav>
-            <a
-              className="site-footer__preferred-source"
-              href={footer.preferredSource.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={footer.preferredSource.badge}
-                alt={footer.preferredSource.label}
-                width={676}
-                height={213}
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-          </div>
+              ))}
+              <li>
+                <PageLink href="/contact">Start a project</PageLink>
+              </li>
+            </ul>
+          </nav>
         </div>
 
         <div className="site-footer__legal">
           <p className="site-footer__copyright">
             &copy; {year} {siteMeta.name}
           </p>
+          <a
+            className="site-footer__preferred-source"
+            href={footer.preferredSource.href}
+            aria-label={footer.preferredSource.label}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={footer.preferredSource.icon} alt="" width={18} height={18} loading="lazy" decoding="async" />
+            <span>{footer.preferredSource.text}</span>
+            <span className="site-footer__preferred-arrow" aria-hidden="true">↗</span>
+          </a>
           <PageLink href="/privacy" className="site-footer__privacy">
             Privacy
           </PageLink>

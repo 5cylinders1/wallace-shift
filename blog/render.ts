@@ -53,8 +53,15 @@ function header(): string {
 
 function footer(): string {
   return `<footer class="blog-footer"><div class="blog-container">
-    <div class="blog-footer__top"><div><a class="blog-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="22" height="14" alt="" /><span>Wallace Shift</span></a><p>Software. Workflows. Progress.</p></div><div class="blog-footer__links"><nav aria-label="Footer"><ul>${navLinks()}</ul></nav><a class="blog-footer__preferred-source" href="${safeUrl(siteFooter.preferredSource.href)}" target="_blank" rel="noopener noreferrer"><img src="${safeUrl(siteFooter.preferredSource.badge)}" alt="${escape(siteFooter.preferredSource.label)}" width="676" height="213" loading="lazy" decoding="async" /></a></div></div>
-    <div class="blog-footer__bottom"><p>© ${new Date().getFullYear()} Wallace Shift</p><a href="/privacy">Privacy</a></div>
+    <div class="blog-footer__top"><div><a class="blog-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="22" height="14" alt="" /><span>Wallace Shift</span></a><p>Software. Workflows. Progress.</p></div><nav aria-label="Footer"><ul>${navLinks()}</ul></nav></div>
+    <div class="blog-footer__bottom">
+      <p>© ${new Date().getFullYear()} Wallace Shift</p>
+      <a class="blog-footer__preferred-source" href="${safeUrl(siteFooter.preferredSource.href)}" aria-label="${escape(siteFooter.preferredSource.label)}" target="_blank" rel="noopener noreferrer">
+        <img src="${safeUrl(siteFooter.preferredSource.icon)}" alt="" width="18" height="18" loading="lazy" decoding="async" />
+        <span>${escape(siteFooter.preferredSource.text)}</span><span class="blog-footer__preferred-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="blog-footer__privacy" href="/privacy">Privacy</a>
+    </div>
   </div></footer>`
 }
 
