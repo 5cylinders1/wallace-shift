@@ -29,7 +29,7 @@ That buyer description comes from the business brief. No raw customer inquiries,
 
 Existing prices, terms, credits and scope exclusions remain in place. The $18,000 starting price is for a focused build around one primary workflow, not a universal fixed quote for a custom CRM. Broader CRM and AI requirements need an agreed scope and price.
 
-The roofing offer remains a separate, limited offer starting at $750 per month for 12 months, with the website and CRM setup included within the agreed scope. Its $9,000 minimum commitment does not define the price of every custom system. Confirm how that offer should sit beside the main systems engagement before expanding or repackaging it.
+The roofing offer is a separate, limited offer: a free Motion website build with purchase of a roofing CRM plan. The paid plan covers CRM setup and managed automation, starting at $750 per month for 12 months within the agreed scope. Its $9,000 minimum commitment does not define the price of every custom system. The website is the free part of this offer; the CRM plan is purchased.
 
 Managed automation covers monitoring, maintenance, failure recovery and minor adjustments; new workflows and substantial changes remain separate. Ongoing development reserves capacity for agreed feature work. Confirm the desired prominence of the existing website packages and fast initial-preview timelines as the business develops; no replacement pricing or delivery guarantees were invented.
 

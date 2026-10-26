@@ -79,6 +79,7 @@ img { display: block; width: 100%; }
 .ro-offer-card h2 { font-size: clamp(30px, 2.7vw, 40px); font-weight: 500; line-height: 1.17; letter-spacing: -.045em; margin-bottom: 18px; }
 .ro-offer-card h2>span, .ro-offer-card h2>em { display: block; }
 .ro-offer-card h2>em { color: var(--ro-accent); margin-top: 8px; font-size: 1.35em; letter-spacing: -.02em; }
+.ro-offer-condition { font-size: 16px; font-weight: 600; line-height: 1.6; color: var(--ro-paper); margin-bottom: 12px; }
 .ro-offer-note { font-size: 13px; color: var(--ro-muted-dark); line-height: 1.85; max-width: 350px; margin-bottom: 23px; }
 .ro-offer-price { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
 .ro-offer-price>span { font-size: 11px; color: var(--ro-silver); }
