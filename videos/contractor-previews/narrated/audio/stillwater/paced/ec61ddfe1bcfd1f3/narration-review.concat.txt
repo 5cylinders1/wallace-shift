@@ -1,0 +1,6 @@
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/opening.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/transformation.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/inspiration.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/planner.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/brief.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/ending.wav'

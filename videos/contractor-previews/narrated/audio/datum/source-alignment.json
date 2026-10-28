@@ -1,0 +1,285 @@
+{
+  "id": "datum",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/higgsfield-grady-source.mp3",
+  "sourceSha256": "8a284553c54660b1ae38f87af9c6edf5d732b422bbc7e94589674f9386459818",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in the supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 5.8,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff. The retained screenshot already shows the next Tambour form and its separate quote.",
+    "browserEvidence": "output/narrated-previews/datum/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Datum history row beginning Foundation work displays Grady and Seed Audio 1.0. The left form is already on the subsequent Tambour narration."
+  },
+  "alignmentReview": {
+    "status": "ASR alignment reviewed against actual-take script; subjective listening and final caption review pending",
+    "method": "Unprompted offline faster-whisper base.en recognition, independently checked with opening and guidance crops. Exact matching to the actual-take script follows recognition, with a disclosed Wallace Schiff/Wallace Shift proper-name alias. Scene cuts use measured silence.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-opening-transcript.json",
+        "offset": 0,
+        "replaceStart": 0,
+        "replaceEnd": 8,
+        "removedWords": [
+          " The",
+          " foundation",
+          " work",
+          " begins",
+          " with",
+          " something",
+          " homeowners",
+          " cannot",
+          " see.",
+          " Wallis's",
+          " shift",
+          " built",
+          " datum",
+          " to",
+          " make",
+          " that",
+          " first",
+          " conversation",
+          " clearer."
+        ],
+        "addedWords": [
+          " The",
+          " foundation",
+          " work",
+          " begins",
+          " with",
+          " something",
+          " homeowners",
+          " cannot",
+          " see.",
+          " Wallace",
+          " Schiff",
+          " built",
+          " Datum",
+          " to",
+          " make",
+          " that",
+          " first",
+          " conversation",
+          " clearer."
+        ],
+        "review": "Independent original-audio 0–8s recognition resolves the brand spelling to the disclosed Schiff/Shift proper-name alias. It also corroborates an opening The absent from the original script. Root explicitly authorized adding that article to the script to match the actual take, without changing the product claim."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-guidance-transcript.json",
+        "offset": 27,
+        "replaceStart": 27,
+        "replaceEnd": 32,
+        "removedWords": [
+          " Answer",
+          " a",
+          " follow",
+          "-up",
+          " question",
+          " and",
+          " the",
+          " displayed",
+          " guidance",
+          " changes."
+        ],
+        "addedWords": [
+          " Answer",
+          " a",
+          " follow",
+          "-up",
+          " question",
+          " and",
+          " the",
+          " displayed",
+          " guidance",
+          " changes."
+        ],
+        "review": "Independent original-audio 27–35.6s recognition supplies the first guidance sentence with valid word timing, resolving the full-pass zero-duration a. Replace only through the 32s gap; the crop's later Never has zero duration, so the valid original second-sentence timings remain."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Wallace Shift",
+        "recognized": "Wallace Schiff",
+        "start": 3.82,
+        "end": 4.44,
+        "reviewedBy": "Codex other_narrative_research agent under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "The independent 0–8s opening crop recognizes Wallace Schiff. The source script and Wallace Shift identity establish the intended spelling. Preserve the observed complete name span; pronunciation and subjective listening remain pending.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 3.82,
+            "end": 4.04,
+            "probability": 0.8387530446052551,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-opening-transcript.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "schiff",
+            "text": " Schiff",
+            "start": 4.04,
+            "end": 4.44,
+            "probability": 0.3431907892227173,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-opening-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex other_narrative_research agent, delegated source alignment review",
+    "scriptAdjustment": {
+      "before": "Foundation work begins with something homeowners cannot see.",
+      "after": "The foundation work begins with something homeowners cannot see.",
+      "reason": "Both full-take and independent opening recognition contain The. Root authorized adding the non-substantive article to match the actual take. This is an actual-take transcription adjustment, not a claim of exact agreement with the original script.",
+      "claimMeaningChanged": false
+    },
+    "findings": [
+      "The opening crop corroborates the added The and recognizes the brand as Wallace Schiff. The disclosed proper-name alias retains its complete observed span; pronunciation remains unreviewed.",
+      "The full pass gives a zero-length a in Answer a follow-up question. An independent source 27–35.6s crop provides valid first-sentence spans. Only source 27–32s is replaced; later crop Never is zero-length, so original valid second-sentence spans remain.",
+      "All 133 actual-take script tokens map after the disclosed name alias, with zero remaining differences and zero invalid word spans. All seven internal scene cuts lie within measured silence."
+    ],
+    "limitations": [
+      "Subjective listening, pronunciation, delivery, music mix, final captions, and buyer comprehension remain unreviewed.",
+      "Automatic recognition can include leading silence; caption spans are sentence-level, not invented word highlighting."
+    ],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-opening-transcript.json",
+      "asr-guidance-transcript.json",
+      "alignment-report.json",
+      "asr-review.json",
+      "higgsfield-generation.jpg"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 8.049687500000001,
+      "phrases": [
+        {
+          "text": "The foundation work begins with something homeowners cannot see.",
+          "start": 0,
+          "end": 2.9
+        },
+        {
+          "text": "Wallace Shift built Datum to make that first conversation clearer.",
+          "start": 3.82,
+          "end": 7.34
+        }
+      ]
+    },
+    {
+      "id": "seasons",
+      "start": 8.049687500000001,
+      "end": 12.872146,
+      "phrases": [
+        {
+          "text": "An interactive cutaway shows the house and soil across the seasons.",
+          "start": 8.58,
+          "end": 12.22
+        }
+      ]
+    },
+    {
+      "id": "report",
+      "start": 12.872146,
+      "end": 19.587854,
+      "phrases": [
+        {
+          "text": "A sample inspection report helps visitors understand what the service could deliver before they inquire.",
+          "start": 13.22,
+          "end": 18.8
+        }
+      ]
+    },
+    {
+      "id": "symptom",
+      "start": 19.587854,
+      "end": 26.79825,
+      "phrases": [
+        {
+          "text": "The crack decoder starts with the visitor’s concern.",
+          "start": 20.02,
+          "end": 22.56
+        },
+        {
+          "text": "Choose where the crack appears and what it looks like.",
+          "start": 23.62,
+          "end": 26.52
+        }
+      ]
+    },
+    {
+      "id": "guidance",
+      "start": 26.79825,
+      "end": 35.7826665,
+      "phrases": [
+        {
+          "text": "Answer a follow-up question and the displayed guidance changes.",
+          "start": 27,
+          "end": 31.14
+        },
+        {
+          "text": "It is a guide, never a diagnosis.",
+          "start": 32.3,
+          "end": 34.88
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "start": 35.7826665,
+      "end": 42.2129585,
+      "phrases": [
+        {
+          "text": "That concern carries into the inspection request, so the visitor does not have to explain it again.",
+          "start": 36.22,
+          "end": 41.52
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "start": 42.2129585,
+      "end": 50.84,
+      "phrases": [
+        {
+          "text": "The form offers space for photos, property details, contact information, and a convenient visit window.",
+          "start": 42.74,
+          "end": 50.84
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "start": 50.84,
+      "end": 64.632,
+      "phrases": [
+        {
+          "text": "The finished preview keeps the concern attached.",
+          "start": 50.84,
+          "end": 55.08
+        },
+        {
+          "text": "This fictional demonstration sends nothing.",
+          "start": 56.62,
+          "end": 59.18
+        },
+        {
+          "text": "It connects useful education with a more informed inquiry.",
+          "start": 60.1,
+          "end": 63.86
+        }
+      ]
+    }
+  ]
+}

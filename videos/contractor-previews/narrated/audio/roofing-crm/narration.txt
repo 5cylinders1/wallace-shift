@@ -1,0 +1,13 @@
+A roofing website starts a conversation. This CRM demonstration by Wallace Shift shows how the next steps could be organized.
+
+Open the storm map to explore sample weather and nearby properties. It is a search aid, not proof of roof damage.
+
+Review a property’s contact details, record source, and weather context. Then add it to the follow-up list.
+
+Record the contact outcome and an internal note, keeping the next step with the property.
+
+Choose an inspection time and assign a team member. The sample appointment updates the property’s status.
+
+The worklist and upcoming appointments show the change. Customer records and sample website inquiries are organized in the same workspace.
+
+All records are fictional. No live weather or contact lookup runs, and no messages or calendar invitations are sent. The handoff to inspection is visible.

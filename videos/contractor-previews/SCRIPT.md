@@ -1,4 +1,6 @@
-# Silent, caption-led product demonstrations
+# Legacy script: 36-second silent previews
+
+This is the superseded silent brief, retained as an evaluation baseline. Its no-narration decision and fixed durations do not govern current production. Use [NARRATED-SCRIPT.md](NARRATED-SCRIPT.md) for the current spoken scripts and screen actions, and [NARRATED-DESIGN.md](NARRATED-DESIGN.md) for the sound and picture direction.
 
 No narration or paid synthesis is needed: the requested previews should work immediately with sound off. Captions are baked into the composition and also supplied as WebVTT for accessible playback. This intentionally replaces the optional voiceover step in the HyperFrames production workflow.
 

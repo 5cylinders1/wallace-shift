@@ -1,0 +1,337 @@
+{
+  "id": "stratum",
+  "sourceTimingFile": "unpaced-timing-f27829618be0d635.json",
+  "sourceTimingSha256": "f27829618be0d63546aa0f69cf8157c87ace74c9855be1c68610cd2dbf127b02",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "592b544fb665bce133a093a49dc9c3c92e71beafff9105f76e2eff30f15a866a"
+    },
+    {
+      "file": "anatomy.wav",
+      "sha256": "91d8f934f95e36d2641487889cf70e0c97ba8fa40ef4e0348b5653ca539786d5"
+    },
+    {
+      "file": "shape.wav",
+      "sha256": "63188179a4b45528250e89375dc386abab7dd94c754f399e11e0d8cac40e24c0"
+    },
+    {
+      "file": "finish.wav",
+      "sha256": "7bef4b059264a46ef12eb363783986c2a939b293110aa7315130768c915150b8"
+    },
+    {
+      "file": "view.wav",
+      "sha256": "a980fb2b87faaa3a107edde9db961ea02bd457dfe2fd32ab394f36885622f1eb"
+    },
+    {
+      "file": "handoff.wav",
+      "sha256": "e08d9aed84243e3453d8f23fd806f55933326a49f315937fce6563faa8bb429d"
+    },
+    {
+      "file": "brief.wav",
+      "sha256": "957fbbdb3481779ccb7d3eead9ac2e97d7fb38b495dd7a26ae0c5f27f9a7b068"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "372751501403cadb9c910f554719344f36ab84e1bffee463e43289996139cae5"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 6.7645,
+      "pacedDuration": 6.073333,
+      "edits": [
+        {
+          "text": "Stratum is a roofing website concept by Wallace Shift, built around one live, interactive model.",
+          "trimStart": 0,
+          "trimEnd": 6.5591669999999995,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 6.2,
+          "speechStart": 0,
+          "speechEnd": 6.419167,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 6.419167,
+            "end": 6.7645
+          },
+          "outputStart": 0,
+          "outputDuration": 6.073333,
+          "tempo": 1.08,
+          "measuredScale": 0.9259305335570813
+        }
+      ]
+    },
+    {
+      "id": "anatomy",
+      "originalDuration": 8.46175,
+      "pacedDuration": 7.134125,
+      "edits": [
+        {
+          "text": "As the visitor moves through the page, the same house helps explain the roof as a system, including the layers underneath.",
+          "trimStart": 0.236875,
+          "trimEnd": 7.9295,
+          "originalCaptionStart": 0.35550000000000015,
+          "originalCaptionEnd": 7.535500000000001,
+          "speechStart": 0.376875,
+          "speechEnd": 7.7895,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.376875
+          },
+          "trailingSilence": {
+            "start": 7.7895,
+            "end": 8.46175
+          },
+          "outputStart": 0,
+          "outputDuration": 7.134125,
+          "tempo": 1.08,
+          "measuredScale": 0.9273979948327132
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "originalDuration": 7.556708,
+      "pacedDuration": 6.073417,
+      "edits": [
+        {
+          "text": "In the roof studio, change the roof form and adjust the pitch.",
+          "trimStart": 0.641458,
+          "trimEnd": 4.439457999999999,
+          "originalCaptionStart": 0.6937499999999996,
+          "originalCaptionEnd": 4.133749999999999,
+          "speechStart": 0.781458,
+          "speechEnd": 4.299458,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.781458
+          },
+          "trailingSilence": {
+            "start": 4.299458,
+            "end": 4.902375
+          },
+          "outputStart": 0,
+          "outputDuration": 3.530542,
+          "tempo": 1.08,
+          "measuredScale": 0.9295792522380202
+        },
+        {
+          "text": "The model and its calculated measurements respond.",
+          "trimStart": 4.7623750000000005,
+          "trimEnd": 7.491917,
+          "originalCaptionStart": 4.893750000000001,
+          "originalCaptionEnd": 6.953749999999999,
+          "speechStart": 4.902375,
+          "speechEnd": 7.351917,
+          "leadingSilence": {
+            "start": 4.299458,
+            "end": 4.902375
+          },
+          "trailingSilence": {
+            "start": 7.351917,
+            "end": 7.556708
+          },
+          "outputStart": 3.530542,
+          "outputDuration": 2.542875,
+          "tempo": 1.08,
+          "measuredScale": 0.9316123364286025
+        }
+      ]
+    },
+    {
+      "id": "finish",
+      "originalDuration": 5.590292,
+      "pacedDuration": 4.8245,
+      "edits": [
+        {
+          "text": "Choose a different finish and see its illustrative planning range alongside the roof area.",
+          "trimStart": 0.264625,
+          "trimEnd": 5.463166999999999,
+          "originalCaptionStart": 0.21702100000000257,
+          "originalCaptionEnd": 5.077021000000002,
+          "speechStart": 0.404625,
+          "speechEnd": 5.323167,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.404625
+          },
+          "trailingSilence": {
+            "start": 5.323167,
+            "end": 5.590292
+          },
+          "outputStart": 0,
+          "outputDuration": 4.8245,
+          "tempo": 1.08,
+          "measuredScale": 0.9280486721084489
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "originalDuration": 6.437042,
+      "pacedDuration": 5.503875,
+      "edits": [
+        {
+          "text": "Switch to an aerial view to inspect the design, then carry that choice into an inspection request.",
+          "trimStart": 0.254417,
+          "trimEnd": 6.19175,
+          "originalCaptionStart": 0.2867500000000014,
+          "originalCaptionEnd": 5.826750000000004,
+          "speechStart": 0.394417,
+          "speechEnd": 6.05175,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.394417
+          },
+          "trailingSilence": {
+            "start": 6.05175,
+            "end": 6.437042
+          },
+          "outputStart": 0,
+          "outputDuration": 5.503875,
+          "tempo": 1.08,
+          "measuredScale": 0.9269944939925048
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "originalDuration": 7.254125,
+      "pacedDuration": 6.342458,
+      "edits": [
+        {
+          "text": "The selected material, geometry, and range arrive together in the brief, keeping those choices connected.",
+          "trimStart": 0.318333,
+          "trimEnd": 7.165541999999999,
+          "originalCaptionStart": 0.38970849999999757,
+          "originalCaptionEnd": 6.849708499999991,
+          "speechStart": 0.458333,
+          "speechEnd": 7.025542,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.458333
+          },
+          "trailingSilence": {
+            "start": 7.025542,
+            "end": 7.254125
+          },
+          "outputStart": 0,
+          "outputDuration": 6.342458,
+          "tempo": 1.08,
+          "measuredScale": 0.9262836872658626
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "originalDuration": 7.758292,
+      "pacedDuration": 6.160375,
+      "edits": [
+        {
+          "text": "This is a sample home, and the request remains an unsent demo preview.",
+          "trimStart": 0.563417,
+          "trimEnd": 5.491667,
+          "originalCaptionStart": 0.23560399999999504,
+          "originalCaptionEnd": 5.055603999999995,
+          "speechStart": 0.703417,
+          "speechEnd": 5.351667,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.703417
+          },
+          "trailingSilence": {
+            "start": 5.351667,
+            "end": 5.984
+          },
+          "outputStart": 0,
+          "outputDuration": 4.568083,
+          "tempo": 1.08,
+          "measuredScale": 0.9269178714553848
+        },
+        {
+          "text": "No inspection is booked.",
+          "trimStart": 5.844,
+          "trimEnd": 7.576333,
+          "originalCaptionStart": 5.915603999999995,
+          "originalCaptionEnd": 7.195603999999996,
+          "speechStart": 5.984,
+          "speechEnd": 7.436333,
+          "leadingSilence": {
+            "start": 5.351667,
+            "end": 5.984
+          },
+          "trailingSilence": {
+            "start": 7.436333,
+            "end": 7.758292
+          },
+          "outputStart": 4.568083,
+          "outputDuration": 1.592292,
+          "tempo": 1.08,
+          "measuredScale": 0.9191604616433448
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 7.441292,
+      "pacedDuration": 6.551042,
+      "edits": [
+        {
+          "text": "An interactive explanation becomes a practical starting point for discussing a roof project.",
+          "trimStart": 0,
+          "trimEnd": 5.3095,
+          "originalCaptionStart": 0.3372919999999979,
+          "originalCaptionEnd": 4.9572920000000025,
+          "speechStart": 0.3372919999999979,
+          "speechEnd": 5.1695,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 5.1695,
+            "end": 5.767917
+          },
+          "outputStart": 0,
+          "outputDuration": 4.921417,
+          "tempo": 1.08,
+          "measuredScale": 0.9269078067614653
+        },
+        {
+          "text": "Built by Wallace Shift.",
+          "trimStart": 5.627917,
+          "trimEnd": 7.373749999999999,
+          "originalCaptionStart": 5.637292000000002,
+          "originalCaptionEnd": 7.2172920000000005,
+          "speechStart": 5.767917,
+          "speechEnd": 7.23375,
+          "leadingSilence": {
+            "start": 5.1695,
+            "end": 5.767917
+          },
+          "trailingSilence": {
+            "start": 7.23375,
+            "end": 7.441292
+          },
+          "outputStart": 4.921417,
+          "outputDuration": 1.629625,
+          "tempo": 1.08,
+          "measuredScale": 0.93343693239846
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "originalDuration": 57.26400099999999,
+  "pacedDuration": 48.663125,
+  "reviewAudio": "paced/67242c0811ea6802/narration-review.wav",
+  "spokenTextUnchanged": true
+}

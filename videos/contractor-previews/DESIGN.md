@@ -1,4 +1,6 @@
-# Contractor preview films
+# Legacy design: 36-second silent previews
+
+This document records the superseded silent edit and is retained for comparison. The current production design is [NARRATED-DESIGN.md](NARRATED-DESIGN.md); start with [README.md](README.md) and [NARRATED-SCRIPT.md](NARRATED-SCRIPT.md). Its fixed three-chapter timing is not a requirement for narrated films.
 
 ## Overview
 Use the existing Wallace Shift identity as a quiet editorial frame around recordings of the real demos. The interface remains the hero. Each film has three twelve-second chapters: context, action, and result. Preserve the original demo's typography, images, animation, and sample disclosures inside the recording.

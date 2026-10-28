@@ -1,0 +1,540 @@
+{
+  "id": "tambour",
+  "sourceTimingFile": "unpaced-timing-66c871f98d386dbf.json",
+  "sourceTimingSha256": "66c871f98d386dbf1703be169d1e61416e80095a183a60f6151d72680a950ea5",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "b8bb1fc7ac3e34b44627178f95bbd81452ba91f65ffa359a3066dea5fe84ebfe"
+    },
+    {
+      "file": "rooms.wav",
+      "sha256": "5d71668449089ccafd66fd2481d8bb365180b50b25982bd3ed7c029911026845"
+    },
+    {
+      "file": "samples.wav",
+      "sha256": "56408f305b2f0d7a3e5fdbf3cb173f978b11a047777403a98285c447a4aa34e9"
+    },
+    {
+      "file": "planning.wav",
+      "sha256": "4022ff7719994357c3c36d0aea846cb82d56f444bf09fddaf4905b49a82d9aab"
+    },
+    {
+      "file": "carried.wav",
+      "sha256": "4fc5c5f236a51de6871bfeee9ca7ac90b20e4f7e0efefce0913ea50d9dcccc04"
+    },
+    {
+      "file": "details.wav",
+      "sha256": "0586839116db45d86e71f2e6cfd4d4e22efb5ed68d8af26e9a5e63ccdce0d793"
+    },
+    {
+      "file": "result.wav",
+      "sha256": "0666c0bd9ca2773b1aa2fc0cc07c95ac64c7ae19700ca302af5c058a564fea81"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 9.271292,
+      "pacedDuration": 7.827042,
+      "edits": [
+        {
+          "text": "Tambour guides a visitor from a room they admire to a project they can describe.",
+          "phrase": 1,
+          "desiredTrimStart": 0,
+          "desiredTrimEnd": 4.944833,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 4.46,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 4.804833,
+            "end": 5.678708
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0,
+          "trimEnd": 4.944833,
+          "observedSpeechStart": 0,
+          "observedSpeechEnd": 4.804833,
+          "captionSourceStart": 0,
+          "captionSourceEnd": 4.804833,
+          "outputStart": 0,
+          "outputDuration": 4.581375,
+          "measuredScale": 0.9264974165962734,
+          "tempo": 1.08
+        },
+        {
+          "text": "This cabinetry experience was built by Wallace Shift.",
+          "phrase": 2,
+          "desiredTrimStart": 5.538708000000001,
+          "desiredTrimEnd": 9.0365,
+          "originalCaptionStart": 5.64,
+          "originalCaptionEnd": 8.88,
+          "leadingSilence": {
+            "start": 4.804833,
+            "end": 5.678708
+          },
+          "trailingSilence": {
+            "start": 8.8965,
+            "end": 9.271292
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 5.538708000000001,
+          "trimEnd": 9.0365,
+          "observedSpeechStart": 5.678708,
+          "observedSpeechEnd": 8.8965,
+          "captionSourceStart": 5.678708,
+          "captionSourceEnd": 8.8965,
+          "outputStart": 4.581375,
+          "outputDuration": 3.245667,
+          "measuredScale": 0.927918812782464,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0,
+          "sourceEnd": 4.944833,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 4.581375,
+          "measuredScale": 0.9264974165962734,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 5.538708000000001,
+          "sourceEnd": 9.0365,
+          "phrases": [
+            2
+          ],
+          "outputStart": 4.581375,
+          "outputDuration": 3.245667,
+          "measuredScale": 0.927918812782464,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "rooms",
+      "originalDuration": 7.529875,
+      "pacedDuration": 6.236667,
+      "edits": [
+        {
+          "text": "Kitchens, baths, and built-ins lead into construction stories and a tactile material library.",
+          "phrase": 1,
+          "desiredTrimStart": 0.49912500000000004,
+          "desiredTrimEnd": 7.225458,
+          "originalCaptionStart": 0.3887084999999999,
+          "originalCaptionEnd": 6.808708499999998,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.639125
+          },
+          "trailingSilence": {
+            "start": 7.085458,
+            "end": 7.529875
+          },
+          "sourceSceneFile": "rooms.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.49912500000000004,
+          "trimEnd": 7.225458,
+          "observedSpeechStart": 0.639125,
+          "observedSpeechEnd": 7.085458,
+          "captionSourceStart": 0.639125,
+          "captionSourceEnd": 7.085458,
+          "outputStart": 0,
+          "outputDuration": 6.236667,
+          "measuredScale": 0.927201641667161,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.49912500000000004,
+          "sourceEnd": 7.225458,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 6.236667,
+          "measuredScale": 0.927201641667161,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "samples",
+      "originalDuration": 5.607083,
+      "pacedDuration": 4.605375,
+      "edits": [
+        {
+          "text": "Choose a wood, add a stone, and those choices collect in a sample box.",
+          "phrase": 1,
+          "desiredTrimStart": 0.650125,
+          "desiredTrimEnd": 5.607083,
+          "originalCaptionStart": 0.47885399999999834,
+          "originalCaptionEnd": 5.218853999999997,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.790125
+          },
+          "trailingSilence": null,
+          "sourceSceneFile": "samples.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.650125,
+          "trimEnd": 5.607083,
+          "observedSpeechStart": 0.790125,
+          "observedSpeechEnd": 5.218853999999997,
+          "captionSourceStart": 0.790125,
+          "captionSourceEnd": 5.218853999999997,
+          "outputStart": 0,
+          "outputDuration": 4.605375,
+          "measuredScale": 0.9290728305545458,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.650125,
+          "sourceEnd": 5.607083,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 4.605375,
+          "measuredScale": 0.9290728305545458,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "originalDuration": 11.128917,
+      "pacedDuration": 9.088708,
+      "edits": [
+        {
+          "text": "The investment planner explores size, construction, and scope.",
+          "phrase": 1,
+          "desiredTrimStart": 0,
+          "desiredTrimEnd": 5.709083,
+          "originalCaptionStart": 0.09174999999999756,
+          "originalCaptionEnd": 5.371749999999999,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 5.569083,
+            "end": 6.561875
+          },
+          "sourceSceneFile": "planning.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0,
+          "trimEnd": 5.709083,
+          "observedSpeechStart": 0.09174999999999756,
+          "observedSpeechEnd": 5.569083,
+          "captionSourceStart": 0.09174999999999756,
+          "captionSourceEnd": 5.569083,
+          "outputStart": 0,
+          "outputDuration": 5.287375,
+          "measuredScale": 0.926133846714087,
+          "tempo": 1.08
+        },
+        {
+          "text": "Change the choices and the illustrative planning range responds.",
+          "phrase": 2,
+          "desiredTrimStart": 6.421875,
+          "desiredTrimEnd": 10.526417,
+          "originalCaptionStart": 6.451749999999997,
+          "originalCaptionEnd": 9.951749999999997,
+          "leadingSilence": {
+            "start": 5.569083,
+            "end": 6.561875
+          },
+          "trailingSilence": {
+            "start": 10.386417,
+            "end": 11.128917
+          },
+          "sourceSceneFile": "planning.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 6.421875,
+          "trimEnd": 10.526417,
+          "observedSpeechStart": 6.561875,
+          "observedSpeechEnd": 10.386417,
+          "captionSourceStart": 6.561875,
+          "captionSourceEnd": 10.386417,
+          "outputStart": 5.287375,
+          "outputDuration": 3.801333,
+          "measuredScale": 0.9261284206617937,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0,
+          "sourceEnd": 5.709083,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.287375,
+          "measuredScale": 0.926133846714087,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 6.421875,
+          "sourceEnd": 10.526417,
+          "phrases": [
+            2
+          ],
+          "outputStart": 5.287375,
+          "outputDuration": 3.801333,
+          "measuredScale": 0.9261284206617937,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "carried",
+      "originalDuration": 6.5325,
+      "pacedDuration": 4.769542,
+      "edits": [
+        {
+          "text": "Save the range, and it travels with the samples into the consultation brief.",
+          "phrase": 1,
+          "desiredTrimStart": 0.975583,
+          "desiredTrimEnd": 6.11675,
+          "originalCaptionStart": 0.7428335000000033,
+          "originalCaptionEnd": 5.8028335000000055,
+          "leadingSilence": {
+            "start": 0,
+            "end": 1.115583
+          },
+          "trailingSilence": {
+            "start": 5.97675,
+            "end": 6.5325
+          },
+          "sourceSceneFile": "carried.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.975583,
+          "trimEnd": 6.11675,
+          "observedSpeechStart": 1.115583,
+          "observedSpeechEnd": 5.97675,
+          "captionSourceStart": 1.115583,
+          "captionSourceEnd": 5.97675,
+          "outputStart": 0,
+          "outputDuration": 4.769542,
+          "measuredScale": 0.9277158279433446,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.975583,
+          "sourceEnd": 6.11675,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 4.769542,
+          "measuredScale": 0.9277158279433446,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "originalDuration": 8.813125,
+      "pacedDuration": 7.286875,
+      "edits": [
+        {
+          "text": "Four steps gather the room, timing, style notes, and contact details for a more specific first conversation.",
+          "phrase": 1,
+          "desiredTrimStart": 0.567958,
+          "desiredTrimEnd": 8.428042000000001,
+          "originalCaptionStart": 0.5703540000000018,
+          "originalCaptionEnd": 8.030354000000003,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.707958
+          },
+          "trailingSilence": {
+            "start": 8.288042,
+            "end": 8.813125
+          },
+          "sourceSceneFile": "details.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.567958,
+          "trimEnd": 8.428042000000001,
+          "observedSpeechStart": 0.707958,
+          "observedSpeechEnd": 8.288042,
+          "captionSourceStart": 0.707958,
+          "captionSourceEnd": 8.288042,
+          "outputStart": 0,
+          "outputDuration": 7.286875,
+          "measuredScale": 0.9270734256784022,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.567958,
+          "sourceEnd": 8.428042000000001,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 7.286875,
+          "measuredScale": 0.9270734256784022,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "originalDuration": 11.261208,
+      "pacedDuration": 8.850542,
+      "edits": [
+        {
+          "text": "The preview brings it together.",
+          "phrase": 1,
+          "desiredTrimStart": 0.5802499999999999,
+          "desiredTrimEnd": 2.418708,
+          "originalCaptionStart": 0.5372289999999964,
+          "originalCaptionEnd": 2.0572289999999924,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.72025
+          },
+          "trailingSilence": {
+            "start": 2.278708,
+            "end": 3.045417
+          },
+          "sourceSceneFile": "result.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.5802499999999999,
+          "trimEnd": 2.418708,
+          "observedSpeechStart": 0.72025,
+          "observedSpeechEnd": 2.278708,
+          "captionSourceStart": 0.72025,
+          "captionSourceEnd": 2.278708,
+          "outputStart": 0,
+          "outputDuration": 1.712958,
+          "measuredScale": 0.931736270287382,
+          "tempo": 1.08
+        },
+        {
+          "text": "Tambour is fictional, prices are examples, and nothing is sent.",
+          "phrase": 2,
+          "desiredTrimStart": 2.9572289999999914,
+          "desiredTrimEnd": 7.831458,
+          "originalCaptionStart": 3.0972289999999916,
+          "originalCaptionEnd": 7.517228999999993,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 7.691458,
+            "end": 8.545375
+          },
+          "sourceSceneFile": "result.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 2.9572289999999914,
+          "trimEnd": 7.831458,
+          "observedSpeechStart": 3.0972289999999916,
+          "observedSpeechEnd": 7.691458,
+          "captionSourceStart": 3.0972289999999916,
+          "captionSourceEnd": 7.691458,
+          "outputStart": 1.712958,
+          "outputDuration": 4.522292,
+          "measuredScale": 0.9277963755908867,
+          "tempo": 1.08
+        },
+        {
+          "text": "Inspiration and inquiry stay connected.",
+          "phrase": 3,
+          "desiredTrimStart": 8.437228999999995,
+          "desiredTrimEnd": 11.261208,
+          "originalCaptionStart": 8.577228999999996,
+          "originalCaptionEnd": 11.097228999999992,
+          "leadingSilence": null,
+          "trailingSilence": null,
+          "sourceSceneFile": "result.wav",
+          "segment": 3,
+          "mergedSentenceCount": 1,
+          "trimStart": 8.437228999999995,
+          "trimEnd": 11.261208,
+          "observedSpeechStart": 8.577228999999996,
+          "observedSpeechEnd": 11.097228999999992,
+          "captionSourceStart": 8.577228999999996,
+          "captionSourceEnd": 11.097228999999992,
+          "outputStart": 6.235250000000001,
+          "outputDuration": 2.615292,
+          "measuredScale": 0.9261017875841129,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.5802499999999999,
+          "sourceEnd": 2.418708,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 1.712958,
+          "measuredScale": 0.931736270287382,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 2.9572289999999914,
+          "sourceEnd": 7.831458,
+          "phrases": [
+            2
+          ],
+          "outputStart": 1.712958,
+          "outputDuration": 4.522292,
+          "measuredScale": 0.9277963755908867,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 8.437228999999995,
+          "sourceEnd": 11.261208,
+          "phrases": [
+            3
+          ],
+          "outputStart": 6.235250000000001,
+          "outputDuration": 2.615292,
+          "measuredScale": 0.9261017875841129,
+          "tempo": 1.08
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "samples/1: no trailing silence matched; retained extra source conservatively.",
+    "result/3: no trailing silence matched; retained extra source conservatively."
+  ],
+  "originalDuration": 60.14399999999999,
+  "pacedDuration": 48.664750999999995,
+  "reviewAudio": "paced/ed41953958dc9e52/narration-review.wav",
+  "spokenTextUnchanged": true
+}

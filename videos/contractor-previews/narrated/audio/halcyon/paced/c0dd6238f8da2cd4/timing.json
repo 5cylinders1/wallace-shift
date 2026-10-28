@@ -1,0 +1,622 @@
+{
+  "id": "halcyon",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:24:37.228Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in the supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 6,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff. The retained screenshot already shows the next Stratum form and its separate quote.",
+    "browserEvidence": "output/narrated-previews/halcyon/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Halcyon history row displays Grady and Seed Audio 1.0. The left form is already on the subsequent Stratum narration."
+  },
+  "exactSpokenText": "Halcyon is Wallace Shift’s architectural roofing concept. A cinematic estate view introduces a premium, material-led experience.\n\nA detailed gallery brings the materials, their character, and their planning information together.\n\nThe visualizer accepts a photograph, then offers material and finish choices. A new generation requires permission to send the image.\n\nHere we use prepared sample studies. Switch from metal to slate, then compare the result with the original home.\n\nEnter a roof area to explore an illustrative planning range. The photograph itself does not measure the roof.\n\nThose material and budget choices carry into a consultation brief, alongside the project and timeline.\n\nReview the resulting preview. Nothing is sent, stored, or booked in this demonstration.\n\nA premium website connecting visual inspiration with a more specific project conversation, by Wallace Shift.",
+  "timingMethod": "Unprompted offline faster-whisper base.en recognition of the original take and an independent closing crop. Exact script matching follows recognition, with explicit Wallace Schiff/Wallace Shift proper-name aliases. Sentence timing uses observed word spans and scene cuts use measured silence. Sentence boundaries refined against measured source silence; overlapping retained ranges are merged and processed once. Accepted interior caption spans are remapped within merged segments. No spoken text removed.",
+  "alignmentReview": {
+    "status": "ASR alignment reviewed with disclosed proper-name aliases; subjective listening and final caption review pending",
+    "method": "Unprompted offline faster-whisper base.en recognition of the original take and an independent closing crop. Exact script matching follows recognition, with explicit Wallace Schiff/Wallace Shift proper-name aliases. Sentence timing uses observed word spans and scene cuts use measured silence.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-closing-transcript.json",
+        "offset": 47.5,
+        "replaceStart": 48,
+        "replaceEnd": 62.568,
+        "removedWords": [
+          " Review",
+          " the",
+          " resulting",
+          " preview.",
+          " Nothing",
+          " is",
+          " sent,",
+          " stored",
+          " or",
+          " booked",
+          " Visual",
+          " Inspiration",
+          " with",
+          " a",
+          " more",
+          " specific",
+          " project",
+          " conversation",
+          " by",
+          " Wallace",
+          " Schiff."
+        ],
+        "addedWords": [
+          " Review",
+          " the",
+          " resulting",
+          " preview.",
+          " Nothing",
+          " is",
+          " sent,",
+          " stored",
+          " or",
+          " booked",
+          " in",
+          " this",
+          " demonstration.",
+          " A",
+          " premium",
+          " website",
+          " connecting",
+          " visual",
+          " inspiration",
+          " with",
+          " a",
+          " more",
+          " specific",
+          " project",
+          " conversation",
+          " by",
+          " Wallace",
+          " Schiff."
+        ],
+        "review": "Independent unprompted original-audio 47.5–62.568s recognition restores the complete Nothing is sent, stored or booked in this demonstration disclosure and A premium website connecting ending. Replace only after 48s, excluding the partial timeline word at the crop start. No missing words or timestamps are fabricated."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Wallace Shift's",
+        "recognized": "Wallace Schiff's",
+        "start": 0.68,
+        "end": 1.52,
+        "reviewedBy": "Codex other_narrative_research agent under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Full-take unprompted ASR recognizes the brand possessive as Wallace Schiff's at the opening. The exact source script and Wallace Shift product identity establish the intended spelling. Preserve the complete observed name span; this is not pronunciation or listening verification.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 0.68,
+            "end": 0.94,
+            "probability": 0.9698423743247986,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-transcript.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "schiff's",
+            "text": " Schiff's",
+            "start": 0.94,
+            "end": 1.52,
+            "probability": 0.8114182353019714,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      },
+      {
+        "expected": "Wallace Shift",
+        "recognized": "Wallace Schiff.",
+        "start": 61.64,
+        "end": 62.3,
+        "reviewedBy": "Codex other_narrative_research agent under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Both full-take and independent 47.5–62.568s recognition spell the ending brand Wallace Schiff. The exact source script and Wallace Shift identity establish the intended spelling. Preserve observed timing; pronunciation and subjective listening remain pending.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 61.64,
+            "end": 61.94,
+            "probability": 0.9279367923736572,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-closing-transcript.json",
+            "sourceOffset": 47.5
+          },
+          {
+            "token": "schiff",
+            "text": " Schiff.",
+            "start": 61.94,
+            "end": 62.3,
+            "probability": 0.7899944186210632,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-closing-transcript.json",
+            "sourceOffset": 47.5
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex other_narrative_research agent, delegated source alignment review",
+    "findings": [
+      "Full-take recognition omitted in this demonstration and A premium website connecting around a chunk boundary, and assigned zero duration to booked.",
+      "Independent original-audio 47.5–62.568s recognition recovers both complete closing scenes and valid observed timings. Replace only source 48–62.568s, excluding the partial timeline word at the crop opening.",
+      "Full recognition spells the opening brand possessive Wallace Schiff’s. Full and crop recognition spell the ending Wallace Schiff. Disclosed proper-name aliases retain the observed complete name spans; the script supplies the Wallace Shift spelling.",
+      "Final mapping contains all 130 script tokens after the two disclosed name aliases, with zero remaining differences or invalid word spans. All seven internal scene cuts lie within measured silence.",
+      "No subjective listening or correct-pronunciation claim is made. The aliases resolve recognized spelling for alignment, not human-perceived brand pronunciation."
+    ],
+    "limitations": [
+      "Pronunciation, natural delivery, brand fit, music balance, synchronization, final caption review, and buyer comprehension remain unresolved.",
+      "ASR near a crop boundary may include leading silence. Captions use complete sentence spans, not invented internal word timing."
+    ],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-closing-transcript.json",
+      "alignment-report.json",
+      "asr-review.json",
+      "higgsfield-generation.jpg"
+    ],
+    "pacingReview": "Transformation follows user feedback; subjective listening is not claimed. Independent paced-audio ASR and final playback review remain separate checks."
+  },
+  "processing": "Existing Higgsfield take, pitch-preserving atempo=1.08. Sentence-adjacent silence trimmed with 0.14s handles; original scene WAVs, imported timing and source hashes retained. No speech generation. Natural within-sentence pauses and continuous audio at overlapping sentence boundaries are preserved.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "836c5a7498fc6289f66df33988eab723137a5348fe7d5da9612d318ef48d487f",
+      "retainedFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "duration": 62.568,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "paced/c0dd6238f8da2cd4/opening.wav",
+      "spoken": "Halcyon is Wallace Shift’s architectural roofing concept. A cinematic estate view introduces a premium, material-led experience.",
+      "duration": 7.909917,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 9.222604,
+      "phrases": [
+        {
+          "text": "Halcyon is Wallace Shift’s architectural roofing concept.",
+          "start": 0,
+          "end": 3.057980781846621,
+          "sourceStart": 0,
+          "sourceEnd": 3.06,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0,
+          "originalSceneEnd": 3.06,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0,
+            "trimEnd": 3.436958,
+            "observedSpeechStart": 0,
+            "observedSpeechEnd": 3.296958,
+            "captionSourceStart": 0,
+            "captionSourceEnd": 3.296958,
+            "outputStart": 0,
+            "outputDuration": 3.187833,
+            "measuredScale": 0.9275158439527046,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "A cinematic estate view introduces a premium, material-led experience.",
+          "start": 3.3177964580036368,
+          "end": 7.779952541996362,
+          "sourceStart": 4.06,
+          "sourceEnd": 8.58,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 4.06,
+          "originalSceneEnd": 8.58,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 3.9594169999999997,
+            "trimEnd": 9.046167,
+            "observedSpeechStart": 4.099417,
+            "observedSpeechEnd": 8.906167,
+            "captionSourceStart": 4.099417,
+            "captionSourceEnd": 8.906167,
+            "outputStart": 3.187833,
+            "outputDuration": 4.722083,
+            "measuredScale": 0.928310414311692,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "file": "paced/c0dd6238f8da2cd4/materials.wav",
+      "spoken": "A detailed gallery brings the materials, their character, and their planning information together.",
+      "duration": 5.31625,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 9.222604,
+      "sourceEnd": 15.421146,
+      "phrases": [
+        {
+          "text": "A detailed gallery brings the materials, their character, and their planning information together.",
+          "start": 0.12981068247167285,
+          "end": 5.186439317528328,
+          "sourceStart": 9.54,
+          "sourceEnd": 14.76,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0.3173959999999987,
+          "originalSceneEnd": 5.537395999999999,
+          "paceMapping": {
+            "sourceSceneFile": "materials.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.209625,
+            "trimEnd": 5.943167,
+            "observedSpeechStart": 0.349625,
+            "observedSpeechEnd": 5.803167,
+            "captionSourceStart": 0.349625,
+            "captionSourceEnd": 5.803167,
+            "outputStart": 0,
+            "outputDuration": 5.31625,
+            "measuredScale": 0.9272191605119489,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "photo",
+      "file": "paced/c0dd6238f8da2cd4/photo.wav",
+      "spoken": "The visualizer accepts a photograph, then offers material and finish choices. A new generation requires permission to send the image.",
+      "duration": 7.9975,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 15.421146,
+      "sourceEnd": 24.942916500000003,
+      "phrases": [
+        {
+          "text": "The visualizer accepts a photograph, then offers material and finish choices.",
+          "start": 0.12985486770061994,
+          "end": 4.67697813229938,
+          "sourceStart": 15.82,
+          "sourceEnd": 20.38,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0.39885400000000004,
+          "originalSceneEnd": 4.958853999999999,
+          "paceMapping": {
+            "sourceSceneFile": "photo.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.300292,
+            "trimEnd": 5.482666999999999,
+            "observedSpeechStart": 0.440292,
+            "observedSpeechEnd": 5.342667,
+            "captionSourceStart": 0.440292,
+            "captionSourceEnd": 5.342667,
+            "outputStart": 0,
+            "outputDuration": 4.806833,
+            "measuredScale": 0.9275347692901422,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "A new generation requires permission to send the image.",
+          "start": 4.936817184586679,
+          "end": 7.86751581541332,
+          "sourceStart": 21.46,
+          "sourceEnd": 24.34,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 6.038854000000001,
+          "originalSceneEnd": 8.918854,
+          "paceMapping": {
+            "sourceSceneFile": "photo.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 5.898854000000001,
+            "trimEnd": 9.335375,
+            "observedSpeechStart": 6.038854000000001,
+            "observedSpeechEnd": 9.195375,
+            "captionSourceStart": 6.038854000000001,
+            "captionSourceEnd": 9.195375,
+            "outputStart": 4.806833,
+            "outputDuration": 3.190667,
+            "measuredScale": 0.9284584613334241,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "file": "paced/c0dd6238f8da2cd4/comparison.wav",
+      "spoken": "Here we use prepared sample studies. Switch from metal to slate, then compare the result with the original home.",
+      "duration": 7.304042,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 24.942916500000003,
+      "sourceEnd": 33.368812500000004,
+      "phrases": [
+        {
+          "text": "Here we use prepared sample studies.",
+          "start": 0.12973843118596756,
+          "end": 2.0222982594628056,
+          "sourceStart": 25.28,
+          "sourceEnd": 27.4,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0.33708349999999854,
+          "originalSceneEnd": 2.457083499999996,
+          "paceMapping": {
+            "sourceSceneFile": "comparison.wav",
+            "segment": 1,
+            "mergedSentenceCount": 2,
+            "trimStart": 0.274833,
+            "trimEnd": 8.156583000000001,
+            "observedSpeechStart": 0.414833,
+            "observedSpeechEnd": 2.640958,
+            "captionSourceStart": 0.414833,
+            "captionSourceEnd": 2.457083499999996,
+            "outputStart": 0,
+            "outputDuration": 7.304042,
+            "measuredScale": 0.9267030798997683,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Switch from metal to slate, then compare the result with the original home.",
+          "start": 2.0222982594628056,
+          "end": 7.1743035688140315,
+          "sourceStart": 27.4,
+          "sourceEnd": 32.76,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 2.457083499999996,
+          "originalSceneEnd": 7.817083499999995,
+          "paceMapping": {
+            "sourceSceneFile": "comparison.wav",
+            "segment": 1,
+            "mergedSentenceCount": 2,
+            "trimStart": 0.274833,
+            "trimEnd": 8.156583000000001,
+            "observedSpeechStart": 2.457083499999996,
+            "observedSpeechEnd": 8.016583,
+            "captionSourceStart": 2.457083499999996,
+            "captionSourceEnd": 8.016583,
+            "outputStart": 0,
+            "outputDuration": 7.304042,
+            "measuredScale": 0.9267030798997683,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "file": "paced/c0dd6238f8da2cd4/planning.wav",
+      "spoken": "Enter a roof area to explore an illustrative planning range. The photograph itself does not measure the roof.",
+      "duration": 6.408125,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 33.368812500000004,
+      "sourceEnd": 41.618104,
+      "phrases": [
+        {
+          "text": "Enter a roof area to explore an illustrative planning range.",
+          "start": 0.13009011843575422,
+          "end": 3.5083678815642463,
+          "sourceStart": 33.78,
+          "sourceEnd": 37.38,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0.41118749999999693,
+          "originalSceneEnd": 4.011187499999998,
+          "paceMapping": {
+            "sourceSceneFile": "planning.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.37745799999999996,
+            "trimEnd": 4.293082999999999,
+            "observedSpeechStart": 0.517458,
+            "observedSpeechEnd": 4.153083,
+            "captionSourceStart": 0.517458,
+            "captionSourceEnd": 4.153083,
+            "outputStart": 0,
+            "outputDuration": 3.638458,
+            "measuredScale": 0.9292151316839586,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "The photograph itself does not measure the roof.",
+          "start": 3.7686493687316465,
+          "end": 6.277933631268353,
+          "sourceStart": 38.46,
+          "sourceEnd": 41.06,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 5.091187499999997,
+          "originalSceneEnd": 7.691187499999998,
+          "paceMapping": {
+            "sourceSceneFile": "planning.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 5.080958000000001,
+            "trimEnd": 8.059292000000001,
+            "observedSpeechStart": 5.220958,
+            "observedSpeechEnd": 7.919292,
+            "captionSourceStart": 5.220958,
+            "captionSourceEnd": 7.919292,
+            "outputStart": 3.638458,
+            "outputDuration": 2.769667,
+            "measuredScale": 0.9299383480831901,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "file": "paced/c0dd6238f8da2cd4/handoff.wav",
+      "spoken": "Those material and budget choices carry into a consultation brief, alongside the project and timeline.",
+      "duration": 5.677,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 41.618104,
+      "sourceEnd": 48.1880625,
+      "phrases": [
+        {
+          "text": "Those material and budget choices carry into a consultation brief, alongside the project and timeline.",
+          "start": 0.12998282770463654,
+          "end": 5.547017172295363,
+          "sourceStart": 41.98,
+          "sourceEnd": 47.76,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0.36189599999999444,
+          "originalSceneEnd": 6.141895999999996,
+          "paceMapping": {
+            "sourceSceneFile": "handoff.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.32787499999999997,
+            "trimEnd": 6.442374999999999,
+            "observedSpeechStart": 0.467875,
+            "observedSpeechEnd": 6.302375,
+            "captionSourceStart": 0.467875,
+            "captionSourceEnd": 6.302375,
+            "outputStart": 0,
+            "outputDuration": 5.677,
+            "measuredScale": 0.9284487693188322,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "file": "paced/c0dd6238f8da2cd4/brief.wav",
+      "spoken": "Review the resulting preview. Nothing is sent, stored, or booked in this demonstration.",
+      "duration": 5.54925,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 48.1880625,
+      "sourceEnd": 54.9944585,
+      "phrases": [
+        {
+          "text": "Review the resulting preview.",
+          "start": 0.1298679246822106,
+          "end": 1.5759240753177894,
+          "sourceStart": 48.46,
+          "sourceEnd": 49.76,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0.27193749999999994,
+          "originalSceneEnd": 1.571937499999997,
+          "paceMapping": {
+            "sourceSceneFile": "brief.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.177417,
+            "trimEnd": 2.016292,
+            "observedSpeechStart": 0.317417,
+            "observedSpeechEnd": 1.876292,
+            "captionSourceStart": 0.317417,
+            "captionSourceEnd": 1.876292,
+            "outputStart": 0,
+            "outputDuration": 1.705792,
+            "measuredScale": 0.9276280334443613,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Nothing is sent, stored, or booked in this demonstration.",
+          "start": 1.8355915706187433,
+          "end": 5.419450429381257,
+          "sourceStart": 50.58,
+          "sourceEnd": 54.1,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 2.3919374999999974,
+          "originalSceneEnd": 5.9119375000000005,
+          "paceMapping": {
+            "sourceSceneFile": "brief.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 2.320042,
+            "trimEnd": 6.465542,
+            "observedSpeechStart": 2.460042,
+            "observedSpeechEnd": 6.325542,
+            "captionSourceStart": 2.460042,
+            "captionSourceEnd": 6.325542,
+            "outputStart": 1.705792,
+            "outputDuration": 3.843458,
+            "measuredScale": 0.92713979013388,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "file": "paced/c0dd6238f8da2cd4/ending.wav",
+      "spoken": "A premium website connecting visual inspiration with a more specific project conversation, by Wallace Shift.",
+      "duration": 6.648833,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+      "sourceStart": 54.9944585,
+      "sourceEnd": 62.568,
+      "phrases": [
+        {
+          "text": "A premium website connecting visual inspiration with a more specific project conversation, by Wallace Shift.",
+          "start": 0.1299506659220997,
+          "end": 6.400069832553886,
+          "sourceStart": 55.480000000000004,
+          "sourceEnd": 62.3,
+          "sourceFile": "originals/higgsfield-836c5a7498fc6289.mp3",
+          "originalSceneStart": 0.4855415000000036,
+          "originalSceneEnd": 7.305541499999997,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.41054199999999996,
+            "trimEnd": 7.573542,
+            "observedSpeechStart": 0.550542,
+            "observedSpeechEnd": 7.305541499999997,
+            "captionSourceStart": 0.550542,
+            "captionSourceEnd": 7.305541499999997,
+            "outputStart": 0,
+            "outputDuration": 6.648833,
+            "measuredScale": 0.928219042300712,
+            "tempo": 1.08
+          }
+        }
+      ]
+    }
+  ],
+  "duration": 52.810917,
+  "pacing": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2,
+    "sourceTimingFile": "unpaced-timing-af10e603c9db8252.json",
+    "sourceTimingSha256": "af10e603c9db825221465e7ad61dc91f34b362496c117a62ff5ea31fd2c202ac",
+    "report": "paced/c0dd6238f8da2cd4/pacing-report.json"
+  }
+}

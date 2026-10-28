@@ -1,0 +1,2 @@
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/planner-segment-1.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/stillwater/paced/ec61ddfe1bcfd1f3/planner-segment-2.wav'

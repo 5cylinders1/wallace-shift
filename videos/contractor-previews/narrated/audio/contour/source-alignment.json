@@ -1,0 +1,258 @@
+{
+  "id": "contour",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/contour/higgsfield-grady-source.mp3",
+  "sourceSha256": "effd6da0be51cae820fb9cd4ce05527837b92a9081913ebd1543af63bb7b57d7",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in the supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 6,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff; the retained screenshot already shows the next Halcyon form.",
+    "browserEvidence": "output/narrated-previews/contour/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Contour history row displays Grady and Seed Audio 1.0. The left form is already on the subsequent Halcyon narration."
+  },
+  "alignmentReview": {
+    "status": "ASR alignment reviewed with explicit root-authorized orthography exception; subjective listening and final caption review pending",
+    "method": "Independent offline ASR word alignment, selectively corroborated by unprompted crop recognitions, plus one explicit root-authorized unscent/unsent orthography correction. No substantive words or missing timings are invented. Scene cuts use measured silence.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/contour/asr-orthography-reviewed.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/contour/asr-payment-transcript.json",
+        "offset": 44,
+        "replaceStart": 44,
+        "replaceEnd": 49.2,
+        "removedWords": [
+          " Use",
+          " the",
+          " estimates",
+          " midpoint",
+          " in",
+          " the",
+          " payment",
+          " explorer.",
+          " Aurora,"
+        ],
+        "addedWords": [
+          " Use",
+          " the",
+          " estimate's",
+          " midpoint",
+          " in",
+          " the",
+          " payment",
+          " explorer."
+        ],
+        "review": "Independent unprompted source 44–55s recognition contains estimate's and no extra Aurora at the chunk boundary. Replace only through the silent gap at 49.2s before Change. The crop's Change has zero duration, so the second sentence retains the valid full-take word timestamps."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/contour/asr-closing-transcript.json",
+        "offset": 64,
+        "replaceStart": 72,
+        "replaceEnd": 80.328,
+        "removedWords": [
+          " A",
+          " visual",
+          " explanation",
+          " becomes",
+          " a",
+          " practical",
+          " comparison",
+          " and",
+          " an",
+          " organized",
+          " starting",
+          " point",
+          " for",
+          " the",
+          " contract",
+          " a",
+          " conversation."
+        ],
+        "addedWords": [
+          " A",
+          " visual",
+          " explanation",
+          " becomes",
+          " a",
+          " practical",
+          " comparison",
+          " and",
+          " an",
+          " organized",
+          " starting",
+          " point",
+          " for",
+          " the",
+          " contractor",
+          " conversation."
+        ],
+        "review": "Independent unprompted source 64–80.328s recognition restores contractor conversation. Replace only the ending scene after 72s, in the gap preceding it. The crop's earlier unscent spelling is not accepted as an alias."
+      }
+    ],
+    "aliasUses": [],
+    "issues": [],
+    "reviewedBy": "Codex other_narrative_research agent, delegated source alignment review",
+    "orthographyReview": {
+      "rawReport": "output/narrated-previews/contour/asr-transcript.json",
+      "reviewedBy": "Root agent explicit exception for Contour on 2026-10-28",
+      "kind": "Orthographic/homophone spelling correction only",
+      "rationale": "Root authorizes unscent → unsent as an explicit /un-sent/ orthographic exception, corroborated by independent crop recognition, the approved source script, and the captured unsent local brief. It is not a subjective listening claim and must not be generalized to omissions or unrelated substitutions.",
+      "corrections": [
+        {
+          "recognized": " unscent",
+          "corrected": " unsent",
+          "start": 66.72,
+          "end": 67.14
+        }
+      ],
+      "evidence": [
+        "asr-transcript.json",
+        "asr-closing-transcript.json",
+        "asr-unsent-transcript.json",
+        "evidence.json",
+        "videos/contractor-previews/narrated-roofing.mjs"
+      ],
+      "listening": "pending"
+    },
+    "findings": [
+      "The full pass recognizes estimates instead of the possessive estimate’s, inserts Aurora at a chunk boundary, spells unsent as unscent, and splits contractor into contract a.",
+      "Independent source 44–55s recognition restores estimate’s and omits Aurora. Replace only source 44–49.2s to retain valid full-take timings for Change and the second sentence; the crop gave Change a zero-length span.",
+      "Independent source64–80.328s recognition restores contractor conversation. Replace only the ending after 72s; the earlier unscent spelling is not imported as an alias.",
+      "The raw full-take recognition and both independent closing/brief crops spell unsent as unscent. Root explicitly reviewed and authorized this as an orthographic/homophone correction, corroborated by the source script and captured local unsent brief.",
+      "asr-orthography-reviewed.json is a separately labeled derived report, changing only that spelling while retaining the exact observed word span. All raw recognitions remain unchanged. This exception does not establish listening verification and does not apply to substantive omissions or unrelated substitutions.",
+      "Final mapping matches all 136 script tokens with zero remaining differences and zero invalid word spans after the disclosed correction. All seven internal scene cuts lie within measured silent intervals."
+    ],
+    "limitations": [
+      "Subjective listening, pronunciation, delivery, music mix, final captions, and buyer comprehension remain unreviewed.",
+      "This report describes ASR uncertainty, not a demonstrated defect in the actual spoken take."
+    ],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-orthography-reviewed.json",
+      "asr-payment-transcript.json",
+      "asr-closing-transcript.json",
+      "asr-unsent-transcript.json",
+      "asr-review.json",
+      "higgsfield-generation.jpg"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 9.284625,
+      "phrases": [
+        {
+          "text": "Contour is a roofing website concept by Wallace Shift, built around clear decisions and a visual introduction to the roof.",
+          "start": 0,
+          "end": 7.28
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "start": 9.284625,
+      "end": 22.365729,
+      "phrases": [
+        {
+          "text": "Its interactive three-dimensional study offers a top view.",
+          "start": 11.1,
+          "end": 15.18
+        },
+        {
+          "text": "This is an illustrative model, not a measurement of the visitor’s property.",
+          "start": 16.18,
+          "end": 20.58
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "start": 22.365729,
+      "end": 32.6587085,
+      "phrases": [
+        {
+          "text": "The separate estimator lets a homeowner explore a sample roof and begin comparing the options.",
+          "start": 23.92,
+          "end": 30.38
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "start": 32.6587085,
+      "end": 44.3913125,
+      "phrases": [
+        {
+          "text": "Choose metal and the planning range updates.",
+          "start": 34.620000000000005,
+          "end": 37.94
+        },
+        {
+          "text": "These are sample prices, not a contractor quote.",
+          "start": 39.24,
+          "end": 42.8
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "start": 44.3913125,
+      "end": 54.8581875,
+      "phrases": [
+        {
+          "text": "Use the estimate’s midpoint in the payment explorer.",
+          "start": 45.78,
+          "end": 48.7
+        },
+        {
+          "text": "Change the term and compare both the monthly payment and total repayment.",
+          "start": 49.5,
+          "end": 53.82
+        }
+      ]
+    },
+    {
+      "id": "questions",
+      "start": 54.8581875,
+      "end": 63.81312500000001,
+      "phrases": [
+        {
+          "text": "The visitor then brings their roof concern, timing, and estimate together in a project brief.",
+          "start": 55.46000000000001,
+          "end": 62.08
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "start": 63.81312500000001,
+      "end": 71.981479,
+      "phrases": [
+        {
+          "text": "This creates an unsent preview with the selected options and sample pricing clearly identified.",
+          "start": 65.30000000000001,
+          "end": 70.98
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "start": 71.981479,
+      "end": 80.328,
+      "phrases": [
+        {
+          "text": "A visual explanation becomes a practical comparison and an organized starting point for the contractor conversation.",
+          "start": 72.53999999999999,
+          "end": 79.76
+        }
+      ]
+    }
+  ]
+}

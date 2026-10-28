@@ -1,0 +1,569 @@
+{
+  "id": "roofing-crm",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:38:25.509Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in supplied browser evidence; no identifier inferred.",
+    "quotedCredits": 5.7,
+    "quotedCreditsEvidence": "Production lead direct browser generation handoff.",
+    "browserEvidence": "output/narrated-previews/roofing-crm/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The first history row is the roofing CRM narration and shows Grady and Seed Audio 1.0; the left CRM form displays 5.7 credits."
+  },
+  "exactSpokenText": "A roofing website starts a conversation. This CRM demonstration by Wallace Shift shows how the next steps could be organized.\n\nOpen the storm map to explore sample weather and nearby properties. It is a search aid, not proof of roof damage.\n\nReview a property’s contact details, record source, and weather context. Then add it to the follow-up list.\n\nRecord the contact outcome and an internal note, keeping the next step with the property.\n\nChoose an inspection time and assign a team member. The sample appointment updates the property’s status.\n\nThe worklist and upcoming appointments show the change. Customer records and sample website inquiries are organized in the same workspace.\n\nAll records are fictional. No live weather or contact lookup runs, and no messages or calendar invitations are sent. The handoff to inspection is visible.",
+  "timingMethod": "exact token sequence alignment to independent ASR word timestamps, with explicit reviewed proper-name aliases only. Complete sentences use matched observed word spans; scene cuts prefer measured silence. No timing is invented for missing/substituted words. The derived full report joins work list to worklist using its complete observed span; raw recognition retained. Sentence boundaries refined against measured source silence; overlapping retained ranges are merged and processed once. Accepted interior caption spans are remapped within merged segments. No spoken text removed.",
+  "alignmentReview": {
+    "status": "ASR mapping reviewed by delegated audio production agent; subjective listening and caption review pending",
+    "method": "exact token sequence alignment to independent ASR word timestamps, with explicit reviewed proper-name aliases only. Complete sentences use matched observed word spans; scene cuts prefer measured silence. No timing is invented for missing/substituted words. The derived full report joins work list to worklist using its complete observed span; raw recognition retained.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/roofing-crm/asr-orthography-reviewed.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/roofing-crm/asr-property-transcript.json",
+        "offset": 16.7,
+        "replaceStart": 16.7,
+        "replaceEnd": 24.3,
+        "removedWords": [
+          " Review",
+          " a",
+          " property's",
+          " contact",
+          " details,",
+          " record",
+          " source",
+          " and",
+          " weather",
+          " contacts.",
+          " Then",
+          " add",
+          " it",
+          " to",
+          " the",
+          " follow",
+          "-up",
+          " list.",
+          " list,"
+        ],
+        "addedWords": [
+          " Review",
+          " a",
+          " property's",
+          " contact",
+          " details,",
+          " record",
+          " source",
+          " and",
+          " weather",
+          " contacts,",
+          " then",
+          " add",
+          " it",
+          " to",
+          " the",
+          " follow",
+          "-up",
+          " list."
+        ],
+        "review": "Independent source16.7–31.3s crop removes duplicated list; use only through24.3s before Record. Its Record span is zero-length, so keep full-take outcome words. The later tighter context crop resolves contacts."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/roofing-crm/asr-context-transcript.json",
+        "offset": 20.4,
+        "replaceStart": 20.7,
+        "replaceEnd": 22.1,
+        "removedWords": [
+          " and",
+          " weather",
+          " contacts,"
+        ],
+        "addedWords": [
+          " and",
+          " weather",
+          " context."
+        ],
+        "review": "Independent original20.4–22.1s crop recognizes and weather context. Replace only weather/context after the preceding and, retaining exact observed spans; raw full/cropped contacts readings remain recorded."
+      }
+    ],
+    "aliasUses": [],
+    "issues": [],
+    "findings": [
+      "All 135 scripted tokens match after independent source crop substitution and compound spelling normalization.",
+      "Full recognition duplicated list at a chunk boundary; independent property crop contains it once.",
+      "Full and broad crop read weather contacts; independent source20.4–22.1s crop recognizes and weather context. No context alias was introduced; both conflicting raw reports remain retained.",
+      "Every internal scene boundary uses measured silence. All fictional/no-live-lookup/no-messages/no-calendar-invitations disclosures match recognized words.",
+      "This is ASR review only; pronunciation, natural delivery and final mix remain unlistened by this agent."
+    ],
+    "pacingReview": "Transformation follows user feedback; subjective listening is not claimed. Independent paced-audio ASR and final playback review remain separate checks."
+  },
+  "processing": "Existing Higgsfield take, pitch-preserving atempo=1.08. Sentence-adjacent silence trimmed with 0.14s handles; original scene WAVs, imported timing and source hashes retained. No speech generation. Natural within-sentence pauses and continuous audio at overlapping sentence boundaries are preserved.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "76b4ce9fb3732a5776d0975db0af2816057ada05516606280680bfaaf6fd2510",
+      "retainedFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "duration": 57.84,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "paced/1a433c7c2eeb9745/opening.wav",
+      "spoken": "A roofing website starts a conversation. This CRM demonstration by Wallace Shift shows how the next steps could be organized.",
+      "duration": 7.194292,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 8.9385415,
+      "phrases": [
+        {
+          "text": "A roofing website starts a conversation.",
+          "start": 0.1305083174465979,
+          "end": 2.0092836825534017,
+          "sourceStart": 0,
+          "sourceEnd": 2,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 0,
+          "originalSceneEnd": 2,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.39879200000000004,
+            "trimEnd": 2.694208,
+            "observedSpeechStart": 0.538792,
+            "observedSpeechEnd": 2.554208,
+            "captionSourceStart": 0.538792,
+            "captionSourceEnd": 2.554208,
+            "outputStart": 0,
+            "outputDuration": 2.139792,
+            "measuredScale": 0.9322022674756992,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "This CRM demonstration by Wallace Shift shows how the next steps could be organized.",
+          "start": 2.269704879812916,
+          "end": 7.064379120187083,
+          "sourceStart": 3.38,
+          "sourceEnd": 8.22,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 3.38,
+          "originalSceneEnd": 8.22,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 3.315417,
+            "trimEnd": 8.762375,
+            "observedSpeechStart": 3.455417,
+            "observedSpeechEnd": 8.622375,
+            "captionSourceStart": 3.455417,
+            "captionSourceEnd": 8.622375,
+            "outputStart": 2.139792,
+            "outputDuration": 5.0545,
+            "measuredScale": 0.9279491415208267,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "weather",
+      "file": "paced/1a433c7c2eeb9745/weather.wav",
+      "spoken": "Open the storm map to explore sample weather and nearby properties. It is a search aid, not proof of roof damage.",
+      "duration": 6.693208,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "sourceStart": 8.9385415,
+      "sourceEnd": 16.5956665,
+      "phrases": [
+        {
+          "text": "Open the storm map to explore sample weather and nearby properties.",
+          "start": 0.12998511724850448,
+          "end": 3.5869318827514958,
+          "sourceStart": 9.26,
+          "sourceEnd": 12.66,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 0.3214585000000003,
+          "originalSceneEnd": 3.7214585000000007,
+          "paceMapping": {
+            "sourceSceneFile": "weather.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.1975,
+            "trimEnd": 4.200792,
+            "observedSpeechStart": 0.3375,
+            "observedSpeechEnd": 4.060792,
+            "captionSourceStart": 0.3375,
+            "captionSourceEnd": 4.060792,
+            "outputStart": 0,
+            "outputDuration": 3.716917,
+            "measuredScale": 0.9284651232036034,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "It is a search aid, not proof of roof damage.",
+          "start": 3.846633205152152,
+          "end": 6.400729996616704,
+          "sourceStart": 13.5,
+          "sourceEnd": 16.28,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 4.5614585000000005,
+          "originalSceneEnd": 7.341458500000002,
+          "paceMapping": {
+            "sourceSceneFile": "weather.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 4.444875000000001,
+            "trimEnd": 7.657125,
+            "observedSpeechStart": 4.584875,
+            "observedSpeechEnd": 7.341458500000002,
+            "captionSourceStart": 4.584875,
+            "captionSourceEnd": 7.341458500000002,
+            "outputStart": 3.716917,
+            "outputDuration": 2.976292,
+            "measuredScale": 0.9265443225153711,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "property",
+      "file": "paced/1a433c7c2eeb9745/property.wav",
+      "spoken": "Review a property’s contact details, record source, and weather context. Then add it to the follow-up list.",
+      "duration": 6.437375,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "sourceStart": 16.5956665,
+      "sourceEnd": 24.413625,
+      "phrases": [
+        {
+          "text": "Review a property’s contact details, record source, and weather context.",
+          "start": 0.1298685463149902,
+          "end": 4.453756453685011,
+          "sourceStart": 16.7,
+          "sourceEnd": 21.459999999999997,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 0.10433349999999919,
+          "originalSceneEnd": 4.864333499999997,
+          "paceMapping": {
+            "sourceSceneFile": "property.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.41854199999999997,
+            "trimEnd": 5.35975,
+            "observedSpeechStart": 0.558542,
+            "observedSpeechEnd": 5.21975,
+            "captionSourceStart": 0.558542,
+            "captionSourceEnd": 5.21975,
+            "outputStart": 0,
+            "outputDuration": 4.583625,
+            "measuredScale": 0.9276324736785013,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Then add it to the follow-up list.",
+          "start": 4.712488163978593,
+          "end": 6.308511836021406,
+          "sourceStart": 22.299999999999997,
+          "sourceEnd": 23.939999999999998,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 5.704333499999997,
+          "originalSceneEnd": 7.344333499999998,
+          "paceMapping": {
+            "sourceSceneFile": "property.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 5.6805,
+            "trimEnd": 7.694458,
+            "observedSpeechStart": 5.8205,
+            "observedSpeechEnd": 7.554458,
+            "captionSourceStart": 5.8205,
+            "captionSourceEnd": 7.554458,
+            "outputStart": 4.583625,
+            "outputDuration": 1.85375,
+            "measuredScale": 0.9204511712756672,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "outcome",
+      "file": "paced/1a433c7c2eeb9745/outcome.wav",
+      "spoken": "Record the contact outcome and an internal note, keeping the next step with the property.",
+      "duration": 5.999958,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "sourceStart": 24.413625,
+      "sourceEnd": 31.2504375,
+      "phrases": [
+        {
+          "text": "Record the contact outcome and an internal note, keeping the next step with the property.",
+          "start": 0.12992864083481595,
+          "end": 5.870029359165184,
+          "sourceStart": 24.68,
+          "sourceEnd": 30.82,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 0.26637500000000003,
+          "originalSceneEnd": 6.406375000000001,
+          "paceMapping": {
+            "sourceSceneFile": "outcome.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.274958,
+            "trimEnd": 6.739999999999999,
+            "observedSpeechStart": 0.414958,
+            "observedSpeechEnd": 6.6,
+            "captionSourceStart": 0.414958,
+            "captionSourceEnd": 6.6,
+            "outputStart": 0,
+            "outputDuration": 5.999958,
+            "measuredScale": 0.9280617202486853,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "inspection",
+      "file": "paced/1a433c7c2eeb9745/inspection.wav",
+      "spoken": "Choose an inspection time and assign a team member. The sample appointment updates the property’s status.",
+      "duration": 5.593167,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "sourceStart": 31.2504375,
+      "sourceEnd": 37.8665,
+      "phrases": [
+        {
+          "text": "Choose an inspection time and assign a team member.",
+          "start": 0.13021165797872097,
+          "end": 2.694955342021279,
+          "sourceStart": 31.52,
+          "sourceEnd": 34.24,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 0.26956249999999926,
+          "originalSceneEnd": 2.9895625000000017,
+          "paceMapping": {
+            "sourceSceneFile": "inspection.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.238875,
+            "trimEnd": 3.276417,
+            "observedSpeechStart": 0.378875,
+            "observedSpeechEnd": 3.136417,
+            "captionSourceStart": 0.378875,
+            "captionSourceEnd": 3.136417,
+            "outputStart": 0,
+            "outputDuration": 2.825167,
+            "measuredScale": 0.9300832712765783,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "The sample appointment updates the property’s status.",
+          "start": 2.955624996712965,
+          "end": 5.462709003287035,
+          "sourceStart": 34.86,
+          "sourceEnd": 37.22,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 3.609562499999999,
+          "originalSceneEnd": 5.9695624999999986,
+          "paceMapping": {
+            "sourceSceneFile": "inspection.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 3.5160419999999997,
+            "trimEnd": 6.4864999999999995,
+            "observedSpeechStart": 3.656042,
+            "observedSpeechEnd": 6.3465,
+            "captionSourceStart": 3.656042,
+            "captionSourceEnd": 6.3465,
+            "outputStart": 2.825167,
+            "outputDuration": 2.768,
+            "measuredScale": 0.9318428336640343,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "worklist",
+      "file": "paced/1a433c7c2eeb9745/worklist.wav",
+      "spoken": "The worklist and upcoming appointments show the change. Customer records and sample website inquiries are organized in the same workspace.",
+      "duration": 7.692,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "sourceStart": 37.8665,
+      "sourceEnd": 46.838375,
+      "phrases": [
+        {
+          "text": "The worklist and upcoming appointments show the change.",
+          "start": 0.12997700103768714,
+          "end": 3.062272998962313,
+          "sourceStart": 38.14,
+          "sourceEnd": 41.12,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 0.2734999999999985,
+          "originalSceneEnd": 3.2534999999999954,
+          "paceMapping": {
+            "sourceSceneFile": "worklist.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.17616699999999996,
+            "trimEnd": 3.614583,
+            "observedSpeechStart": 0.316167,
+            "observedSpeechEnd": 3.474583,
+            "captionSourceStart": 0.316167,
+            "captionSourceEnd": 3.474583,
+            "outputStart": 0,
+            "outputDuration": 3.19225,
+            "measuredScale": 0.9284071502691937,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Customer records and sample website inquiries are organized in the same workspace.",
+          "start": 3.322014848910306,
+          "end": 7.562235151089693,
+          "sourceStart": 41.9,
+          "sourceEnd": 46.08,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 4.0334999999999965,
+          "originalSceneEnd": 8.213499999999996,
+          "paceMapping": {
+            "sourceSceneFile": "worklist.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 4.006292,
+            "trimEnd": 8.860958,
+            "observedSpeechStart": 4.146292,
+            "observedSpeechEnd": 8.720958,
+            "captionSourceStart": 4.146292,
+            "captionSourceEnd": 8.720958,
+            "outputStart": 3.19225,
+            "outputDuration": 4.49975,
+            "measuredScale": 0.9268917779307577,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "file": "paced/1a433c7c2eeb9745/ending.wav",
+      "spoken": "All records are fictional. No live weather or contact lookup runs, and no messages or calendar invitations are sent. The handoff to inspection is visible.",
+      "duration": 9.650625,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+      "sourceStart": 46.838375,
+      "sourceEnd": 57.84,
+      "phrases": [
+        {
+          "text": "All records are fictional.",
+          "start": 0.12977259390417797,
+          "end": 1.33862747979908,
+          "sourceStart": 47.1,
+          "sourceEnd": 48.46,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 0.2616250000000022,
+          "originalSceneEnd": 1.6216250000000016,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "segment": 1,
+            "mergedSentenceCount": 2,
+            "trimStart": 0.1775,
+            "trimEnd": 8.236167,
+            "observedSpeechStart": 0.3175,
+            "observedSpeechEnd": 1.960625,
+            "captionSourceStart": 0.3175,
+            "captionSourceEnd": 1.6216250000000016,
+            "outputStart": 0,
+            "outputDuration": 7.469958,
+            "measuredScale": 0.9269470993155569,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "No live weather or contact lookup runs, and no messages or calendar invitations are sent.",
+          "start": 1.33862747979908,
+          "end": 7.340185406095822,
+          "sourceStart": 48.46,
+          "sourceEnd": 54.72,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 1.6216250000000016,
+          "originalSceneEnd": 7.881625,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "segment": 1,
+            "mergedSentenceCount": 2,
+            "trimStart": 0.1775,
+            "trimEnd": 8.236167,
+            "observedSpeechStart": 1.6216250000000016,
+            "observedSpeechEnd": 8.096167,
+            "captionSourceStart": 1.6216250000000016,
+            "captionSourceEnd": 8.096167,
+            "outputStart": 0,
+            "outputDuration": 7.469958,
+            "measuredScale": 0.9269470993155569,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "The handoff to inspection is visible.",
+          "start": 7.600425256410257,
+          "end": 9.33377594871795,
+          "sourceStart": 55.64,
+          "sourceEnd": 57.5,
+          "sourceFile": "originals/higgsfield-76b4ce9fb3732a57.mp3",
+          "originalSceneStart": 8.801625000000001,
+          "originalSceneEnd": 10.661625,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 8.661625,
+            "trimEnd": 11.001625,
+            "observedSpeechStart": 8.801625000000001,
+            "observedSpeechEnd": 10.661625,
+            "captionSourceStart": 8.801625000000001,
+            "captionSourceEnd": 10.661625,
+            "outputStart": 7.469958,
+            "outputDuration": 2.180667,
+            "measuredScale": 0.9319089743589745,
+            "tempo": 1.08
+          }
+        }
+      ]
+    }
+  ],
+  "duration": 49.260625,
+  "pacing": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2,
+    "sourceTimingFile": "unpaced-timing-b8172ba78984e008.json",
+    "sourceTimingSha256": "b8172ba78984e008f6c9b0f4f2f6eae47e29bdab2d9b9379506e86c27fedd110",
+    "report": "paced/1a433c7c2eeb9745/pacing-report.json"
+  }
+}

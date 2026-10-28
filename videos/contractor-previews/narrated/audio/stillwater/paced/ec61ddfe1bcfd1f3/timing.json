@@ -1,0 +1,518 @@
+{
+  "id": "stillwater",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:43:30.007Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in supplied browser evidence; no identifier inferred.",
+    "quotedCredits": 5.1,
+    "quotedCreditsEvidence": "Production lead direct browser generation handoff.",
+    "browserEvidence": "output/narrated-previews/stillwater/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Stillwater history row shows Grady and Seed Audio 1.0; the left form is already on the subsequent CRM take, so its displayed 5.7 quote is not Stillwater pricing.",
+    "takes": [
+      {
+        "role": "Original body; opening rejected",
+        "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3",
+        "quotedCredits": 5.1,
+        "browserEvidence": "output/narrated-previews/stillwater/higgsfield-generation.jpg",
+        "generationId": null
+      },
+      {
+        "role": "Opening replacement",
+        "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-opening-repair.mp3",
+        "sha256": "94e273247b9836a948d3b1cc3fe3e468c47032c92884809c592983a94376bfa6",
+        "model": "Seed Audio 1.0",
+        "voice": "Grady",
+        "quotedCredits": 0.8,
+        "originalExportName": "hf_20261028_184056_6496c7d9-7701-4300-bcd8-fedec22fb758.mp3",
+        "generationId": null,
+        "browserEvidence": "output/narrated-previews/stillwater/higgsfield-opening-repair.jpg",
+        "direction": "155 words per minute; pronounce Stillwater clearly as STILL water, two distinct syllables."
+      }
+    ]
+  },
+  "exactSpokenText": "Stillwater is a pool website concept by Wallace Shift. It connects backyard inspiration with a concrete starting point.\n\nThe opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.\n\nCompare a social gathering place, a quiet courtyard, and a more natural escape. Each choice changes the inspiration.\n\nThat style carries into a project planner. Add features, choose an ideal timeframe, and describe the space in your own words.\n\nThe site brings those decisions into a readable brief, ready to download for the first conversation.\n\nStillwater is fictional and the images are concepts. The brief stays local; nothing is sent. The visitor leaves with something specific to discuss.",
+  "timingMethod": "Independent unprompted faster-whisper word timestamps. Opening uses a separately verified replacement take; body uses accepted observed spans and measured silent scene cuts. Compound time frame→timeframe spelling joins preserve complete observed spans. Ending Still water→Stillwater is a canonical proper-name spelling only. Sentence boundaries refined against measured source silence; overlapping retained ranges are merged and processed once. Accepted interior caption spans are remapped within merged segments. No spoken text removed.",
+  "alignmentReview": {
+    "status": "ASR mapping reviewed by delegated audio production agent; subjective listening and final caption review pending",
+    "method": "Independent unprompted faster-whisper word timestamps. Opening uses a separately verified replacement take; body uses accepted observed spans and measured silent scene cuts. Compound time frame→timeframe spelling joins preserve complete observed spans. Ending Still water→Stillwater is a canonical proper-name spelling only.",
+    "noListeningClaim": true,
+    "issues": [],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-orthography-reviewed.json",
+      "asr-opening-transcript.json",
+      "asr-inspiration-transcript.json",
+      "asr-opening-repair.json",
+      "body-alignment-pending-opening.json"
+    ],
+    "findings": [
+      "The original opening was rejected after full and cropped recognition read The water. It is excluded from the finished narration; its source bytes and reports remain retained.",
+      "The replacement independently recognizes Stillwater is a pool website concept by Wallace Shift. It connects backyard inspiration with a concrete starting point. exactly.",
+      "All original body capability and fictional/local/nothing-sent disclosures retain matched observed word spans.",
+      "ASR agreement is not a claim of subjective listening, pronunciation approval, mix quality or buyer comprehension."
+    ],
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-inspiration-transcript.json",
+        "offset": 15.2,
+        "replaceStart": 15.2,
+        "replaceEnd": 20.8,
+        "removedWords": [
+          " Compare",
+          " a",
+          " social",
+          " gathering",
+          " place,",
+          " a",
+          " quiet",
+          " courtyard,",
+          " and",
+          " a",
+          " more",
+          " natural",
+          " escape."
+        ],
+        "addedWords": [
+          " Compare",
+          " a",
+          " social",
+          " gathering",
+          " place,",
+          " a",
+          " quiet",
+          " courtyard,",
+          " and",
+          " a",
+          " more",
+          " natural",
+          " escape."
+        ],
+        "review": "Independent source15.2–23.7s crop gives a valid Compare span. Replace only the first inspiration sentence through20.8s; its Each span is zero-length, so keep the full take valid second-sentence words."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Stillwater",
+        "recognized": "Still water",
+        "start": 41.32,
+        "end": 41.98,
+        "reviewedBy": "Codex source and unprompted ASR comparison under production-lead proper-name permission",
+        "evidence": "Ending source recognizes Still water as two words at the expected brand position. Closed proper-name spelling normalization only; actual word-group span retained.",
+        "observedWords": [
+          {
+            "token": "still",
+            "text": " Still",
+            "start": 41.32,
+            "end": 41.58,
+            "probability": 0.9864294528961182,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-orthography-reviewed.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "water",
+            "text": " water",
+            "start": 41.58,
+            "end": 41.98,
+            "probability": 0.5484216213226318,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-orthography-reviewed.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "pacingReview": "Transformation follows user feedback; subjective listening is not claimed. Independent paced-audio ASR and final playback review remain separate checks."
+  },
+  "processing": "Existing Higgsfield take, pitch-preserving atempo=1.08. Sentence-adjacent silence trimmed with 0.14s handles; original scene WAVs, imported timing and source hashes retained. No speech generation. Natural within-sentence pauses and continuous audio at overlapping sentence boundaries are preserved.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-opening-repair.mp3",
+      "sha256": "94e273247b9836a948d3b1cc3fe3e468c47032c92884809c592983a94376bfa6",
+      "retainedFile": "originals/higgsfield-94e273247b9836a9.mp3",
+      "duration": 8.16,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    },
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "ea004eed8695ba128a2542e87309efdc36d1e23d936bbf12fbef401a12480c45",
+      "retainedFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "duration": 51.768,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "paced/ec61ddfe1bcfd1f3/opening.wav",
+      "spoken": "Stillwater is a pool website concept by Wallace Shift. It connects backyard inspiration with a concrete starting point.",
+      "duration": 6.866417,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-94e273247b9836a9.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 8.16,
+      "phrases": [
+        {
+          "text": "Stillwater is a pool website concept by Wallace Shift.",
+          "start": 0.1297403328233023,
+          "end": 3.2577176671766974,
+          "sourceStart": 0,
+          "sourceEnd": 3.36,
+          "sourceFile": "originals/higgsfield-94e273247b9836a9.mp3",
+          "originalSceneStart": 0,
+          "originalSceneEnd": 3.36,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.15912499999999996,
+            "trimEnd": 3.814458,
+            "observedSpeechStart": 0.299125,
+            "observedSpeechEnd": 3.674458,
+            "captionSourceStart": 0.299125,
+            "captionSourceEnd": 3.674458,
+            "outputStart": 0,
+            "outputDuration": 3.387458,
+            "measuredScale": 0.9267166630235877,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "It connects backyard inspiration with a concrete starting point.",
+          "start": 3.5174922616890347,
+          "end": 6.736381738310965,
+          "sourceStart": 4.4,
+          "sourceEnd": 7.74,
+          "sourceFile": "originals/higgsfield-94e273247b9836a9.mp3",
+          "originalSceneStart": 4.4,
+          "originalSceneEnd": 7.74,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 4.273917,
+            "trimEnd": 8.0195,
+            "observedSpeechStart": 4.413917,
+            "observedSpeechEnd": 7.8795,
+            "captionSourceStart": 4.413917,
+            "captionSourceEnd": 7.8795,
+            "outputStart": 3.387458,
+            "outputDuration": 3.478958,
+            "measuredScale": 0.9288161549216769,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "transformation",
+      "file": "paced/ec61ddfe1bcfd1f3/transformation.wav",
+      "spoken": "The opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.",
+      "duration": 5.34575,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 9.1520625,
+      "sourceEnd": 15.148937499999999,
+      "phrases": [
+        {
+          "text": "The opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.",
+          "start": 0.12995211216785726,
+          "end": 5.058985138193876,
+          "sourceStart": 9.48,
+          "sourceEnd": 14.84,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 0.3279375000000009,
+          "originalSceneEnd": 5.6879375,
+          "paceMapping": {
+            "sourceSceneFile": "transformation.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.237792,
+            "trimEnd": 5.996875,
+            "observedSpeechStart": 0.377792,
+            "observedSpeechEnd": 5.6879375,
+            "captionSourceStart": 0.377792,
+            "captionSourceEnd": 5.6879375,
+            "outputStart": 0,
+            "outputDuration": 5.34575,
+            "measuredScale": 0.9282293726275519,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "inspiration",
+      "file": "paced/ec61ddfe1bcfd1f3/inspiration.wav",
+      "spoken": "Compare a social gathering place, a quiet courtyard, and a more natural escape. Each choice changes the inspiration.",
+      "duration": 7.256958,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 15.148937499999999,
+      "sourceEnd": 23.746125,
+      "phrases": [
+        {
+          "text": "Compare a social gathering place, a quiet courtyard, and a more natural escape.",
+          "start": 0.1300247336480108,
+          "end": 4.69064226635199,
+          "sourceStart": 15.2,
+          "sourceEnd": 20.259999999999998,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 0.051062500000000455,
+          "originalSceneEnd": 5.111062499999999,
+          "paceMapping": {
+            "sourceSceneFile": "inspiration.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.31066699999999997,
+            "trimEnd": 5.501167,
+            "observedSpeechStart": 0.450667,
+            "observedSpeechEnd": 5.361167,
+            "captionSourceStart": 0.450667,
+            "captionSourceEnd": 5.361167,
+            "outputStart": 0,
+            "outputDuration": 4.820667,
+            "measuredScale": 0.9287480974857913,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Each choice changes the inspiration.",
+          "start": 4.951081779334886,
+          "end": 7.126544220665114,
+          "sourceStart": 21.14,
+          "sourceEnd": 23.04,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 5.991062500000002,
+          "originalSceneEnd": 7.8910625,
+          "paceMapping": {
+            "sourceSceneFile": "inspiration.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 5.851062500000002,
+            "trimEnd": 8.466417,
+            "observedSpeechStart": 5.991062500000002,
+            "observedSpeechEnd": 8.326417,
+            "captionSourceStart": 5.991062500000002,
+            "captionSourceEnd": 8.326417,
+            "outputStart": 4.820667,
+            "outputDuration": 2.436292,
+            "measuredScale": 0.9315341381063262,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "planner",
+      "file": "paced/ec61ddfe1bcfd1f3/planner.wav",
+      "spoken": "That style carries into a project planner. Add features, choose an ideal timeframe, and describe the space in your own words.",
+      "duration": 9.152792,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 23.746125,
+      "sourceEnd": 34.586854,
+      "phrases": [
+        {
+          "text": "That style carries into a project planner.",
+          "start": 0.12995126626814005,
+          "end": 2.46346573373186,
+          "sourceStart": 24.08,
+          "sourceEnd": 26.56,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 0.33387499999999903,
+          "originalSceneEnd": 2.8138749999999995,
+          "paceMapping": {
+            "sourceSceneFile": "planner.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.40212499999999995,
+            "trimEnd": 3.1960830000000002,
+            "observedSpeechStart": 0.542125,
+            "observedSpeechEnd": 3.056083,
+            "captionSourceStart": 0.542125,
+            "captionSourceEnd": 3.056083,
+            "outputStart": 0,
+            "outputDuration": 2.593417,
+            "measuredScale": 0.9282233304867145,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Add features, choose an ideal timeframe, and describe the space in your own words.",
+          "start": 2.72315116231341,
+          "end": 9.02305783768659,
+          "sourceStart": 27.34,
+          "sourceEnd": 33.82,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 3.5938750000000006,
+          "originalSceneEnd": 10.073875000000001,
+          "paceMapping": {
+            "sourceSceneFile": "planner.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 3.4538750000000005,
+            "trimEnd": 10.532292,
+            "observedSpeechStart": 3.5938750000000006,
+            "observedSpeechEnd": 10.392292,
+            "captionSourceStart": 3.5938750000000006,
+            "captionSourceEnd": 10.392292,
+            "outputStart": 2.593417,
+            "outputDuration": 6.559375,
+            "measuredScale": 0.926672587952928,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "file": "paced/ec61ddfe1bcfd1f3/brief.wav",
+      "spoken": "The site brings those decisions into a readable brief, ready to download for the first conversation.",
+      "duration": 5.355042,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 34.586854,
+      "sourceEnd": 40.969104,
+      "phrases": [
+        {
+          "text": "The site brings those decisions into a readable brief, ready to download for the first conversation.",
+          "start": 0.12970501466760692,
+          "end": 5.225336985332393,
+          "sourceStart": 35.04,
+          "sourceEnd": 40.42,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 0.4531459999999967,
+          "originalSceneEnd": 5.833145999999999,
+          "paceMapping": {
+            "sourceSceneFile": "brief.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.40858300000000003,
+            "trimEnd": 6.188667,
+            "observedSpeechStart": 0.548583,
+            "observedSpeechEnd": 6.048667,
+            "captionSourceStart": 0.548583,
+            "captionSourceEnd": 6.048667,
+            "outputStart": 0,
+            "outputDuration": 5.355042,
+            "measuredScale": 0.9264643904829065,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "file": "paced/ec61ddfe1bcfd1f3/ending.wav",
+      "spoken": "Stillwater is fictional and the images are concepts. The brief stays local; nothing is sent. The visitor leaves with something specific to discuss.",
+      "duration": 9.712542,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 40.969104,
+      "sourceEnd": 51.768,
+      "phrases": [
+        {
+          "text": "Stillwater is fictional and the images are concepts.",
+          "start": 0.12984423915185794,
+          "end": 2.9431552549250326,
+          "sourceStart": 41.32,
+          "sourceEnd": 44.4,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 0.35089599999999876,
+          "originalSceneEnd": 3.430895999999997,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "segment": 1,
+            "mergedSentenceCount": 3,
+            "trimStart": 0.257542,
+            "trimEnd": 10.729750000000001,
+            "observedSpeechStart": 0.397542,
+            "observedSpeechEnd": 3.58725,
+            "captionSourceStart": 0.397542,
+            "captionSourceEnd": 3.430895999999997,
+            "outputStart": 0,
+            "outputDuration": 9.712542,
+            "measuredScale": 0.9274588510846995,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "The brief stays local; nothing is sent.",
+          "start": 4.056105876226675,
+          "end": 6.282007118829952,
+          "sourceStart": 45.6,
+          "sourceEnd": 48,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 4.630896,
+          "originalSceneEnd": 7.0308959999999985,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "segment": 1,
+            "mergedSentenceCount": 3,
+            "trimStart": 0.257542,
+            "trimEnd": 10.729750000000001,
+            "observedSpeechStart": 4.666417,
+            "observedSpeechEnd": 7.264458,
+            "captionSourceStart": 4.630896,
+            "captionSourceEnd": 7.0308959999999985,
+            "outputStart": 0,
+            "outputDuration": 9.712542,
+            "measuredScale": 0.9274588510846995,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "The visitor leaves with something specific to discuss.",
+          "start": 6.282007118829952,
+          "end": 9.58269776084814,
+          "sourceStart": 48,
+          "sourceEnd": 51.2,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+          "originalSceneStart": 7.0308959999999985,
+          "originalSceneEnd": 10.230896000000001,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "segment": 1,
+            "mergedSentenceCount": 3,
+            "trimStart": 0.257542,
+            "trimEnd": 10.729750000000001,
+            "observedSpeechStart": 7.0308959999999985,
+            "observedSpeechEnd": 10.58975,
+            "captionSourceStart": 7.0308959999999985,
+            "captionSourceEnd": 10.58975,
+            "outputStart": 0,
+            "outputDuration": 9.712542,
+            "measuredScale": 0.9274588510846995,
+            "tempo": 1.08
+          }
+        }
+      ]
+    }
+  ],
+  "duration": 43.689501,
+  "pacing": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2,
+    "sourceTimingFile": "unpaced-timing-068df537d9f00831.json",
+    "sourceTimingSha256": "068df537d9f0083117808b667aa0abaeca8f28bc4141297fdb74f9124f96f6b0",
+    "report": "paced/ec61ddfe1bcfd1f3/pacing-report.json"
+  }
+}
