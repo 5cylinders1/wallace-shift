@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { preview } from 'vite'
 import { createAgreementTestStore } from './demo-agreement-test-store.mjs'
+import { contractorPreviewFiles } from './contractor-preview-contract.mjs'
 
 // Exercise actual built HTML/assets and Node handlers over loopback HTTP.
 // The empty Vite root/env directory prevents its loadEnv hook from reading real
@@ -119,6 +120,20 @@ try {
   }
 
   for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg']) await checkStatus(path, 200)
+  for (const file of contractorPreviewFiles) {
+    const path = `/${file}`
+    const response = await checkStatus(path, 200, { method: 'HEAD' })
+    assert.ok(Number(response.headers.get('content-length')) > 0, `${path} must contain media`)
+    const expectedType = file.endsWith('.mp4') ? 'video/mp4' : file.endsWith('.jpg') ? 'image/jpeg' : 'text/vtt'
+    assert.ok(response.headers.get('content-type')?.startsWith(expectedType), `${path} must be served as ${expectedType}`)
+    if (file.endsWith('.mp4')) {
+      const partial = await checkStatus(path, 206, { headers: { range: 'bytes=0-31' } })
+      assert.match(partial.headers.get('content-range'), /^bytes 0-31\/\d+$/)
+      assert.equal(partial.headers.get('content-length'), '32')
+    } else if (file.endsWith('.vtt')) {
+      assert.match((await checkStatus(path, 200)).body, /^WEBVTT\s/)
+    }
+  }
   for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/']) {
     const page = await request(path)
     for (const asset of assetsFrom(page.body)) {

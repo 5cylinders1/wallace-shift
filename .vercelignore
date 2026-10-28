@@ -10,6 +10,7 @@ dist
 /output/
 /review-assets/
 /tmp/
+/videos/
 
 # Local source/reference assets. Optimized deploy copies live under public/.
 /BannerImage.png

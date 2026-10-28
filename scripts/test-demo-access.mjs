@@ -7,6 +7,7 @@ import { Readable } from 'node:stream'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import ts from 'typescript'
 import { createAgreementTestStore } from './demo-agreement-test-store.mjs'
+import { contractorPreviewFiles } from './contractor-preview-contract.mjs'
 
 // Execute real handlers with isolated environment and mocked providers only.
 // No local environment file is read and no email can leave this test suite.
@@ -131,6 +132,23 @@ test('documents redirect while assets, API aliases, and encoded paths deny witho
 test('only exact previews, gallery and public asset namespace remain public', async () => {
   for (const path of ['/', '/request-demo/', '/demo-agreement/', '/assets/public.js', '/demos/roofers-offer/index.html', '/src/demos/roofers-offer/main.tsx', '/demos/contractors/index.html', '/src/demos/contractors/main.tsx', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg']) assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
   assert.equal((await access.gateDemoRequest(new Request(origin + '/demos/roofers-4/preview.jpg/extra')))?.status, 303)
+})
+
+test('all contractor preview films, posters and captions are public without granting interactive access', async () => {
+  delete process.env.DEMO_ACCESS_SECRET
+  for (const host of ['https://contractors.wallaceshift.com', origin]) {
+    for (const file of contractorPreviewFiles) {
+      assert.equal(await access.gateDemoRequest(new Request(`${host}/${file}`)), null, file)
+    }
+    for (const [demo, path] of Object.entries(access.DEMO_PATHS)) {
+      const response = await access.gateDemoRequest(new Request(host + path))
+      assert.equal(response?.status, 303, path)
+      assert.equal(response.headers.get('location'), `/request-demo/?demo=${demo}`, path)
+    }
+    for (const path of ['/demo-assets/preview.js', '/api/roof-render', '/demos/roofers-5/residence-slate.jpg']) {
+      assert.equal((await access.gateDemoRequest(new Request(host + path)))?.status, 403, path)
+    }
+  }
 })
 
 test('Stillwater aliases use the pool access request and keep implementation private', async () => {

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { contractorPreviewFiles } from './contractor-preview-contract.mjs'
 
 // Check the actual release output, including nested pages and lazy bundles.
 // This is run by npm build after both Vite passes.
@@ -36,4 +37,19 @@ for (const path of privateJs) {
   assert.ok(!/(?:from\s*|import\s*\()\s*["'](?:\/assets\/|\.\.\/assets\/)/.test(source), `Private bundle imports the public build: ${path}`)
 }
 assert.ok(!output.some(path => /\.(?:map|tsx|ts|jsx|zip|tar|gz)$/.test(path)), 'Release output must not contain source maps or source archives')
-console.log(`Demo build boundary verified: ${privateHtml.length} documents and ${privateJs.length} private JavaScript bundles.`)
+const previews = output.filter(path => path.startsWith('media/demo-previews/'))
+assert.deepEqual(previews.toSorted(), contractorPreviewFiles.toSorted(), 'Every contractor concept requires exactly one public film, poster and caption file; production sources stay outside public output')
+for (const path of contractorPreviewFiles) {
+  const contents = await readFile(new URL(path, root))
+  if (path.endsWith('.mp4')) {
+    assert.ok(contents.length > 1024, `Empty preview film: ${path}`)
+    assert.equal(contents.toString('ascii', 4, 8), 'ftyp', `Invalid MP4: ${path}`)
+  } else if (path.endsWith('.jpg')) {
+    assert.equal(contents.subarray(0, 3).toString('hex'), 'ffd8ff', `Invalid JPEG poster: ${path}`)
+  } else {
+    const captions = contents.toString('utf8')
+    assert.match(captions, /^WEBVTT\s/, `Invalid captions: ${path}`)
+    assert.match(captions, /\d{2}:\d{2}(?::\d{2})?\.\d{3} --> \d{2}:\d{2}(?::\d{2})?\.\d{3}/, `Captions have no timed cues: ${path}`)
+  }
+}
+console.log(`Demo build boundary verified: ${privateHtml.length} documents, ${privateJs.length} private JavaScript bundles and ${previews.length} public contractor preview assets.`)
