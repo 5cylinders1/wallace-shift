@@ -132,7 +132,18 @@ await writeFile(join(destination, 'HANDOFF.md'), `# Wallace Shift narrated contr
 const list = join(destination, 'archive-files.txt')
 await writeFile(list, `${chosen.map(file => file.path).join('\0')}\0`)
 const archive = join(destination, 'wallace-shift-contractor-narrated-editables.tar.gz')
-execFileSync('tar', ['-czf', archive, '-C', root, '--null', '-T', list, '-C', destination, 'HANDOFF.json', 'HANDOFF.md'], { stdio: 'inherit' })
+// Python's standard library gives every member an explicit archive-relative
+// name. BSD tar applies the later -C to list entries, unlike GNU tar.
+execFileSync(process.env.PYTHON || 'python3', ['-c', `
+import json, pathlib, sys, tarfile
+root, destination, archive = map(pathlib.Path, sys.argv[1:])
+manifest = json.loads((destination / 'HANDOFF.json').read_text())
+with tarfile.open(archive, 'w:gz', compresslevel=4) as bundle:
+    for item in manifest['files']:
+        bundle.add(root / item['path'], arcname=item['path'], recursive=False)
+    for name in ['HANDOFF.json', 'HANDOFF.md']:
+        bundle.add(destination / name, arcname=name, recursive=False)
+`, root, destination, archive], { stdio: 'inherit' })
 for (const file of chosen) {
   const after = await stat(join(root, file.path))
   assert(after.size === file.bytes && after.mtimeMs === file.mtimeMs, `File changed while tar ran; do not deliver archive: ${file.path}`)

@@ -1,6 +1,6 @@
 # Narrated contractor walkthrough validation
 
-Evidence snapshot: **2026-10-28, 20:00 UTC**. Measurements below come from current local files and retained reports. Local completion, deployment, live verification and buyer validation are separate states.
+Evidence snapshot: **2026-10-28, 20:15 UTC**. Measurements below come from current local files and retained reports. Local completion, deployment, live verification and buyer validation are separate states.
 
 ## Current result
 
@@ -8,7 +8,7 @@ All **eleven demos** have narrated encoded films, editable scripts and operated 
 
 **11 current films have complete technical desktop sound-enabled and phone-muted playback.** All eleven current films also have sampled final visual review, including the replacement Datum and CRM encodes. The latest saved gallery run passed **181/181** checks and media run **132/132**; their exact snapshot scope is recorded below. All **33** initial focused paused desktop/portrait/landscape control samples, plus six final-replacement samples, showed captions clear of native controls.
 
-**Deployment and fresh live verification of the narrated collection are pending. Subjective listening and representative-buyer validation remain unresolved.** No participants have been recruited or tested. Sound-enabled playback proves player operation, not that a person listened or understood the story.
+**The narrated preview deployment is READY. Production still serves the previous collection; fresh public live verification is pending. Subjective listening and representative-buyer validation remain unresolved.** No participants have been recruited or tested. Sound-enabled playback proves player operation, not that a person listened or understood the story.
 
 ## Inventory and operated evidence
 
@@ -140,11 +140,14 @@ The Velar boundary remains explicit: photo preparation is local; displayed gener
 | Local production build and access | Build exit 0; 19 private documents, 29 private bundles, 33 public preview assets; 575 HTTP responses and 34 access tests passed | Verify these boundaries on the exact deployed revision |
 | Local playback and accessibility | All eleven current films have two complete technical passes; 181 gallery assertions; 33 visually reviewed control samples plus six visually reviewed final-replacement samples | Physical-device/native-control and screen-reader validation |
 | Narration and mix | Independent content alignment, pitch-preserving pacing, licensed music and measured decoded audio | Subjective pronunciation, joins, synchronization and mix listening |
-| Deployment | **Not performed for the narrated collection** | Exact commit/revision, deployment ID and public URL |
+| Preview deployment | **READY**, application revision `05ffbb4c9add06181ad0e0464fba4e81ad5131ac`, deployment `dpl_8gXsvCaw5HUmzy9P8JVv3rEK3EvT` | Preview can require Vercel sign-in; it is not the public production release |
+| Production deployment | **Not performed for the narrated collection** | Publish approval and the exact production revision |
 | Live verification | **Pending** | Guest gallery/media/routes, range requests, gated resources, playback and demand-loading on exact deployed revision |
 | Buyer validation | **Unresolved: zero participants** | Five representative contractor buyers; protocol below |
 
 The previous `output/contractor-previews/release-summary.json` and silent-preview production HTTP records describe the earlier 36-second collection. Their deployed status and metrics do not validate this narrated replacement. Current gallery/media JSON files have newer local evidence and are identified explicitly above.
+
+Review the [narrated preview gallery](https://wallace-shift-m0lvp3h0z-matthews-projects-a78a2f2e.vercel.app/demos/contractors) and [pull request 15](https://github.com/5cylinders1/wallace-shift/pull/15). The Vercel connector confirmed READY again at 20:14:48 UTC. An authenticated preview HTML fetch returned 200 at 20:10:59 UTC; that establishes document availability with authentication, not unauthenticated playback or a production route audit. The main implementation commit is `05ffbb4` (`Replace contractor previews with narrated walkthroughs and verified playback`). Later handoff documentation and packaging changes do not change the application or films in this preview.
 
 ## Five-buyer evaluation protocol
 
@@ -182,4 +185,6 @@ Report every misunderstanding and which script, shot, caption, or disclosure cha
 
 Editable source and handoff instructions are in [README.md](../../videos/contractor-previews/README.md). The archive helper includes scripts, original narration, derived WAVs, capture clips and QA evidence while excluding credentials, local grants, dependencies and ASR models. Run it only after final QA stops writing outputs; archive creation is separate from deployment.
 
-Suggested commit message: `Replace contractor previews with narrated walkthroughs and verified public playback`.
+The completed [editable archive](../../output/narrated-handoffs/2026-10-28T20-04-29-413Z/wallace-shift-contractor-narrated-editables.tar.gz) is **1,408,378,117 bytes**. Its SHA-256 is `9538b9231e1a4604db1891b50a231b0599c599117a0d40adb5ecd2108ca7d75d`. The adjacent [verification record](../../output/narrated-handoffs/2026-10-28T20-04-29-413Z/archive-verification.json) confirms that all **2,892 project files**, within **2,894 archive members** including the two handoff documents, matched their manifest sizes and hashes. The archive is a fixed snapshot made before the preview-status documentation update; its included deployment statement is superseded by this release record.
+
+Commit message: `Replace contractor previews with narrated walkthroughs and verified playback`.

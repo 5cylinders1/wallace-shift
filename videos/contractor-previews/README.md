@@ -61,6 +61,8 @@ Only after capture, composition, rendering, and QA have finished, create the loc
 node videos/contractor-previews/narrated-package.mjs --archive
 ```
 
+Packaging uses Python 3's standard-library `tarfile` module, with an explicit relative path for each archive member so behavior is consistent on macOS and Linux. Set `PYTHON` to a Python 3 executable if `python3` is not on PATH. No additional Python package is required.
+
 The archive is written to a new timestamped directory under `output/narrated-handoffs/`, together with `HANDOFF.json`, `HANDOFF.md`, and an archive SHA-256 checksum. It retains all eleven public films, posters and captions; editable compositions and clips; original narration, measured timing and PCM edits; music attribution; and the recorded validation evidence. It includes the final player revision, per-demo player layout checks, encoded visual review, and public live QA folders when present. Before packaging, it checks that each delivered film contains audio and video, follows the current timeline, and has the expected composition and delivery records. These file checks do not establish a passed subjective listening review, buyer validation, or deployment.
 
 Keep scripts, JSON/TXT timing and provenance, and retained original MP3 takes under Git review. Generated scene WAVs, paced WAVs, soundtracks, capture clips, and temporary caches stay outside Git; the archive carries the needed local media. Do not remove those ignored production files until the handoff archive and its checksum have been verified. The helper excludes `.demo-preview.local`, environment and credential files, authentication/browser storage state, dependency installations, ASR models, raw full-page browser recordings, and duplicate rendered masters.
