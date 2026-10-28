@@ -1,0 +1,8 @@
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/opening.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/seasons.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/report.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/symptom.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/guidance.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/handoff.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/details.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/datum/paced/6c8522611ab83c4c/result.wav'

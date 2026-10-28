@@ -1,0 +1,15 @@
+Stratum is a roofing website concept by Wallace Shift, built around one live, interactive model.
+
+As the visitor moves through the page, the same house helps explain the roof as a system, including the layers underneath.
+
+In the roof studio, change the roof form and adjust the pitch. The model and its calculated measurements respond.
+
+Choose a different finish and see its illustrative planning range alongside the roof area.
+
+Switch to an aerial view to inspect the design, then carry that choice into an inspection request.
+
+The selected material, geometry, and range arrive together in the brief, keeping those choices connected.
+
+This is a sample home, and the request remains an unsent demo preview. No inspection is booked.
+
+An interactive explanation becomes a practical starting point for discussing a roof project. Built by Wallace Shift.

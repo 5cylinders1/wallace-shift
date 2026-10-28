@@ -1,0 +1,7 @@
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/tambour/paced/ed41953958dc9e52/opening.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/tambour/paced/ed41953958dc9e52/rooms.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/tambour/paced/ed41953958dc9e52/samples.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/tambour/paced/ed41953958dc9e52/planning.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/tambour/paced/ed41953958dc9e52/carried.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/tambour/paced/ed41953958dc9e52/details.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/tambour/paced/ed41953958dc9e52/result.wav'

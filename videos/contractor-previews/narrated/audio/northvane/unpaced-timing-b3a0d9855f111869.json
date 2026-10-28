@@ -1,0 +1,319 @@
+{
+  "id": "northvane",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:13:37.881Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in the supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 6,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff; the retained screenshot already shows the next Alder and Stone form.",
+    "browserEvidence": "output/narrated-previews/northvane/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Northvane history row displays Grady and Seed Audio 1.0. The left form is already on the subsequent Alder and Stone narration."
+  },
+  "exactSpokenText": "This is Northvane, a roofing website concept by Wallace Shift. It helps homeowners understand the work and prepare for a useful first conversation.\n\nThe opening illustration walks through the roof replacement, showing how the work comes together.\n\nThe roof planner then turns choices into a budget. We are using its built-in sample house.\n\nAdjust the pitch and choose metal. The roof area and planning range respond. These prices are illustrative.\n\nExplore a payment scenario, with the monthly amount and total of payments visible together.\n\nThe project questions gather the roof concern, payment approach, and timing, before asking for contact details.\n\nThose answers become a structured lead preview, alongside the estimate and payment already explored. Nothing is sent from this demonstration.\n\nThe distinctive feature is the connection: the homeowner’s choices travel with the conversation.",
+  "timingMethod": "Unprompted offline faster-whisper base.en recognition of the full actual Higgsfield take plus an independently recognized crop. Exact script token matching follows recognition. Only the affected sample-scene interval is replaced; scene cuts use measured silence and captions use observed phrase word spans. Source originals retained unchanged; scene clips decoded to PCM with FFmpeg and measured using ffprobe.",
+  "alignmentReview": {
+    "status": "ASR alignment reviewed; subjective listening and final caption review pending",
+    "method": "Unprompted offline faster-whisper base.en recognition of the full actual Higgsfield take plus an independently recognized crop. Exact script token matching follows recognition. Only the affected sample-scene interval is replaced; scene cuts use measured silence and captions use observed phrase word spans.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/northvane/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/northvane/asr-sample-estimate-transcript.json",
+        "offset": 18.5,
+        "replaceStart": 18.5,
+        "replaceEnd": 25.7,
+        "removedWords": [
+          " The",
+          " roof",
+          " planner",
+          " then",
+          " turns",
+          " choices",
+          " into",
+          " a",
+          " budget.",
+          " We",
+          " are",
+          " using",
+          " its",
+          " built",
+          "-in",
+          " sample",
+          " house.",
+          " house."
+        ],
+        "addedWords": [
+          " The",
+          " roof",
+          " planner",
+          " then",
+          " turns",
+          " choices",
+          " into",
+          " a",
+          " budget.",
+          " We",
+          " are",
+          " using",
+          " its",
+          " built",
+          "-in",
+          " sample",
+          " house."
+        ],
+        "review": "Independent unprompted recognition of an original-audio 18.5–34.25 second crop contains one house and exactly matches sample and estimate text. Replace only the sample scene through 25.7s, inside its following silence. Full ASR duplicated house across a segment boundary; no token is simply discarded. The crop's later roof-area phrase has a zero-length internal word, so its estimate timestamps are not imported; that scene retains the valid full-take ASR timestamps."
+      }
+    ],
+    "aliasUses": [],
+    "issues": [],
+    "reviewedBy": "Codex other_narrative_research agent, delegated source alignment review",
+    "evidence": [
+      "asr-transcript.json",
+      "asr-sample-estimate-transcript.json",
+      "asr-review.json",
+      "alignment-report.json",
+      "higgsfield-generation.jpg"
+    ],
+    "findings": [
+      "Full-take ASR recognized 135 words against the 134-word script: an extra house appeared across the 24.88s segment boundary.",
+      "The independent original-audio 18.5–34.25s crop recognizes house once and matches sample/estimate text exactly. Source 18.5–25.7s is replaced using that crop, ending within silence before Adjust.",
+      "The crop assigns zero duration to The in the later roof-area sentence. That interval is not imported; valid original full-take timings are retained for the estimate scene.",
+      "Final mapping contains all 134 script tokens, zero differences, zero invalid word spans, and no proper-name aliases. Northvane and Wallace Shift are recognized with their expected spelling.",
+      "All seven internal scene boundaries are within measured silent gaps; all 13 sentence/phrase spans are valid, ordered, and inside their scene ranges."
+    ],
+    "limitations": [
+      "ASR agreement does not establish correct pronunciation, natural delivery, brand fit, synchronization, music balance, or buyer comprehension.",
+      "A crop-initial word may include leading silence. These are sentence captions, not word highlighting.",
+      "No subjective listening review has been performed. Final encoded playback and human buyer validation remain separate."
+    ]
+  },
+  "processing": "Cuts only at supplied in/out points; original pitch, speed, volume and pauses preserved. No normalization or synthetic gaps.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "06e19a48dc69d41e134b14ecc704ec6ea5dc69e167bb582c8bfda120f8ba0ee7",
+      "retainedFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "duration": 72.84,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "opening.wav",
+      "spoken": "This is Northvane, a roofing website concept by Wallace Shift. It helps homeowners understand the work and prepare for a useful first conversation.",
+      "duration": 11.866875,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 11.866875,
+      "phrases": [
+        {
+          "text": "This is Northvane, a roofing website concept by Wallace Shift.",
+          "start": 0,
+          "end": 4.72,
+          "sourceStart": 0,
+          "sourceEnd": 4.72,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        },
+        {
+          "text": "It helps homeowners understand the work and prepare for a useful first conversation.",
+          "start": 5.62,
+          "end": 10.98,
+          "sourceStart": 5.62,
+          "sourceEnd": 10.98,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "file": "process.wav",
+      "spoken": "The opening illustration walks through the roof replacement, showing how the work comes together.",
+      "duration": 6.394417,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 11.866875,
+      "sourceEnd": 18.261312500000003,
+      "phrases": [
+        {
+          "text": "The opening illustration walks through the roof replacement, showing how the work comes together.",
+          "start": 0.6531249999999993,
+          "end": 6.073125000000001,
+          "sourceStart": 12.52,
+          "sourceEnd": 17.94,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "file": "sample.wav",
+      "spoken": "The roof planner then turns choices into a budget. We are using its built-in sample house.",
+      "duration": 7.485875,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 18.261312500000003,
+      "sourceEnd": 25.7471665,
+      "phrases": [
+        {
+          "text": "The roof planner then turns choices into a budget.",
+          "start": 0.2386874999999975,
+          "end": 3.6786874999999988,
+          "sourceStart": 18.5,
+          "sourceEnd": 21.94,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        },
+        {
+          "text": "We are using its built-in sample house.",
+          "start": 4.698687499999998,
+          "end": 6.758687499999997,
+          "sourceStart": 22.96,
+          "sourceEnd": 25.02,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "file": "estimate.wav",
+      "spoken": "Adjust the pitch and choose metal. The roof area and planning range respond. These prices are illustrative.",
+      "duration": 8.411667,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 25.7471665,
+      "sourceEnd": 34.1588335,
+      "phrases": [
+        {
+          "text": "Adjust the pitch and choose metal.",
+          "start": 0.6328335000000003,
+          "end": 2.772833500000001,
+          "sourceStart": 26.38,
+          "sourceEnd": 28.52,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        },
+        {
+          "text": "The roof area and planning range respond.",
+          "start": 3.4928334999999997,
+          "end": 5.4728335,
+          "sourceStart": 29.24,
+          "sourceEnd": 31.22,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        },
+        {
+          "text": "These prices are illustrative.",
+          "start": 6.2928335,
+          "end": 7.7928335,
+          "sourceStart": 32.04,
+          "sourceEnd": 33.54,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "file": "payment.wav",
+      "spoken": "Explore a payment scenario, with the monthly amount and total of payments visible together.",
+      "duration": 6.772833,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 34.1588335,
+      "sourceEnd": 40.931687499999995,
+      "phrases": [
+        {
+          "text": "Explore a payment scenario, with the monthly amount and total of payments visible together.",
+          "start": 0.5211664999999996,
+          "end": 5.761166500000002,
+          "sourceStart": 34.68,
+          "sourceEnd": 39.92,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    },
+    {
+      "id": "questions",
+      "file": "questions.wav",
+      "spoken": "The project questions gather the roof concern, payment approach, and timing, before asking for contact details.",
+      "duration": 10.59675,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 40.931687499999995,
+      "sourceEnd": 51.528396,
+      "phrases": [
+        {
+          "text": "The project questions gather the roof concern, payment approach, and timing, before asking for contact details.",
+          "start": 0.8683125000000018,
+          "end": 8.428312500000004,
+          "sourceStart": 41.8,
+          "sourceEnd": 49.36,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "file": "brief.wav",
+      "spoken": "Those answers become a structured lead preview, alongside the estimate and payment already explored. Nothing is sent from this demonstration.",
+      "duration": 13.206,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 51.528396,
+      "sourceEnd": 64.73441650000001,
+      "phrases": [
+        {
+          "text": "Those answers become a structured lead preview, alongside the estimate and payment already explored.",
+          "start": 1.8716039999999978,
+          "end": 9.051603999999998,
+          "sourceStart": 53.4,
+          "sourceEnd": 60.58,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        },
+        {
+          "text": "Nothing is sent from this demonstration.",
+          "start": 10.611604,
+          "end": 12.351604000000002,
+          "sourceStart": 62.14,
+          "sourceEnd": 63.88,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "file": "ending.wav",
+      "spoken": "The distinctive feature is the connection: the homeowner’s choices travel with the conversation.",
+      "duration": 8.105583,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3",
+      "sourceStart": 64.73441650000001,
+      "sourceEnd": 72.84,
+      "phrases": [
+        {
+          "text": "The distinctive feature is the connection: the homeowner’s choices travel with the conversation.",
+          "start": 0.46558349999999393,
+          "end": 7.385583499999996,
+          "sourceStart": 65.2,
+          "sourceEnd": 72.12,
+          "sourceFile": "originals/higgsfield-06e19a48dc69d41e.mp3"
+        }
+      ]
+    }
+  ],
+  "duration": 72.83999999999999
+}

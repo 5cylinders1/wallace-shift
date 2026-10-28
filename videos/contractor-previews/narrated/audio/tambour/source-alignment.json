@@ -1,0 +1,261 @@
+{
+  "id": "tambour",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/higgsfield-grady-source.mp3",
+  "sourceSha256": "66c300976e47940e39a3ca47e81eaf2f1342d9b4338dea6771abda15482ecf3d",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 5.1,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff; retained screenshot already shows the next Mitre form and its separate quote.",
+    "browserEvidence": "output/narrated-previews/tambour/higgsfield-generation.jpg",
+    "browserEvidenceNote": "Tambour history row displays Grady and Seed Audio 1.0."
+  },
+  "alignmentReview": {
+    "status": "ASR-based alignment accepted with disclosed proper-name aliases and verb-ending uncertainty; not word-perfect heard-word verification",
+    "method": "Independent full-take and cropped unprompted ASR with exact token matching after disclosed name aliases and one explicit root-reviewed phonetic verb-ending exception. Scene cuts use measured silence; no timing is invented.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-planning-reviewed.json",
+        "offset": 22.5,
+        "replaceStart": 22.5,
+        "replaceEnd": 33.5,
+        "removedWords": [
+          " The",
+          " investment",
+          " planner",
+          " explores",
+          " size,",
+          " construction,",
+          " and",
+          " scope.",
+          " Hope.",
+          " Change",
+          " the",
+          " choices",
+          " and",
+          " the",
+          " illustrative",
+          " planning",
+          " range",
+          " response."
+        ],
+        "addedWords": [
+          " The",
+          " investment",
+          " planner",
+          " explores",
+          " size,",
+          " construction",
+          " and",
+          " scope.",
+          " Change",
+          " the",
+          " choices",
+          " and",
+          " the",
+          " illustrative",
+          " planning",
+          " range",
+          " responds."
+        ],
+        "review": "Independent crop removes extra Hope. A separately retained derived report applies the root-authorized response/responds verb-ending uncertainty only; raw recognitions remain untouched. This is not a word-perfect spoken QA claim."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Tambour",
+        "recognized": "Tambor",
+        "start": 0,
+        "end": 0.68,
+        "reviewedBy": "Codex other_narrative_research under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Opening full-take recognition uses Tambor; the website wordmark, source script, and supplied generation history identify Tambour. Retain actual recognized span; no pronunciation claim.",
+        "observedWords": [
+          {
+            "token": "tambor",
+            "text": " Tambor",
+            "start": 0,
+            "end": 0.68,
+            "probability": 0.6539624631404877,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      },
+      {
+        "expected": "Wallace Shift",
+        "recognized": "Wallace Schifft.",
+        "start": 7.96,
+        "end": 8.88,
+        "reviewedBy": "Codex other_narrative_research under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Full-take recognition spells the brand Wallace Schifft; script and product identity establish Wallace Shift. Retain actual span; subjective pronunciation remains unreviewed.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 7.96,
+            "end": 8.28,
+            "probability": 0.7084012627601624,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "schifft",
+            "text": " Schifft.",
+            "start": 8.28,
+            "end": 8.88,
+            "probability": 0.5718335658311844,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "findings": [
+      "Independent planning crop resolves the extra Hope after scope at a full-pass chunk boundary.",
+      "Full take and both independent planning crops recognize response where the script says responds. Root permits intended-verb caption spelling because primary capture proves the planning range updates; actual verb-ending pronunciation remains uncertain.",
+      "Tambor/Tambour and Wallace Schifft/Wallace Shift are disclosed proper-name aliases.",
+      "No omissions or unrelated meaning changes are silently accepted."
+    ],
+    "phoneticReview": {
+      "rawReport": "output/narrated-previews/tambour/asr-planning-transcript.json",
+      "reviewedBy": "Root explicit instruction on 2026-10-28",
+      "corrections": [
+        {
+          "recognized": " response.",
+          "caption": " responds.",
+          "start": 9.5,
+          "end": 9.86
+        }
+      ],
+      "rationale": "Root accepts response→responds solely as documented ASR phonetic verb-ending uncertainty with captions using the intended verb. Primary capture verifies that the planning range updates. This is not exact heard-word verification and must not generalize to negations, numbers, actions or changes in meaning.",
+      "listeningUncertainty": "All three unprompted recognitions use response. Actual verb-ending pronunciation remains unreviewed."
+    },
+    "limitations": [
+      "Subjective listening, pronunciation, delivery, music mix, final captions and buyer comprehension remain unreviewed.",
+      "Zero mapped token differences after reviewed exceptions is not a claim of word-perfect spoken QA."
+    ],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-planning-transcript.json",
+      "asr-response-transcript.json",
+      "asr-planning-reviewed.json",
+      "capture-story-review.json",
+      "higgsfield-generation.jpg"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 9.2712915,
+      "phrases": [
+        {
+          "text": "Tambour guides a visitor from a room they admire to a project they can describe.",
+          "start": 0,
+          "end": 4.46
+        },
+        {
+          "text": "This cabinetry experience was built by Wallace Shift.",
+          "start": 5.64,
+          "end": 8.88
+        }
+      ]
+    },
+    {
+      "id": "rooms",
+      "start": 9.2712915,
+      "end": 16.801146000000003,
+      "phrases": [
+        {
+          "text": "Kitchens, baths, and built-ins lead into construction stories and a tactile material library.",
+          "start": 9.66,
+          "end": 16.08
+        }
+      ]
+    },
+    {
+      "id": "samples",
+      "start": 16.801146000000003,
+      "end": 22.408250000000002,
+      "phrases": [
+        {
+          "text": "Choose a wood, add a stone, and those choices collect in a sample box.",
+          "start": 17.28,
+          "end": 22.02
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "start": 22.408250000000002,
+      "end": 33.5371665,
+      "phrases": [
+        {
+          "text": "The investment planner explores size, construction, and scope.",
+          "start": 22.5,
+          "end": 27.78
+        },
+        {
+          "text": "Change the choices and the illustrative planning range responds.",
+          "start": 28.86,
+          "end": 32.36
+        }
+      ]
+    },
+    {
+      "id": "carried",
+      "start": 33.5371665,
+      "end": 40.069646,
+      "phrases": [
+        {
+          "text": "Save the range, and it travels with the samples into the consultation brief.",
+          "start": 34.28,
+          "end": 39.34
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "start": 40.069646,
+      "end": 48.882771000000005,
+      "phrases": [
+        {
+          "text": "Four steps gather the room, timing, style notes, and contact details for a more specific first conversation.",
+          "start": 40.64,
+          "end": 48.1
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "start": 48.882771000000005,
+      "end": 60.144,
+      "phrases": [
+        {
+          "text": "The preview brings it together.",
+          "start": 49.42,
+          "end": 50.94
+        },
+        {
+          "text": "Tambour is fictional, prices are examples, and nothing is sent.",
+          "start": 51.98,
+          "end": 56.4
+        },
+        {
+          "text": "Inspiration and inquiry stay connected.",
+          "start": 57.46,
+          "end": 59.98
+        }
+      ]
+    }
+  ]
+}

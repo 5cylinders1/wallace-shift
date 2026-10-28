@@ -1,0 +1,8 @@
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/opening.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/overview.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/photo.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/comparison.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/planning.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/brief.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/portal.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/59a0b6196d8a78f1/ending.wav'

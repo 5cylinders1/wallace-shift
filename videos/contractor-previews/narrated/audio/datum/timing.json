@@ -1,0 +1,567 @@
+{
+  "id": "datum",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:23:13.878Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in the supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 5.8,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff. The retained screenshot already shows the next Tambour form and its separate quote.",
+    "browserEvidence": "output/narrated-previews/datum/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Datum history row beginning Foundation work displays Grady and Seed Audio 1.0. The left form is already on the subsequent Tambour narration."
+  },
+  "exactSpokenText": "The foundation work begins with something homeowners cannot see. Wallace Shift built Datum to make that first conversation clearer.\n\nAn interactive cutaway shows the house and soil across the seasons.\n\nA sample inspection report helps visitors understand what the service could deliver before they inquire.\n\nThe crack decoder starts with the visitor’s concern. Choose where the crack appears and what it looks like.\n\nAnswer a follow-up question and the displayed guidance changes. It is a guide, never a diagnosis.\n\nThat concern carries into the inspection request, so the visitor does not have to explain it again.\n\nThe form offers space for photos, property details, contact information, and a convenient visit window.\n\nThe finished preview keeps the concern attached. This fictional demonstration sends nothing. It connects useful education with a more informed inquiry.",
+  "timingMethod": "Unprompted offline faster-whisper base.en recognition, independently checked with opening and guidance crops. Exact matching to the actual-take script follows recognition, with a disclosed Wallace Schiff/Wallace Shift proper-name alias. Scene cuts use measured silence. Sentence boundaries refined against measured source silence, then remapped through each measured retained clip and pitch-preserving tempo change; no spoken text removed.",
+  "alignmentReview": {
+    "status": "ASR alignment reviewed against actual-take script; subjective listening and final caption review pending",
+    "method": "Unprompted offline faster-whisper base.en recognition, independently checked with opening and guidance crops. Exact matching to the actual-take script follows recognition, with a disclosed Wallace Schiff/Wallace Shift proper-name alias. Scene cuts use measured silence.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-opening-transcript.json",
+        "offset": 0,
+        "replaceStart": 0,
+        "replaceEnd": 8,
+        "removedWords": [
+          " The",
+          " foundation",
+          " work",
+          " begins",
+          " with",
+          " something",
+          " homeowners",
+          " cannot",
+          " see.",
+          " Wallis's",
+          " shift",
+          " built",
+          " datum",
+          " to",
+          " make",
+          " that",
+          " first",
+          " conversation",
+          " clearer."
+        ],
+        "addedWords": [
+          " The",
+          " foundation",
+          " work",
+          " begins",
+          " with",
+          " something",
+          " homeowners",
+          " cannot",
+          " see.",
+          " Wallace",
+          " Schiff",
+          " built",
+          " Datum",
+          " to",
+          " make",
+          " that",
+          " first",
+          " conversation",
+          " clearer."
+        ],
+        "review": "Independent original-audio 0–8s recognition resolves the brand spelling to the disclosed Schiff/Shift proper-name alias. It also corroborates an opening The absent from the original script. Root explicitly authorized adding that article to the script to match the actual take, without changing the product claim."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-guidance-transcript.json",
+        "offset": 27,
+        "replaceStart": 27,
+        "replaceEnd": 32,
+        "removedWords": [
+          " Answer",
+          " a",
+          " follow",
+          "-up",
+          " question",
+          " and",
+          " the",
+          " displayed",
+          " guidance",
+          " changes."
+        ],
+        "addedWords": [
+          " Answer",
+          " a",
+          " follow",
+          "-up",
+          " question",
+          " and",
+          " the",
+          " displayed",
+          " guidance",
+          " changes."
+        ],
+        "review": "Independent original-audio 27–35.6s recognition supplies the first guidance sentence with valid word timing, resolving the full-pass zero-duration a. Replace only through the 32s gap; the crop's later Never has zero duration, so the valid original second-sentence timings remain."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Wallace Shift",
+        "recognized": "Wallace Schiff",
+        "start": 3.82,
+        "end": 4.44,
+        "reviewedBy": "Codex other_narrative_research agent under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "The independent 0–8s opening crop recognizes Wallace Schiff. The source script and Wallace Shift identity establish the intended spelling. Preserve the observed complete name span; pronunciation and subjective listening remain pending.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 3.82,
+            "end": 4.04,
+            "probability": 0.8387530446052551,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-opening-transcript.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "schiff",
+            "text": " Schiff",
+            "start": 4.04,
+            "end": 4.44,
+            "probability": 0.3431907892227173,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/datum/asr-opening-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex other_narrative_research agent, delegated source alignment review",
+    "scriptAdjustment": {
+      "before": "Foundation work begins with something homeowners cannot see.",
+      "after": "The foundation work begins with something homeowners cannot see.",
+      "reason": "Both full-take and independent opening recognition contain The. Root authorized adding the non-substantive article to match the actual take. This is an actual-take transcription adjustment, not a claim of exact agreement with the original script.",
+      "claimMeaningChanged": false
+    },
+    "findings": [
+      "The opening crop corroborates the added The and recognizes the brand as Wallace Schiff. The disclosed proper-name alias retains its complete observed span; pronunciation remains unreviewed.",
+      "The full pass gives a zero-length a in Answer a follow-up question. An independent source 27–35.6s crop provides valid first-sentence spans. Only source 27–32s is replaced; later crop Never is zero-length, so original valid second-sentence spans remain.",
+      "All 133 actual-take script tokens map after the disclosed name alias, with zero remaining differences and zero invalid word spans. All seven internal scene cuts lie within measured silence."
+    ],
+    "limitations": [
+      "Subjective listening, pronunciation, delivery, music mix, final captions, and buyer comprehension remain unreviewed.",
+      "Automatic recognition can include leading silence; caption spans are sentence-level, not invented word highlighting."
+    ],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-opening-transcript.json",
+      "asr-guidance-transcript.json",
+      "alignment-report.json",
+      "asr-review.json",
+      "higgsfield-generation.jpg"
+    ],
+    "pacingReview": "Transformation follows user feedback; subjective listening is not claimed. Independent paced-audio ASR and final playback review remain separate checks."
+  },
+  "processing": "Existing Higgsfield take, pitch-preserving atempo=1.08. Sentence-adjacent silence trimmed with 0.14s handles; original scene WAVs, imported timing and source hashes retained. No speech generation. Natural within-sentence pauses are preserved.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "8a284553c54660b1ae38f87af9c6edf5d732b422bbc7e94589674f9386459818",
+      "retainedFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "duration": 64.632,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "paced/6c8522611ab83c4c/opening.wav",
+      "spoken": "The foundation work begins with something homeowners cannot see. Wallace Shift built Datum to make that first conversation clearer.",
+      "duration": 6.629125,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 8.049687500000001,
+      "phrases": [
+        {
+          "text": "The foundation work begins with something homeowners cannot see.",
+          "start": 0,
+          "end": 2.8355265509782286,
+          "sourceStart": 0,
+          "sourceEnd": 2.9,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0,
+          "originalSceneEnd": 2.9,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "trimStart": 0,
+            "trimEnd": 3.1972080000000003,
+            "observedSpeechStart": 0,
+            "observedSpeechEnd": 3.057208,
+            "outputStart": 0,
+            "outputDuration": 2.965375,
+            "measuredScale": 0.927488921584082,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Wallace Shift built Datum to make that first conversation clearer.",
+          "start": 3.0952554393487404,
+          "end": 6.49924456065126,
+          "sourceStart": 3.82,
+          "sourceEnd": 7.34,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 3.82,
+          "originalSceneEnd": 7.34,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "trimStart": 3.727208,
+            "trimEnd": 7.676417,
+            "observedSpeechStart": 3.867208,
+            "observedSpeechEnd": 7.536417,
+            "outputStart": 2.965375,
+            "outputDuration": 3.66375,
+            "measuredScale": 0.9277174239195748,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "seasons",
+      "file": "paced/6c8522611ab83c4c/seasons.wav",
+      "spoken": "An interactive cutaway shows the house and soil across the seasons.",
+      "duration": 3.924833,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 8.049687500000001,
+      "sourceEnd": 12.872146,
+      "phrases": [
+        {
+          "text": "An interactive cutaway shows the house and soil across the seasons.",
+          "start": 0.12989928062996384,
+          "end": 3.7949337193700363,
+          "sourceStart": 8.58,
+          "sourceEnd": 12.22,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0.5303124999999991,
+          "originalSceneEnd": 4.1703125,
+          "paceMapping": {
+            "sourceSceneFile": "seasons.wav",
+            "trimStart": 0.39031249999999906,
+            "trimEnd": 4.620333,
+            "observedSpeechStart": 0.5303124999999991,
+            "observedSpeechEnd": 4.480333,
+            "outputStart": 0,
+            "outputDuration": 3.924833,
+            "measuredScale": 0.9278520044997417,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "report",
+      "file": "paced/6c8522611ab83c4c/report.wav",
+      "spoken": "A sample inspection report helps visitors understand what the service could deliver before they inquire.",
+      "duration": 5.585167,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 12.872146,
+      "sourceEnd": 19.587854,
+      "phrases": [
+        {
+          "text": "A sample inspection report helps visitors understand what the service could deliver before they inquire.",
+          "start": 0.12986963431804205,
+          "end": 5.455297365681958,
+          "sourceStart": 13.22,
+          "sourceEnd": 18.8,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0.3478539999999999,
+          "originalSceneEnd": 5.927854,
+          "paceMapping": {
+            "sourceSceneFile": "report.wav",
+            "trimStart": 0.41379199999999994,
+            "trimEnd": 6.434625,
+            "observedSpeechStart": 0.553792,
+            "observedSpeechEnd": 6.294625,
+            "outputStart": 0,
+            "outputDuration": 5.585167,
+            "measuredScale": 0.9276402451288718,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "symptom",
+      "file": "paced/6c8522611ab83c4c/symptom.wav",
+      "spoken": "The crack decoder starts with the visitor’s concern. Choose where the crack appears and what it looks like.",
+      "duration": 5.669208,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 19.587854,
+      "sourceEnd": 26.79825,
+      "phrases": [
+        {
+          "text": "The crack decoder starts with the visitor’s concern.",
+          "start": 0.1300007232631768,
+          "end": 2.655999276736823,
+          "sourceStart": 20.02,
+          "sourceEnd": 22.56,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0.4321459999999995,
+          "originalSceneEnd": 2.9721459999999986,
+          "paceMapping": {
+            "sourceSceneFile": "symptom.wav",
+            "trimStart": 0.598792,
+            "trimEnd": 3.5990830000000003,
+            "observedSpeechStart": 0.738792,
+            "observedSpeechEnd": 3.459083,
+            "outputStart": 0,
+            "outputDuration": 2.786,
+            "measuredScale": 0.9285765947369771,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Choose where the crack appears and what it looks like.",
+          "start": 2.9162321631717543,
+          "end": 5.5389758368282465,
+          "sourceStart": 23.62,
+          "sourceEnd": 26.52,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 4.032146000000001,
+          "originalSceneEnd": 6.9321459999999995,
+          "paceMapping": {
+            "sourceSceneFile": "symptom.wav",
+            "trimStart": 4.056292,
+            "trimEnd": 7.155749999999999,
+            "observedSpeechStart": 4.196292,
+            "observedSpeechEnd": 7.01575,
+            "outputStart": 2.786,
+            "outputDuration": 2.883208,
+            "measuredScale": 0.9302297369411041,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "guidance",
+      "file": "paced/6c8522611ab83c4c/guidance.wav",
+      "spoken": "Answer a follow-up question and the displayed guidance changes. It is a guide, never a diagnosis.",
+      "duration": 6.643333,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 26.79825,
+      "sourceEnd": 35.7826665,
+      "phrases": [
+        {
+          "text": "Answer a follow-up question and the displayed guidance changes.",
+          "start": 0.13001218301057146,
+          "end": 3.515862816989429,
+          "sourceStart": 27,
+          "sourceEnd": 31.14,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0.20175000000000054,
+          "originalSceneEnd": 4.341750000000001,
+          "paceMapping": {
+            "sourceSceneFile": "guidance.wav",
+            "trimStart": 0.810458,
+            "trimEnd": 4.736416999999999,
+            "observedSpeechStart": 0.950458,
+            "observedSpeechEnd": 4.596417,
+            "outputStart": 0,
+            "outputDuration": 3.645875,
+            "measuredScale": 0.9286584500755104,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "It is a guide, never a diagnosis.",
+          "start": 3.776104864439875,
+          "end": 6.513103135560125,
+          "sourceStart": 32.3,
+          "sourceEnd": 34.88,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 5.501749999999998,
+          "originalSceneEnd": 8.081750000000003,
+          "paceMapping": {
+            "sourceSceneFile": "guidance.wav",
+            "trimStart": 5.471583000000001,
+            "trimEnd": 8.693917,
+            "observedSpeechStart": 5.611583,
+            "observedSpeechEnd": 8.553917,
+            "outputStart": 3.645875,
+            "outputDuration": 2.997458,
+            "measuredScale": 0.9302133174276782,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "file": "paced/6c8522611ab83c4c/handoff.wav",
+      "spoken": "That concern carries into the inspection request, so the visitor does not have to explain it again.",
+      "duration": 5.213958,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 35.7826665,
+      "sourceEnd": 42.2129585,
+      "phrases": [
+        {
+          "text": "That concern carries into the inspection request, so the visitor does not have to explain it again.",
+          "start": 0.129930342279392,
+          "end": 5.084027657720608,
+          "sourceStart": 36.22,
+          "sourceEnd": 41.52,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0.43733350000000115,
+          "originalSceneEnd": 5.737333500000005,
+          "paceMapping": {
+            "sourceSceneFile": "handoff.wav",
+            "trimStart": 0.44662499999999994,
+            "trimEnd": 6.064667,
+            "observedSpeechStart": 0.586625,
+            "observedSpeechEnd": 5.924667,
+            "outputStart": 0,
+            "outputDuration": 5.213958,
+            "measuredScale": 0.9280738734242285,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "file": "paced/6c8522611ab83c4c/details.wav",
+      "spoken": "The form offers space for photos, property details, contact information, and a convenient visit window.",
+      "duration": 7.59075,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 42.2129585,
+      "sourceEnd": 50.84,
+      "phrases": [
+        {
+          "text": "The form offers space for photos, property details, contact information, and a convenient visit window.",
+          "start": 0.12970229636792563,
+          "end": 7.590749536777517,
+          "sourceStart": 42.74,
+          "sourceEnd": 50.84,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0.5270415000000028,
+          "originalSceneEnd": 8.627041500000004,
+          "paceMapping": {
+            "sourceSceneFile": "details.wav",
+            "trimStart": 0.43362500000000004,
+            "trimEnd": 8.627042,
+            "observedSpeechStart": 0.573625,
+            "observedSpeechEnd": 8.627041500000004,
+            "outputStart": 0,
+            "outputDuration": 7.59075,
+            "measuredScale": 0.9264449740566115,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "file": "paced/6c8522611ab83c4c/result.wav",
+      "spoken": "The finished preview keeps the concern attached. This fictional demonstration sends nothing. It connects useful education with a more informed inquiry.",
+      "duration": 11.0195,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+      "sourceStart": 50.84,
+      "sourceEnd": 64.632,
+      "phrases": [
+        {
+          "text": "The finished preview keeps the concern attached.",
+          "start": 0,
+          "end": 4.399775615388552,
+          "sourceStart": 50.84,
+          "sourceEnd": 55.08,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 0,
+          "originalSceneEnd": 4.239999999999995,
+          "paceMapping": {
+            "sourceSceneFile": "result.wav",
+            "trimStart": 0,
+            "trimEnd": 4.886749999999999,
+            "observedSpeechStart": 0,
+            "observedSpeechEnd": 4.74675,
+            "outputStart": 0,
+            "outputDuration": 4.529542,
+            "measuredScale": 0.9269027472246383,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "This fictional demonstration sends nothing.",
+          "start": 4.659651756478031,
+          "end": 7.080390243521968,
+          "sourceStart": 56.62,
+          "sourceEnd": 59.18,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 5.779999999999994,
+          "originalSceneEnd": 8.339999999999996,
+          "paceMapping": {
+            "sourceSceneFile": "result.wav",
+            "trimStart": 5.758667,
+            "trimEnd": 8.643417000000001,
+            "observedSpeechStart": 5.898667,
+            "observedSpeechEnd": 8.503417,
+            "outputStart": 4.529542,
+            "outputDuration": 2.680958,
+            "measuredScale": 0.929355403414507,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "It connects useful education with a more informed inquiry.",
+          "start": 7.340488116639752,
+          "end": 10.889511883360248,
+          "sourceStart": 60.1,
+          "sourceEnd": 63.86,
+          "sourceFile": "originals/higgsfield-8a284553c54660b1.mp3",
+          "originalSceneStart": 9.259999999999998,
+          "originalSceneEnd": 13.019999999999996,
+          "paceMapping": {
+            "sourceSceneFile": "result.wav",
+            "trimStart": 9.393708,
+            "trimEnd": 13.496083,
+            "observedSpeechStart": 9.533708,
+            "observedSpeechEnd": 13.356083,
+            "outputStart": 7.2105,
+            "outputDuration": 3.809,
+            "measuredScale": 0.9284865474267954,
+            "tempo": 1.08
+          }
+        }
+      ]
+    }
+  ],
+  "duration": 52.275874,
+  "pacing": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1,
+    "sourceTimingFile": "unpaced-timing-83a8bf5da25ec3b4.json",
+    "sourceTimingSha256": "83a8bf5da25ec3b493f55aa79c3db7b2d35c8224f6a6adc95dab3939d4b8a6ff",
+    "report": "paced/6c8522611ab83c4c/pacing-report.json"
+  }
+}

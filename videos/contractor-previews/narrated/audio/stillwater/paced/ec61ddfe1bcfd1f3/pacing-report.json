@@ -1,0 +1,512 @@
+{
+  "id": "stillwater",
+  "sourceTimingFile": "unpaced-timing-068df537d9f00831.json",
+  "sourceTimingSha256": "068df537d9f0083117808b667aa0abaeca8f28bc4141297fdb74f9124f96f6b0",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "e2cd36f91efb52c12bcdfbdc4b84f02a714ec8bc3acad4f6c2752fec0a497a64"
+    },
+    {
+      "file": "transformation.wav",
+      "sha256": "d8e2209facbbbe54dedad5d75ffc95431acc5a435224744513c3376dfdd713fa"
+    },
+    {
+      "file": "inspiration.wav",
+      "sha256": "43b231457cb6558c07b3b914e01bd33c8b266062a18570f68c254afd6b62a279"
+    },
+    {
+      "file": "planner.wav",
+      "sha256": "17cfae7224eb961b6b83aa214d011102b30709321fd475a86013f57d40736cf5"
+    },
+    {
+      "file": "brief.wav",
+      "sha256": "302f575edd66274177cfe33ec429835aa89c14101aeaa342c9742a38a1ceb588"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "b1ec2d62b5650f6f2aab2890ce77571bd17abd06f8937b2bd4146a3e2e60f3ee"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 8.16,
+      "pacedDuration": 6.866417,
+      "edits": [
+        {
+          "text": "Stillwater is a pool website concept by Wallace Shift.",
+          "phrase": 1,
+          "desiredTrimStart": 0.15912499999999996,
+          "desiredTrimEnd": 3.814458,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 3.36,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.299125
+          },
+          "trailingSilence": {
+            "start": 3.674458,
+            "end": 4.413917
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.15912499999999996,
+          "trimEnd": 3.814458,
+          "observedSpeechStart": 0.299125,
+          "observedSpeechEnd": 3.674458,
+          "captionSourceStart": 0.299125,
+          "captionSourceEnd": 3.674458,
+          "outputStart": 0,
+          "outputDuration": 3.387458,
+          "measuredScale": 0.9267166630235877,
+          "tempo": 1.08
+        },
+        {
+          "text": "It connects backyard inspiration with a concrete starting point.",
+          "phrase": 2,
+          "desiredTrimStart": 4.273917,
+          "desiredTrimEnd": 8.0195,
+          "originalCaptionStart": 4.4,
+          "originalCaptionEnd": 7.74,
+          "leadingSilence": {
+            "start": 3.674458,
+            "end": 4.413917
+          },
+          "trailingSilence": {
+            "start": 7.8795,
+            "end": 8.16
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 4.273917,
+          "trimEnd": 8.0195,
+          "observedSpeechStart": 4.413917,
+          "observedSpeechEnd": 7.8795,
+          "captionSourceStart": 4.413917,
+          "captionSourceEnd": 7.8795,
+          "outputStart": 3.387458,
+          "outputDuration": 3.478958,
+          "measuredScale": 0.9288161549216769,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.15912499999999996,
+          "sourceEnd": 3.814458,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 3.387458,
+          "measuredScale": 0.9267166630235877,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 4.273917,
+          "sourceEnd": 8.0195,
+          "phrases": [
+            2
+          ],
+          "outputStart": 3.387458,
+          "outputDuration": 3.478958,
+          "measuredScale": 0.9288161549216769,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "transformation",
+      "originalDuration": 5.996875,
+      "pacedDuration": 5.34575,
+      "edits": [
+        {
+          "text": "The opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.",
+          "phrase": 1,
+          "desiredTrimStart": 0.237792,
+          "desiredTrimEnd": 5.996875,
+          "originalCaptionStart": 0.3279375000000009,
+          "originalCaptionEnd": 5.6879375,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.377792
+          },
+          "trailingSilence": null,
+          "sourceSceneFile": "transformation.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.237792,
+          "trimEnd": 5.996875,
+          "observedSpeechStart": 0.377792,
+          "observedSpeechEnd": 5.6879375,
+          "captionSourceStart": 0.377792,
+          "captionSourceEnd": 5.6879375,
+          "outputStart": 0,
+          "outputDuration": 5.34575,
+          "measuredScale": 0.9282293726275519,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.237792,
+          "sourceEnd": 5.996875,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.34575,
+          "measuredScale": 0.9282293726275519,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "inspiration",
+      "originalDuration": 8.597208,
+      "pacedDuration": 7.256958,
+      "edits": [
+        {
+          "text": "Compare a social gathering place, a quiet courtyard, and a more natural escape.",
+          "phrase": 1,
+          "desiredTrimStart": 0.31066699999999997,
+          "desiredTrimEnd": 5.501167,
+          "originalCaptionStart": 0.051062500000000455,
+          "originalCaptionEnd": 5.111062499999999,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.450667
+          },
+          "trailingSilence": {
+            "start": 5.361167,
+            "end": 5.920833
+          },
+          "sourceSceneFile": "inspiration.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.31066699999999997,
+          "trimEnd": 5.501167,
+          "observedSpeechStart": 0.450667,
+          "observedSpeechEnd": 5.361167,
+          "captionSourceStart": 0.450667,
+          "captionSourceEnd": 5.361167,
+          "outputStart": 0,
+          "outputDuration": 4.820667,
+          "measuredScale": 0.9287480974857913,
+          "tempo": 1.08
+        },
+        {
+          "text": "Each choice changes the inspiration.",
+          "phrase": 2,
+          "desiredTrimStart": 5.851062500000002,
+          "desiredTrimEnd": 8.466417,
+          "originalCaptionStart": 5.991062500000002,
+          "originalCaptionEnd": 7.8910625,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 8.326417,
+            "end": 8.597208
+          },
+          "sourceSceneFile": "inspiration.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 5.851062500000002,
+          "trimEnd": 8.466417,
+          "observedSpeechStart": 5.991062500000002,
+          "observedSpeechEnd": 8.326417,
+          "captionSourceStart": 5.991062500000002,
+          "captionSourceEnd": 8.326417,
+          "outputStart": 4.820667,
+          "outputDuration": 2.436292,
+          "measuredScale": 0.9315341381063262,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.31066699999999997,
+          "sourceEnd": 5.501167,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 4.820667,
+          "measuredScale": 0.9287480974857913,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 5.851062500000002,
+          "sourceEnd": 8.466417,
+          "phrases": [
+            2
+          ],
+          "outputStart": 4.820667,
+          "outputDuration": 2.436292,
+          "measuredScale": 0.9315341381063262,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "planner",
+      "originalDuration": 10.840708,
+      "pacedDuration": 9.152792,
+      "edits": [
+        {
+          "text": "That style carries into a project planner.",
+          "phrase": 1,
+          "desiredTrimStart": 0.40212499999999995,
+          "desiredTrimEnd": 3.1960830000000002,
+          "originalCaptionStart": 0.33387499999999903,
+          "originalCaptionEnd": 2.8138749999999995,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.542125
+          },
+          "trailingSilence": {
+            "start": 3.056083,
+            "end": 3.572542
+          },
+          "sourceSceneFile": "planner.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.40212499999999995,
+          "trimEnd": 3.1960830000000002,
+          "observedSpeechStart": 0.542125,
+          "observedSpeechEnd": 3.056083,
+          "captionSourceStart": 0.542125,
+          "captionSourceEnd": 3.056083,
+          "outputStart": 0,
+          "outputDuration": 2.593417,
+          "measuredScale": 0.9282233304867145,
+          "tempo": 1.08
+        },
+        {
+          "text": "Add features, choose an ideal timeframe, and describe the space in your own words.",
+          "phrase": 2,
+          "desiredTrimStart": 3.4538750000000005,
+          "desiredTrimEnd": 10.532292,
+          "originalCaptionStart": 3.5938750000000006,
+          "originalCaptionEnd": 10.073875000000001,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 10.392292,
+            "end": 10.840708
+          },
+          "sourceSceneFile": "planner.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 3.4538750000000005,
+          "trimEnd": 10.532292,
+          "observedSpeechStart": 3.5938750000000006,
+          "observedSpeechEnd": 10.392292,
+          "captionSourceStart": 3.5938750000000006,
+          "captionSourceEnd": 10.392292,
+          "outputStart": 2.593417,
+          "outputDuration": 6.559375,
+          "measuredScale": 0.926672587952928,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.40212499999999995,
+          "sourceEnd": 3.1960830000000002,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 2.593417,
+          "measuredScale": 0.9282233304867145,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 3.4538750000000005,
+          "sourceEnd": 10.532292,
+          "phrases": [
+            2
+          ],
+          "outputStart": 2.593417,
+          "outputDuration": 6.559375,
+          "measuredScale": 0.926672587952928,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "originalDuration": 6.38225,
+      "pacedDuration": 5.355042,
+      "edits": [
+        {
+          "text": "The site brings those decisions into a readable brief, ready to download for the first conversation.",
+          "phrase": 1,
+          "desiredTrimStart": 0.40858300000000003,
+          "desiredTrimEnd": 6.188667,
+          "originalCaptionStart": 0.4531459999999967,
+          "originalCaptionEnd": 5.833145999999999,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.548583
+          },
+          "trailingSilence": {
+            "start": 6.048667,
+            "end": 6.38225
+          },
+          "sourceSceneFile": "brief.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.40858300000000003,
+          "trimEnd": 6.188667,
+          "observedSpeechStart": 0.548583,
+          "observedSpeechEnd": 6.048667,
+          "captionSourceStart": 0.548583,
+          "captionSourceEnd": 6.048667,
+          "outputStart": 0,
+          "outputDuration": 5.355042,
+          "measuredScale": 0.9264643904829065,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.40858300000000003,
+          "sourceEnd": 6.188667,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.355042,
+          "measuredScale": 0.9264643904829065,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 10.798917,
+      "pacedDuration": 9.712542,
+      "edits": [
+        {
+          "text": "Stillwater is fictional and the images are concepts.",
+          "phrase": 1,
+          "desiredTrimStart": 0.257542,
+          "desiredTrimEnd": 3.72725,
+          "originalCaptionStart": 0.35089599999999876,
+          "originalCaptionEnd": 3.430895999999997,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.397542
+          },
+          "trailingSilence": {
+            "start": 3.58725,
+            "end": 3.715458
+          },
+          "sourceSceneFile": "ending.wav",
+          "segment": 1,
+          "mergedSentenceCount": 3,
+          "trimStart": 0.257542,
+          "trimEnd": 10.729750000000001,
+          "observedSpeechStart": 0.397542,
+          "observedSpeechEnd": 3.58725,
+          "captionSourceStart": 0.397542,
+          "captionSourceEnd": 3.430895999999997,
+          "outputStart": 0,
+          "outputDuration": 9.712542,
+          "measuredScale": 0.9274588510846995,
+          "tempo": 1.08
+        },
+        {
+          "text": "The brief stays local; nothing is sent.",
+          "phrase": 2,
+          "desiredTrimStart": 4.526417,
+          "desiredTrimEnd": 7.404458,
+          "originalCaptionStart": 4.630896,
+          "originalCaptionEnd": 7.0308959999999985,
+          "leadingSilence": {
+            "start": 3.89425,
+            "end": 4.666417
+          },
+          "trailingSilence": {
+            "start": 7.264458,
+            "end": 7.829792
+          },
+          "sourceSceneFile": "ending.wav",
+          "segment": 1,
+          "mergedSentenceCount": 3,
+          "trimStart": 0.257542,
+          "trimEnd": 10.729750000000001,
+          "observedSpeechStart": 4.666417,
+          "observedSpeechEnd": 7.264458,
+          "captionSourceStart": 4.630896,
+          "captionSourceEnd": 7.0308959999999985,
+          "outputStart": 0,
+          "outputDuration": 9.712542,
+          "measuredScale": 0.9274588510846995,
+          "tempo": 1.08
+        },
+        {
+          "text": "The visitor leaves with something specific to discuss.",
+          "phrase": 3,
+          "desiredTrimStart": 6.890895999999999,
+          "desiredTrimEnd": 10.729750000000001,
+          "originalCaptionStart": 7.0308959999999985,
+          "originalCaptionEnd": 10.230896000000001,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 10.58975,
+            "end": 10.798917
+          },
+          "sourceSceneFile": "ending.wav",
+          "segment": 1,
+          "mergedSentenceCount": 3,
+          "trimStart": 0.257542,
+          "trimEnd": 10.729750000000001,
+          "observedSpeechStart": 7.0308959999999985,
+          "observedSpeechEnd": 10.58975,
+          "captionSourceStart": 7.0308959999999985,
+          "captionSourceEnd": 10.58975,
+          "outputStart": 0,
+          "outputDuration": 9.712542,
+          "measuredScale": 0.9274588510846995,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.257542,
+          "sourceEnd": 10.729750000000001,
+          "phrases": [
+            1,
+            2,
+            3
+          ],
+          "outputStart": 0,
+          "outputDuration": 9.712542,
+          "measuredScale": 0.9274588510846995,
+          "tempo": 1.08
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "transformation/1: no trailing silence matched; retained extra source conservatively."
+  ],
+  "originalDuration": 50.775958,
+  "pacedDuration": 43.689501,
+  "reviewAudio": "paced/ec61ddfe1bcfd1f3/narration-review.wav",
+  "spokenTextUnchanged": true
+}

@@ -1,0 +1,319 @@
+{
+  "id": "stillwater",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:43:28.948Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in supplied browser evidence; no identifier inferred.",
+    "quotedCredits": 5.1,
+    "quotedCreditsEvidence": "Production lead direct browser generation handoff.",
+    "browserEvidence": "output/narrated-previews/stillwater/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Stillwater history row shows Grady and Seed Audio 1.0; the left form is already on the subsequent CRM take, so its displayed 5.7 quote is not Stillwater pricing.",
+    "takes": [
+      {
+        "role": "Original body; opening rejected",
+        "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3",
+        "quotedCredits": 5.1,
+        "browserEvidence": "output/narrated-previews/stillwater/higgsfield-generation.jpg",
+        "generationId": null
+      },
+      {
+        "role": "Opening replacement",
+        "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-opening-repair.mp3",
+        "sha256": "94e273247b9836a948d3b1cc3fe3e468c47032c92884809c592983a94376bfa6",
+        "model": "Seed Audio 1.0",
+        "voice": "Grady",
+        "quotedCredits": 0.8,
+        "originalExportName": "hf_20261028_184056_6496c7d9-7701-4300-bcd8-fedec22fb758.mp3",
+        "generationId": null,
+        "browserEvidence": "output/narrated-previews/stillwater/higgsfield-opening-repair.jpg",
+        "direction": "155 words per minute; pronounce Stillwater clearly as STILL water, two distinct syllables."
+      }
+    ]
+  },
+  "exactSpokenText": "Stillwater is a pool website concept by Wallace Shift. It connects backyard inspiration with a concrete starting point.\n\nThe opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.\n\nCompare a social gathering place, a quiet courtyard, and a more natural escape. Each choice changes the inspiration.\n\nThat style carries into a project planner. Add features, choose an ideal timeframe, and describe the space in your own words.\n\nThe site brings those decisions into a readable brief, ready to download for the first conversation.\n\nStillwater is fictional and the images are concepts. The brief stays local; nothing is sent. The visitor leaves with something specific to discuss.",
+  "timingMethod": "Independent unprompted faster-whisper word timestamps. Opening uses a separately verified replacement take; body uses accepted observed spans and measured silent scene cuts. Compound time frame→timeframe spelling joins preserve complete observed spans. Ending Still water→Stillwater is a canonical proper-name spelling only. Source originals retained unchanged; scene clips decoded to PCM with FFmpeg and measured using ffprobe.",
+  "alignmentReview": {
+    "status": "ASR mapping reviewed by delegated audio production agent; subjective listening and final caption review pending",
+    "method": "Independent unprompted faster-whisper word timestamps. Opening uses a separately verified replacement take; body uses accepted observed spans and measured silent scene cuts. Compound time frame→timeframe spelling joins preserve complete observed spans. Ending Still water→Stillwater is a canonical proper-name spelling only.",
+    "noListeningClaim": true,
+    "issues": [],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-orthography-reviewed.json",
+      "asr-opening-transcript.json",
+      "asr-inspiration-transcript.json",
+      "asr-opening-repair.json",
+      "body-alignment-pending-opening.json"
+    ],
+    "findings": [
+      "The original opening was rejected after full and cropped recognition read The water. It is excluded from the finished narration; its source bytes and reports remain retained.",
+      "The replacement independently recognizes Stillwater is a pool website concept by Wallace Shift. It connects backyard inspiration with a concrete starting point. exactly.",
+      "All original body capability and fictional/local/nothing-sent disclosures retain matched observed word spans.",
+      "ASR agreement is not a claim of subjective listening, pronunciation approval, mix quality or buyer comprehension."
+    ],
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-inspiration-transcript.json",
+        "offset": 15.2,
+        "replaceStart": 15.2,
+        "replaceEnd": 20.8,
+        "removedWords": [
+          " Compare",
+          " a",
+          " social",
+          " gathering",
+          " place,",
+          " a",
+          " quiet",
+          " courtyard,",
+          " and",
+          " a",
+          " more",
+          " natural",
+          " escape."
+        ],
+        "addedWords": [
+          " Compare",
+          " a",
+          " social",
+          " gathering",
+          " place,",
+          " a",
+          " quiet",
+          " courtyard,",
+          " and",
+          " a",
+          " more",
+          " natural",
+          " escape."
+        ],
+        "review": "Independent source15.2–23.7s crop gives a valid Compare span. Replace only the first inspiration sentence through20.8s; its Each span is zero-length, so keep the full take valid second-sentence words."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Stillwater",
+        "recognized": "Still water",
+        "start": 41.32,
+        "end": 41.98,
+        "reviewedBy": "Codex source and unprompted ASR comparison under production-lead proper-name permission",
+        "evidence": "Ending source recognizes Still water as two words at the expected brand position. Closed proper-name spelling normalization only; actual word-group span retained.",
+        "observedWords": [
+          {
+            "token": "still",
+            "text": " Still",
+            "start": 41.32,
+            "end": 41.58,
+            "probability": 0.9864294528961182,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-orthography-reviewed.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "water",
+            "text": " water",
+            "start": 41.58,
+            "end": 41.98,
+            "probability": 0.5484216213226318,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-orthography-reviewed.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ]
+  },
+  "processing": "Cuts only at supplied in/out points; original pitch, speed, volume and pauses preserved. No normalization or synthetic gaps.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-opening-repair.mp3",
+      "sha256": "94e273247b9836a948d3b1cc3fe3e468c47032c92884809c592983a94376bfa6",
+      "retainedFile": "originals/higgsfield-94e273247b9836a9.mp3",
+      "duration": 8.16,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    },
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "ea004eed8695ba128a2542e87309efdc36d1e23d936bbf12fbef401a12480c45",
+      "retainedFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "duration": 51.768,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "opening.wav",
+      "spoken": "Stillwater is a pool website concept by Wallace Shift. It connects backyard inspiration with a concrete starting point.",
+      "duration": 8.16,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-94e273247b9836a9.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 8.16,
+      "phrases": [
+        {
+          "text": "Stillwater is a pool website concept by Wallace Shift.",
+          "start": 0,
+          "end": 3.36,
+          "sourceStart": 0,
+          "sourceEnd": 3.36,
+          "sourceFile": "originals/higgsfield-94e273247b9836a9.mp3"
+        },
+        {
+          "text": "It connects backyard inspiration with a concrete starting point.",
+          "start": 4.4,
+          "end": 7.74,
+          "sourceStart": 4.4,
+          "sourceEnd": 7.74,
+          "sourceFile": "originals/higgsfield-94e273247b9836a9.mp3"
+        }
+      ]
+    },
+    {
+      "id": "transformation",
+      "file": "transformation.wav",
+      "spoken": "The opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.",
+      "duration": 5.996875,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 9.1520625,
+      "sourceEnd": 15.148937499999999,
+      "phrases": [
+        {
+          "text": "The opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.",
+          "start": 0.3279375000000009,
+          "end": 5.6879375,
+          "sourceStart": 9.48,
+          "sourceEnd": 14.84,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        }
+      ]
+    },
+    {
+      "id": "inspiration",
+      "file": "inspiration.wav",
+      "spoken": "Compare a social gathering place, a quiet courtyard, and a more natural escape. Each choice changes the inspiration.",
+      "duration": 8.597208,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 15.148937499999999,
+      "sourceEnd": 23.746125,
+      "phrases": [
+        {
+          "text": "Compare a social gathering place, a quiet courtyard, and a more natural escape.",
+          "start": 0.051062500000000455,
+          "end": 5.111062499999999,
+          "sourceStart": 15.2,
+          "sourceEnd": 20.259999999999998,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        },
+        {
+          "text": "Each choice changes the inspiration.",
+          "start": 5.991062500000002,
+          "end": 7.8910625,
+          "sourceStart": 21.14,
+          "sourceEnd": 23.04,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        }
+      ]
+    },
+    {
+      "id": "planner",
+      "file": "planner.wav",
+      "spoken": "That style carries into a project planner. Add features, choose an ideal timeframe, and describe the space in your own words.",
+      "duration": 10.840708,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 23.746125,
+      "sourceEnd": 34.586854,
+      "phrases": [
+        {
+          "text": "That style carries into a project planner.",
+          "start": 0.33387499999999903,
+          "end": 2.8138749999999995,
+          "sourceStart": 24.08,
+          "sourceEnd": 26.56,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        },
+        {
+          "text": "Add features, choose an ideal timeframe, and describe the space in your own words.",
+          "start": 3.5938750000000006,
+          "end": 10.073875000000001,
+          "sourceStart": 27.34,
+          "sourceEnd": 33.82,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "file": "brief.wav",
+      "spoken": "The site brings those decisions into a readable brief, ready to download for the first conversation.",
+      "duration": 6.38225,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 34.586854,
+      "sourceEnd": 40.969104,
+      "phrases": [
+        {
+          "text": "The site brings those decisions into a readable brief, ready to download for the first conversation.",
+          "start": 0.4531459999999967,
+          "end": 5.833145999999999,
+          "sourceStart": 35.04,
+          "sourceEnd": 40.42,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "file": "ending.wav",
+      "spoken": "Stillwater is fictional and the images are concepts. The brief stays local; nothing is sent. The visitor leaves with something specific to discuss.",
+      "duration": 10.798917,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3",
+      "sourceStart": 40.969104,
+      "sourceEnd": 51.768,
+      "phrases": [
+        {
+          "text": "Stillwater is fictional and the images are concepts.",
+          "start": 0.35089599999999876,
+          "end": 3.430895999999997,
+          "sourceStart": 41.32,
+          "sourceEnd": 44.4,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        },
+        {
+          "text": "The brief stays local; nothing is sent.",
+          "start": 4.630896,
+          "end": 7.0308959999999985,
+          "sourceStart": 45.6,
+          "sourceEnd": 48,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        },
+        {
+          "text": "The visitor leaves with something specific to discuss.",
+          "start": 7.0308959999999985,
+          "end": 10.230896000000001,
+          "sourceStart": 48,
+          "sourceEnd": 51.2,
+          "sourceFile": "originals/higgsfield-ea004eed8695ba12.mp3"
+        }
+      ]
+    }
+  ],
+  "duration": 50.775958
+}

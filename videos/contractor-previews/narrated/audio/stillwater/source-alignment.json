@@ -1,0 +1,233 @@
+{
+  "id": "stillwater",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3",
+  "sourceSha256": "ea004eed8695ba128a2542e87309efdc36d1e23d936bbf12fbef401a12480c45",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in supplied browser evidence; no identifier inferred.",
+    "quotedCredits": 5.1,
+    "quotedCreditsEvidence": "Production lead direct browser generation handoff.",
+    "browserEvidence": "output/narrated-previews/stillwater/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Stillwater history row shows Grady and Seed Audio 1.0; the left form is already on the subsequent CRM take, so its displayed 5.7 quote is not Stillwater pricing.",
+    "takes": [
+      {
+        "role": "Original body; opening rejected",
+        "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3",
+        "quotedCredits": 5.1,
+        "browserEvidence": "output/narrated-previews/stillwater/higgsfield-generation.jpg",
+        "generationId": null
+      },
+      {
+        "role": "Opening replacement",
+        "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-opening-repair.mp3",
+        "sha256": "94e273247b9836a948d3b1cc3fe3e468c47032c92884809c592983a94376bfa6",
+        "model": "Seed Audio 1.0",
+        "voice": "Grady",
+        "quotedCredits": 0.8,
+        "originalExportName": "hf_20261028_184056_6496c7d9-7701-4300-bcd8-fedec22fb758.mp3",
+        "generationId": null,
+        "browserEvidence": "output/narrated-previews/stillwater/higgsfield-opening-repair.jpg",
+        "direction": "155 words per minute; pronounce Stillwater clearly as STILL water, two distinct syllables."
+      }
+    ]
+  },
+  "alignmentReview": {
+    "status": "ASR mapping reviewed by delegated audio production agent; subjective listening and final caption review pending",
+    "method": "Independent unprompted faster-whisper word timestamps. Opening uses a separately verified replacement take; body uses accepted observed spans and measured silent scene cuts. Compound time frame→timeframe spelling joins preserve complete observed spans. Ending Still water→Stillwater is a canonical proper-name spelling only.",
+    "noListeningClaim": true,
+    "issues": [],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-orthography-reviewed.json",
+      "asr-opening-transcript.json",
+      "asr-inspiration-transcript.json",
+      "asr-opening-repair.json",
+      "body-alignment-pending-opening.json"
+    ],
+    "findings": [
+      "The original opening was rejected after full and cropped recognition read The water. It is excluded from the finished narration; its source bytes and reports remain retained.",
+      "The replacement independently recognizes Stillwater is a pool website concept by Wallace Shift. It connects backyard inspiration with a concrete starting point. exactly.",
+      "All original body capability and fictional/local/nothing-sent disclosures retain matched observed word spans.",
+      "ASR agreement is not a claim of subjective listening, pronunciation approval, mix quality or buyer comprehension."
+    ],
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-inspiration-transcript.json",
+        "offset": 15.2,
+        "replaceStart": 15.2,
+        "replaceEnd": 20.8,
+        "removedWords": [
+          " Compare",
+          " a",
+          " social",
+          " gathering",
+          " place,",
+          " a",
+          " quiet",
+          " courtyard,",
+          " and",
+          " a",
+          " more",
+          " natural",
+          " escape."
+        ],
+        "addedWords": [
+          " Compare",
+          " a",
+          " social",
+          " gathering",
+          " place,",
+          " a",
+          " quiet",
+          " courtyard,",
+          " and",
+          " a",
+          " more",
+          " natural",
+          " escape."
+        ],
+        "review": "Independent source15.2–23.7s crop gives a valid Compare span. Replace only the first inspiration sentence through20.8s; its Each span is zero-length, so keep the full take valid second-sentence words."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Stillwater",
+        "recognized": "Still water",
+        "start": 41.32,
+        "end": 41.98,
+        "reviewedBy": "Codex source and unprompted ASR comparison under production-lead proper-name permission",
+        "evidence": "Ending source recognizes Still water as two words at the expected brand position. Closed proper-name spelling normalization only; actual word-group span retained.",
+        "observedWords": [
+          {
+            "token": "still",
+            "text": " Still",
+            "start": 41.32,
+            "end": 41.58,
+            "probability": 0.9864294528961182,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-orthography-reviewed.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "water",
+            "text": " water",
+            "start": 41.58,
+            "end": 41.98,
+            "probability": 0.5484216213226318,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/asr-orthography-reviewed.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-opening-repair.mp3",
+      "start": 0,
+      "end": 8.16,
+      "phrases": [
+        {
+          "text": "Stillwater is a pool website concept by Wallace Shift.",
+          "start": 0,
+          "end": 3.36
+        },
+        {
+          "text": "It connects backyard inspiration with a concrete starting point.",
+          "start": 4.4,
+          "end": 7.74
+        }
+      ]
+    },
+    {
+      "id": "transformation",
+      "start": 9.1520625,
+      "end": 15.148937499999999,
+      "phrases": [
+        {
+          "text": "The opening transformation follows the build through the finished setting, controlled by the visitor’s scroll.",
+          "start": 9.48,
+          "end": 14.84
+        }
+      ],
+      "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3"
+    },
+    {
+      "id": "inspiration",
+      "start": 15.148937499999999,
+      "end": 23.746125,
+      "phrases": [
+        {
+          "text": "Compare a social gathering place, a quiet courtyard, and a more natural escape.",
+          "start": 15.2,
+          "end": 20.259999999999998
+        },
+        {
+          "text": "Each choice changes the inspiration.",
+          "start": 21.14,
+          "end": 23.04
+        }
+      ],
+      "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3"
+    },
+    {
+      "id": "planner",
+      "start": 23.746125,
+      "end": 34.586854,
+      "phrases": [
+        {
+          "text": "That style carries into a project planner.",
+          "start": 24.08,
+          "end": 26.56
+        },
+        {
+          "text": "Add features, choose an ideal timeframe, and describe the space in your own words.",
+          "start": 27.34,
+          "end": 33.82
+        }
+      ],
+      "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3"
+    },
+    {
+      "id": "brief",
+      "start": 34.586854,
+      "end": 40.969104,
+      "phrases": [
+        {
+          "text": "The site brings those decisions into a readable brief, ready to download for the first conversation.",
+          "start": 35.04,
+          "end": 40.42
+        }
+      ],
+      "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3"
+    },
+    {
+      "id": "ending",
+      "start": 40.969104,
+      "end": 51.768,
+      "phrases": [
+        {
+          "text": "Stillwater is fictional and the images are concepts.",
+          "start": 41.32,
+          "end": 44.4
+        },
+        {
+          "text": "The brief stays local; nothing is sent.",
+          "start": 45.6,
+          "end": 48
+        },
+        {
+          "text": "The visitor leaves with something specific to discuss.",
+          "start": 48,
+          "end": 51.2
+        }
+      ],
+      "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stillwater/higgsfield-grady-source.mp3"
+    }
+  ]
+}

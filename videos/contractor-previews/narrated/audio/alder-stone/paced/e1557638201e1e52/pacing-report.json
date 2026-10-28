@@ -1,0 +1,352 @@
+{
+  "id": "alder-stone",
+  "sourceTimingFile": "unpaced-timing-8dc3672b71dd1879.json",
+  "sourceTimingSha256": "8dc3672b71dd187962915f21b470aa97b98fe774e6dcc9d0a52d659ff64f14a6",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "8e85fbe12c75fd682fc94da64bebe62e3cbe6bd55ebbafc5dc370dc6257c7114"
+    },
+    {
+      "file": "process.wav",
+      "sha256": "35d3b7fd80d1ebcc5364b1ce731fbcb83d03058ee9a10af9f6c84b94b88db91f"
+    },
+    {
+      "file": "sample.wav",
+      "sha256": "e3a8fbaebee14b1788bbd2474d97ebe81ee2d8a6dc1700417382e0bcf593387d"
+    },
+    {
+      "file": "estimate.wav",
+      "sha256": "4bb5823f3dea317f1d7b002968181e0489a05c2575d1b8ecc4ddac8eb447c44d"
+    },
+    {
+      "file": "handoff.wav",
+      "sha256": "7283ffc59027298ff3ac4c09b791aa5280b22700ebdf4d85b3c54dbe01cf6128"
+    },
+    {
+      "file": "questions.wav",
+      "sha256": "41a89b4571c947cafa5e9fb75be295039ac3c0c3c3660d4e01dcc4cc2daea3cd"
+    },
+    {
+      "file": "brief.wav",
+      "sha256": "8ca7b0e2c4748f39dba7d6d07658f03712ab20c77155c8abf2b0242a99d96101"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "bbd0765fb0d29118e5573518e1768012ffcda856878226bc8959b1f9bdf9dd9d"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 8.627458,
+      "pacedDuration": 7.797042,
+      "edits": [
+        {
+          "text": "Alder and Stone is Wallace Shift’s editorial roofing concept: a calm, guided path from understanding the work to planning a project.",
+          "trimStart": 0,
+          "trimEnd": 8.415792,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 8,
+          "speechStart": 0,
+          "speechEnd": 8.275792,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 8.275792,
+            "end": 8.627458
+          },
+          "outputStart": 0,
+          "outputDuration": 7.797042,
+          "tempo": 1.08,
+          "measuredScale": 0.9264775079992472
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "originalDuration": 12.081333,
+      "pacedDuration": 9.542958,
+      "edits": [
+        {
+          "text": "The opening concept film explores preparation, protection, installation, and the final walkthrough.",
+          "trimStart": 0.338833,
+          "trimEnd": 7.024417,
+          "originalCaptionStart": 0.3525209999999994,
+          "originalCaptionEnd": 6.772520999999999,
+          "speechStart": 0.478833,
+          "speechEnd": 6.884417,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.478833
+          },
+          "trailingSilence": {
+            "start": 6.884417,
+            "end": 8.195417
+          },
+          "outputStart": 0,
+          "outputDuration": 6.19475,
+          "tempo": 1.08,
+          "measuredScale": 0.9265832274338338
+        },
+        {
+          "text": "This is an illustration, not a completed customer job.",
+          "trimStart": 8.055417,
+          "trimEnd": 11.678875000000001,
+          "originalCaptionStart": 7.752520999999998,
+          "originalCaptionEnd": 11.352521,
+          "speechStart": 8.195417,
+          "speechEnd": 11.538875,
+          "leadingSilence": {
+            "start": 6.884417,
+            "end": 8.195417
+          },
+          "trailingSilence": {
+            "start": 11.538875,
+            "end": 12.081333
+          },
+          "outputStart": 6.19475,
+          "outputDuration": 3.348208,
+          "tempo": 1.08,
+          "measuredScale": 0.9240366522807768
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "originalDuration": 7.185083,
+      "pacedDuration": 5.68575,
+      "edits": [
+        {
+          "text": "Next, the roof planner lets a visitor explore a sample property, without entering contact details.",
+          "trimStart": 0.8707079999999999,
+          "trimEnd": 7.002167,
+          "originalCaptionStart": 0.5512085000000013,
+          "originalCaptionEnd": 6.5712085000000044,
+          "speechStart": 1.010708,
+          "speechEnd": 6.862167,
+          "leadingSilence": {
+            "start": 0,
+            "end": 1.010708
+          },
+          "trailingSilence": {
+            "start": 6.862167,
+            "end": 7.185083
+          },
+          "outputStart": 0,
+          "outputDuration": 5.68575,
+          "tempo": 1.08,
+          "measuredScale": 0.9273078397816897
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "originalDuration": 6.577667,
+      "pacedDuration": 5.330542,
+      "edits": [
+        {
+          "text": "Adjust the pitch and compare roofing materials.",
+          "trimStart": 0.2261249999999967,
+          "trimEnd": 3.211833,
+          "originalCaptionStart": 0.3661249999999967,
+          "originalCaptionEnd": 2.7461249999999993,
+          "speechStart": 0.3661249999999967,
+          "speechEnd": 3.071833,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 3.071833,
+            "end": 3.845
+          },
+          "outputStart": 0,
+          "outputDuration": 2.778833,
+          "tempo": 1.08,
+          "measuredScale": 0.9307115766176722
+        },
+        {
+          "text": "The planning range changes with those choices.",
+          "trimStart": 3.705,
+          "trimEnd": 6.452667,
+          "originalCaptionStart": 3.766124999999999,
+          "originalCaptionEnd": 5.906124999999996,
+          "speechStart": 3.845,
+          "speechEnd": 6.312667,
+          "leadingSilence": {
+            "start": 3.071833,
+            "end": 3.845
+          },
+          "trailingSilence": {
+            "start": 6.312667,
+            "end": 6.577667
+          },
+          "outputStart": 2.778833,
+          "outputDuration": 2.551708,
+          "tempo": 1.08,
+          "measuredScale": 0.9286816779471457
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "originalDuration": 5.287792,
+      "pacedDuration": 4.4645,
+      "edits": [
+        {
+          "text": "When they continue into a project brief, the estimate follows them to the next page.",
+          "trimStart": 0.236417,
+          "trimEnd": 5.053792,
+          "originalCaptionStart": 0.26845850000000127,
+          "originalCaptionEnd": 4.6684585,
+          "speechStart": 0.376417,
+          "speechEnd": 4.913792,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.376417
+          },
+          "trailingSilence": {
+            "start": 4.913792,
+            "end": 5.287792
+          },
+          "outputStart": 0,
+          "outputDuration": 4.4645,
+          "tempo": 1.08,
+          "measuredScale": 0.9267495264537223
+        }
+      ]
+    },
+    {
+      "id": "questions",
+      "originalDuration": 7.175708,
+      "pacedDuration": 6.374417,
+      "edits": [
+        {
+          "text": "The form gathers the property, roof concern, payment approach, and preferred timing in manageable steps.",
+          "trimStart": 0.301958,
+          "trimEnd": 7.175708,
+          "originalCaptionStart": 0.3806665000000038,
+          "originalCaptionEnd": 6.840666500000005,
+          "speechStart": 0.441958,
+          "speechEnd": 6.840666500000005,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.441958
+          },
+          "trailingSilence": null,
+          "outputStart": 0,
+          "outputDuration": 6.374417,
+          "tempo": 1.08,
+          "measuredScale": 0.9273565375522822
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "originalDuration": 9.135667,
+      "pacedDuration": 7.538625,
+      "edits": [
+        {
+          "text": "The result is an organized, unsent request preview.",
+          "trimStart": 0.709542,
+          "trimEnd": 4.341417,
+          "originalCaptionStart": 0.06497900000000101,
+          "originalCaptionEnd": 3.9649789999999996,
+          "speechStart": 0.849542,
+          "speechEnd": 4.201417,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.849542
+          },
+          "trailingSilence": {
+            "start": 4.201417,
+            "end": 4.689917
+          },
+          "outputStart": 0,
+          "outputDuration": 3.379083,
+          "tempo": 1.08,
+          "measuredScale": 0.9303962829117192
+        },
+        {
+          "text": "The sample estimate stays clearly identified, and nothing is booked.",
+          "trimStart": 4.564979000000002,
+          "trimEnd": 9.048792,
+          "originalCaptionStart": 4.704979000000002,
+          "originalCaptionEnd": 8.644979,
+          "speechStart": 4.704979000000002,
+          "speechEnd": 8.908792,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 8.908792,
+            "end": 9.135667
+          },
+          "outputStart": 3.379083,
+          "outputDuration": 4.159542,
+          "tempo": 1.08,
+          "measuredScale": 0.927679633383462
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 5.993292,
+      "pacedDuration": 5.047792,
+      "edits": [
+        {
+          "text": "A considered visual identity, connected to a practical planning journey.",
+          "trimStart": 0.32175,
+          "trimEnd": 4.476292,
+          "originalCaptionStart": 0.22927099999999712,
+          "originalCaptionEnd": 4.0692710000000005,
+          "speechStart": 0.46175,
+          "speechEnd": 4.336292,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.46175
+          },
+          "trailingSilence": {
+            "start": 4.336292,
+            "end": 4.849042
+          },
+          "outputStart": 0,
+          "outputDuration": 3.860417,
+          "tempo": 1.08,
+          "measuredScale": 0.9292039892724637
+        },
+        {
+          "text": "Built by Wallace Shift.",
+          "trimStart": 4.709042,
+          "trimEnd": 5.993292,
+          "originalCaptionStart": 4.3292709999999985,
+          "originalCaptionEnd": 5.889271000000001,
+          "speechStart": 4.849042,
+          "speechEnd": 5.889271000000001,
+          "leadingSilence": {
+            "start": 4.336292,
+            "end": 4.849042
+          },
+          "trailingSilence": null,
+          "outputStart": 3.860417,
+          "outputDuration": 1.187375,
+          "tempo": 1.08,
+          "measuredScale": 0.9245668678216857
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "questions/1: no trailing silence matched; retained extra source conservatively.",
+    "ending/2: no trailing silence matched; retained extra source conservatively."
+  ],
+  "originalDuration": 62.06399999999999,
+  "pacedDuration": 51.781626,
+  "reviewAudio": "paced/e1557638201e1e52/narration-review.wav",
+  "spokenTextUnchanged": true
+}

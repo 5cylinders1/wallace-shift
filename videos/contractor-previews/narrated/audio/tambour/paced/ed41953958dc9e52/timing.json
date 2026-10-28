@@ -1,0 +1,549 @@
+{
+  "id": "tambour",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:28:36.286Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 5.1,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff; retained screenshot already shows the next Mitre form and its separate quote.",
+    "browserEvidence": "output/narrated-previews/tambour/higgsfield-generation.jpg",
+    "browserEvidenceNote": "Tambour history row displays Grady and Seed Audio 1.0."
+  },
+  "exactSpokenText": "Tambour guides a visitor from a room they admire to a project they can describe. This cabinetry experience was built by Wallace Shift.\n\nKitchens, baths, and built-ins lead into construction stories and a tactile material library.\n\nChoose a wood, add a stone, and those choices collect in a sample box.\n\nThe investment planner explores size, construction, and scope. Change the choices and the illustrative planning range responds.\n\nSave the range, and it travels with the samples into the consultation brief.\n\nFour steps gather the room, timing, style notes, and contact details for a more specific first conversation.\n\nThe preview brings it together. Tambour is fictional, prices are examples, and nothing is sent. Inspiration and inquiry stay connected.",
+  "timingMethod": "Independent full-take and cropped unprompted ASR with exact token matching after disclosed name aliases and one explicit root-reviewed phonetic verb-ending exception. Scene cuts use measured silence; no timing is invented. Sentence boundaries refined against measured source silence; overlapping retained ranges are merged and processed once. Accepted interior caption spans are remapped within merged segments. No spoken text removed.",
+  "alignmentReview": {
+    "status": "ASR-based alignment accepted with disclosed proper-name aliases and verb-ending uncertainty; not word-perfect heard-word verification",
+    "method": "Independent full-take and cropped unprompted ASR with exact token matching after disclosed name aliases and one explicit root-reviewed phonetic verb-ending exception. Scene cuts use measured silence; no timing is invented.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-planning-reviewed.json",
+        "offset": 22.5,
+        "replaceStart": 22.5,
+        "replaceEnd": 33.5,
+        "removedWords": [
+          " The",
+          " investment",
+          " planner",
+          " explores",
+          " size,",
+          " construction,",
+          " and",
+          " scope.",
+          " Hope.",
+          " Change",
+          " the",
+          " choices",
+          " and",
+          " the",
+          " illustrative",
+          " planning",
+          " range",
+          " response."
+        ],
+        "addedWords": [
+          " The",
+          " investment",
+          " planner",
+          " explores",
+          " size,",
+          " construction",
+          " and",
+          " scope.",
+          " Change",
+          " the",
+          " choices",
+          " and",
+          " the",
+          " illustrative",
+          " planning",
+          " range",
+          " responds."
+        ],
+        "review": "Independent crop removes extra Hope. A separately retained derived report applies the root-authorized response/responds verb-ending uncertainty only; raw recognitions remain untouched. This is not a word-perfect spoken QA claim."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Tambour",
+        "recognized": "Tambor",
+        "start": 0,
+        "end": 0.68,
+        "reviewedBy": "Codex other_narrative_research under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Opening full-take recognition uses Tambor; the website wordmark, source script, and supplied generation history identify Tambour. Retain actual recognized span; no pronunciation claim.",
+        "observedWords": [
+          {
+            "token": "tambor",
+            "text": " Tambor",
+            "start": 0,
+            "end": 0.68,
+            "probability": 0.6539624631404877,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      },
+      {
+        "expected": "Wallace Shift",
+        "recognized": "Wallace Schifft.",
+        "start": 7.96,
+        "end": 8.88,
+        "reviewedBy": "Codex other_narrative_research under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Full-take recognition spells the brand Wallace Schifft; script and product identity establish Wallace Shift. Retain actual span; subjective pronunciation remains unreviewed.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 7.96,
+            "end": 8.28,
+            "probability": 0.7084012627601624,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "schifft",
+            "text": " Schifft.",
+            "start": 8.28,
+            "end": 8.88,
+            "probability": 0.5718335658311844,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/tambour/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "findings": [
+      "Independent planning crop resolves the extra Hope after scope at a full-pass chunk boundary.",
+      "Full take and both independent planning crops recognize response where the script says responds. Root permits intended-verb caption spelling because primary capture proves the planning range updates; actual verb-ending pronunciation remains uncertain.",
+      "Tambor/Tambour and Wallace Schifft/Wallace Shift are disclosed proper-name aliases.",
+      "No omissions or unrelated meaning changes are silently accepted."
+    ],
+    "phoneticReview": {
+      "rawReport": "output/narrated-previews/tambour/asr-planning-transcript.json",
+      "reviewedBy": "Root explicit instruction on 2026-10-28",
+      "corrections": [
+        {
+          "recognized": " response.",
+          "caption": " responds.",
+          "start": 9.5,
+          "end": 9.86
+        }
+      ],
+      "rationale": "Root accepts response→responds solely as documented ASR phonetic verb-ending uncertainty with captions using the intended verb. Primary capture verifies that the planning range updates. This is not exact heard-word verification and must not generalize to negations, numbers, actions or changes in meaning.",
+      "listeningUncertainty": "All three unprompted recognitions use response. Actual verb-ending pronunciation remains unreviewed."
+    },
+    "limitations": [
+      "Subjective listening, pronunciation, delivery, music mix, final captions and buyer comprehension remain unreviewed.",
+      "Zero mapped token differences after reviewed exceptions is not a claim of word-perfect spoken QA."
+    ],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-planning-transcript.json",
+      "asr-response-transcript.json",
+      "asr-planning-reviewed.json",
+      "capture-story-review.json",
+      "higgsfield-generation.jpg"
+    ],
+    "pacingReview": "Transformation follows user feedback; subjective listening is not claimed. Independent paced-audio ASR and final playback review remain separate checks."
+  },
+  "processing": "Existing Higgsfield take, pitch-preserving atempo=1.08. Sentence-adjacent silence trimmed with 0.14s handles; original scene WAVs, imported timing and source hashes retained. No speech generation. Natural within-sentence pauses and continuous audio at overlapping sentence boundaries are preserved.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "66c300976e47940e39a3ca47e81eaf2f1342d9b4338dea6771abda15482ecf3d",
+      "retainedFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "duration": 60.144,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "paced/ed41953958dc9e52/opening.wav",
+      "spoken": "Tambour guides a visitor from a room they admire to a project they can describe. This cabinetry experience was built by Wallace Shift.",
+      "duration": 7.827042,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 9.2712915,
+      "phrases": [
+        {
+          "text": "Tambour guides a visitor from a room they admire to a project they can describe.",
+          "start": 0,
+          "end": 4.451665361676523,
+          "sourceStart": 0,
+          "sourceEnd": 4.46,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 0,
+          "originalSceneEnd": 4.46,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0,
+            "trimEnd": 4.944833,
+            "observedSpeechStart": 0,
+            "observedSpeechEnd": 4.804833,
+            "captionSourceStart": 0,
+            "captionSourceEnd": 4.804833,
+            "outputStart": 0,
+            "outputDuration": 4.581375,
+            "measuredScale": 0.9264974165962734,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "This cabinetry experience was built by Wallace Shift.",
+          "start": 4.711283633789545,
+          "end": 7.697133366210455,
+          "sourceStart": 5.64,
+          "sourceEnd": 8.88,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 5.64,
+          "originalSceneEnd": 8.88,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 5.538708000000001,
+            "trimEnd": 9.0365,
+            "observedSpeechStart": 5.678708,
+            "observedSpeechEnd": 8.8965,
+            "captionSourceStart": 5.678708,
+            "captionSourceEnd": 8.8965,
+            "outputStart": 4.581375,
+            "outputDuration": 3.245667,
+            "measuredScale": 0.927918812782464,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "rooms",
+      "file": "paced/ed41953958dc9e52/rooms.wav",
+      "spoken": "Kitchens, baths, and built-ins lead into construction stories and a tactile material library.",
+      "duration": 6.236667,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "sourceStart": 9.2712915,
+      "sourceEnd": 16.801146000000003,
+      "phrases": [
+        {
+          "text": "Kitchens, baths, and built-ins lead into construction stories and a tactile material library.",
+          "start": 0.12980822983340257,
+          "end": 6.106858770166597,
+          "sourceStart": 9.66,
+          "sourceEnd": 16.08,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 0.3887084999999999,
+          "originalSceneEnd": 6.808708499999998,
+          "paceMapping": {
+            "sourceSceneFile": "rooms.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.49912500000000004,
+            "trimEnd": 7.225458,
+            "observedSpeechStart": 0.639125,
+            "observedSpeechEnd": 7.085458,
+            "captionSourceStart": 0.639125,
+            "captionSourceEnd": 7.085458,
+            "outputStart": 0,
+            "outputDuration": 6.236667,
+            "measuredScale": 0.927201641667161,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "samples",
+      "file": "paced/ed41953958dc9e52/samples.wav",
+      "spoken": "Choose a wood, add a stone, and those choices collect in a sample box.",
+      "duration": 4.605375,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "sourceStart": 16.801146000000003,
+      "sourceEnd": 22.408250000000002,
+      "phrases": [
+        {
+          "text": "Choose a wood, add a stone, and those choices collect in a sample box.",
+          "start": 0.1300701962776364,
+          "end": 4.244681984066636,
+          "sourceStart": 17.28,
+          "sourceEnd": 22.02,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 0.47885399999999834,
+          "originalSceneEnd": 5.218853999999997,
+          "paceMapping": {
+            "sourceSceneFile": "samples.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.650125,
+            "trimEnd": 5.607083,
+            "observedSpeechStart": 0.790125,
+            "observedSpeechEnd": 5.218853999999997,
+            "captionSourceStart": 0.790125,
+            "captionSourceEnd": 5.218853999999997,
+            "outputStart": 0,
+            "outputDuration": 4.605375,
+            "measuredScale": 0.9290728305545458,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "file": "paced/ed41953958dc9e52/planning.wav",
+      "spoken": "The investment planner explores size, construction, and scope. Change the choices and the illustrative planning range responds.",
+      "duration": 9.088708,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "sourceStart": 22.408250000000002,
+      "sourceEnd": 33.5371665,
+      "phrases": [
+        {
+          "text": "The investment planner explores size, construction, and scope.",
+          "start": 0.08497278043601522,
+          "end": 5.1577162614600285,
+          "sourceStart": 22.5,
+          "sourceEnd": 27.78,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 0.09174999999999756,
+          "originalSceneEnd": 5.371749999999999,
+          "paceMapping": {
+            "sourceSceneFile": "planning.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0,
+            "trimEnd": 5.709083,
+            "observedSpeechStart": 0.09174999999999756,
+            "observedSpeechEnd": 5.569083,
+            "captionSourceStart": 0.09174999999999756,
+            "captionSourceEnd": 5.569083,
+            "outputStart": 0,
+            "outputDuration": 5.287375,
+            "measuredScale": 0.926133846714087,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Change the choices and the illustrative planning range responds.",
+          "start": 5.41703297889265,
+          "end": 8.959050021107348,
+          "sourceStart": 28.86,
+          "sourceEnd": 32.36,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 6.451749999999997,
+          "originalSceneEnd": 9.951749999999997,
+          "paceMapping": {
+            "sourceSceneFile": "planning.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 6.421875,
+            "trimEnd": 10.526417,
+            "observedSpeechStart": 6.561875,
+            "observedSpeechEnd": 10.386417,
+            "captionSourceStart": 6.561875,
+            "captionSourceEnd": 10.386417,
+            "outputStart": 5.287375,
+            "outputDuration": 3.801333,
+            "measuredScale": 0.9261284206617937,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "carried",
+      "file": "paced/ed41953958dc9e52/carried.wav",
+      "spoken": "Save the range, and it travels with the samples into the consultation brief.",
+      "duration": 4.769542,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "sourceStart": 33.5371665,
+      "sourceEnd": 40.069646,
+      "phrases": [
+        {
+          "text": "Save the range, and it travels with the samples into the consultation brief.",
+          "start": 0.12988021591206825,
+          "end": 4.639661784087933,
+          "sourceStart": 34.28,
+          "sourceEnd": 39.34,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 0.7428335000000033,
+          "originalSceneEnd": 5.8028335000000055,
+          "paceMapping": {
+            "sourceSceneFile": "carried.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.975583,
+            "trimEnd": 6.11675,
+            "observedSpeechStart": 1.115583,
+            "observedSpeechEnd": 5.97675,
+            "captionSourceStart": 1.115583,
+            "captionSourceEnd": 5.97675,
+            "outputStart": 0,
+            "outputDuration": 4.769542,
+            "measuredScale": 0.9277158279433446,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "file": "paced/ed41953958dc9e52/details.wav",
+      "spoken": "Four steps gather the room, timing, style notes, and contact details for a more specific first conversation.",
+      "duration": 7.286875,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "sourceStart": 40.069646,
+      "sourceEnd": 48.882771000000005,
+      "phrases": [
+        {
+          "text": "Four steps gather the room, timing, style notes, and contact details for a more specific first conversation.",
+          "start": 0.12979027959497633,
+          "end": 7.157084720405023,
+          "sourceStart": 40.64,
+          "sourceEnd": 48.1,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 0.5703540000000018,
+          "originalSceneEnd": 8.030354000000003,
+          "paceMapping": {
+            "sourceSceneFile": "details.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.567958,
+            "trimEnd": 8.428042000000001,
+            "observedSpeechStart": 0.707958,
+            "observedSpeechEnd": 8.288042,
+            "captionSourceStart": 0.707958,
+            "captionSourceEnd": 8.288042,
+            "outputStart": 0,
+            "outputDuration": 7.286875,
+            "measuredScale": 0.9270734256784022,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "file": "paced/ed41953958dc9e52/result.wav",
+      "spoken": "The preview brings it together. Tambour is fictional, prices are examples, and nothing is sent. Inspiration and inquiry stay connected.",
+      "duration": 8.850542,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+      "sourceStart": 48.882771000000005,
+      "sourceEnd": 60.144,
+      "phrases": [
+        {
+          "text": "The preview brings it together.",
+          "start": 0.13044307784023348,
+          "end": 1.5825149221597663,
+          "sourceStart": 49.42,
+          "sourceEnd": 50.94,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 0.5372289999999964,
+          "originalSceneEnd": 2.0572289999999924,
+          "paceMapping": {
+            "sourceSceneFile": "result.wav",
+            "segment": 1,
+            "mergedSentenceCount": 1,
+            "trimStart": 0.5802499999999999,
+            "trimEnd": 2.418708,
+            "observedSpeechStart": 0.72025,
+            "observedSpeechEnd": 2.278708,
+            "captionSourceStart": 0.72025,
+            "captionSourceEnd": 2.278708,
+            "outputStart": 0,
+            "outputDuration": 1.712958,
+            "measuredScale": 0.931736270287382,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Tambour is fictional, prices are examples, and nothing is sent.",
+          "start": 1.8428494925827241,
+          "end": 6.105358507417275,
+          "sourceStart": 51.98,
+          "sourceEnd": 56.4,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 3.0972289999999916,
+          "originalSceneEnd": 7.517228999999993,
+          "paceMapping": {
+            "sourceSceneFile": "result.wav",
+            "segment": 2,
+            "mergedSentenceCount": 1,
+            "trimStart": 2.9572289999999914,
+            "trimEnd": 7.831458,
+            "observedSpeechStart": 3.0972289999999916,
+            "observedSpeechEnd": 7.691458,
+            "captionSourceStart": 3.0972289999999916,
+            "captionSourceEnd": 7.691458,
+            "outputStart": 1.712958,
+            "outputDuration": 4.522292,
+            "measuredScale": 0.9277963755908867,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Inspiration and inquiry stay connected.",
+          "start": 6.364904250261777,
+          "end": 8.698680754973738,
+          "sourceStart": 57.46,
+          "sourceEnd": 59.98,
+          "sourceFile": "originals/higgsfield-66c300976e47940e.mp3",
+          "originalSceneStart": 8.577228999999996,
+          "originalSceneEnd": 11.097228999999992,
+          "paceMapping": {
+            "sourceSceneFile": "result.wav",
+            "segment": 3,
+            "mergedSentenceCount": 1,
+            "trimStart": 8.437228999999995,
+            "trimEnd": 11.261208,
+            "observedSpeechStart": 8.577228999999996,
+            "observedSpeechEnd": 11.097228999999992,
+            "captionSourceStart": 8.577228999999996,
+            "captionSourceEnd": 11.097228999999992,
+            "outputStart": 6.235250000000001,
+            "outputDuration": 2.615292,
+            "measuredScale": 0.9261017875841129,
+            "tempo": 1.08
+          }
+        }
+      ]
+    }
+  ],
+  "duration": 48.664750999999995,
+  "pacing": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2,
+    "sourceTimingFile": "unpaced-timing-66c871f98d386dbf.json",
+    "sourceTimingSha256": "66c871f98d386dbf1703be169d1e61416e80095a183a60f6151d72680a950ea5",
+    "report": "paced/ed41953958dc9e52/pacing-report.json"
+  }
+}

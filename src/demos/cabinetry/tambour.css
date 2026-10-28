@@ -573,7 +573,7 @@ body { margin: 0; background: #f4efe7; }
 .tb-segmented span { font-size: 0.84rem; color: var(--tb-muted); line-height: 1.4; }
 .tb-planner-result { position: sticky; top: calc(var(--tb-header) + 24px); background: var(--tb-ink); color: var(--tb-paper); padding: 32px; display: grid; gap: 18px; }
 .tb-planner-range { font-family: var(--tb-serif); font-size: clamp(2.2rem, 3.6vw, 3.4rem); line-height: 1.05; }
-.tb-planner-range span { font-size: 0.5em; color: var(--tb-muted-light); font-style: italic; }
+.tb-planner-range > span:not(.tb-odo) { font-size: 0.5em; color: var(--tb-muted-light); font-style: italic; }
 .tb-planner-label { font-size: 0.86rem; color: var(--tb-muted-light); }
 .tb-planner-parts { display: grid; gap: 14px; padding-top: 18px; border-top: 1px solid var(--tb-line-light); }
 .tb-planner-parts li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; font-size: 0.86rem; }

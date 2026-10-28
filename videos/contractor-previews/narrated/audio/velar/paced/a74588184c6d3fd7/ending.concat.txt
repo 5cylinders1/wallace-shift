@@ -1,0 +1,2 @@
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/a74588184c6d3fd7/ending-1.wav'
+file '/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/videos/contractor-previews/narrated/audio/velar/paced/a74588184c6d3fd7/ending-2.wav'

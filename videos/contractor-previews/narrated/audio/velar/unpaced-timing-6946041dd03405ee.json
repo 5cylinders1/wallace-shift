@@ -1,0 +1,273 @@
+{
+  "id": "velar",
+  "complete": true,
+  "generatedAt": "2026-10-28T17:51:45.139Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "originalExportName": "hf_20261028_173502_8003c54b-2ac4-4d5a-9b2d-f1ec62af84b9.mp3",
+    "quotedCredits": 6.5,
+    "browserEvidence": "output/narrated-previews/velar/higgsfield-generation.jpg",
+    "direction": "Calm, confident American male; conversational, measured 145wpm. Pronounce Velar VEE-lar."
+  },
+  "exactSpokenText": "What if a roofing website helped homeowners explore the decision before the first conversation? This is Velar, a concept built by Wallace Shift.\n\nAn architectural opening and material collection lead into a roof design studio.\n\nUpload a photograph, then choose a material and finish. The photo is prepared locally, with consent required before sending it for generation.\n\nWe are using prepared sample studies here. Compare the original with slate, then explore the same home in metal.\n\nEnter measured roof area and complexity to explore an illustrative planning range. The photograph itself does not measure the roof.\n\nThose choices carry into a project brief, keeping the conversation connected. This demo prepares the brief locally; nothing is sent.\n\nA separate sample project room shows how approvals, site updates and documents could be presented after the sale.\n\nFrom first impression to a more informed conversation. A tailored roofing experience, by Wallace Shift.",
+  "timingMethod": "Supplied source-time sentence/scene boundaries; source originals retained unchanged. Scene clips decoded to PCM with FFmpeg and measured using ffprobe. No automatic speech alignment.",
+  "alignmentReview": {
+    "status": "ASR-based alignment; subjective listening and final caption review pending",
+    "method": "Unprompted local faster-whisper base.en segment/word timestamps. Scene cuts sit at measured midpoints of inter-scene silent intervals. Caption ranges use recognized sentence first/last word boundaries; no evenly distributed word timing.",
+    "evidence": [
+      "asr-transcript.json",
+      "asr-generation-transcript.json",
+      "asr-tail-transcript.json",
+      "asr-closing-transcript.json",
+      "higgsfield-generation.jpg"
+    ],
+    "noListeningClaim": true,
+    "findings": [
+      "Full recognition duplicated generation at a segment boundary; the independent 24.0–31.2s crop recognizes it once.",
+      "Full recognition omitted most of the closing; independent 69.468–73.968s recognition recovers A tailored roofing experience by Wallace Schefft.",
+      "Wallace Shift is recognized as Wallace Schifft/Schefft. This is unresolved name spelling/pronunciation uncertainty; do not claim it has been listened to or is definitively correct.",
+      "Caption text uses the approved spelling and punctuation. Timing and transcript agreement do not establish natural delivery, brand fit, or buyer comprehension.",
+      "The first word of a cropped ASR segment may include leading silence; sentence captions intentionally do not use word highlighting."
+    ],
+    "cropOffsets": {
+      "asr-generation-24.wav": 24,
+      "asr-tail-63.968.wav": 63.968,
+      "asr-closing-69.468.wav": 69.468
+    }
+  },
+  "processing": "Cuts only at supplied in/out points; original pitch, speed, volume and pauses preserved. No normalization or synthetic gaps.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "ae7736490504b743014cc948caf16312dd8a670d44ca591ebd926ed7f57f9d6b",
+      "retainedFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "duration": 73.968,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "opening.wav",
+      "spoken": "What if a roofing website helped homeowners explore the decision before the first conversation? This is Velar, a concept built by Wallace Shift.",
+      "duration": 10.074333,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 10.074313,
+      "phrases": [
+        {
+          "text": "What if a roofing website helped homeowners explore the decision before the first conversation?",
+          "start": 0,
+          "end": 4.88,
+          "sourceStart": 0,
+          "sourceEnd": 4.88,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        },
+        {
+          "text": "This is Velar, a concept built by Wallace Shift.",
+          "start": 5.86,
+          "end": 9.58,
+          "sourceStart": 5.86,
+          "sourceEnd": 9.58,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    },
+    {
+      "id": "overview",
+      "file": "overview.wav",
+      "spoken": "An architectural opening and material collection lead into a roof design studio.",
+      "duration": 6.530125,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 10.074313,
+      "sourceEnd": 16.604479,
+      "phrases": [
+        {
+          "text": "An architectural opening and material collection lead into a roof design studio.",
+          "start": 0.2056869999999993,
+          "end": 5.605687,
+          "sourceStart": 10.28,
+          "sourceEnd": 15.68,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    },
+    {
+      "id": "photo",
+      "file": "photo.wav",
+      "spoken": "Upload a photograph, then choose a material and finish. The photo is prepared locally, with consent required before sending it for generation.",
+      "duration": 11.365792,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 16.604479,
+      "sourceEnd": 27.97023,
+      "phrases": [
+        {
+          "text": "Upload a photograph, then choose a material and finish.",
+          "start": 0.2755209999999977,
+          "end": 4.555520999999999,
+          "sourceStart": 16.88,
+          "sourceEnd": 21.16,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        },
+        {
+          "text": "The photo is prepared locally, with consent required before sending it for generation.",
+          "start": 5.975520999999997,
+          "end": 10.375520999999999,
+          "sourceStart": 22.58,
+          "sourceEnd": 26.98,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "file": "comparison.wav",
+      "spoken": "We are using prepared sample studies here. Compare the original with slate, then explore the same home in metal.",
+      "duration": 8.621583,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 27.97023,
+      "sourceEnd": 36.591813,
+      "phrases": [
+        {
+          "text": "We are using prepared sample studies here.",
+          "start": 0.4097699999999982,
+          "end": 2.5497699999999988,
+          "sourceStart": 28.38,
+          "sourceEnd": 30.52,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        },
+        {
+          "text": "Compare the original with slate, then explore the same home in metal.",
+          "start": 3.3097700000000003,
+          "end": 7.8497699999999995,
+          "sourceStart": 31.28,
+          "sourceEnd": 35.82,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "file": "planning.wav",
+      "spoken": "Enter measured roof area and complexity to explore an illustrative planning range. The photograph itself does not measure the roof.",
+      "duration": 10.176125,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 36.591813,
+      "sourceEnd": 46.767959,
+      "phrases": [
+        {
+          "text": "Enter measured roof area and complexity to explore an illustrative planning range.",
+          "start": 0.36818699999999893,
+          "end": 5.7481870000000015,
+          "sourceStart": 36.96,
+          "sourceEnd": 42.34,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        },
+        {
+          "text": "The photograph itself does not measure the roof.",
+          "start": 6.788187000000001,
+          "end": 9.288187,
+          "sourceStart": 43.38,
+          "sourceEnd": 45.88,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "file": "brief.wav",
+      "spoken": "Those choices carry into a project brief, keeping the conversation connected. This demo prepares the brief locally; nothing is sent.",
+      "duration": 10.612167,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 46.767959,
+      "sourceEnd": 57.380125,
+      "phrases": [
+        {
+          "text": "Those choices carry into a project brief, keeping the conversation connected.",
+          "start": 0.13204100000000096,
+          "end": 5.2720410000000015,
+          "sourceStart": 46.9,
+          "sourceEnd": 52.04,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        },
+        {
+          "text": "This demo prepares the brief locally; nothing is sent.",
+          "start": 6.0320409999999995,
+          "end": 9.792041000000005,
+          "sourceStart": 52.8,
+          "sourceEnd": 56.56,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    },
+    {
+      "id": "portal",
+      "file": "portal.wav",
+      "spoken": "A separate sample project room shows how approvals, site updates and documents could be presented after the sale.",
+      "duration": 8.564667,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 57.380125,
+      "sourceEnd": 65.944771,
+      "phrases": [
+        {
+          "text": "A separate sample project room shows how approvals, site updates and documents could be presented after the sale.",
+          "start": 0.5998749999999973,
+          "end": 7.799875000000007,
+          "sourceStart": 57.98,
+          "sourceEnd": 65.18,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "file": "ending.wav",
+      "spoken": "From first impression to a more informed conversation. A tailored roofing experience, by Wallace Shift.",
+      "duration": 8.023208,
+      "sampleRate": 24000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-ae7736490504b743.mp3",
+      "sourceStart": 65.944771,
+      "sourceEnd": 73.968,
+      "phrases": [
+        {
+          "text": "From first impression to a more informed conversation.",
+          "start": 0.5752289999999931,
+          "end": 3.235229000000004,
+          "sourceStart": 66.52,
+          "sourceEnd": 69.18,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        },
+        {
+          "text": "A tailored roofing experience, by Wallace Shift.",
+          "start": 3.5232290000000006,
+          "end": 7.7632289999999955,
+          "sourceStart": 69.468,
+          "sourceEnd": 73.708,
+          "sourceFile": "originals/higgsfield-ae7736490504b743.mp3"
+        }
+      ]
+    }
+  ],
+  "duration": 73.968
+}

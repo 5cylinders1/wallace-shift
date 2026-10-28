@@ -1,0 +1,343 @@
+{
+  "id": "contour",
+  "sourceTimingFile": "unpaced-timing-af103fc90a128709.json",
+  "sourceTimingSha256": "af103fc90a128709a08d83fc46f9257b4641e926f78532ddafcef57785977364",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "abef0db327e711c2717d332ffc0014e0e9e0343c8b432aab79a0ddead21cc473"
+    },
+    {
+      "file": "model.wav",
+      "sha256": "66fb6d65c6fb7fcefdce8aaefe0742773191e7b2da194a909ed547c3d4d95a47"
+    },
+    {
+      "file": "sample.wav",
+      "sha256": "e65e31c33b16abd0dc3c7babc6c4d11cabc066b2fe0d6fe19ecbf7bc7da9bfc6"
+    },
+    {
+      "file": "estimate.wav",
+      "sha256": "e23e613ead32e78ffd640d43a5a47feeb632068c3c341d105beb9e2a36f5165c"
+    },
+    {
+      "file": "payment.wav",
+      "sha256": "469d4b6379be4aabd98096920042248d8bf1ba13438d5da348c8a98edbf87053"
+    },
+    {
+      "file": "questions.wav",
+      "sha256": "ec3a22932dc7ff416d269a3f9c7636dfc11159ce9e70b83a0257832987e8de91"
+    },
+    {
+      "file": "brief.wav",
+      "sha256": "3bb3b381a2647957205914eb300a3227eb39426ca7a73671b5e68f37ebf0ac1f"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "d3c63b81c22b22b0d396f04cd8b038fa8c44bb78994741a97ca84e9780b38fc6"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 9.284625,
+      "pacedDuration": 6.91225,
+      "edits": [
+        {
+          "text": "Contour is a roofing website concept by Wallace Shift, built around clear decisions and a visual introduction to the roof.",
+          "trimStart": 0.156833,
+          "trimEnd": 7.615832999999999,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 7.28,
+          "speechStart": 0.296833,
+          "speechEnd": 7.475833,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.296833
+          },
+          "trailingSilence": {
+            "start": 7.475833,
+            "end": 9.284625
+          },
+          "outputStart": 0,
+          "outputDuration": 6.91225,
+          "tempo": 1.08,
+          "measuredScale": 0.9266992894489878
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "originalDuration": 13.081083,
+      "pacedDuration": 8.611917,
+      "edits": [
+        {
+          "text": "Its interactive three-dimensional study offers a top view.",
+          "trimStart": 1.8690829999999998,
+          "trimEnd": 6.28925,
+          "originalCaptionStart": 1.8153749999999995,
+          "originalCaptionEnd": 5.895375,
+          "speechStart": 2.009083,
+          "speechEnd": 6.14925,
+          "leadingSilence": {
+            "start": 0,
+            "end": 2.009083
+          },
+          "trailingSilence": {
+            "start": 6.14925,
+            "end": 6.988
+          },
+          "outputStart": 0,
+          "outputDuration": 4.103833,
+          "tempo": 1.08,
+          "measuredScale": 0.9284339256865181
+        },
+        {
+          "text": "This is an illustrative model, not a measurement of the visitor’s property.",
+          "trimStart": 6.848000000000001,
+          "trimEnd": 11.709708000000001,
+          "originalCaptionStart": 6.895375,
+          "originalCaptionEnd": 11.295374999999998,
+          "speechStart": 6.988,
+          "speechEnd": 11.569708,
+          "leadingSilence": {
+            "start": 6.14925,
+            "end": 6.988
+          },
+          "trailingSilence": {
+            "start": 11.569708,
+            "end": 13.081083
+          },
+          "outputStart": 4.103833,
+          "outputDuration": 4.508083,
+          "tempo": 1.08,
+          "measuredScale": 0.9272632169599655
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "originalDuration": 10.293,
+      "pacedDuration": 5.532875,
+      "edits": [
+        {
+          "text": "The separate estimator lets a homeowner explore a sample roof and begin comparing the options.",
+          "trimStart": 2.515417,
+          "trimEnd": 8.475292000000001,
+          "originalCaptionStart": 1.554271,
+          "originalCaptionEnd": 8.014270999999997,
+          "speechStart": 2.655417,
+          "speechEnd": 8.335292,
+          "leadingSilence": {
+            "start": 0,
+            "end": 2.655417
+          },
+          "trailingSilence": {
+            "start": 8.335292,
+            "end": 10.293
+          },
+          "outputStart": 0,
+          "outputDuration": 5.532875,
+          "tempo": 1.08,
+          "measuredScale": 0.9283542020596066
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "originalDuration": 11.732583,
+      "pacedDuration": 6.91125,
+      "edits": [
+        {
+          "text": "Choose metal and the planning range updates.",
+          "trimStart": 2.334875,
+          "trimEnd": 5.809208,
+          "originalCaptionStart": 1.9612915000000015,
+          "originalCaptionEnd": 5.281291499999995,
+          "speechStart": 2.474875,
+          "speechEnd": 5.669208,
+          "leadingSilence": {
+            "start": 0,
+            "end": 2.474875
+          },
+          "trailingSilence": {
+            "start": 5.669208,
+            "end": 6.670125
+          },
+          "outputStart": 0,
+          "outputDuration": 3.233375,
+          "tempo": 1.08,
+          "measuredScale": 0.9306462564181384
+        },
+        {
+          "text": "These are sample prices, not a contractor quote.",
+          "trimStart": 6.530125,
+          "trimEnd": 10.488042,
+          "originalCaptionStart": 6.581291499999999,
+          "originalCaptionEnd": 10.141291499999994,
+          "speechStart": 6.670125,
+          "speechEnd": 10.348042,
+          "leadingSilence": {
+            "start": 5.669208,
+            "end": 6.670125
+          },
+          "trailingSilence": {
+            "start": 10.348042,
+            "end": 11.732583
+          },
+          "outputStart": 3.233375,
+          "outputDuration": 3.677875,
+          "tempo": 1.08,
+          "measuredScale": 0.9292451054430904
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "originalDuration": 10.466875,
+      "pacedDuration": 7.144292,
+      "edits": [
+        {
+          "text": "Use the estimate’s midpoint in the payment explorer.",
+          "trimStart": 1.8966249999999998,
+          "trimEnd": 4.670332999999999,
+          "originalCaptionStart": 1.3886875000000032,
+          "originalCaptionEnd": 4.308687500000005,
+          "speechStart": 2.036625,
+          "speechEnd": 4.530333,
+          "leadingSilence": {
+            "start": 0,
+            "end": 2.036625
+          },
+          "trailingSilence": {
+            "start": 4.530333,
+            "end": 5.241
+          },
+          "outputStart": 0,
+          "outputDuration": 2.57975,
+          "tempo": 1.08,
+          "measuredScale": 0.9300726680674392
+        },
+        {
+          "text": "Change the term and compare both the monthly payment and total repayment.",
+          "trimStart": 5.101,
+          "trimEnd": 10.019125,
+          "originalCaptionStart": 5.108687500000002,
+          "originalCaptionEnd": 9.428687500000002,
+          "speechStart": 5.241,
+          "speechEnd": 9.879125,
+          "leadingSilence": {
+            "start": 4.530333,
+            "end": 5.241
+          },
+          "trailingSilence": {
+            "start": 9.879125,
+            "end": 10.466875
+          },
+          "outputStart": 2.57975,
+          "outputDuration": 4.564542,
+          "tempo": 1.08,
+          "measuredScale": 0.9281061380099123
+        }
+      ]
+    },
+    {
+      "id": "questions",
+      "originalDuration": 8.954958,
+      "pacedDuration": 6.286417,
+      "edits": [
+        {
+          "text": "The visitor then brings their roof concern, timing, and estimate together in a project brief.",
+          "trimStart": 0.838542,
+          "trimEnd": 7.623583,
+          "originalCaptionStart": 0.6018125000000083,
+          "originalCaptionEnd": 7.221812499999999,
+          "speechStart": 0.978542,
+          "speechEnd": 7.483583,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.978542
+          },
+          "trailingSilence": {
+            "start": 7.483583,
+            "end": 8.954958
+          },
+          "outputStart": 0,
+          "outputDuration": 6.286417,
+          "tempo": 1.08,
+          "measuredScale": 0.9265112767925795
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "originalDuration": 8.168333,
+      "pacedDuration": 5.273542,
+      "edits": [
+        {
+          "text": "This creates an unsent preview with the selected options and sample pricing clearly identified.",
+          "trimStart": 2.098417,
+          "trimEnd": 7.780417,
+          "originalCaptionStart": 1.4868750000000048,
+          "originalCaptionEnd": 7.166874999999997,
+          "speechStart": 2.238417,
+          "speechEnd": 7.640417,
+          "leadingSilence": {
+            "start": 0,
+            "end": 2.238417
+          },
+          "trailingSilence": {
+            "start": 7.640417,
+            "end": 8.168333
+          },
+          "outputStart": 0,
+          "outputDuration": 5.273542,
+          "tempo": 1.08,
+          "measuredScale": 0.9281136923618444
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 8.346542,
+      "pacedDuration": 6.918167,
+      "edits": [
+        {
+          "text": "A visual explanation becomes a practical comparison and an organized starting point for the contractor conversation.",
+          "trimStart": 0.784125,
+          "trimEnd": 8.244875,
+          "originalCaptionStart": 0.5585209999999989,
+          "originalCaptionEnd": 7.778521000000012,
+          "speechStart": 0.924125,
+          "speechEnd": 8.104875,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.924125
+          },
+          "trailingSilence": {
+            "start": 8.104875,
+            "end": 8.346542
+          },
+          "outputStart": 0,
+          "outputDuration": 6.918167,
+          "tempo": 1.08,
+          "measuredScale": 0.9272750058640217
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "originalDuration": 80.32799899999999,
+  "pacedDuration": 53.59071,
+  "reviewAudio": "paced/3e9e901b52b78f93/narration-review.wav",
+  "spokenTextUnchanged": true
+}

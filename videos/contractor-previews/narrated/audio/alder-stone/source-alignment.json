@@ -1,0 +1,383 @@
+{
+  "id": "alder-stone",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/higgsfield-grady-source.mp3",
+  "sourceSha256": "ef2310c8e67fff7a2a31867d7ed09b8ddcf782108538bc377116b6f0cd118ec9",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "quotedCredits": 6,
+    "browserEvidence": "output/narrated-previews/alder-stone/higgsfield-generation.jpg",
+    "creditEvidence": "Production lead observed six quoted credits for this take; the retained screenshot also shows the six-credit generation button.",
+    "direction": "Calm, confident American male product narrator. Natural conversational delivery with brisk pacing around 155 words per minute. Clear diction, short natural pauses, no drawn-out words. Thoughtful rather than salesy. Speech only; no music or sound effects."
+  },
+  "alignmentReview": {
+    "status": "ASR alignment reviewed with explicit root orthography exception; subjective listening and final caption review pending",
+    "method": "Exact token sequence alignment to unprompted local ASR word timestamps, using independent original-audio crop recognition, explicit proper-name aliases, and one root-reviewed unscent-to-unsent orthographic normalization. Complete phrases retain recognized source spans; all seven internal scene cuts use measured silence. No timing invented for missing words.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/asr-contact-transcript.json",
+        "offset": 20.5,
+        "replaceStart": 20.5,
+        "replaceEnd": 31.5,
+        "removedWords": [
+          " Next,",
+          " the",
+          " roof",
+          " planner",
+          " lets",
+          " a",
+          " visitor",
+          " explore",
+          " a",
+          " sample",
+          " property",
+          " without",
+          " entering",
+          " contact",
+          " attack",
+          " details.",
+          " Adjust",
+          " the",
+          " pitch",
+          " and",
+          " compare",
+          " roofing",
+          " materials."
+        ],
+        "addedWords": [
+          " Next,",
+          " the",
+          " roof",
+          " planner",
+          " lets",
+          " a",
+          " visitor",
+          " explore",
+          " a",
+          " sample",
+          " property",
+          " without",
+          " entering",
+          " contact",
+          " details.",
+          " Adjust",
+          " the",
+          " pitch",
+          " and",
+          " compare",
+          " roofing",
+          " materials."
+        ],
+        "review": "Independent20.5–31.5s recognition contains contact details once; no attack token. Complete sentence plus following material sentence retained."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/asr-brief-orthography-reviewed.json",
+        "offset": 47,
+        "replaceStart": 47,
+        "replaceEnd": 56.3,
+        "removedWords": [
+          " The",
+          " result",
+          " is",
+          " an",
+          " organized,",
+          " unscent",
+          " request",
+          " preview."
+        ],
+        "addedWords": [
+          " The",
+          " result",
+          " is",
+          " an",
+          " organized,",
+          " unsent",
+          " request",
+          " preview.",
+          " The",
+          " sample",
+          " estimate",
+          " stays",
+          " clearly",
+          " identified,",
+          " and",
+          " nothing",
+          " is",
+          " booked."
+        ],
+        "review": "Independent47–56.3s crop recovers omitted sample estimate/nothing booked. The separate derived report normalizes only unscent to unsent after explicit root orthography review; retains exact measured word timestamps and unchanged raw crop. Root-reviewed one-word ASR orthography/homophone exception: full and independent brief recognition spell the word unscent; a tighter independent47.6–51.3s crop spells un-cent at the same audible span. The intended script and actual local unsent preview corroborate the meaning. This normalizes spelling only, not a substantive omission or capability claim. No subjective listening claim."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/asr-ending-transcript.json",
+        "offset": 56.3,
+        "replaceStart": 56.3,
+        "replaceEnd": 62.064,
+        "removedWords": [
+          " The",
+          " considered",
+          " visual",
+          " identity",
+          " connected",
+          " to",
+          " a",
+          " practical",
+          " planning",
+          " journey,",
+          " built",
+          " by",
+          " Wallace",
+          " Let's",
+          " shift."
+        ],
+        "addedWords": [
+          " A",
+          " considered",
+          " visual",
+          " identity",
+          " connected",
+          " to",
+          " a",
+          " practical",
+          " planning",
+          " journey,",
+          " built",
+          " by",
+          " Wallace",
+          " Let's",
+          " shift."
+        ],
+        "review": "Independent closing begins in the gap after booked; recovers A considered opening of the final scene. Separate brand crop below resolves final chunking."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/asr-brand-transcript.json",
+        "offset": 60.4,
+        "replaceStart": 60.4,
+        "replaceEnd": 62.064,
+        "removedWords": [
+          " built",
+          " by",
+          " Wallace",
+          " Let's",
+          " shift."
+        ],
+        "addedWords": [
+          " built",
+          " by",
+          " Wallace",
+          " Scheff."
+        ],
+        "review": "Independent final1.664s crop gives built by Wallace Scheff; no Lets insertion. Canonical brand spelling is an explicitly reviewed proper-name alias."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Shift's",
+        "recognized": "Schiff's",
+        "start": 1.32,
+        "end": 1.78,
+        "reviewedBy": "Codex source and independent transcript comparison",
+        "evidence": "Canonical possessive in the approved script is Wallace Shift’s. The original unprompted ASR renders the possessive brand token Schiff's at1.32–1.78s. This is transcript-name normalization only; subjective pronunciation remains pending.",
+        "observedWords": [
+          {
+            "token": "schiff's",
+            "text": " Schiff's",
+            "start": 1.32,
+            "end": 1.78,
+            "probability": 0.8339478671550751,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      },
+      {
+        "expected": "Shift",
+        "recognized": "Scheff.",
+        "start": 61.519999999999996,
+        "end": 61.96,
+        "reviewedBy": "Codex source and independent transcript comparison",
+        "evidence": "Independent60.4–62.064s crop recognizes built by Wallace Scheff, resolving the full-pass artificial Lets token. Canonical brand is Wallace Shift. Name spelling is normalized; subjective pronunciation remains pending.",
+        "observedWords": [
+          {
+            "token": "scheff",
+            "text": " Scheff.",
+            "start": 61.519999999999996,
+            "end": 61.96,
+            "probability": 0.5427054166793823,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/alder-stone/asr-brand-transcript.json",
+            "sourceOffset": 60.4
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex roofing narrative agent; explicit root review of the single homophone spelling exception",
+    "reviewedAt": "2026-10-28T18:17:01.904252+00:00",
+    "orthographicException": {
+      "reviewer": "Root production agent, explicit instruction in task message",
+      "sourceReport": "output/narrated-previews/alder-stone/asr-brief-transcript.json",
+      "sourceReportSha256": "be6e03662466917220da49ffa47ea451eebe982b6b8e78ca8ad92e13f3b448c8",
+      "reason": "Root-reviewed one-word ASR orthography/homophone exception: full and independent brief recognition spell the word unscent; a tighter independent47.6–51.3s crop spells un-cent at the same audible span. The intended script and actual local unsent preview corroborate the meaning. This normalizes spelling only, not a substantive omission or capability claim. No subjective listening claim.",
+      "changes": [
+        {
+          "original": " unscent",
+          "normalized": " unsent",
+          "cropStart": 2.5,
+          "cropEnd": 2.98,
+          "sourceStart": 49.5,
+          "sourceEnd": 49.98
+        }
+      ],
+      "independentEvidence": [
+        "asr-transcript.json",
+        "asr-brief-transcript.json",
+        "asr-unsent-transcript.json"
+      ],
+      "rawReportsPreserved": true,
+      "noListeningClaim": true
+    },
+    "evidence": [
+      "asr-transcript.json",
+      "asr-contact-transcript.json",
+      "asr-brief-transcript.json",
+      "asr-unsent-transcript.json",
+      "asr-closing-transcript.json",
+      "asr-ending-transcript.json",
+      "asr-brand-transcript.json",
+      "asr-brief-orthography-reviewed.json",
+      "alignment-review-config.json",
+      "alignment-report.json",
+      "higgsfield-generation.jpg"
+    ],
+    "limitations": [
+      "No subjective listening review performed.",
+      "User accepted the Grady voice; this does not separately establish every name pronunciation or this take’s delivery.",
+      "Proper-name normalization retains Schiff's/Scheff as raw recognition evidence; pronunciation remains untested.",
+      "A cropped ASR sentence may include leading silence in its first-word timestamp; captions are sentence-level and not word highlighting.",
+      "No pacing, normalization, sound mix, composition, or rendering performed by this alignment task."
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 8.627479000000001,
+      "phrases": [
+        {
+          "text": "Alder and Stone is Wallace Shift’s editorial roofing concept: a calm, guided path from understanding the work to planning a project.",
+          "start": 0,
+          "end": 8
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "start": 8.627479000000001,
+      "end": 20.708791499999997,
+      "phrases": [
+        {
+          "text": "The opening concept film explores preparation, protection, installation, and the final walkthrough.",
+          "start": 8.98,
+          "end": 15.4
+        },
+        {
+          "text": "This is an illustration, not a completed customer job.",
+          "start": 16.38,
+          "end": 19.98
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "start": 20.708791499999997,
+      "end": 27.893875,
+      "phrases": [
+        {
+          "text": "Next, the roof planner lets a visitor explore a sample property, without entering contact details.",
+          "start": 21.259999999999998,
+          "end": 27.28
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "start": 27.893875,
+      "end": 34.4715415,
+      "phrases": [
+        {
+          "text": "Adjust the pitch and compare roofing materials.",
+          "start": 28.259999999999998,
+          "end": 30.64
+        },
+        {
+          "text": "The planning range changes with those choices.",
+          "start": 31.66,
+          "end": 33.8
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "start": 34.4715415,
+      "end": 39.7593335,
+      "phrases": [
+        {
+          "text": "When they continue into a project brief, the estimate follows them to the next page.",
+          "start": 34.74,
+          "end": 39.14
+        }
+      ]
+    },
+    {
+      "id": "questions",
+      "start": 39.7593335,
+      "end": 46.935021,
+      "phrases": [
+        {
+          "text": "The form gathers the property, roof concern, payment approach, and preferred timing in manageable steps.",
+          "start": 40.14,
+          "end": 46.6
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "start": 46.935021,
+      "end": 56.070729,
+      "phrases": [
+        {
+          "text": "The result is an organized, unsent request preview.",
+          "start": 47,
+          "end": 50.9
+        },
+        {
+          "text": "The sample estimate stays clearly identified, and nothing is booked.",
+          "start": 51.64,
+          "end": 55.58
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "start": 56.070729,
+      "end": 62.064,
+      "phrases": [
+        {
+          "text": "A considered visual identity, connected to a practical planning journey.",
+          "start": 56.3,
+          "end": 60.14
+        },
+        {
+          "text": "Built by Wallace Shift.",
+          "start": 60.4,
+          "end": 61.96
+        }
+      ]
+    }
+  ]
+}

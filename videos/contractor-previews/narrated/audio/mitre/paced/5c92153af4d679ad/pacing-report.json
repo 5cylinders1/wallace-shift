@@ -1,0 +1,504 @@
+{
+  "id": "mitre",
+  "sourceTimingFile": "unpaced-timing-b13df8e7660c6312.json",
+  "sourceTimingSha256": "b13df8e7660c63124787a008bb93e6e03685556e16d45dbbd5886e531cf589a2",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "248254132ddce1d9ed4ffb657f25203545c4132b32945701cd8581689d365f61"
+    },
+    {
+      "file": "assembly.wav",
+      "sha256": "a2260945114545d66e399da2c2f16edc58767f406a621a66af76f8287fe99f1c"
+    },
+    {
+      "file": "finished.wav",
+      "sha256": "133471abee619d9de18f400c130767bebb2da4b34d70a3614f7cb6d3e08ae6f9"
+    },
+    {
+      "file": "services.wav",
+      "sha256": "23905d989482a17cf1bd419528a315b3305aa4ab4ea839fb20ce7d80dcc34ddf"
+    },
+    {
+      "file": "process.wav",
+      "sha256": "1932956f79ff4a5d6efa69e9bac53194ab08706da23fdbe1aaa24693920ad1d7"
+    },
+    {
+      "file": "materials.wav",
+      "sha256": "73cda42b59fabc8cf3ba3475240d1c4ccc8b3dd6a3edf7d9a4dd268a3e4cc075"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "511c686918b41f86f85d7ace00bbf52c185ca510df5fdf65c2dd93bf7b4890a8"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 8.753667,
+      "pacedDuration": 7.546917,
+      "edits": [
+        {
+          "text": "The Mitre and Rift opens with a room that builds as you scroll.",
+          "phrase": 1,
+          "desiredTrimStart": 0,
+          "desiredTrimEnd": 3.733625,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 3.28,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 3.593625,
+            "end": 4.334958
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0,
+          "trimEnd": 3.733625,
+          "observedSpeechStart": 0,
+          "observedSpeechEnd": 3.593625,
+          "captionSourceStart": 0,
+          "captionSourceEnd": 3.593625,
+          "outputStart": 0,
+          "outputDuration": 3.46425,
+          "measuredScale": 0.9278516187351434,
+          "tempo": 1.08
+        },
+        {
+          "text": "Wallace Shift created this editorial website for a fictional cabinetmaker.",
+          "phrase": 2,
+          "desiredTrimStart": 4.2,
+          "desiredTrimEnd": 8.604125,
+          "originalCaptionStart": 4.34,
+          "originalCaptionEnd": 8.2,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 8.464125,
+            "end": 8.753667
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 4.2,
+          "trimEnd": 8.604125,
+          "observedSpeechStart": 4.34,
+          "observedSpeechEnd": 8.464125,
+          "captionSourceStart": 4.34,
+          "captionSourceEnd": 8.464125,
+          "outputStart": 3.46425,
+          "outputDuration": 4.082667,
+          "measuredScale": 0.9270097919564045,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0,
+          "sourceEnd": 3.733625,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 3.46425,
+          "measuredScale": 0.9278516187351434,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 4.2,
+          "sourceEnd": 8.604125,
+          "phrases": [
+            2
+          ],
+          "outputStart": 3.46425,
+          "outputDuration": 4.082667,
+          "measuredScale": 0.9270097919564045,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "assembly",
+      "originalDuration": 9.319667,
+      "pacedDuration": 7.955583,
+      "edits": [
+        {
+          "text": "A continuous rendered sequence moves from the empty interior through cabinetry, stone, and lighting.",
+          "phrase": 1,
+          "desiredTrimStart": 0.225958,
+          "desiredTrimEnd": 6.95825,
+          "originalCaptionStart": 0.30631250000000065,
+          "originalCaptionEnd": 6.466312500000001,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.365958
+          },
+          "trailingSilence": {
+            "start": 6.81825,
+            "end": 7.619583
+          },
+          "sourceSceneFile": "assembly.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.225958,
+          "trimEnd": 6.95825,
+          "observedSpeechStart": 0.365958,
+          "observedSpeechEnd": 6.81825,
+          "captionSourceStart": 0.365958,
+          "captionSourceEnd": 6.81825,
+          "outputStart": 0,
+          "outputDuration": 6.246958,
+          "measuredScale": 0.927909544030473,
+          "tempo": 1.08
+        },
+        {
+          "text": "The visitor controls the pace.",
+          "phrase": 2,
+          "desiredTrimStart": 7.479583000000001,
+          "desiredTrimEnd": 9.319667,
+          "originalCaptionStart": 7.5863125,
+          "originalCaptionEnd": 9.026312500000001,
+          "leadingSilence": {
+            "start": 6.81825,
+            "end": 7.619583
+          },
+          "trailingSilence": null,
+          "sourceSceneFile": "assembly.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 7.479583000000001,
+          "trimEnd": 9.319667,
+          "observedSpeechStart": 7.619583,
+          "observedSpeechEnd": 9.026312500000001,
+          "captionSourceStart": 7.619583,
+          "captionSourceEnd": 9.026312500000001,
+          "outputStart": 6.246958,
+          "outputDuration": 1.708625,
+          "measuredScale": 0.9285581527799818,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.225958,
+          "sourceEnd": 6.95825,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 6.246958,
+          "measuredScale": 0.927909544030473,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 7.479583000000001,
+          "sourceEnd": 9.319667,
+          "phrases": [
+            2
+          ],
+          "outputStart": 6.246958,
+          "outputDuration": 1.708625,
+          "measuredScale": 0.9285581527799818,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "finished",
+      "originalDuration": 6.606208,
+      "pacedDuration": 5.776,
+      "edits": [
+        {
+          "text": "Short chapters explain each stage, then the finished room brings the materials and proportions together.",
+          "phrase": 1,
+          "desiredTrimStart": 0.382042,
+          "desiredTrimEnd": 6.606208,
+          "originalCaptionStart": 0.026645999999999503,
+          "originalCaptionEnd": 6.346646,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.522042
+          },
+          "trailingSilence": null,
+          "sourceSceneFile": "finished.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.382042,
+          "trimEnd": 6.606208,
+          "observedSpeechStart": 0.522042,
+          "observedSpeechEnd": 6.346646,
+          "captionSourceStart": 0.522042,
+          "captionSourceEnd": 6.346646,
+          "outputStart": 0,
+          "outputDuration": 5.776,
+          "measuredScale": 0.9279958150216431,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.382042,
+          "sourceEnd": 6.606208,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.776,
+          "measuredScale": 0.9279958150216431,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "originalDuration": 8.939542,
+      "pacedDuration": 7.2825,
+      "edits": [
+        {
+          "text": "The rest of the site makes that first impression useful, introducing kitchens, pantries, built-ins, stone, and light.",
+          "phrase": 1,
+          "desiredTrimStart": 0.823,
+          "desiredTrimEnd": 8.687875,
+          "originalCaptionStart": 0.020437499999999886,
+          "originalCaptionEnd": 8.3604375,
+          "leadingSilence": {
+            "start": 0.00666667,
+            "end": 0.963
+          },
+          "trailingSilence": {
+            "start": 8.547875,
+            "end": 8.939542
+          },
+          "sourceSceneFile": "services.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.823,
+          "trimEnd": 8.687875,
+          "observedSpeechStart": 0.963,
+          "observedSpeechEnd": 8.547875,
+          "captionSourceStart": 0.963,
+          "captionSourceEnd": 8.547875,
+          "outputStart": 0,
+          "outputDuration": 7.2825,
+          "measuredScale": 0.9259524150097744,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.823,
+          "sourceEnd": 8.687875,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 7.2825,
+          "measuredScale": 0.9259524150097744,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "originalDuration": 6.689208,
+      "pacedDuration": 5.567583,
+      "edits": [
+        {
+          "text": "A clear process explains the journey from measuring and drawing through workshop construction and fitting.",
+          "phrase": 1,
+          "desiredTrimStart": 0.392625,
+          "desiredTrimEnd": 6.411874999999999,
+          "originalCaptionStart": 0.400916500000001,
+          "originalCaptionEnd": 6.0209164999999985,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.532625
+          },
+          "trailingSilence": {
+            "start": 6.271875,
+            "end": 6.689208
+          },
+          "sourceSceneFile": "process.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.392625,
+          "trimEnd": 6.411874999999999,
+          "observedSpeechStart": 0.532625,
+          "observedSpeechEnd": 6.271875,
+          "captionSourceStart": 0.532625,
+          "captionSourceEnd": 6.271875,
+          "outputStart": 0,
+          "outputDuration": 5.567583,
+          "measuredScale": 0.9249629106616274,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.392625,
+          "sourceEnd": 6.411874999999999,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.567583,
+          "measuredScale": 0.9249629106616274,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "originalDuration": 6.160417,
+      "pacedDuration": 5.315875,
+      "edits": [
+        {
+          "text": "Material details show the palette behind the kitchen, with a contact section providing the next step.",
+          "phrase": 1,
+          "desiredTrimStart": 0.417833,
+          "desiredTrimEnd": 6.160417,
+          "originalCaptionStart": 0.43170850000000627,
+          "originalCaptionEnd": 5.911708500000003,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.557833
+          },
+          "trailingSilence": null,
+          "sourceSceneFile": "materials.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.417833,
+          "trimEnd": 6.160417,
+          "observedSpeechStart": 0.557833,
+          "observedSpeechEnd": 5.911708500000003,
+          "captionSourceStart": 0.557833,
+          "captionSourceEnd": 5.911708500000003,
+          "outputStart": 0,
+          "outputDuration": 5.315875,
+          "measuredScale": 0.9256939036503428,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.417833,
+          "sourceEnd": 6.160417,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.315875,
+          "measuredScale": 0.9256939036503428,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 9.859292,
+      "pacedDuration": 8.126875,
+      "edits": [
+        {
+          "text": "The imagery is rendered and contacts are placeholders.",
+          "phrase": 1,
+          "desiredTrimStart": 0.543583,
+          "desiredTrimEnd": 3.805708,
+          "originalCaptionStart": 0.13129149999999612,
+          "originalCaptionEnd": 3.4112914999999973,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.683583
+          },
+          "trailingSilence": {
+            "start": 3.665708,
+            "end": 4.386958
+          },
+          "sourceSceneFile": "ending.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.543583,
+          "trimEnd": 3.805708,
+          "observedSpeechStart": 0.683583,
+          "observedSpeechEnd": 3.665708,
+          "captionSourceStart": 0.683583,
+          "captionSourceEnd": 3.665708,
+          "outputStart": 0,
+          "outputDuration": 3.037167,
+          "measuredScale": 0.9310394298195195,
+          "tempo": 1.08
+        },
+        {
+          "text": "The distinction is making the whole room, and the thinking behind it, easy to understand.",
+          "phrase": 2,
+          "desiredTrimStart": 4.246958,
+          "desiredTrimEnd": 9.738375000000001,
+          "originalCaptionStart": 4.351291499999995,
+          "originalCaptionEnd": 9.171291499999995,
+          "leadingSilence": {
+            "start": 3.665708,
+            "end": 4.386958
+          },
+          "trailingSilence": {
+            "start": 9.598375,
+            "end": 9.859292
+          },
+          "sourceSceneFile": "ending.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 4.246958,
+          "trimEnd": 9.738375000000001,
+          "observedSpeechStart": 4.386958,
+          "observedSpeechEnd": 9.598375,
+          "captionSourceStart": 4.386958,
+          "captionSourceEnd": 9.598375,
+          "outputStart": 3.037167,
+          "outputDuration": 5.089708,
+          "measuredScale": 0.9268478427334873,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.543583,
+          "sourceEnd": 3.805708,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 3.037167,
+          "measuredScale": 0.9310394298195195,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 4.246958,
+          "sourceEnd": 9.738375000000001,
+          "phrases": [
+            2
+          ],
+          "outputStart": 3.037167,
+          "outputDuration": 5.089708,
+          "measuredScale": 0.9268478427334873,
+          "tempo": 1.08
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "assembly/2: no trailing silence matched; retained extra source conservatively.",
+    "finished/1: no trailing silence matched; retained extra source conservatively.",
+    "materials/1: no trailing silence matched; retained extra source conservatively."
+  ],
+  "originalDuration": 56.328001,
+  "pacedDuration": 47.571332999999996,
+  "reviewAudio": "paced/5c92153af4d679ad/narration-review.wav",
+  "spokenTextUnchanged": true
+}
