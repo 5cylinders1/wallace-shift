@@ -12,6 +12,9 @@ dist
 /tmp/
 /videos/
 
+# Private proposal source and internal pricing notes are local business files.
+/docs/proposals/docomomo-2026-10-28/
+
 # Local source/reference assets. Optimized deploy copies live under public/.
 /BannerImage.png
 /PitStopFinal.mp4

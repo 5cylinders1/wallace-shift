@@ -2,6 +2,21 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/resources/blog/wallace-shift-business-systems-worksheets.xlsx",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"wallace-shift-business-systems-worksheets.xlsx\""
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/",

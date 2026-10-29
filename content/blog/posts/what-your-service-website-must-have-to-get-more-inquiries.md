@@ -1,7 +1,7 @@
 ---
 status: published
 publishedAt: "2026-10-25T06:34:58Z"
-updatedAt: "2026-10-25T18:58:05Z"
+updatedAt: "2026-10-26T13:03:43Z"
 slug: what-your-service-website-must-have-to-get-more-inquiries
 title: "What Should a Service Business Website Include to Get More Inquiries?"
 description: "A practical guide to clear service pages, credible proof, contact forms, mobile usability, and reliable follow-up. Includes a printable website checklist."
@@ -98,6 +98,8 @@ Beside the form, explain what happens next. If your team can reliably reply with
 
 **Test it:** Submit an inquiry with permission from the team receiving it. Check the success screen, the destination inbox or CRM, and any acknowledgment. A successful-looking screen alone does not prove that a person received the request.
 
+If the form confirms success but the notification is missing, follow the [contact-form email troubleshooting guide](/blog/contact-form-not-sending-email) to locate the last verified step and collect evidence for a repair.
+
 ## 4. Give each service enough detail to support a decision
 
 A list of service names is often not enough for someone deciding whether to hire you. Explain the scope of the work, who it suits, relevant exclusions, the steps involved, and the information needed to get started.
@@ -154,6 +156,8 @@ For illustration, if 500 measured sessions produce five completed inquiries, tha
 Compare periods using the same measurement method, and consider changes in traffic sources, seasonality, advertising, or your offer. With low volumes, a small number of inquiries can noticeably change the percentage.
 
 If the numbers and the requests your team receives do not line up, our [guide to diagnosing missing website inquiries](/blog/why-your-website-is-not-generating-inquiries) helps trace the gap from traffic through submission, delivery, and follow-up.
+
+For the measurement itself, use the [website inquiry tracking guide](/blog/track-website-inquiries-qualified-leads) to distinguish browser events, received requests, repeated deliveries, and qualification decisions in a reconciliation sheet.
 
 ## Choose the next fixes before deciding on a redesign
 

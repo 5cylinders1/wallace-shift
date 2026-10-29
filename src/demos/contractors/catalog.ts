@@ -29,18 +29,11 @@ export const categories: { id: TradeCategoryId; name: string; description: strin
   { id: 'business', name: 'Business systems', description: 'The team’s side of the work: sample customer records, follow-ups and inspections.' },
 ]
 
-// Rounded up from the encoded narrated deliveries; checked against each MP4.
-const previewDurations = {
-  northvane: 63, 'alder-stone': 60, contour: 62, halcyon: 61,
-  velar: 66, stratum: 57, datum: 60, tambour: 56, mitre: 57,
-  stillwater: 51, 'roofing-crm': 57,
-} as const
-
-const preview = (id: keyof typeof previewDurations) => ({
+const preview = (id: string) => ({
   thumbnail: `/media/demo-previews/${id}.jpg`,
   video: `/media/demo-previews/${id}.mp4`,
   captions: `/media/demo-previews/${id}.vtt`,
-  durationSeconds: previewDurations[id],
+  durationSeconds: 36,
 })
 const roofingDisclosure = 'Fictional demo brand. Estimator figures are illustrative planning ranges, not a quote.'
 

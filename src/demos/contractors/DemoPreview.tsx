@@ -63,7 +63,7 @@ export default function DemoPreview({ demo, onClose }: { demo: TradeDemo; onClos
       </video>
       {playBlocked && !failed && <div className="ct-preview-start"><p>Your preview is ready.</p><button type="button" className="ct-button" onClick={() => { void videoRef.current?.play().catch(() => setPlayBlocked(true)) }}>Play preview <span aria-hidden="true">▶</span></button></div>}
       {failed && <p className="ct-preview-error" role="alert">The preview could not load. <a href={demo.video}>Try opening the video directly</a>.</p>}
-      <div className="ct-preview-foot"><div><p>{demo.summary}</p><p id="preview-disclosure" className="ct-preview-disclosure">{demo.disclosure} Narrated walkthrough with English captions. Sound and captions are available in the player controls.</p><p className="ct-preview-disclosure">Music: <a href="https://www.scottbuckley.com.au/library/a-kind-of-hope/" target="_blank" rel="noreferrer">“A Kind Of Hope” by Scott Buckley</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>. Edited excerpt, mixed under narration.</p></div><a className="ct-button" href={accessHref(demo)}>Request interactive access <span aria-hidden="true">↗</span></a></div>
+      <div className="ct-preview-foot"><div><p>{demo.summary}</p><p id="preview-disclosure" className="ct-preview-disclosure">{demo.disclosure} The preview includes on-screen explanations and an optional English caption track.</p></div><a className="ct-button" href={accessHref(demo)}>Request interactive access <span aria-hidden="true">↗</span></a></div>
     </div>
   </dialog>
 }

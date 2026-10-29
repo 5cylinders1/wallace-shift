@@ -98,6 +98,7 @@ export default function ContractorsLander() {
       <header className="ct-wrap ct-header">
         <Wordmark />
         <nav aria-label="Contractors">
+          <a href="#offer">Offer</a>
           <a href="#demos">Demos</a>
           <a href="#built">What they do</a>
           <a href="#access">Access</a>
@@ -123,6 +124,20 @@ export default function ContractorsLander() {
         </section>
       </main>
     </div>
+
+    <section id="offer" className="ct-offer" aria-labelledby="offer-title">
+      <div className="ct-wrap ct-offer-inner">
+        <div>
+          <p className="ct-eyebrow">Contractor launch offer</p>
+          <h2 id="offer-title">A free website <em>when you purchase a CRM integrated with AI.</em></h2>
+        </div>
+        <div className="ct-offer-detail">
+          <p>Get a customer website designed around the same workflow as your CRM, so the first inquiry and the team’s next action have a clearer handoff.</p>
+          <p className="ct-offer-note">CRM configuration, AI connections, platform costs and any work outside the agreed website scope are discussed and scoped separately.</p>
+          <a className="ct-button" href={`${STUDIO}/contact`}>Discuss the offer <Arrow diagonal /></a>
+        </div>
+      </div>
+    </section>
 
     <section id="demos" className="ct-light ct-section" aria-labelledby="demos-title">
       <div className="ct-wrap">

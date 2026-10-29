@@ -1,9 +1,5 @@
 # Contractor collection: inventory and preview acceptance
 
-> Historical audit of the original 36-second silent previews. Its local-completion and production-baseline results do not validate the replacement narrated films. Use [narrated-validation.md](narrated-validation.md) for the current production and release status; retain this report as baseline evidence.
-
-The original ignored capture artifacts are not all present in this checkout. In particular, the linked legacy Velar `evidence.json` and `final-check.json` were absent when the narrated documentation was updated. The historical results below have not been rerun or independently reverified for that update.
-
 Audit date: October 27, 2026 (America/Chicago). Baseline HTTP checks were made at approximately October 28, 2026 01:28 UTC. Local production evidence below was added after all 11 films were rendered. Production baseline and local completion are recorded separately; this is not a claim that the new gallery has been deployed.
 
 ## Primary sources

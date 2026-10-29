@@ -71,6 +71,19 @@ ol, ul { padding: 0; list-style: none; }
 .ct-hero-feature-label { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; background: #080d12d9; backdrop-filter: blur(10px); font-size: 13px; color: var(--ct-silver); }
 .ct-hero-feature-label strong { color: var(--ct-pearl); font-size: 15px; }
 
+/* Offer */
+.ct-offer { background: var(--ct-accent); color: var(--ct-ink); }
+.ct-offer-inner { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 96px); align-items: end; padding: clamp(56px, 7vw, 96px) 0; }
+.ct-offer .ct-eyebrow { color: var(--ct-ink); }
+.ct-offer .ct-eyebrow::before { background: var(--ct-ink); }
+.ct-offer h2 { max-width: 720px; font-size: clamp(34px, 4.4vw, 66px); line-height: 1; letter-spacing: -.035em; font-weight: 500; text-wrap: balance; }
+.ct-offer h2 em { color: #174f7a; }
+.ct-offer-detail { max-width: 560px; }
+.ct-offer-detail > p:first-child { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.55; }
+.ct-offer-note { margin-top: 18px; color: #174f7a; font-size: 13px; line-height: 1.55; }
+.ct-offer .ct-button { margin-top: 28px; background: var(--ct-ink); color: var(--ct-pearl); }
+.ct-offer .ct-button:hover { background: var(--ct-graphite); }
+
 /* Sections */
 .ct-section { padding: clamp(80px, 10vw, 140px) 0; position: relative; }
 .ct-section-rule { border-top: 1px solid var(--ct-line); }
@@ -132,6 +145,7 @@ ol, ul { padding: 0; list-style: none; }
   .ct-header { grid-template-columns: 1fr auto; }
   .ct-header nav { display: none; }
   .ct-hero { grid-template-columns: 1fr; }
+  .ct-offer-inner { grid-template-columns: 1fr; align-items: start; }
   .ct-demos { grid-template-columns: 1fr; }
   .ct-access { grid-template-columns: 1fr; }
   .ct-access .ct-button { grid-column: 1; }
@@ -194,16 +208,14 @@ button { font: inherit; }
 
 .ct-preview { width: min(1180px, calc(100vw - 40px)); max-width: none; max-height: calc(100dvh - 40px); padding: 0; border: 1px solid #edf1f233; border-radius: 18px; background: var(--ct-ink); color: var(--ct-pearl); box-shadow: 0 30px 120px #0008; }
 .ct-preview::backdrop { background: #080d12d9; backdrop-filter: blur(5px); }
-.ct-preview-inner { display: flex; flex-direction: column; min-width: 0; container-type: inline-size; }
+.ct-preview-inner { display: flex; flex-direction: column; min-width: 0; }
 .ct-preview-head { display: flex; justify-content: space-between; gap: 20px; align-items: center; padding: 22px 26px; }
 .ct-preview-head .ct-eyebrow { color: var(--ct-silver); font-size: 10px; margin-bottom: 5px; }
 .ct-preview-head h2 { font-size: clamp(23px, 3vw, 34px); font-weight: 500; line-height: 1.15; letter-spacing: -.02em; }
 .ct-preview-close { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-width: 90px; min-height: 44px; padding: 0 12px; border: 1px solid #edf1f259; border-radius: 999px; background: none; color: var(--ct-pearl); font-weight: 600; font-size: 13px; cursor: pointer; }
 .ct-preview-close span { font-size: 23px; font-weight: 400; }
 .ct-preview-close:hover { border-color: var(--ct-accent); color: var(--ct-accent-hover); }
-/* Keep the previous fitted picture size while reserving a native-control rail.
-   Capping both dimensions prevents object-fit from enlarging into that rail. */
-.ct-preview-video { display: block; align-self: center; width: min(100%, calc(61dvh * 16 / 9)); height: calc(min(100cqw * 9 / 16, 61dvh) + 60px); aspect-ratio: auto; max-height: none; object-fit: contain; object-position: center top; background: #000; }
+.ct-preview-video { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 61dvh; object-fit: contain; background: #000; }
 .ct-preview-foot { display: flex; justify-content: space-between; align-items: start; gap: 28px; padding: 24px 26px; }
 .ct-preview-foot > div { max-width: 70ch; }
 .ct-preview-foot p { color: var(--ct-silver); font-size: 14px; line-height: 1.6; }
@@ -244,14 +256,8 @@ button { font: inherit; }
   .ct-preview-head .ct-eyebrow { font-size: 9px; letter-spacing: .08em; }
   .ct-preview-close { min-width: 70px; padding-inline: 10px; gap: 7px; }
   .ct-preview-foot { padding: 18px 16px; }
-  /* Keep native controls below the 16:9 picture, including its burned captions.
-     Dialog content is viewport minus 16px outer space and two 1px borders. */
-  .ct-preview-video { height: calc((100vw - 18px) * 9 / 16 + 60px); aspect-ratio: auto; max-height: none; object-position: center top; }
+  .ct-preview-video { max-height: 55dvh; }
   .ct-preview-foot .ct-button { width: 100%; }
-}
-@media (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
-  /* Retain the previous 61dvh fitted picture size and put controls underneath. */
-  .ct-preview-video { align-self: center; width: min(100%, calc(61dvh * 16 / 9)); height: calc(61dvh + 60px); aspect-ratio: auto; max-height: none; object-position: center top; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ct-slider { scroll-behavior: auto; }

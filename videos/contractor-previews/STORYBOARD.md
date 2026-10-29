@@ -1,6 +1,4 @@
-# Legacy storyboard: three chapters in 36 seconds
-
-This storyboard belongs to the superseded silent films. Retain it only as historical production context and a baseline for comprehension comparison. The current pilot uses [NARRATED-STORYBOARD.md](NARRATED-STORYBOARD.md); the complete collection is indexed in [NARRATED-SCRIPT.md](NARRATED-SCRIPT.md).
+# Three chapters, one visible journey
 
 1. 00–12: Establish the actual demo and the need it addresses. Show its strongest visual in motion, with a restrained name entrance and chapter title.
 2. 12–24: Focus on the distinguishing interactive tool. Perform a real choice, drag, material change, or navigation using browser automation. Use a brief crossfade between captured chapters; do not fabricate a UI state.

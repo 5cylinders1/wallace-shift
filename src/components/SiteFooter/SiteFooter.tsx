@@ -80,6 +80,17 @@ export function SiteFooter() {
           <p className="site-footer__copyright">
             &copy; {year} {siteMeta.name}
           </p>
+          <a
+            className="site-footer__preferred-source"
+            href={footer.preferredSource.href}
+            aria-label={footer.preferredSource.label}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={footer.preferredSource.icon} alt="" width={18} height={18} loading="lazy" decoding="async" />
+            <span>{footer.preferredSource.text}</span>
+            <span className="site-footer__preferred-arrow" aria-hidden="true">↗</span>
+          </a>
           <PageLink href="/privacy" className="site-footer__privacy">
             Privacy
           </PageLink>
