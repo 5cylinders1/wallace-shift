@@ -7,7 +7,7 @@ import { PageLink } from '../PageLink/PageLink'
 import { ShiftQuiz } from '../ShiftQuiz/ShiftQuiz'
 import { SiteFooter } from '../SiteFooter/SiteFooter'
 import { getInteractiveHomeJourneySnapshot, getStaticHomeJourneySnapshot, subscribeInteractiveHomeJourney } from './homeJourneyDisplay'
-import { initialJourneyFrame, PROCESS_SCROLL_UNITS, sampleJourneyFrame, type JourneyFrame, type JourneyLayout } from './journeyDirector'
+import { initialJourneyFrame, PROCESS_SCROLL_UNITS, sampleJourneyFrame, type JourneyFrameSource, type JourneyLayout } from './journeyDirector'
 import { JourneyServiceRows } from './JourneyServiceRows'
 import { JourneyStageArt, type JourneyStage } from './JourneyStageArt'
 import './HomeJourney.css'
@@ -25,7 +25,7 @@ class SceneBoundary extends Component<{ children: ReactNode; onFailure: () => vo
 }
 
 function JourneyVisual({ frame, nearby, onFailure }: {
-  frame: { current: JourneyFrame }; nearby: boolean; onFailure: () => void
+  frame: JourneyFrameSource; nearby: boolean; onFailure: () => void
 }) {
   const [ready, setReady] = useState(false)
   return <div className="home-journey__visual" aria-hidden="true">
@@ -49,7 +49,7 @@ export function HomeJourney() {
   const interactive = useSyncExternalStore(subscribeInteractiveHomeJourney, getInteractiveHomeJourneySnapshot, getStaticHomeJourneySnapshot)
   const [nearby, setNearby] = useState(false)
   const [failed, setFailed] = useState(false)
-  const frame = useRef({ ...initialJourneyFrame })
+  const frame: JourneyFrameSource = useRef({ ...initialJourneyFrame })
   // The eased charge the quiz mark carries, and the short flash each new
   // answer sends through it. Kept out of the pose sampler's own state so
   // scrolling still produces one pure, reversible frame.
@@ -155,9 +155,11 @@ export function HomeJourney() {
       layout.findCopyRight = Math.max(findPanel.title.getBoundingClientRect().right, findBody.getBoundingClientRect().right)
       layout.findCopyBottom = findCopy.bottom - findPanel.panel.getBoundingClientRect().top + layout.headerOffset
     }
+    let sampledScroll = NaN
     const update = () => {
+      sampledScroll = window.scrollY
       pending = 0
-      frame.current = sampleJourneyFrame(window.scrollY, layout, power.current)
+      frame.current = sampleJourneyFrame(sampledScroll, layout, power.current)
       root.style.setProperty('--journey-visibility', String(frame.current.visible))
       root.style.setProperty('--journey-x', `${(frame.current.x + 1) * 50}%`)
       root.style.setProperty('--journey-y', `${(1 - frame.current.y) * 50}%`)
@@ -200,6 +202,13 @@ export function HomeJourney() {
     const refresh = () => { measure(); requestUpdate() }
     measure()
     update()
+    frame.sync = () => {
+      if (sampledScroll === window.scrollY) return
+      // Cancel the queued scroll callback when the renderer gets here first.
+      // Both consumers now receive the same pose for this browser frame.
+      cancelAnimationFrame(pending)
+      update()
+    }
     const observer = new ResizeObserver(refresh)
     for (const element of [root, heading, headingText, rows, process,
       ...panels.flatMap(item => [item.copy, item.title]), quiz, closing,
@@ -217,6 +226,7 @@ export function HomeJourney() {
       cancelAnimationFrame(pending)
       cancelAnimationFrame(charging)
       kickPower.current = () => {}
+      delete frame.sync
       delete root.dataset.grip
       for (const item of panels) item.panel.style.removeProperty('--journey-panel-padding')
       frame.current = { ...frame.current, visible: 0 }

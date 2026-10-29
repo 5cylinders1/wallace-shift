@@ -122,7 +122,7 @@ export const approach = {
   steps: [
     {
       index: '01',
-      title: 'Find the gaps',
+      title: 'Find the friction',
       description:
         'Trace an enquiry through your team and tools. Find missed follow-up, repeated work, and information that owners cannot easily see.',
     },
