@@ -122,11 +122,13 @@ export function HomeJourney() {
       layout = {
         viewportHeight: window.innerHeight,
         viewportWidth: window.innerWidth,
-        headerOffset: parseFloat(getComputedStyle(heading).top) || 0,
+        headerOffset: parseFloat(getComputedStyle(root).getPropertyValue("--journey-header-offset")) || 80,
         servicesTop: top(section), servicesRowsBottom: top(rows) + rows.offsetHeight,
         servicesHeaderHeight: heading.offsetHeight,
         servicesHeadingRight: headingText.getBoundingClientRect().right,
-        servicesHeadingBaseline: baseline.getBoundingClientRect().top - heading.getBoundingClientRect().top,
+        // Keep the following animation chapters on their established baseline.
+        servicesHeadingBaseline: Math.max(baseline.getBoundingClientRect().top - heading.getBoundingClientRect().top,
+          (Math.max(260, Math.min(window.innerHeight * .32, 340)) + panels[0].title.offsetHeight) / 2 + 22),
         processTop: top(process), processHeight: process.offsetHeight,
         processHeadingRight: Math.max(...panels.map(item => item.title.getBoundingClientRect().right)),
         quizTop: top(quiz), closingTop: top(closing), end: top(root) + root.offsetHeight,
@@ -155,6 +157,7 @@ export function HomeJourney() {
     const update = () => {
       pending = 0
       frame.current = sampleJourneyFrame(window.scrollY, layout, power.current)
+      root.style.setProperty("--journey-visual-start", `${Math.max(0, layout.processTop - Math.max(window.scrollY, layout.servicesTop))}px`)
       root.style.setProperty('--journey-visibility', String(frame.current.visible))
       root.style.setProperty('--journey-x', `${(frame.current.x + 1) * 50}%`)
       root.style.setProperty('--journey-y', `${(1 - frame.current.y) * 50}%`)
@@ -230,7 +233,7 @@ export function HomeJourney() {
             <div className="container journey-services__heading-wrap">
               <div>
                 <p className="eyebrow journey-kicker">01 / What moves you forward</p>
-                <h2 id="journey-services-heading">{renderLines(services.headingLines)}<span className="journey-services__baseline" aria-hidden="true" /></h2>
+                <h2 id="journey-services-heading">{services.headingLines.join(" ")}<span className="journey-services__baseline" aria-hidden="true" /></h2>
               </div>
               <img className="journey-static-mark" src="/brand/wallace-shift-logo-black.svg" alt="" width="180" height="105" />
             </div>
