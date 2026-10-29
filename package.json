@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && vite build --mode demos && node scripts/verify-demo-build.mjs && node scripts/verify-blog-build.mjs",
+    "check:deployment": "node scripts/test-vercel-typescript.mjs && node scripts/test-lawn-api.mjs",
+    "build": "npm run check:deployment && tsc -b && vite build && vite build --mode demos && node scripts/verify-demo-build.mjs && node scripts/verify-blog-build.mjs",
     "test:blog": "node scripts/test-blog.mjs && node scripts/test-blog-preview.mjs",
     "lint": "eslint .",
     "preview": "vite preview",

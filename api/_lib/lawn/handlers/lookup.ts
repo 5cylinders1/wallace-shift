@@ -10,11 +10,9 @@
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { isRateLimited, queryOf, sendJson } from './_lib/roof/http.js'
-import { handleLawn, sendLawnError } from './_lib/lawn/http.js'
-import { lawnLookup, type LookupTarget } from './_lib/lawn/lookup.js'
-
-export const config = { maxDuration: 20 }
+import { isRateLimited, queryOf, sendJson } from '../../roof/http.js'
+import { handleLawn, sendLawnError } from '../http.js'
+import { lawnLookup, type LookupTarget } from '../lookup.js'
 
 /** A homeowner looks up one or two homes; this stops someone mapping a town. */
 const RATE_LIMIT = 40

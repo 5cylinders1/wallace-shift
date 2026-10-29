@@ -10,7 +10,7 @@ about the business is invented.
   (no access request, email code or agreement) and unindexed: `noindex` meta plus
   an `X-Robots-Tag` header on `/trawsome` and `/demos/lawn`. Send Ben that link.
 - Document `demos/lawn/index.html` (built in the public pass, like Bucyrus), code
-  `src/demos/lawn/`, media `public/demos/lawn/`, functions `api/lawn-*.ts` and
+  `src/demos/lawn/`, media `public/demos/lawn/`, function `api/lawn.ts` (shared dispatcher), handlers `api/_lib/lawn/handlers/`, and
   `api/_lib/lawn/`. There is no gate key; `lawn` is in `PUBLIC_DEMO_DIRS`.
 - The estimator APIs are public too, behind per-IP limits: 300 suggestions,
   40 lookups and 6 requests an hour.
@@ -127,3 +127,7 @@ checkout's build failed only on another session's unfinished
 frames at 0.26 and 0.74, lookup and auto-measure of a Stilwell address, erase brush,
 form validation, unconfigured submit, out-of-range lookup and request (20.2 mi vs
 15), API 403 without demo access, no horizontal overflow on the phone.
+
+## Deployment routing
+
+The three existing `/api/lawn-suggest`, `/api/lawn-lookup` and `/api/lawn-request` URLs rewrite to one `api/lawn.ts` function. Direct dispatch uses `/api/lawn?action=suggest|lookup|request`; legacy pathnames take precedence over query selectors. Vite mounts the same dispatcher locally. Handler validation, provider calls, response caching and per-action rate-limit scopes are unchanged. The shared function allows 20 seconds, matching the previous longest handler. This keeps the project within the existing function limit without a plan change.

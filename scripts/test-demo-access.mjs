@@ -167,7 +167,7 @@ test('Stillwater aliases use the pool access request and keep implementation pri
 })
 
 test('Trawsome is a public demo: page, media, source and rate-limited estimator need no access', async () => {
-  for (const path of ['/trawsome', '/trawsome/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%74rawsome', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-finished.webp', '/public/demos/lawn/edge.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request']) {
+  for (const path of ['/trawsome', '/trawsome/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%74rawsome', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-finished.webp', '/public/demos/lawn/edge.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request', '/api/lawn?action=suggest', '/api/lawn?action=lookup', '/api/lawn?action=request']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
   }
   assert.equal(access.demoKey('lawn'), 'roofers', 'Public demos have no access-request key')
