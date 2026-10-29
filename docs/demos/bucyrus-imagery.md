@@ -1,5 +1,11 @@
 # Bucyrus demo imagery
 
+## Official business logo
+
+The owner-supplied `Bucyrus Auto & Drivetrain/logo.jpg` was added on October 29, 2026. `public/media/bucyrus/logo.jpg` is an exact copy (960 × 960, approximately 41 KB). The header and footer use CSS to frame the original artwork, omitting its large surrounding margins. Its colors, lettering, gear, and roof symbol are unchanged. The same original supplies the favicon. This replaces the initial concept monogram.
+
+## Illustrative vehicle photography
+
 Generated on October 29, 2026 using the built-in image generation tool. These are illustrative American muscle car scenes; they do not depict Bucyrus Auto & Drivetrain premises or verified customer vehicles. Keep the on-page illustrative imagery disclosure. No original shop photographs were altered to create these scenes.
 
 Each result was visually inspected for a complete car, realistic proportions, usable composition, coherent dusk lighting, and absence of added shop signage or people. Vehicle marks appear as part of generated vehicles; no affiliation is implied.

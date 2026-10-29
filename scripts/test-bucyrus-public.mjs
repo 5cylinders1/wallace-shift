@@ -41,20 +41,22 @@ async function compile(relative) {
 }
 
 const { DEMO_PATHS, gateDemoRequest, isProtectedDemoPath } = await import(pathToFileURL(await compile('api/_lib/demo-access.ts')).href)
-const origin = 'https://contractors.wallaceshift.com'
+const origin = 'https://wallaceshift.com'
 const publicPaths = [
   '/bucyrus-auto', '/bucyrus-auto/',
   '/demos/bucyrus-auto', '/demos/bucyrus-auto/', '/demos/bucyrus-auto/index.html',
   '/src/demos/bucyrus-auto/main.tsx',
-  '/media/bucyrus/hero-1.webp', '/media/bucyrus/film-engine.webp',
+  '/media/bucyrus/hero-1.webp', '/media/bucyrus/film-engine.webp', '/media/bucyrus/logo.jpg',
 ]
 
 test('Bucyrus alias, document, source entry and imagery are public without a session or secret', async () => {
   for (const path of publicPaths) {
     assert.equal(isProtectedDemoPath(path), false, path)
     for (const method of ['GET', 'HEAD']) {
-      const response = await gateDemoRequest(new Request(origin + path, { method }))
-      assert.equal(response, null, `${method} ${path}`)
+      for (const host of [origin, 'https://contractors.wallaceshift.com']) {
+        const response = await gateDemoRequest(new Request(host + path, { method }))
+        assert.equal(response, null, `${method} ${host}${path}`)
+      }
     }
   }
 })
@@ -69,7 +71,7 @@ test('making Bucyrus public does not grant access to private peer demos or bundl
       assert.equal(response.headers.get('location'), `/request-demo/?demo=${demo}`, path)
     }
   }
-  for (const path of ['/demo-assets/private.js', '/src/demos/roofers/main.tsx', '/src/demos/lawn/main.tsx', '/demos/bucyrus-auto-private/index.html', '/src/demos/bucyrus-auto-private/main.tsx']) {
+  for (const path of ['/demo-assets/private.js', '/src/demos/roofers/main.tsx', '/demos/bucyrus-auto-private/index.html', '/src/demos/bucyrus-auto-private/main.tsx']) {
     assert.equal(isProtectedDemoPath(path), true, path)
     const response = await gateDemoRequest(new Request(origin + path))
     assert.equal(response?.status, path.endsWith('.html') ? 303 : 403, path)
@@ -102,6 +104,9 @@ function verifyDocumentMetadata(html, context) {
   const canonicals = tags.filter(tag => tag.rel?.toLowerCase() === 'canonical')
   assert.equal(canonicals.length, 1, `${context}: one canonical URL is required`)
   assert.equal(canonicals[0].href, `${origin}/bucyrus-auto`, context)
+  assert.equal(tags.find(tag => tag.property === 'og:url')?.content, `${origin}/bucyrus-auto`, context)
+  assert.equal(tags.find(tag => tag.property === 'og:image')?.content, `${origin}/media/bucyrus/hero-1.webp`, context)
+  assert.equal(tags.find(tag => tag.rel === 'icon')?.href, '/media/bucyrus/logo.jpg', context)
   assert.match(html, /<title>[^<]*Bucyrus Auto/i, `${context}: wrong document title`)
 }
 
@@ -133,6 +138,16 @@ test('Vercel exposes the dedicated alias and keeps the gallery at the contractor
     assert.ok(values.length, `Missing X-Robots-Tag header for ${path}`)
     assertNoindex(values.join(', '), path)
   }
+})
+
+test('old contractors alias redirects only that demo to the main domain', async () => {
+  const config = JSON.parse(await readFile(join(root, 'vercel.json'), 'utf8'))
+  const redirect = config.redirects.find(rule => rule.source === '/bucyrus-auto')
+  assert.ok(redirect, 'Missing old-host redirect')
+  assert.equal(redirect.destination, `${origin}/bucyrus-auto`)
+  assert.equal(redirect.permanent, true)
+  assert.deepEqual(redirect.has, [{ type: 'host', value: 'contractors.wallaceshift.com' }], 'Redirect must not match the main domain or change the gallery root')
+  assert.equal(config.trailingSlash, false, 'Trailing slash aliases normalize before the exact-path redirect')
 })
 
 test('dedicated source document is unindexed and canonicalizes to the public alias', async () => {
@@ -170,7 +185,7 @@ test('built Bucyrus document and its dependency graph use public emitted assets'
       pending.push(match[1].startsWith('/') ? match[1] : posix.resolve(posix.dirname(path), match[1]))
     }
   }
-  for (const path of ['/media/bucyrus/hero-1.webp', '/media/bucyrus/film-engine.webp']) {
+  for (const path of ['/media/bucyrus/hero-1.webp', '/media/bucyrus/film-engine.webp', '/media/bucyrus/logo.jpg']) {
     await fileAccess(join(root, 'dist', path.slice(1)))
     assert.equal(await gateDemoRequest(new Request(origin + path)), null, path)
   }

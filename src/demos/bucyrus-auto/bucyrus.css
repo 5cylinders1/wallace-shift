@@ -80,51 +80,35 @@ h1,h2,h3,p,figure {
   margin-left:18px;
 }
 .ba-header {
-  background:var(--ba-paper);
+  background:#eee;
 }
 .ba-header-inner {
-  height:96px;
+  height:132px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:28px;
 }
 .ba-wordmark {
-  display:flex;
-  gap:12px;
-  align-items:center;
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:25px;
-  font-weight:700;
-  line-height:.95;
-  letter-spacing:.025em;
-  flex-shrink:0;
-}
-.ba-wordmark small {
   display:block;
-  font-family:'DM Sans',sans-serif;
-  font-size:10px;
-  letter-spacing:.25em;
-  margin-top:9px;
+  flex-shrink:0;
+  background:#eee;
 }
-.ba-mark {
+.ba-logo-window {
+  display:block;
   position:relative;
-  background:var(--ba-blue);
-  color:white;
-  width:45px;
-  height:47px;
-  display:grid;
-  place-items:center;
-  font-style:italic;
-  font-size:35px;
-  border-radius:1px;
+  width:180px;
+  aspect-ratio:700 / 430;
+  overflow:hidden;
 }
-.ba-mark span {
+.ba-logo-window img {
+  /* Frame the original 960px square without changing the supplied artwork. */
   position:absolute;
-  right:2px;
-  top:0;
-  font-family:sans-serif;
-  font-size:20px;
+  width:137.142857%;
+  max-width:none;
+  height:auto;
+  left:-18.571429%;
+  top:-61.627907%;
 }
 .ba-header nav {
   display:flex;
@@ -638,6 +622,9 @@ h2 em {
   gap:20px;
   padding-bottom:36px;
 }
+.ba-footer .ba-wordmark {
+  padding:12px;
+}
 .ba-footer-top>p {
   font-family:'Barlow Condensed',sans-serif;
   font-size:28px;
@@ -699,22 +686,13 @@ h2 em {
     display:none;
   }
   .ba-header-inner {
-    height:80px;
+    height:112px;
     gap:12px;
     flex-wrap:wrap;
     align-content:center;
   }
-  .ba-wordmark {
-    font-size:21px;
-    gap:9px;
-  }
-  .ba-wordmark small {
-    font-size:8px;
-  }
-  .ba-mark {
-    width:37px;
-    height:40px;
-    font-size:29px;
+  .ba-logo-window {
+    width:150px;
   }
   .ba-header nav {
     display:none;
@@ -869,9 +847,6 @@ h2 em {
 @media(max-width:370px) {
   .ba-header-phone {
     font-size:10px;
-  }
-  .ba-wordmark {
-    font-size:19px;
   }
   .ba-hero h1 {
     font-size:68px;

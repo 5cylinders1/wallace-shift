@@ -2,6 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/bucyrus-auto",
+      "has": [{ "type": "host", "value": "contractors.wallaceshift.com" }],
+      "destination": "https://wallaceshift.com/bucyrus-auto",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/bucyrus-auto/:path*",

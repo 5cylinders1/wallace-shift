@@ -1,8 +1,21 @@
 # Bucyrus demo validation
 
-Checked October 29, 2026. See the latest routing check below; earlier sections record the design iterations.
+Checked October 29, 2026. See the latest check below; earlier sections record the design iterations.
 
-## Public route correction — latest check
+## Official logo and main-domain move — latest check
+
+The current production target is **https://wallaceshift.com/bucyrus-auto**. Canonical and Open Graph metadata use that domain. A permanent redirect is restricted to the former contractors-host Bucyrus alias, preserving the contractors collection homepage. The public route and `noindex, nofollow` controls remain in place.
+
+The actual supplied logo replaces the concept monogram in both header and footer, and the favicon uses the supplied artwork. The public JPEG is byte-for-byte identical to the 960 × 960 original (41 KB); CSS frames out surrounding whitespace. Fixed aspect ratio and explicit image dimensions reserve its layout space.
+
+- Full production build, cinematic timeline tests, seven public route/metadata/asset regression tests, focused ESLint, and whitespace checks passed.
+- Browser inspection at 390 × 844 and 1440 × 1000 confirmed both logo images loaded, visible branding, and no horizontal overflow. Footer keyboard focus remained visible.
+- Before this change was published, the apex URL already returned HTTP 200 anonymously with `X-Robots-Tag: noindex, nofollow`; it was still serving the previous branding. This live response is not verification of the new release.
+- Screenshots: `output/bucyrus/logo-mobile.jpg`, `output/bucyrus/logo-desktop.jpg` (local ignored output).
+
+Commit message: `fix: use official Bucyrus logo and move demo to main domain`
+
+## Earlier public route correction
 
 Bucyrus now lives at `/bucyrus-auto`, backed by `/demos/bucyrus-auto/index.html` and `src/demos/bucyrus-auto/`. Production URL after deployment is **https://contractors.wallaceshift.com/bucyrus-auto**. The contractors homepage, styles, entry metadata, and documentation were restored exactly from the original committed version. No tile was added.
 
