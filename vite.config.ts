@@ -188,6 +188,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
+        if (/^\/(?:bucyrus-auto(?:\/|$)|demos\/bucyrus-auto(?:\/|$))/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -220,7 +221,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -247,6 +248,7 @@ function roofingDemoRoutes(): Plugin {
         '/stratum': '/demos/roofers-6/index.html',
         '/stillwater': '/demos/pools/index.html',
         '/mitre': '/demos/cabinetry-2/index.html',
+        '/bucyrus-auto': '/demos/bucyrus-auto/index.html',
       }
       if (destinations[alias]) {
         req.url = `${destinations[alias]}${url.search}`
@@ -262,7 +264,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `/demos/cabinetry/index.html${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|contractors)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -290,6 +292,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         main: 'index.html',
         roofersOffer: 'demos/roofers-offer/index.html',
         contractors: 'demos/contractors/index.html',
+        bucyrusAuto: 'demos/bucyrus-auto/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',

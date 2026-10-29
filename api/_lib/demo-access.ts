@@ -35,8 +35,8 @@ export type AdminPendingGrant = GrantBase & { kind: 'admin-pending' }
 export type AdminSessionGrant = GrantBase & { kind: 'admin-session' }
 export type DemoGrant = InviteGrant | SessionGrant | ProofGrant | AdminPendingGrant | AdminSessionGrant
 const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg'])
-/** Collection landers are public; every other demo directory is gated. */
-const PUBLIC_DEMO_DIRS = new Set(['roofers-offer', 'contractors'])
+/** Collection landers and the unlisted Bucyrus demo are public; other demos are gated. */
+const PUBLIC_DEMO_DIRS = new Set(['roofers-offer', 'contractors', 'bucyrus-auto'])
 const COUNTER_ENV = ['RATE_LIMIT_REDIS_URL', 'RATE_LIMIT_REDIS_TOKEN', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
 const counters = new Map<string, { count: number; until: number }>()
 
@@ -71,7 +71,7 @@ function protectedPath(pathname: string): { demo: DemoKey; document: boolean } |
     return { demo: demoKey(parts[2]), document: !/\.[^/]+$/.test(path) || /\.html$/.test(path) }
   }
   if (path === '/demo-assets' || path.startsWith('/demo-assets/') || /^\/api\/roof-/.test(path)) return { demo: 'roofers', document: false }
-  if (/^\/src\/demos(?:\/|$)/.test(path) && !/^\/src\/demos\/(?:roofers-offer|contractors)(?:\/|$)/.test(path)) return { demo: 'roofers', document: false }
+  if (/^\/src\/demos(?:\/|$)/.test(path) && !/^\/src\/demos\/(?:roofers-offer|contractors|bucyrus-auto)(?:\/|$)/.test(path)) return { demo: 'roofers', document: false }
   if (/^\/src\/roofing-dashboard(?:\/|$)/.test(path)) return { demo: 'roofers-dashboard', document: false }
   // Vite also accepts public-file and absolute-filesystem paths during local development.
   if (path.startsWith('/dist/')) return protectedPath(path.slice('/dist'.length))
