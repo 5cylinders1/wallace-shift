@@ -10,6 +10,7 @@ Reviewed October 29, 2026. This is a demo, not an owner-approved business websit
 | Bucyrus, Kansas | BBB and Facebook page title | Use city and state. |
 | (913) 420-9865 | BBB profile; corroborated by [Nears.me listing](https://autorepair-usa.nears.me/business/united-states/kansas/bucyrus-1/trusted-bucyrus-auto-drivetrain-llc-bucyrus-ks/) | Use as public business phone and click-to-call destination. |
 | Auto repair / drivetrain | BBB categorizes the business as auto repair. Drivetrain is in its name and described by [LocalityBiz](https://localitybiz.com/kansas/auto-maintenance-shops-in-kansas). | Use broad category only; do not imply a verified detailed service menu. |
+| Standard maintenance / modifications and upgrades | User explicitly requested these service categories for the demo after reviewing the initial page. | Include as user-directed demo content. Maintenance examples are enquiry prompts; modification copy invites discussion of vehicle goals. Detailed capability remains subject to shop confirmation. |
 
 Form topics and symptom examples are enquiries, not promises that the shop performs every listed repair. Actual scope and appointment availability require the shop's confirmation.
 

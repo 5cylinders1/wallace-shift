@@ -9,12 +9,10 @@
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { isRateLimited, queryOf, sendJson } from './_lib/roof/http.js'
-import { geocoderFromEnv } from './_lib/roof/geocoder.js'
-import { searchBias } from './_lib/lawn/config.js'
-import { handleLawn, sendLawnError } from './_lib/lawn/http.js'
-
-export const config = { maxDuration: 10 }
+import { isRateLimited, queryOf, sendJson } from '../../roof/http.js'
+import { geocoderFromEnv } from '../../roof/geocoder.js'
+import { searchBias } from '../config.js'
+import { handleLawn, sendLawnError } from '../http.js'
 
 /** Keystroke-driven, so generous; this only stops scripted abuse. */
 const RATE_LIMIT = 300

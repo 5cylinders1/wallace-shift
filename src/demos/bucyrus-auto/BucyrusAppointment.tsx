@@ -132,7 +132,7 @@ export default function BucyrusAppointment() {
         </div>
         <div className="ba-field ba-field-wide">
           <label htmlFor={`${id}-service`}>What can we help with? *</label>
-          <textarea {...fieldProps('service')} required maxLength={2000} rows={4} onChange={event => update('service', event.target.value)} placeholder="Describe the issue, when it happens, or the service you’d like to discuss." />
+          <textarea {...fieldProps('service')} required maxLength={2000} rows={4} onChange={event => update('service', event.target.value)} placeholder="Tell us about a repair, maintenance that’s due, or a modification you have in mind." />
           {fieldError('service')}
         </div>
       </div>

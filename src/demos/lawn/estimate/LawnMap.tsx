@@ -1,23 +1,27 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 import { loadImage } from './api'
-import { brush, lawnSqFt, measureLawn, type LawnMask } from './measure'
+import { edgeDistanceSq } from './geo'
+import { autoHome, brush, lawnSqFt, measureLawn, type HomeChoice, type LawnMask } from './measure'
 import type { LawnLookup } from './types'
 
 export type Tool = 'look' | 'add' | 'erase'
 
 interface Props {
   data: LawnLookup
-  home: string | null
+  /** null until the aerial is read, when the map chooses the house itself. */
+  home: HomeChoice | null
   tool: Tool
   /** Bumped by "Reset" to restore the automatic answer. */
   resetKey: number
-  onHome: (id: string) => void
+  onHome: (home: HomeChoice) => void
   /** null: the aerial couldn't be read, so the lawn must be sized by hand. */
   onArea: (sqft: number | null, edited: boolean) => void
 }
 
 /** Brush radius on the ground. */
 const BRUSH_M = 2.4
+/** A tap this close to an outline picks it: a fingertip covers a few metres. */
+const TAP_SNAP_M = 3
 const STRIPE_PX = 14
 
 type Status = 'loading' | 'ready' | 'failed'
@@ -28,7 +32,7 @@ function pointerToMask(event: PointerEvent<HTMLCanvasElement>, size: number): [n
 }
 
 /** Lawn as alternating mowing stripes, its edge as a fine bright line, outlines on top. */
-function paint(canvas: HTMLCanvasElement, mask: LawnMask, home: string | null) {
+function paint(canvas: HTMLCanvasElement, mask: LawnMask, home: HomeChoice | null) {
   const { size, lawn } = mask
   const ctx = canvas.getContext('2d')!
   const image = ctx.createImageData(size, size)
@@ -50,19 +54,35 @@ function paint(canvas: HTMLCanvasElement, mask: LawnMask, home: string | null) {
     }
   }
   ctx.putImageData(image, 0, 0)
-  for (const { id, ring } of mask.rings) {
+  const homeId = home && 'outline' in home ? home.outline : null
+  const trace = (ring: [number, number][]) => {
     ctx.beginPath()
     ring.forEach(([x, y], index) => (index ? ctx.lineTo(x, y) : ctx.moveTo(x, y)))
     ctx.closePath()
-    const isHome = id === home
-    ctx.setLineDash(isHome ? [] : [3, 3])
-    ctx.lineWidth = isHome ? 1.6 : 1
-    ctx.strokeStyle = isHome ? 'rgba(255, 214, 120, 0.95)' : 'rgba(255, 255, 255, 0.55)'
+  }
+  const highlight = (dash: number[]) => {
+    ctx.setLineDash(dash)
+    ctx.lineWidth = 1.6
+    ctx.strokeStyle = 'rgba(255, 214, 120, 0.95)'
     ctx.stroke()
-    if (isHome) {
-      ctx.fillStyle = 'rgba(255, 214, 120, 0.16)'
-      ctx.fill()
+    ctx.fillStyle = 'rgba(255, 214, 120, 0.16)'
+    ctx.fill()
+  }
+  for (const { id, ring } of mask.rings) {
+    trace(ring)
+    if (id === homeId) {
+      highlight([])
+      continue
     }
+    ctx.setLineDash([3, 3])
+    ctx.lineWidth = 1
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)'
+    ctx.stroke()
+  }
+  // A house with no outline: its stand-in square, dashed because its shape is a guess.
+  if (!homeId) {
+    trace(mask.home)
+    highlight([6, 4])
   }
 }
 
@@ -111,14 +131,15 @@ export default function LawnMap({ data, home, tool, resetKey, onHome, onArea }: 
     }
   }, [data.imagery.infrared, size])
 
-  // Measure whenever the house changes or Reset is pressed.
+  // Measure whenever the house changes or Reset is pressed; choose the house first if needed.
   useEffect(() => {
     if (status !== 'ready' || !infrared.current) return
+    if (!home) return onHome(autoHome(infrared.current, data))
     const measured = measureLawn(infrared.current, data.frame, data.buildings, home)
     mask.current = measured
     onAreaLatest.current(lawnSqFt(measured), false)
     redraw()
-  }, [status, home, resetKey, data, redraw])
+  }, [status, home, resetKey, data, redraw, onHome])
 
   useEffect(() => () => cancelAnimationFrame(frame.current), [])
 
@@ -161,18 +182,27 @@ export default function LawnMap({ data, home, tool, resetKey, onHome, onArea }: 
     if (!current || !mask.current) return
     if (tool !== 'look') return onArea(lawnSqFt(mask.current), true)
     if (current.moved) return
-    // A tap on another outline: that one is the house.
+    // A tap on an outline makes that the house; anywhere else marks a house
+    // the building data doesn't have yet.
     const [x, y] = pointerToMask(event, size)
-    const hit = mask.current.rings.find(({ ring }) => {
-      let inside = false
+    const { rings, metersPerPx } = mask.current
+    const inside = rings.find(({ ring }) => {
+      let within = false
       for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
         const [xi, yi] = ring[i]
         const [xj, yj] = ring[j]
-        if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside
+        if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) within = !within
       }
-      return inside
+      return within
     })
-    if (hit && hit.id !== home) onHome(hit.id)
+    const snap = (TAP_SNAP_M / metersPerPx) ** 2
+    const near = rings
+      .map((ring) => ({ ring, distanceSq: edgeDistanceSq(x, y, ring.ring) }))
+      .filter(({ distanceSq }) => distanceSq <= snap)
+      .sort((a, b) => a.distanceSq - b.distanceSq)[0]?.ring
+    const hit = inside ?? near
+    if (!hit) return onHome({ spot: [x, y] })
+    if (!home || !('outline' in home) || hit.id !== home.outline) onHome({ outline: hit.id })
   }
 
   const brushPx = BRUSH_M / (data.frame.viewM / size)

@@ -10,7 +10,7 @@ about the business is invented.
   (no access request, email code or agreement) and unindexed: `noindex` meta plus
   an `X-Robots-Tag` header on `/trawsome` and `/demos/lawn`. Send Ben that link.
 - Document `demos/lawn/index.html` (built in the public pass, like Bucyrus), code
-  `src/demos/lawn/`, media `public/demos/lawn/`, functions `api/lawn-*.ts` and
+  `src/demos/lawn/`, media `public/demos/lawn/`, function `api/lawn.ts` (shared dispatcher), handlers `api/_lib/lawn/handlers/`, and
   `api/_lib/lawn/`. There is no gate key; `lawn` is in `PUBLIC_DEMO_DIRS`.
 - The estimator APIs are public too, behind per-IP limits: 300 suggestions,
   40 lookups and 6 requests an hour.
@@ -73,8 +73,17 @@ so no warping was applied. `scripts/lawn/export.py` writes the WebP set and
    with the pool, trees and drive excluded. NAIP is public domain, which is why
    it is analysed and Mapbox/Google imagery is not (their terms forbid deriving
    data from imagery).
-4. **Adjust**: tap another outline to pick the house; paint or erase lawn; Reset;
-   or type a size. Keyboard users can use the typed size.
+   **New builds** are often missing from both outline datasets (found 2026-10-29
+   on a new south Overland Park street: the page picked the house next door and
+   the real one couldn't be tapped). Now, when a rooftop/parcel address has no
+   outline within 15 m, the server samples NAIP at the point (`getSamples`); on
+   roof (NDVI < 0.1) it frames the address, not the neighbour. The page makes the
+   same check on its infrared (`autoHome`) and marks the house with a dashed
+   stand-in square the size of the neighbours' median outline. On grass (a big
+   lot's parcel point) the nearest outlined house is still chosen.
+4. **Adjust**: tap your house to pick it: an outline (taps within 3 m snap to it),
+   or anywhere else to mark an unmapped house; paint or erase lawn; Reset; or type
+   a size. Keyboard users can use the typed size.
 5. **Price** (`estimate/pricing.ts`, shared with the server): base + rate per
    1,000 sq ft, times a frequency factor, never under the minimum, shown as a ±
    spread. Until the rates are set the page says "Sample rates for this concept."
@@ -127,3 +136,7 @@ checkout's build failed only on another session's unfinished
 frames at 0.26 and 0.74, lookup and auto-measure of a Stilwell address, erase brush,
 form validation, unconfigured submit, out-of-range lookup and request (20.2 mi vs
 15), API 403 without demo access, no horizontal overflow on the phone.
+
+## Deployment routing
+
+The three existing `/api/lawn-suggest`, `/api/lawn-lookup` and `/api/lawn-request` URLs rewrite to one `api/lawn.ts` function. Direct dispatch uses `/api/lawn?action=suggest|lookup|request`; legacy pathnames take precedence over query selectors. Vite mounts the same dispatcher locally. Handler validation, provider calls, response caching and per-action rate-limit scopes are unchanged. The shared function allows 20 seconds, matching the previous longest handler. This keeps the project within the existing function limit without a plan change.

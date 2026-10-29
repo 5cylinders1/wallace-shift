@@ -16,14 +16,12 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import {
   CONTACT_METHODS, EXTRAS, FREQUENCIES, TIMINGS,
   type ContactMethod, type Extra, type Frequency, type Timing,
-} from '../src/demos/lawn/estimate/types.js'
-import { MAX_LAWN_SQFT, MIN_LAWN_SQFT, visitPrice } from '../src/demos/lawn/estimate/pricing.js'
-import { header, isRateLimited, sendJson } from './_lib/roof/http.js'
-import { mailFromEnv, pricingFromEnv, rangeOf } from './_lib/lawn/config.js'
-import { LawnError, handleLawn, sendLawnError } from './_lib/lawn/http.js'
-import { locate } from './_lib/lawn/lookup.js'
-
-export const config = { maxDuration: 15 }
+} from '../../../../src/demos/lawn/estimate/types.js'
+import { MAX_LAWN_SQFT, MIN_LAWN_SQFT, visitPrice } from '../../../../src/demos/lawn/estimate/pricing.js'
+import { header, isRateLimited, sendJson } from '../../roof/http.js'
+import { mailFromEnv, pricingFromEnv, rangeOf } from '../config.js'
+import { LawnError, handleLawn, sendLawnError } from '../http.js'
+import { locate } from '../lookup.js'
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails'
 const MAX_BYTES = 12_000

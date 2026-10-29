@@ -43,6 +43,18 @@
   ],
   "rewrites": [
     {
+      "source": "/api/lawn-suggest",
+      "destination": "/api/lawn?action=suggest"
+    },
+    {
+      "source": "/api/lawn-lookup",
+      "destination": "/api/lawn?action=lookup"
+    },
+    {
+      "source": "/api/lawn-request",
+      "destination": "/api/lawn?action=request"
+    },
+    {
       "source": "/bucyrus-auto",
       "destination": "/demos/bucyrus-auto"
     },

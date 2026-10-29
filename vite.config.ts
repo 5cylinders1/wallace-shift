@@ -125,9 +125,10 @@ const DEV_API_ROUTES: Record<string, string> = {
   '/api/roof-lookup': '/api/roof-lookup.ts',
   '/api/roof-measure': '/api/roof-measure.ts',
   '/api/roof-render': '/api/roof-render.ts',
-  '/api/lawn-suggest': '/api/lawn-suggest.ts',
-  '/api/lawn-lookup': '/api/lawn-lookup.ts',
-  '/api/lawn-request': '/api/lawn-request.ts',
+  '/api/lawn': '/api/lawn.ts',
+  '/api/lawn-suggest': '/api/lawn.ts',
+  '/api/lawn-lookup': '/api/lawn.ts',
+  '/api/lawn-request': '/api/lawn.ts',
 }
 
 function devApiRoutes(): Plugin {

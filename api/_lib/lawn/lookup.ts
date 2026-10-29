@@ -14,7 +14,7 @@
 import type { Credit, LatLng, LawnBuilding, LawnFrame, LawnLookup } from '../../../src/demos/lawn/estimate/types.js'
 import { footprintSourcesFromEnv } from '../roof/footprints.js'
 import { geocoderFromEnv } from '../roof/geocoder.js'
-import { RoofError, deadlineIn } from '../roof/http.js'
+import { RoofError, deadlineIn, fetchJson, type Deadline } from '../roof/http.js'
 import { measureBuildings } from '../roof/measure.js'
 import { localMeters } from '../roof/polygon.js'
 import { pricingFromEnv, rangeOf, searchBias } from './config.js'
@@ -33,7 +33,13 @@ export const HOUSE_MIN_SQFT = 800
 const VIEW_M = { min: 70, max: 160, perNeighbourM: 2.4 }
 export const FRAME_SIZE = 640
 
-const NAIP = 'https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage'
+const NAIP_SERVICE = 'https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer'
+const NAIP = `${NAIP_SERVICE}/exportImage`
+/** Roof or paving reads below this vegetation index; lawn and trees read well above. */
+const MAX_ROOF_NDVI = 0.1
+/** The address and four points this far around it: three or more on roof means a house. */
+const ROOF_PROBE_M = 2
+const ROOF_SAMPLES_MS = 3000
 const NAIP_CREDITS: Credit[] = [
   { text: 'Imagery: NAIP, USDA FPAC Business Center' },
   { text: 'via USGS The National Map', href: 'https://www.usgs.gov/programs/national-geospatial-program/national-map' },
@@ -57,6 +63,34 @@ function naipUrl(frame: LawnFrame, pixels: number, bands: string | null): string
   // Near-infrared, red, green as the image's R, G, B: grass and trees glow in R.
   if (bands) params.set('bandIds', bands)
   return `${NAIP}?${params}`
+}
+
+/**
+ * Whether the address point is on a roof, read from the NAIP bands at a few
+ * points (its R, G, B, NIR values). Null when the imagery can't say in time.
+ */
+async function onRoof(point: LatLng, deadline: Deadline): Promise<boolean | null> {
+  const dLat = ROOF_PROBE_M / 111_320
+  const dLng = dLat / Math.cos((point.lat * Math.PI) / 180)
+  const points = [[0, 0], [dLng, 0], [-dLng, 0], [0, dLat], [0, -dLat]].map(([x, y]) => [point.lng + x, point.lat + y])
+  const params = new URLSearchParams({
+    geometry: JSON.stringify({ points, spatialReference: { wkid: 4326 } }),
+    geometryType: 'esriGeometryMultipoint',
+    returnFirstValueOnly: 'true',
+    f: 'json',
+  })
+  try {
+    const body = (await fetchJson(`${NAIP_SERVICE}/getSamples?${params}`, { deadline, timeoutMs: ROOF_SAMPLES_MS })) as { samples?: { value?: string }[] } | null
+    const ndvi = (body?.samples ?? []).map(({ value }) => {
+      const [red, , , nir] = String(value ?? '').split(/\s+/).map(Number)
+      return (nir - red) / (nir + red)
+    }).filter(Number.isFinite)
+    if (ndvi.length < 3) return null
+    return ndvi.filter((value) => value < MAX_ROOF_NDVI).length >= 3
+  } catch (error) {
+    if (error instanceof RoofError) return null
+    throw error
+  }
 }
 
 const centroid = (ring: LatLng[]): LatLng => ({
@@ -106,7 +140,13 @@ export async function lawnLookup(target: LookupTarget): Promise<{ lookup: LawnLo
   const onBuilding = place.precision === 'rooftop' || place.precision === 'parcel'
   const nearest = buildings[0] ?? null
   const home = nearest && onBuilding && nearest.distanceM <= HOME_WITHIN_M ? nearest : null
-  const { center, viewM } = viewFor(home ?? (nearest && nearest.distanceM <= HOME_WITHIN_M * 2 ? nearest : null), buildings, place.location)
+  const close = nearest && nearest.distanceM <= HOME_WITHIN_M * 2 ? nearest : null
+  // A precise address on a roof with no outline is a house newer than the
+  // building data: frame the address, not the house next door. On grass (a
+  // big lot's parcel point), the nearest house is still the one to frame.
+  // The page makes the same check to choose the house (estimate/measure.ts).
+  const unmapped = !home && close && onBuilding ? await onRoof(place.location, deadline) : false
+  const { center, viewM } = viewFor(home ?? (unmapped === false ? close : null), buildings, place.location)
   const frame: LawnFrame = { center, viewM, size: FRAME_SIZE }
 
   return {

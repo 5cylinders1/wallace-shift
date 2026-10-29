@@ -3,6 +3,7 @@ import { business } from '../content'
 import AddressSearch, { type AddressTarget } from './AddressSearch'
 import { ERROR_TEXT, lookup } from './api'
 import LawnMap, { type Tool } from './LawnMap'
+import type { HomeChoice } from './measure'
 import { MAX_LAWN_SQFT, MIN_LAWN_SQFT, SQFT_PER_ACRE, visitPrice } from './pricing'
 import RequestForm from './RequestForm'
 import type { Frequency, LawnErrorCode, LawnLookup } from './types'
@@ -13,7 +14,7 @@ const FREQUENCY_LABELS: Record<Frequency, { label: string; note: string }> = {
   once: { label: 'One-time', note: 'A single mow, no schedule' },
 }
 const TOOLS: { id: Tool; label: string; hint: string }[] = [
-  { id: 'look', label: 'Pick house', hint: 'Tap your house if we chose the wrong one.' },
+  { id: 'look', label: 'Pick house', hint: 'Tap your house if we chose the wrong one, outlined or not.' },
   { id: 'add', label: 'Add lawn', hint: 'Paint over grass we missed.' },
   { id: 'erase', label: 'Remove', hint: 'Paint over beds, gardens or areas to skip.' },
 ]
@@ -29,7 +30,7 @@ export default function Estimator() {
   const id = useId()
   const panel = useRef<HTMLDivElement>(null)
   const [state, setState] = useState<State>({ step: 'search', error: null })
-  const [home, setHome] = useState<string | null>(null)
+  const [home, setHome] = useState<HomeChoice | null>(null)
   const [tool, setTool] = useState<Tool>('look')
   const [resetKey, setResetKey] = useState(0)
   const [area, setArea] = useState<{ sqft: number | null; edited: boolean }>({ sqft: null, edited: false })
@@ -41,7 +42,8 @@ export default function Estimator() {
     setState({ step: 'loading', label: target.label })
     const result = await lookup('id' in target ? { id: target.id } : { address: target.address })
     if (!result.ok) return setState({ step: 'search', error: result.error })
-    setHome(result.home ?? result.buildings[0]?.id ?? null)
+    // The map chooses the house once it has read the aerial.
+    setHome(null)
     setTool('look')
     setArea({ sqft: null, edited: false })
     setManual(false)
@@ -141,7 +143,7 @@ export default function Estimator() {
                     <button key={item.id} type="button" role="radio" aria-checked={tool === item.id} onClick={() => setTool(item.id)}>{item.label}</button>
                   ))}
                 </div>
-                <p className="tw-tools-hint">{activeTool.hint} {area.edited && <button type="button" className="tw-link" onClick={() => { setResetKey((key) => key + 1); setTool('look') }}>Reset</button>}</p>
+                <p className="tw-tools-hint">{activeTool.hint}{tool === 'look' && home && 'spot' in home && ' Yours isn’t in the building outlines yet, so a dashed square marks it.'} {area.edited && <button type="button" className="tw-link" onClick={() => { setResetKey((key) => key + 1); setTool('look') }}>Reset</button>}</p>
               </div>
             )}
 
