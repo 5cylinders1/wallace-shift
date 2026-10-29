@@ -17,7 +17,7 @@ function Hero() {
     <div className="ba-wrap ba-hero-content">
       <p className="ba-eyebrow"><span /> BUCYRUS, KANSAS</p>
       <h1 id="ba-title">For the love<br />of the <em>drive.</em></h1>
-      <p className="ba-hero-lede">Auto repair. Drivetrain care.<br />A local shop for the road ahead.</p>
+      <p className="ba-hero-lede">Repair. Maintenance. Modifications.<br />Auto and drivetrain care in Bucyrus.</p>
       <a className="ba-button" href="#appointment">Request an appointment <Arrow /></a>
       <a className="ba-hero-phone" href={PHONE}>Or give us a call <strong>(913) 420-9865</strong></a>
     </div>
@@ -43,13 +43,14 @@ export default function BucyrusAuto() {
         <div className="ba-section-heading">
           <p className="ba-eyebrow">01 / WHAT BRINGS YOU IN?</p>
           <h2 id="care-title">Every drive starts<br />with the <em>details.</em></h2>
-          <p>A new sound. A change in the way it drives. Something that just feels off. Tell us what you’re noticing and let’s start there.</p>
+          <p>From routine upkeep to a repair or a planned upgrade, tell us what your vehicle needs. We’ll start with a conversation.</p>
         </div>
         <div className="ba-care-list">
-          <a href="#appointment"><span className="ba-list-number">01</span><div><h3>Auto repair</h3><p>Tell us about your vehicle and what needs attention.</p></div><Arrow /></a>
-          <a href="#appointment"><span className="ba-list-number">02</span><div><h3>Drivetrain concerns</h3><p>A noise, vibration or change in shifting? Describe it here.</p></div><Arrow /></a>
-          <a href="#appointment"><span className="ba-list-number">03</span><div><h3>Not sure where to start?</h3><p>You don’t need the technical terms. Start with a conversation.</p></div><Arrow /></a>
-          <p className="ba-care-note">Call to confirm service availability for your vehicle.</p>
+          <a href="#appointment"><span className="ba-list-number">01</span><div><h3>Standard maintenance</h3><p>Oil changes, filters, fluids or scheduled upkeep? Tell us what’s due.</p></div><Arrow /></a>
+          <a href="#appointment"><span className="ba-list-number">02</span><div><h3>Auto repair</h3><p>Tell us about your vehicle and what needs attention.</p></div><Arrow /></a>
+          <a href="#appointment"><span className="ba-list-number">03</span><div><h3>Drivetrain concerns</h3><p>A noise, vibration or change in shifting? Describe it here.</p></div><Arrow /></a>
+          <a href="#appointment"><span className="ba-list-number">04</span><div><h3>Modifications &amp; upgrades</h3><p>Have an upgrade in mind? Let’s talk about your vehicle, your goals and the options.</p></div><Arrow /></a>
+          <p className="ba-care-note">Not sure where to start? Call to discuss your vehicle and confirm service availability.</p>
         </div>
       </section>
       <section className="ba-shop-section" id="shop" aria-labelledby="shop-title">
