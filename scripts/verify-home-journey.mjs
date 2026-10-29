@@ -679,7 +679,7 @@ await test('journey stays out of the static WebGL import graph and remeasures up
   }
 })
 
-await test('services remain in document flow with or without WebGL and motion', async () => {
+await test('services stay sticky on desktop, including WebGL fallback, with natural static mobile flow', async () => {
   const css = await read('src/components/HomeJourney/HomeJourney.css')
   const headerRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
     .flatMap(([, selectors, declarations]) => selectors.split(',').map(selector => ({ selector: selector.trim(), declarations })))
@@ -695,8 +695,8 @@ await test('services remain in document flow with or without WebGL and motion', 
     }
     return position
   }
-  assert.equal(positionFor(true, true), 'relative')
-  assert.equal(positionFor(true, false), 'relative', 'a rendering failure must not pin the heading over service copy')
+  assert.equal(positionFor(true, true), 'sticky')
+  assert.equal(positionFor(true, false), 'sticky', 'WebGL fallback retains the sticky services header')
   assert.equal(positionFor(false, false), 'relative')
   assert.match(await read('src/components/HomeJourney/HomeJourney.tsx'), /data-scroll=\{interactive\}/)
 })
@@ -767,4 +767,21 @@ await test('healthy Canvas fallback children do not report a WebGL failure', asy
     assert.equal(failures, 0, 'ordinary canvas children cannot trigger fallback state')
     assert.equal(ready, 0, 'DOM mounting alone is not a successfully rendered GLB frame')
   } finally { delete globalThis[effectKey] }
+})
+
+await test('compact services mark holds through the third row then moves down and grows for the redraw', () => {
+  const compact = { ...layout, servicesHeaderHeight: 134, servicesHeadingBaseline: 98,
+    servicesLogoWidth: 140, processHeadingBaseline: 245 }
+  const release = compact.servicesRowsBottom - compact.servicesHeaderHeight - compact.headerOffset
+  const start = sampleJourneyFrame(release, compact)
+  close(start.scale, 140 / compact.viewportWidth)
+  close(start.y, 1 - 2 * (compact.headerOffset + 98) / compact.viewportHeight)
+  const middle = sampleJourneyFrame((release + compact.processTop - compact.headerOffset) / 2, compact)
+  const end = sampleJourneyFrame(compact.processTop - compact.headerOffset, compact)
+  assert.ok(middle.y < start.y && middle.y > end.y, 'logo moves down continuously after the last row')
+  assert.ok(middle.scale > start.scale && middle.scale < end.scale, 'logo grows into the next chapter')
+  close(end.scale, servicesWidth / compact.viewportWidth)
+  close(end.y, 1 - 2 * (compact.headerOffset + 245) / compact.viewportHeight)
+  close(sampleJourneyFrame(release - 100, compact).y, start.y, 'logo holds before release')
+  close(sampleJourneyFrame(release, compact).y, start.y, 'reverse scrolling returns to the same pose')
 })
