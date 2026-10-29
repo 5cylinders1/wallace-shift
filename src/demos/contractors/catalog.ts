@@ -1,109 +1,139 @@
-/**
- * The contractors collection: one or more working demos per trade. This
- * file is the source of truth for the lander's cards. A trade moves from
- * `nextTrades` into `trades` only when its demo exists.
- */
+/** Individual demos in the contractor collection. Preview media is public;
+ * interactive routes continue through the existing demo-access agreement. */
+export type TradeCategoryId = 'roofing' | 'cabinetry' | 'pools' | 'foundation' | 'business'
 
 export interface TradeDemo {
   id: string
+  category: TradeCategoryId
   trade: string
   name: string
-  /** Shown as a small badge on the newest demos. */
-  isNew?: boolean
-  /** The demo shown in the lander's hero; the first new demo when none is set. */
   featured?: boolean
   summary: string
   features: string[]
   thumbnail: string
   thumbnailAlt: string
-  /** Path on the contractors host, and the local development entry. */
+  video: string
+  captions: string
+  durationSeconds: number
   productionPath: string
   localPath: string
-  /** Gate key for /request-demo, when the demo is private. */
-  accessKey?: string
-  /** A whole collection on its own host, rather than one demo here. */
-  collectionUrl?: string
-  count?: string
+  accessKey: string
+  disclosure: string
 }
+
+export const categories: { id: TradeCategoryId; name: string; description: string }[] = [
+  { id: 'roofing', name: 'Roofing', description: 'Six approaches to explaining a roof project, from a first estimate to a material study.' },
+  { id: 'cabinetry', name: 'Kitchens & cabinetry', description: 'Two ways to bring a room, its materials and the planning conversation into focus.' },
+  { id: 'pools', name: 'Pools & outdoor living', description: 'From an empty backyard to a pool plan worth discussing.' },
+  { id: 'foundation', name: 'Foundation repair', description: 'Make an unseen problem easier to understand before the inspection.' },
+  { id: 'business', name: 'Business systems', description: 'The team’s side of the work: sample customer records, follow-ups and inspections.' },
+]
+
+const preview = (id: string) => ({
+  thumbnail: `/media/demo-previews/${id}.jpg`,
+  video: `/media/demo-previews/${id}.mp4`,
+  captions: `/media/demo-previews/${id}.vtt`,
+  durationSeconds: 36,
+})
+const roofingDisclosure = 'Fictional demo brand. Estimator figures are illustrative planning ranges, not a quote.'
 
 export const trades: TradeDemo[] = [
   {
-    id: 'foundation',
-    trade: 'Foundation repair & waterproofing',
-    name: 'Datum',
-    isNew: true,
-    summary: 'A live 3D section through a house and the ground under it. Homeowners watch clay swell, shrink and freeze through a Kansas City year, then see each repair on the house it fixes.',
-    features: ['Live 3D section of the house and soil', 'Crack decoder with a page per symptom', 'Crack log, storm mode and a sample inspection report'],
-    thumbnail: '/demos/foundation/preview.jpg',
-    thumbnailAlt: 'Datum demo: a 3D cutaway of a ranch house, its basement and the soil layers beneath it',
-    productionPath: '/datum',
-    localPath: '/demos/foundation/',
-    accessKey: 'foundation',
+    id: 'northvane', category: 'roofing', trade: 'Roofing', name: 'Northvane Roofing',
+    summary: 'An architectural roof story leads into an estimator that turns roof size, material and project details into an illustrative planning range.',
+    features: ['Interactive roof transformation', 'Roof estimator'],
+    ...preview('northvane'), thumbnailAlt: 'Northvane Roofing: an architectural house and interactive roof estimator',
+    productionPath: '/northvane', localPath: '/demos/roofers/', accessKey: 'roofers', disclosure: roofingDisclosure,
   },
   {
-    id: 'roofing',
-    trade: 'Roofing',
-    name: 'The roofing collection',
-    count: 'Six concepts',
-    summary: 'A roofing CRM demonstration with sample customer records, follow-up worklists and inspections, alongside six customer-facing website concepts with estimators and visualizers.',
-    features: ['Sample CRM records and follow-up worklists', 'Roof estimators and visualizers', 'Storm and insurance guides'],
-    thumbnail: '/demos/roofers-6/preview.jpg',
-    thumbnailAlt: 'Stratum roofing demo: a live 3D house with its roof built up layer by layer',
-    productionPath: 'https://roofers.wallaceshift.com/',
-    localPath: '/demos/roofers-offer/',
-    collectionUrl: 'https://roofers.wallaceshift.com/',
+    id: 'alder-stone', category: 'roofing', trade: 'Roofing', name: 'Alder & Stone',
+    summary: 'A cinematic roof transformation sets the scene, with project planning, process and insurance guidance to support the next conversation.',
+    features: ['Film-led roof transformation', 'Project planning and homeowner guides'],
+    ...preview('alder-stone'), thumbnailAlt: 'Alder & Stone: a stone estate and cinematic roof transformation',
+    productionPath: '/alder-stone', localPath: '/demos/roofers-2/', accessKey: 'roofers-2', disclosure: roofingDisclosure,
   },
   {
-    id: 'cabinetry',
-    trade: 'Custom cabinetry, kitchens & baths',
-    name: 'Tambour',
-    isNew: true,
-    featured: false,
-    summary: 'Scroll and a kitchen is built in front of you: a blueprint over bare studs becomes a wireframe of the finished room, then rough-in, drywall, cabinetry and the kitchen itself. Real wood and stone samples and planning prices carry into a consultation request.',
-    features: ['Scroll-built kitchen, blueprint to finished room', 'Material library with a sample box', 'Planning prices and a stepped consultation request'],
-    thumbnail: '/demos/cabinetry/preview.jpg',
-    thumbnailAlt: 'Tambour demo: a finished white kitchen with a navy island, a plaster hood and brass lantern pendants',
-    productionPath: '/tambour',
-    localPath: '/demos/cabinetry/',
-    accessKey: 'cabinetry',
+    id: 'contour', category: 'roofing', trade: 'Roofing', name: 'Contour Roofing',
+    summary: 'An animated 3D survey introduces the roof, then an interactive estimator makes the project assumptions and planning range visible.',
+    features: ['Animated 3D roof survey', 'Interactive project estimate'],
+    ...preview('contour'), thumbnailAlt: 'Contour Roofing: an animated roof survey and project estimate',
+    productionPath: '/contour', localPath: '/demos/roofers-3/', accessKey: 'roofers-3', disclosure: roofingDisclosure,
   },
   {
-    id: 'cabinetry-2',
-    trade: 'Custom cabinetry, kitchens & baths',
-    name: 'Mitre & Rift',
-    isNew: true,
-    summary: 'An empty room fills with a kitchen as you scroll: rift oak cabinets rise into place, the stone is laid, the island slides in under its pendants and the light turns to evening. A rendered 3D film, timed like a showroom walk-through.',
-    features: ['Scroll-built kitchen, rendered in 3D', 'Day-to-dusk lighting change', 'Materials, process and planning call'],
-    thumbnail: '/demos/cabinetry-2/preview.jpg',
-    thumbnailAlt: 'Mitre & Rift demo: a rift oak kitchen at dusk with a fluted island, a quartzite waterfall top and three opal glass pendants',
-    productionPath: '/mitre',
-    localPath: '/demos/cabinetry-2/',
-    accessKey: 'cabinetry-2',
+    id: 'halcyon', category: 'roofing', trade: 'Roofing', name: 'Halcyon Roofworks',
+    summary: 'A cinematic estate tour leads to a roof photo study, material choices and planning prices, with a concept client ledger alongside the homeowner experience.',
+    features: ['Concept drone film', 'Photo visualizer and prepared material studies'],
+    ...preview('halcyon'), thumbnailAlt: 'Halcyon Roofworks: an estate roof and material preview studio',
+    productionPath: '/halcyon', localPath: '/demos/roofers-4/', accessKey: 'roofers-4',
+    disclosure: 'Fictional demo brand. Prepared visualizer studies and illustrative prices; the client ledger is a concept preview.',
   },
   {
-    id: 'pools',
-    trade: 'Custom pools & outdoor living',
-    name: 'Stillwater Pool Co.',
-    isNew: true,
-    featured: true,
-    summary: 'A backyard pool takes shape as you scroll, from the first plan through excavation, shell, finishes and water. Explore pool styles, then bring your ideas into a consultation planner.',
-    features: ['Scroll controlled backyard pool build', 'Pool style selector', 'Consultation planner'],
-    thumbnail: '/demos/pools/preview.jpg',
-    thumbnailAlt: 'Stillwater Pool Co. demo: a finished backyard swimming pool with a sun terrace and landscaped garden',
-    productionPath: '/stillwater',
-    localPath: '/demos/pools/',
-    accessKey: 'pools',
+    id: 'velar', category: 'roofing', trade: 'Roofing', name: 'Velar Roof Atelier',
+    summary: 'Compare prepared roof finishes against the same residence, explore planning prices, and see an interactive sample homeowner portal.',
+    features: ['Photo design studio with before-and-after comparison', 'Sample homeowner portal'],
+    ...preview('velar'), thumbnailAlt: 'Velar Roof Atelier: a luxury residence in the roof photo design studio',
+    productionPath: '/velar', localPath: '/demos/roofers-5/', accessKey: 'roofers-5',
+    disclosure: 'Fictional demo brand. Prepared roof studies and illustrative planning prices. Portal records are samples.',
+  },
+  {
+    id: 'stratum', category: 'roofing', trade: 'Roofing', name: 'Stratum Roofing Co.',
+    summary: 'One live 3D house connects a storm, roof anatomy and a new roof build. Its roof studio lets homeowners explore materials, dimensions and planning prices.',
+    features: ['Real-time 3D roof and layer-by-layer anatomy', 'Roof studio with dimensions and planning prices'],
+    ...preview('stratum'), thumbnailAlt: 'Stratum Roofing: a live 3D farmhouse with its roof layers exposed',
+    productionPath: '/stratum', localPath: '/demos/roofers-6/', accessKey: 'roofers-6', disclosure: roofingDisclosure,
+  },
+  {
+    id: 'tambour', category: 'cabinetry', trade: 'Kitchens & cabinetry', name: 'Tambour',
+    summary: 'A kitchen develops from blueprint to finished room as you scroll. Material samples and planning prices carry the idea into a consultation request.',
+    features: ['Blueprint-to-finished-kitchen story', 'Material library and consultation planner'],
+    ...preview('tambour'), thumbnailAlt: 'Tambour: a white kitchen with a navy island and brass pendants',
+    productionPath: '/tambour', localPath: '/demos/cabinetry/', accessKey: 'cabinetry',
+    disclosure: 'Fictional demo brand. Material selections and prices demonstrate a planning conversation.',
+  },
+  {
+    id: 'mitre', category: 'cabinetry', trade: 'Kitchens & cabinetry', name: 'Mitre & Rift',
+    summary: 'A rendered 3D film builds a rift oak kitchen in an empty room, then shifts the light to evening for a showroom-style walkthrough.',
+    features: ['Scroll-controlled 3D kitchen film', 'Day-to-dusk lighting'],
+    ...preview('mitre'), thumbnailAlt: 'Mitre & Rift: a rift oak kitchen with a stone waterfall island at dusk',
+    productionPath: '/mitre', localPath: '/demos/cabinetry-2/', accessKey: 'cabinetry-2',
+    disclosure: 'Fictional demo brand. The kitchen build is a rendered concept film.',
+  },
+  {
+    id: 'stillwater', category: 'pools', trade: 'Pools & outdoor living', name: 'Stillwater Pool Co.', featured: true,
+    summary: 'A backyard pool takes shape from excavation to water. Explore pool styles and gather project ideas in a consultation planner.',
+    features: ['Scroll-controlled pool construction', 'Pool style selector and consultation planner'],
+    ...preview('stillwater'), thumbnailAlt: 'Stillwater Pool Co.: a completed backyard pool and landscaped terrace',
+    productionPath: '/stillwater', localPath: '/demos/pools/', accessKey: 'pools',
+    disclosure: 'Fictional demo brand. Pool construction and project details are illustrative.',
+  },
+  {
+    id: 'datum', category: 'foundation', trade: 'Foundation repair', name: 'Datum',
+    summary: 'A 3D cutaway reveals the house, basement and soil through a Kansas City year. Explore symptoms and the repair approaches associated with them.',
+    features: ['Interactive house-and-soil cutaway', 'Crack decoder and sample inspection report'],
+    ...preview('datum'), thumbnailAlt: 'Datum: a 3D section through a ranch house, basement and soil',
+    productionPath: '/datum', localPath: '/demos/foundation/', accessKey: 'foundation',
+    disclosure: 'Fictional demo brand. Soil behavior, symptoms and inspection records are illustrative.',
+  },
+  {
+    id: 'roofing-crm', category: 'business', trade: 'Business systems', name: 'Roofing CRM workspace',
+    summary: 'Move through sample weather, customer records and a follow-up worklist, then see how a property can progress toward a sample inspection.',
+    features: ['Sample storm map and customer records', 'Follow-up worklist and inspection workflow'],
+    ...preview('roofing-crm'), thumbnailAlt: 'Roofing CRM workspace: sample weather, properties and inspection follow-ups',
+    productionPath: '/roofing-dashboard', localPath: '/roofing-dashboard/', accessKey: 'roofers-dashboard',
+    disclosure: 'Fictional weather, properties and customer records. Nothing is sent. Live integrations require implementation.',
   },
 ]
 
-/** Trades with demos planned next. Edit freely; nothing else reads this. */
 export const nextTrades = ['HVAC', 'Solar', 'Remodelers', 'Builders', 'General contractors', 'Flooring', 'Painting']
 
 export function demoHref(demo: TradeDemo, hostname: string): string {
-  if (demo.collectionUrl) return hostname.endsWith('wallaceshift.com') ? demo.collectionUrl : demo.localPath
   return hostname === 'contractors.wallaceshift.com' ? demo.productionPath : demo.localPath
 }
 
 export function accessHref(demo: TradeDemo): string {
-  return demo.accessKey ? `/request-demo/?demo=${encodeURIComponent(demo.accessKey)}` : '/request-demo/'
+  return `/request-demo/?demo=${encodeURIComponent(demo.accessKey)}`
+}
+
+export function previewDuration(seconds: number): string {
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 }

@@ -1,0 +1,15 @@
+{
+  "name": "wallace-shift-contractor-preview-production",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "node server.mjs",
+    "capture": "node capture.mjs",
+    "compose": "node compose.mjs",
+    "render": "node render.mjs"
+  },
+  "devDependencies": {
+    "hyperframes": "0.8.210",
+    "playwright": "1.62.1"
+  }
+}

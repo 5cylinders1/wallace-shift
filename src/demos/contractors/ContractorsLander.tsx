@@ -1,4 +1,6 @@
-import { accessHref, demoHref, nextTrades, trades, type TradeDemo } from './catalog'
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { accessHref, categories, nextTrades, previewDuration, trades, type TradeDemo } from './catalog'
+import DemoPreview from './DemoPreview'
 
 const STUDIO = 'https://www.wallaceshift.com'
 
@@ -13,33 +15,83 @@ function Wordmark() {
   </a>
 }
 
-function DemoCard({ demo, host }: { demo: TradeDemo; host: string }) {
-  const href = demoHref(demo, host)
+function DemoCard({ demo, onWatch }: { demo: TradeDemo; onWatch: (demo: TradeDemo) => void }) {
   return <article className="ct-demo">
-    <a className="ct-demo-image" href={href} aria-label={`${demo.collectionUrl ? 'Open' : 'View'} ${demo.name}, ${demo.trade}`}>
-      <img src={demo.thumbnail} alt={demo.thumbnailAlt} width="1200" height="630" loading="lazy" />
-      {demo.isNew && <span className="ct-badge">New</span>}
-    </a>
+    <button type="button" className="ct-demo-image" onClick={() => onWatch(demo)} aria-label={`Watch ${demo.name} demo, ${previewDuration(demo.durationSeconds)}`}>
+      <img src={demo.thumbnail} alt={demo.thumbnailAlt} width="1600" height="900" loading="lazy" />
+      <span className="ct-play" aria-hidden="true">▶</span>
+      <span className="ct-video-duration">{previewDuration(demo.durationSeconds)}</span>
+    </button>
     <div className="ct-demo-body">
-      <p className="ct-demo-trade">{demo.trade}{demo.count ? ` · ${demo.count}` : ''}</p>
+      <p className="ct-demo-trade">{demo.trade}</p>
       <h3>{demo.name}</h3>
       <p className="ct-demo-summary">{demo.summary}</p>
       <ul className="ct-features">{demo.features.map(feature => <li key={feature}>{feature}</li>)}</ul>
       <div className="ct-demo-actions">
-        {demo.collectionUrl
-          ? <a className="ct-link-strong" href={href}>Open the collection <Arrow diagonal /></a>
-          : <>
-            <a className="ct-link-strong" href={href}>View the demo <Arrow /></a>
-            <a className="ct-link" href={accessHref(demo)}>Request access</a>
-          </>}
+        <button type="button" className="ct-link-strong" onClick={() => onWatch(demo)}>Watch demo <span aria-hidden="true">▶</span></button>
+        <a className="ct-link" href={accessHref(demo)}>Request interactive access <Arrow diagonal /></a>
       </div>
     </div>
   </article>
 }
 
+function CategoryRow({ category, demos, onWatch }: { category: typeof categories[number]; demos: TradeDemo[]; onWatch: (demo: TradeDemo) => void }) {
+  const sliderRef = useRef<HTMLUListElement>(null)
+  const [position, setPosition] = useState({ first: 0, atEnd: false })
+  const multiple = demos.length > 1
+  const updatePosition = useCallback(() => {
+    const slider = sliderRef.current
+    if (!slider) return
+    const cards = Array.from(slider.children)
+    const left = slider.getBoundingClientRect().left
+    const first = cards.findIndex(card => card.getBoundingClientRect().right > left + 8)
+    setPosition(previous => {
+      const next = { first: Math.max(0, first), atEnd: slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 3 }
+      return previous.first === next.first && previous.atEnd === next.atEnd ? previous : next
+    })
+  }, [])
+  useEffect(() => {
+    const slider = sliderRef.current
+    if (!slider) return
+    const observer = new ResizeObserver(updatePosition)
+    observer.observe(slider)
+    return () => observer.disconnect()
+  }, [updatePosition])
+  function move(direction: number) {
+    const slider = sliderRef.current
+    if (!slider) return
+    const card = slider.children[0] as HTMLElement | undefined
+    const gap = Number.parseFloat(getComputedStyle(slider).columnGap) || 0
+    slider.scrollBy({ left: direction * ((card?.offsetWidth ?? slider.clientWidth) + gap), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+  }
+  function onKeyDown(event: KeyboardEvent<HTMLUListElement>) {
+    if (event.target !== event.currentTarget || !multiple) return
+    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+      event.preventDefault()
+      move(event.key === 'ArrowRight' ? 1 : -1)
+    }
+  }
+  return <section id={`category-${category.id}`} className="ct-category" aria-labelledby={`category-${category.id}-title`}>
+    <div className="ct-category-head">
+      <div><p className="ct-category-count">{String(demos.length).padStart(2, '0')} {demos.length === 1 ? 'demo' : 'demos'}</p><h3 id={`category-${category.id}-title`}>{category.name}</h3><p>{category.description}</p></div>
+      {multiple && <div className="ct-slider-controls">
+        <span className="ct-slider-position" aria-live="polite" aria-atomic="true">{position.first + 1} / {demos.length}</span>
+        <button type="button" aria-label={`Previous ${category.name.toLowerCase()} demo`} aria-controls={`slider-${category.id}`} disabled={position.first === 0} onClick={() => move(-1)}><span aria-hidden="true">←</span></button>
+        <button type="button" aria-label={`Next ${category.name.toLowerCase()} demo`} aria-controls={`slider-${category.id}`} disabled={position.atEnd} onClick={() => move(1)}><span aria-hidden="true">→</span></button>
+      </div>}
+    </div>
+    {multiple && <p id={`slider-${category.id}-help`} className="ct-slider-help">Swipe or use the arrows to explore. Keyboard: Tab through cards, or use arrow keys on the row.</p>}
+    <ul ref={sliderRef} id={`slider-${category.id}`} className={`ct-slider${multiple ? '' : ' ct-slider-single'}`} aria-label={`${category.name} demos`} aria-describedby={multiple ? `slider-${category.id}-help` : undefined} tabIndex={multiple ? 0 : undefined} onScroll={updatePosition} onKeyDown={onKeyDown}>
+      {demos.map(demo => <li key={demo.id}><DemoCard demo={demo} onWatch={onWatch} /></li>)}
+    </ul>
+  </section>
+}
+
 export default function ContractorsLander() {
-  const host = typeof window === 'undefined' ? '' : window.location.hostname
-  const featured = trades.find(demo => demo.featured) ?? trades.find(demo => demo.isNew) ?? trades[0]
+  const [activeDemo, setActiveDemo] = useState<TradeDemo | null>(null)
+  const watchDemo = useCallback((demo: TradeDemo) => setActiveDemo(demo), [])
+  const closePreview = useCallback(() => setActiveDemo(null), [])
+  const featured = trades.find(demo => demo.featured) ?? trades[0]
   return <div className="ct-site">
     <a className="ct-skip" href="#main">Skip to content</a>
     <div className="ct-dark">
@@ -58,16 +110,17 @@ export default function ContractorsLander() {
           <div className="ct-hero-copy">
             <p className="ct-eyebrow">Business systems for contractors / Demos</p>
             <h1 id="ct-title">Connect the first inquiry <em>to the work ahead.</em></h1>
-            <p className="ct-lede">Wallace Shift builds custom CRMs, practical AI integrations and workflow automation. These website and CRM concepts show parts of that wider system: helping customers explain what they need and helping your team see the next step.</p>
+            <p className="ct-lede">Wallace Shift builds custom CRMs, practical AI integrations and workflow automation. Explore short, public previews of website and CRM concepts: helping customers explain what they need and helping your team see the next step.</p>
             <div className="ct-actions">
-              <a className="ct-button" href="#demos">See the demos <Arrow /></a>
+              <a className="ct-button" href="#demos">Watch the demos <Arrow /></a>
               <a className="ct-button ct-button-line" href={`${STUDIO}/contact`}>Discuss your workflow</a>
             </div>
           </div>
-          <a className="ct-hero-feature" href={demoHref(featured, host)}>
+          <button type="button" className="ct-hero-feature" onClick={() => watchDemo(featured)} aria-label={`Watch ${featured.name} preview`}>
             <img src={featured.thumbnail} alt={featured.thumbnailAlt} width="1200" height="630" fetchPriority="high" />
-            <span className="ct-hero-feature-label"><span>New · {featured.trade}</span><strong>{featured.name} <Arrow /></strong></span>
-          </a>
+            <span className="ct-play" aria-hidden="true">▶</span>
+            <span className="ct-hero-feature-label"><span>{previewDuration(featured.durationSeconds)} · No access request needed</span><strong>Watch {featured.name} <Arrow /></strong></span>
+          </button>
         </section>
       </main>
     </div>
@@ -92,7 +145,9 @@ export default function ContractorsLander() {
           <p className="ct-eyebrow">The collection</p>
           <h2 id="demos-title">Explore the customer side <em>of the system.</em></h2>
         </div>
-        <div className="ct-demos">{trades.map(demo => <DemoCard key={demo.id} demo={demo} host={host} />)}</div>
+        <p className="ct-collection-intro">{trades.length} individual demos across {categories.length} categories. Watch any preview now; request access when you want to explore the interactive version.</p>
+        <nav className="ct-category-nav" aria-label="Browse demos by trade">{categories.map(category => <a key={category.id} href={`#category-${category.id}`}>{category.name}<span>{trades.filter(demo => demo.category === category.id).length}</span></a>)}</nav>
+        <div className="ct-category-rows">{categories.map(category => <CategoryRow key={category.id} category={category} demos={trades.filter(demo => demo.category === category.id)} onWatch={watchDemo} />)}</div>
         <div className="ct-next">
           <p className="ct-eyebrow">Planned for the collection</p>
           <ul>{nextTrades.map(trade => <li key={trade}>{trade}</li>)}</ul>
@@ -118,8 +173,8 @@ export default function ContractorsLander() {
     <section id="access" className="ct-dark ct-section" aria-labelledby="access-title">
       <div className="ct-wrap ct-access">
         <div>
-          <p className="ct-eyebrow">How access works</p>
-          <h2 id="access-title">See how it could fit. <em>Request a closer look.</em></h2>
+          <p className="ct-eyebrow">Go beyond the preview</p>
+          <h2 id="access-title">Watch freely. <em>Explore with access.</em></h2>
         </div>
         <ol className="ct-steps">
           <li><span>1</span><div><h3>Request access</h3><p>Tell us your name, business and email. We review each request personally.</p></div></li>
@@ -129,6 +184,8 @@ export default function ContractorsLander() {
         <a className="ct-button" href="/request-demo/">Request access <Arrow diagonal /></a>
       </div>
     </section>
+
+    {activeDemo && <DemoPreview key={activeDemo.id} demo={activeDemo} onClose={closePreview} />}
 
     <footer className="ct-dark ct-footer">
       <div className="ct-wrap ct-footer-inner">
