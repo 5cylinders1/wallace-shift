@@ -1,0 +1,288 @@
+{
+  "id": "halcyon",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/higgsfield-grady-source.mp3",
+  "sourceSha256": "836c5a7498fc6289f66df33988eab723137a5348fe7d5da9612d318ef48d487f",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in the supplied browser evidence; no hidden identifier inferred.",
+    "originalExportName": null,
+    "quotedCredits": 6,
+    "quotedCreditsEvidence": "Root agent's direct generation handoff. The retained screenshot already shows the next Stratum form and its separate quote.",
+    "browserEvidence": "output/narrated-previews/halcyon/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The Halcyon history row displays Grady and Seed Audio 1.0. The left form is already on the subsequent Stratum narration."
+  },
+  "alignmentReview": {
+    "status": "ASR alignment reviewed with disclosed proper-name aliases; subjective listening and final caption review pending",
+    "method": "Unprompted offline faster-whisper base.en recognition of the original take and an independent closing crop. Exact script matching follows recognition, with explicit Wallace Schiff/Wallace Shift proper-name aliases. Sentence timing uses observed word spans and scene cuts use measured silence.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-closing-transcript.json",
+        "offset": 47.5,
+        "replaceStart": 48,
+        "replaceEnd": 62.568,
+        "removedWords": [
+          " Review",
+          " the",
+          " resulting",
+          " preview.",
+          " Nothing",
+          " is",
+          " sent,",
+          " stored",
+          " or",
+          " booked",
+          " Visual",
+          " Inspiration",
+          " with",
+          " a",
+          " more",
+          " specific",
+          " project",
+          " conversation",
+          " by",
+          " Wallace",
+          " Schiff."
+        ],
+        "addedWords": [
+          " Review",
+          " the",
+          " resulting",
+          " preview.",
+          " Nothing",
+          " is",
+          " sent,",
+          " stored",
+          " or",
+          " booked",
+          " in",
+          " this",
+          " demonstration.",
+          " A",
+          " premium",
+          " website",
+          " connecting",
+          " visual",
+          " inspiration",
+          " with",
+          " a",
+          " more",
+          " specific",
+          " project",
+          " conversation",
+          " by",
+          " Wallace",
+          " Schiff."
+        ],
+        "review": "Independent unprompted original-audio 47.5–62.568s recognition restores the complete Nothing is sent, stored or booked in this demonstration disclosure and A premium website connecting ending. Replace only after 48s, excluding the partial timeline word at the crop start. No missing words or timestamps are fabricated."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Wallace Shift's",
+        "recognized": "Wallace Schiff's",
+        "start": 0.68,
+        "end": 1.52,
+        "reviewedBy": "Codex other_narrative_research agent under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Full-take unprompted ASR recognizes the brand possessive as Wallace Schiff's at the opening. The exact source script and Wallace Shift product identity establish the intended spelling. Preserve the complete observed name span; this is not pronunciation or listening verification.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 0.68,
+            "end": 0.94,
+            "probability": 0.9698423743247986,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-transcript.json",
+            "sourceOffset": 0
+          },
+          {
+            "token": "schiff's",
+            "text": " Schiff's",
+            "start": 0.94,
+            "end": 1.52,
+            "probability": 0.8114182353019714,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      },
+      {
+        "expected": "Wallace Shift",
+        "recognized": "Wallace Schiff.",
+        "start": 61.64,
+        "end": 62.3,
+        "reviewedBy": "Codex other_narrative_research agent under root authorization for disclosed proper-name ASR aliases",
+        "evidence": "Both full-take and independent 47.5–62.568s recognition spell the ending brand Wallace Schiff. The exact source script and Wallace Shift identity establish the intended spelling. Preserve observed timing; pronunciation and subjective listening remain pending.",
+        "observedWords": [
+          {
+            "token": "wallace",
+            "text": " Wallace",
+            "start": 61.64,
+            "end": 61.94,
+            "probability": 0.9279367923736572,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-closing-transcript.json",
+            "sourceOffset": 47.5
+          },
+          {
+            "token": "schiff",
+            "text": " Schiff.",
+            "start": 61.94,
+            "end": 62.3,
+            "probability": 0.7899944186210632,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/halcyon/asr-closing-transcript.json",
+            "sourceOffset": 47.5
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex other_narrative_research agent, delegated source alignment review",
+    "findings": [
+      "Full-take recognition omitted in this demonstration and A premium website connecting around a chunk boundary, and assigned zero duration to booked.",
+      "Independent original-audio 47.5–62.568s recognition recovers both complete closing scenes and valid observed timings. Replace only source 48–62.568s, excluding the partial timeline word at the crop opening.",
+      "Full recognition spells the opening brand possessive Wallace Schiff’s. Full and crop recognition spell the ending Wallace Schiff. Disclosed proper-name aliases retain the observed complete name spans; the script supplies the Wallace Shift spelling.",
+      "Final mapping contains all 130 script tokens after the two disclosed name aliases, with zero remaining differences or invalid word spans. All seven internal scene cuts lie within measured silence.",
+      "No subjective listening or correct-pronunciation claim is made. The aliases resolve recognized spelling for alignment, not human-perceived brand pronunciation."
+    ],
+    "limitations": [
+      "Pronunciation, natural delivery, brand fit, music balance, synchronization, final caption review, and buyer comprehension remain unresolved.",
+      "ASR near a crop boundary may include leading silence. Captions use complete sentence spans, not invented internal word timing."
+    ],
+    "evidence": [
+      "asr-transcript.json",
+      "asr-closing-transcript.json",
+      "alignment-report.json",
+      "asr-review.json",
+      "higgsfield-generation.jpg"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 9.222604,
+      "phrases": [
+        {
+          "text": "Halcyon is Wallace Shift’s architectural roofing concept.",
+          "start": 0,
+          "end": 3.06
+        },
+        {
+          "text": "A cinematic estate view introduces a premium, material-led experience.",
+          "start": 4.06,
+          "end": 8.58
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "start": 9.222604,
+      "end": 15.421146,
+      "phrases": [
+        {
+          "text": "A detailed gallery brings the materials, their character, and their planning information together.",
+          "start": 9.54,
+          "end": 14.76
+        }
+      ]
+    },
+    {
+      "id": "photo",
+      "start": 15.421146,
+      "end": 24.942916500000003,
+      "phrases": [
+        {
+          "text": "The visualizer accepts a photograph, then offers material and finish choices.",
+          "start": 15.82,
+          "end": 20.38
+        },
+        {
+          "text": "A new generation requires permission to send the image.",
+          "start": 21.46,
+          "end": 24.34
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "start": 24.942916500000003,
+      "end": 33.368812500000004,
+      "phrases": [
+        {
+          "text": "Here we use prepared sample studies.",
+          "start": 25.28,
+          "end": 27.4
+        },
+        {
+          "text": "Switch from metal to slate, then compare the result with the original home.",
+          "start": 27.4,
+          "end": 32.76
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "start": 33.368812500000004,
+      "end": 41.618104,
+      "phrases": [
+        {
+          "text": "Enter a roof area to explore an illustrative planning range.",
+          "start": 33.78,
+          "end": 37.38
+        },
+        {
+          "text": "The photograph itself does not measure the roof.",
+          "start": 38.46,
+          "end": 41.06
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "start": 41.618104,
+      "end": 48.1880625,
+      "phrases": [
+        {
+          "text": "Those material and budget choices carry into a consultation brief, alongside the project and timeline.",
+          "start": 41.98,
+          "end": 47.76
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "start": 48.1880625,
+      "end": 54.9944585,
+      "phrases": [
+        {
+          "text": "Review the resulting preview.",
+          "start": 48.46,
+          "end": 49.76
+        },
+        {
+          "text": "Nothing is sent, stored, or booked in this demonstration.",
+          "start": 50.58,
+          "end": 54.1
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "start": 54.9944585,
+      "end": 62.568,
+      "phrases": [
+        {
+          "text": "A premium website connecting visual inspiration with a more specific project conversation, by Wallace Shift.",
+          "start": 55.480000000000004,
+          "end": 62.3
+        }
+      ]
+    }
+  ]
+}

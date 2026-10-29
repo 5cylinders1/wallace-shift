@@ -1,0 +1,406 @@
+{
+  "id": "velar",
+  "sourceTimingFile": "unpaced-timing-6946041dd03405ee.json",
+  "sourceTimingSha256": "6946041dd03405ee984b4c2aa91ff5aac31b24d615532c6d34ee4228e37d1b01",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "d9ceb16727eb1a03ef7ccc2141620ff9a03e8804ac00616c0e74ea579c64af3d"
+    },
+    {
+      "file": "overview.wav",
+      "sha256": "eab0ae832ec9ca1c73de6f323b5d40e7f37d55534284c8e1b87ba75d8bc0be47"
+    },
+    {
+      "file": "photo.wav",
+      "sha256": "abfe8c0754c586fe157944699e4f05975bc6d44874446ad9adbfb739d50dff5b"
+    },
+    {
+      "file": "comparison.wav",
+      "sha256": "ac5e0d6b612a2afe417d37d1bc0c2b454b9564afe5d1d8f5686416afe939e20a"
+    },
+    {
+      "file": "planning.wav",
+      "sha256": "ce53145eb1cd534bfa9fba76944d55b4d1cbd5b4cb9bca43ef4bc3d447c33a4a"
+    },
+    {
+      "file": "brief.wav",
+      "sha256": "ac59a8655d189091072864324681fca3c81fed95a79e5dfc2db20fac3e8cfb52"
+    },
+    {
+      "file": "portal.wav",
+      "sha256": "7ad8390c4a027b54ebf8946351010bbef2f6d05efd966d8bc4e6fba603e7bf4d"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "3bc030f8c4cea99a0f4cac058ab520ff296cf7dd5cedeb30d8915298fd3ef8c6"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 10.074333,
+      "pacedDuration": 8.166042,
+      "edits": [
+        {
+          "text": "What if a roofing website helped homeowners explore the decision before the first conversation?",
+          "trimStart": 0.391208,
+          "trimEnd": 5.2935419999999995,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 4.88,
+          "speechStart": 0.531208,
+          "speechEnd": 5.153542,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.531208
+          },
+          "trailingSilence": {
+            "start": 5.153542,
+            "end": 5.952417
+          },
+          "outputStart": 0,
+          "outputDuration": 4.540667,
+          "tempo": 1.08,
+          "measuredScale": 0.9262255488916097
+        },
+        {
+          "text": "This is Velar, a concept built by Wallace Shift.",
+          "trimStart": 5.812417,
+          "trimEnd": 9.723792000000001,
+          "originalCaptionStart": 5.86,
+          "originalCaptionEnd": 9.58,
+          "speechStart": 5.952417,
+          "speechEnd": 9.583792,
+          "leadingSilence": {
+            "start": 5.153542,
+            "end": 5.952417
+          },
+          "trailingSilence": {
+            "start": 9.583792,
+            "end": 10.074333
+          },
+          "outputStart": 4.540667,
+          "outputDuration": 3.625375,
+          "tempo": 1.08,
+          "measuredScale": 0.926879933527212
+        }
+      ]
+    },
+    {
+      "id": "overview",
+      "originalDuration": 6.530125,
+      "pacedDuration": 5.202208,
+      "edits": [
+        {
+          "text": "An architectural opening and material collection lead into a roof design studio.",
+          "trimStart": 0.36187499999999995,
+          "trimEnd": 5.977958,
+          "originalCaptionStart": 0.2056869999999993,
+          "originalCaptionEnd": 5.605687,
+          "speechStart": 0.501875,
+          "speechEnd": 5.837958,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.501875
+          },
+          "trailingSilence": {
+            "start": 5.837958,
+            "end": 6.530125
+          },
+          "outputStart": 0,
+          "outputDuration": 5.202208,
+          "tempo": 1.08,
+          "measuredScale": 0.9263053982642351
+        }
+      ]
+    },
+    {
+      "id": "photo",
+      "originalDuration": 11.365792,
+      "pacedDuration": 8.762875,
+      "edits": [
+        {
+          "text": "Upload a photograph, then choose a material and finish.",
+          "trimStart": 0.565083,
+          "trimEnd": 5.005792,
+          "originalCaptionStart": 0.2755209999999977,
+          "originalCaptionEnd": 4.555520999999999,
+          "speechStart": 0.705083,
+          "speechEnd": 4.865792,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.705083
+          },
+          "trailingSilence": {
+            "start": 4.865792,
+            "end": 6.094375
+          },
+          "outputStart": 0,
+          "outputDuration": 4.121375,
+          "tempo": 1.08,
+          "measuredScale": 0.9280894109476662
+        },
+        {
+          "text": "The photo is prepared locally, with consent required before sending it for generation.",
+          "trimStart": 5.954375000000001,
+          "trimEnd": 10.97,
+          "originalCaptionStart": 5.975520999999997,
+          "originalCaptionEnd": 10.375520999999999,
+          "speechStart": 6.094375,
+          "speechEnd": 10.83,
+          "leadingSilence": {
+            "start": 4.865792,
+            "end": 6.094375
+          },
+          "trailingSilence": {
+            "start": 10.83,
+            "end": 11.365792
+          },
+          "outputStart": 4.121375,
+          "outputDuration": 4.6415,
+          "tempo": 1.08,
+          "measuredScale": 0.9254080996884735
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "originalDuration": 8.621583,
+      "pacedDuration": 6.729333,
+      "edits": [
+        {
+          "text": "We are using prepared sample studies here.",
+          "trimStart": 0.396833,
+          "trimEnd": 2.777833,
+          "originalCaptionStart": 0.4097699999999982,
+          "originalCaptionEnd": 2.5497699999999988,
+          "speechStart": 0.536833,
+          "speechEnd": 2.637833,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.536833
+          },
+          "trailingSilence": {
+            "start": 2.637833,
+            "end": 3.400708
+          },
+          "outputStart": 0,
+          "outputDuration": 2.211625,
+          "tempo": 1.08,
+          "measuredScale": 0.9288639227215455
+        },
+        {
+          "text": "Compare the original with slate, then explore the same home in metal.",
+          "trimStart": 3.2607079999999997,
+          "trimEnd": 8.129292,
+          "originalCaptionStart": 3.3097700000000003,
+          "originalCaptionEnd": 7.8497699999999995,
+          "speechStart": 3.400708,
+          "speechEnd": 7.989292,
+          "leadingSilence": {
+            "start": 2.637833,
+            "end": 3.400708
+          },
+          "trailingSilence": {
+            "start": 7.989292,
+            "end": 8.621583
+          },
+          "outputStart": 2.211625,
+          "outputDuration": 4.517708,
+          "tempo": 1.08,
+          "measuredScale": 0.927930585155766
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "originalDuration": 10.176125,
+      "pacedDuration": 7.747333,
+      "edits": [
+        {
+          "text": "Enter measured roof area and complexity to explore an illustrative planning range.",
+          "trimStart": 0.511917,
+          "trimEnd": 5.933542,
+          "originalCaptionStart": 0.36818699999999893,
+          "originalCaptionEnd": 5.7481870000000015,
+          "speechStart": 0.651917,
+          "speechEnd": 5.793542,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.651917
+          },
+          "trailingSilence": {
+            "start": 5.793542,
+            "end": 6.858708
+          },
+          "outputStart": 0,
+          "outputDuration": 5.0345,
+          "tempo": 1.08,
+          "measuredScale": 0.9285961312337168
+        },
+        {
+          "text": "The photograph itself does not measure the roof.",
+          "trimStart": 6.718708,
+          "trimEnd": 9.633750000000001,
+          "originalCaptionStart": 6.788187000000001,
+          "originalCaptionEnd": 9.288187,
+          "speechStart": 6.858708,
+          "speechEnd": 9.49375,
+          "leadingSilence": {
+            "start": 5.793542,
+            "end": 6.858708
+          },
+          "trailingSilence": {
+            "start": 9.49375,
+            "end": 10.176125
+          },
+          "outputStart": 5.0345,
+          "outputDuration": 2.712833,
+          "tempo": 1.08,
+          "measuredScale": 0.9306325603541902
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "originalDuration": 10.612167,
+      "pacedDuration": 8.29425,
+      "edits": [
+        {
+          "text": "Those choices carry into a project brief, keeping the conversation connected.",
+          "trimStart": 0.557708,
+          "trimEnd": 5.571625,
+          "originalCaptionStart": 0.13204100000000096,
+          "originalCaptionEnd": 5.2720410000000015,
+          "speechStart": 0.697708,
+          "speechEnd": 5.431625,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.697708
+          },
+          "trailingSilence": {
+            "start": 5.431625,
+            "end": 6.351792
+          },
+          "outputStart": 0,
+          "outputDuration": 4.656,
+          "tempo": 1.08,
+          "measuredScale": 0.9286152921957024
+        },
+        {
+          "text": "This demo prepares the brief locally; nothing is sent.",
+          "trimStart": 6.211792,
+          "trimEnd": 10.13475,
+          "originalCaptionStart": 6.0320409999999995,
+          "originalCaptionEnd": 9.792041000000005,
+          "speechStart": 6.351792,
+          "speechEnd": 9.99475,
+          "leadingSilence": {
+            "start": 5.431625,
+            "end": 6.351792
+          },
+          "trailingSilence": {
+            "start": 9.99475,
+            "end": 10.612167
+          },
+          "outputStart": 4.656,
+          "outputDuration": 3.63825,
+          "tempo": 1.08,
+          "measuredScale": 0.9274251725356223
+        }
+      ]
+    },
+    {
+      "id": "portal",
+      "originalDuration": 8.564667,
+      "pacedDuration": 7.064625,
+      "edits": [
+        {
+          "text": "A separate sample project room shows how approvals, site updates and documents could be presented after the sale.",
+          "trimStart": 0.493,
+          "trimEnd": 8.113833,
+          "originalCaptionStart": 0.5998749999999973,
+          "originalCaptionEnd": 7.799875000000007,
+          "speechStart": 0.633,
+          "speechEnd": 7.973833,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.633
+          },
+          "trailingSilence": {
+            "start": 7.973833,
+            "end": 8.564667
+          },
+          "outputStart": 0,
+          "outputDuration": 7.064625,
+          "tempo": 1.08,
+          "measuredScale": 0.927014802712512
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 8.023208,
+      "pacedDuration": 6.191083,
+      "edits": [
+        {
+          "text": "From first impression to a more informed conversation.",
+          "trimStart": 0.47508300000000003,
+          "trimEnd": 3.664375,
+          "originalCaptionStart": 0.5752289999999931,
+          "originalCaptionEnd": 3.235229000000004,
+          "speechStart": 0.615083,
+          "speechEnd": 3.524375,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.615083
+          },
+          "trailingSilence": {
+            "start": 3.524375,
+            "end": 4.551292
+          },
+          "outputStart": 0,
+          "outputDuration": 2.961458,
+          "tempo": 1.08,
+          "measuredScale": 0.9285628283644144
+        },
+        {
+          "text": "A tailored roofing experience, by Wallace Shift.",
+          "trimStart": 4.411292,
+          "trimEnd": 7.896332999999999,
+          "originalCaptionStart": 3.5232290000000006,
+          "originalCaptionEnd": 7.7632289999999955,
+          "speechStart": 4.551292,
+          "speechEnd": 7.756333,
+          "leadingSilence": {
+            "start": 3.524375,
+            "end": 4.551292
+          },
+          "trailingSilence": {
+            "start": 7.756333,
+            "end": 8.023208
+          },
+          "outputStart": 2.961458,
+          "outputDuration": 3.229625,
+          "tempo": 1.08,
+          "measuredScale": 0.926710761795916
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "originalDuration": 73.968,
+  "pacedDuration": 58.157748999999995,
+  "reviewAudio": "paced/a74588184c6d3fd7/narration-review.wav",
+  "spokenTextUnchanged": true
+}

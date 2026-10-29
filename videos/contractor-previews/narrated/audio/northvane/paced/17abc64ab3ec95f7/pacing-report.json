@@ -1,0 +1,382 @@
+{
+  "id": "northvane",
+  "sourceTimingFile": "unpaced-timing-b3a0d9855f111869.json",
+  "sourceTimingSha256": "b3a0d9855f1118694a6b690911c7c34535fc8faaf18d0a1bc52a7b3bd11f1437",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "45ec4d17e43d344adf5398b10d1a6e814f26f88d325ad58cd3e0666fd1d21e2c"
+    },
+    {
+      "file": "process.wav",
+      "sha256": "01c1f55df93b863747267bd82b4183b463a1d71f15f5309fbffe85d6f76e4fc9"
+    },
+    {
+      "file": "sample.wav",
+      "sha256": "07f0f051f5b3b07eda23146601f0c205ecb812c6af42bf4157b7ad6d95be98ff"
+    },
+    {
+      "file": "estimate.wav",
+      "sha256": "089260b1090cb9eb63bd2141bcce610ae12b10d96eaf34763a9b35f5cecbff49"
+    },
+    {
+      "file": "payment.wav",
+      "sha256": "00323aaf8437d93c2a13ed771a83432d526e16eb92943e84052e6aa81d019f01"
+    },
+    {
+      "file": "questions.wav",
+      "sha256": "0bf4c88c1e04c779da54121a4a544ffd30e8d3f2f4632f6a907233fb7f03c213"
+    },
+    {
+      "file": "brief.wav",
+      "sha256": "4d2b490b2c65e1235e5123804172b1214f259955314a430f13216616e78968c4"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "8a3c2a162b1003ae4de96697da917ad96356a64207df2793dc9e100332613d15"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 11.866875,
+      "pacedDuration": 9.961708,
+      "edits": [
+        {
+          "text": "This is Northvane, a roofing website concept by Wallace Shift.",
+          "trimStart": 0.16108299999999998,
+          "trimEnd": 5.085292,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 4.72,
+          "speechStart": 0.301083,
+          "speechEnd": 4.945292,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.301083
+          },
+          "trailingSilence": {
+            "start": 4.945292,
+            "end": 5.687708
+          },
+          "outputStart": 0,
+          "outputDuration": 4.563958,
+          "tempo": 1.08,
+          "measuredScale": 0.9268408388027397
+        },
+        {
+          "text": "It helps homeowners understand the work and prepare for a useful first conversation.",
+          "trimStart": 5.547708,
+          "trimEnd": 11.371625,
+          "originalCaptionStart": 5.62,
+          "originalCaptionEnd": 10.98,
+          "speechStart": 5.687708,
+          "speechEnd": 11.231625,
+          "leadingSilence": {
+            "start": 4.945292,
+            "end": 5.687708
+          },
+          "trailingSilence": {
+            "start": 11.231625,
+            "end": 11.866875
+          },
+          "outputStart": 4.563958,
+          "outputDuration": 5.39775,
+          "tempo": 1.08,
+          "measuredScale": 0.9268246783049965
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "originalDuration": 6.394417,
+      "pacedDuration": 5.323375,
+      "edits": [
+        {
+          "text": "The opening illustration walks through the roof replacement, showing how the work comes together.",
+          "trimStart": 0.570083,
+          "trimEnd": 6.314083,
+          "originalCaptionStart": 0.6531249999999993,
+          "originalCaptionEnd": 6.073125000000001,
+          "speechStart": 0.710083,
+          "speechEnd": 6.174083,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.710083
+          },
+          "trailingSilence": {
+            "start": 6.174083,
+            "end": 6.394417
+          },
+          "outputStart": 0,
+          "outputDuration": 5.323375,
+          "tempo": 1.08,
+          "measuredScale": 0.9267714136490252
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "originalDuration": 7.485875,
+      "pacedDuration": 5.316708,
+      "edits": [
+        {
+          "text": "The roof planner then turns choices into a budget.",
+          "trimStart": 0.795625,
+          "trimEnd": 4.075875,
+          "originalCaptionStart": 0.2386874999999975,
+          "originalCaptionEnd": 3.6786874999999988,
+          "speechStart": 0.935625,
+          "speechEnd": 3.935875,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.935625
+          },
+          "trailingSilence": {
+            "start": 3.935875,
+            "end": 4.653708
+          },
+          "outputStart": 0,
+          "outputDuration": 3.045542,
+          "tempo": 1.08,
+          "measuredScale": 0.9284481365749563
+        },
+        {
+          "text": "We are using its built-in sample house.",
+          "trimStart": 4.558687499999999,
+          "trimEnd": 7.000624999999999,
+          "originalCaptionStart": 4.698687499999998,
+          "originalCaptionEnd": 6.758687499999997,
+          "speechStart": 4.698687499999998,
+          "speechEnd": 6.860625,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 6.860625,
+            "end": 7.485875
+          },
+          "outputStart": 3.045542,
+          "outputDuration": 2.271167,
+          "tempo": 1.08,
+          "measuredScale": 0.9300676204857821
+        }
+      ]
+    },
+    {
+      "id": "estimate",
+      "originalDuration": 8.411667,
+      "pacedDuration": 6.053958,
+      "edits": [
+        {
+          "text": "Adjust the pitch and choose metal.",
+          "trimStart": 0.9416669999999999,
+          "trimEnd": 3.078208,
+          "originalCaptionStart": 0.6328335000000003,
+          "originalCaptionEnd": 2.772833500000001,
+          "speechStart": 1.081667,
+          "speechEnd": 2.938208,
+          "leadingSilence": {
+            "start": 0,
+            "end": 1.081667
+          },
+          "trailingSilence": {
+            "start": 2.938208,
+            "end": 3.496792
+          },
+          "outputStart": 0,
+          "outputDuration": 1.983417,
+          "tempo": 1.08,
+          "measuredScale": 0.9283308862315302
+        },
+        {
+          "text": "The roof area and planning range respond.",
+          "trimStart": 3.356792,
+          "trimEnd": 5.913457999999999,
+          "originalCaptionStart": 3.4928334999999997,
+          "originalCaptionEnd": 5.4728335,
+          "speechStart": 3.496792,
+          "speechEnd": 5.773458,
+          "leadingSilence": {
+            "start": 2.938208,
+            "end": 3.496792
+          },
+          "trailingSilence": {
+            "start": 5.773458,
+            "end": 6.355333
+          },
+          "outputStart": 1.983417,
+          "outputDuration": 2.370292,
+          "tempo": 1.08,
+          "measuredScale": 0.9271027189316088
+        },
+        {
+          "text": "These prices are illustrative.",
+          "trimStart": 6.215333,
+          "trimEnd": 8.042625,
+          "originalCaptionStart": 6.2928335,
+          "originalCaptionEnd": 7.7928335,
+          "speechStart": 6.355333,
+          "speechEnd": 7.902625,
+          "leadingSilence": {
+            "start": 5.773458,
+            "end": 6.355333
+          },
+          "trailingSilence": {
+            "start": 7.902625,
+            "end": 8.411667
+          },
+          "outputStart": 4.353709,
+          "outputDuration": 1.70025,
+          "tempo": 1.08,
+          "measuredScale": 0.9304752606589428
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "originalDuration": 6.772833,
+      "pacedDuration": 5.064,
+      "edits": [
+        {
+          "text": "Explore a payment scenario, with the monthly amount and total of payments visible together.",
+          "trimStart": 0.598125,
+          "trimEnd": 6.062167,
+          "originalCaptionStart": 0.5211664999999996,
+          "originalCaptionEnd": 5.761166500000002,
+          "speechStart": 0.738125,
+          "speechEnd": 5.922167,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.738125
+          },
+          "trailingSilence": {
+            "start": 5.922167,
+            "end": 6.772833
+          },
+          "outputStart": 0,
+          "outputDuration": 5.064,
+          "tempo": 1.08,
+          "measuredScale": 0.9267864339256544
+        }
+      ]
+    },
+    {
+      "id": "questions",
+      "originalDuration": 10.59675,
+      "pacedDuration": 7.480333,
+      "edits": [
+        {
+          "text": "The project questions gather the roof concern, payment approach, and timing, before asking for contact details.",
+          "trimStart": 0.800333,
+          "trimEnd": 8.872375,
+          "originalCaptionStart": 0.8683125000000018,
+          "originalCaptionEnd": 8.428312500000004,
+          "speechStart": 0.940333,
+          "speechEnd": 8.732375,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.940333
+          },
+          "trailingSilence": {
+            "start": 8.732375,
+            "end": 10.59675
+          },
+          "outputStart": 0,
+          "outputDuration": 7.480333,
+          "tempo": 1.08,
+          "measuredScale": 0.9266964914206344
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "originalDuration": 13.206,
+      "pacedDuration": 9.015875,
+      "edits": [
+        {
+          "text": "Those answers become a structured lead preview, alongside the estimate and payment already explored.",
+          "trimStart": 2.158083,
+          "trimEnd": 9.53025,
+          "originalCaptionStart": 1.8716039999999978,
+          "originalCaptionEnd": 9.051603999999998,
+          "speechStart": 2.298083,
+          "speechEnd": 9.39025,
+          "leadingSilence": {
+            "start": 0,
+            "end": 2.298083
+          },
+          "trailingSilence": {
+            "start": 9.39025,
+            "end": 10.709667
+          },
+          "outputStart": 0,
+          "outputDuration": 6.835042,
+          "tempo": 1.08,
+          "measuredScale": 0.9271415039838352
+        },
+        {
+          "text": "Nothing is sent from this demonstration.",
+          "trimStart": 10.569666999999999,
+          "trimEnd": 12.914708000000001,
+          "originalCaptionStart": 10.611604,
+          "originalCaptionEnd": 12.351604000000002,
+          "speechStart": 10.709667,
+          "speechEnd": 12.774708,
+          "leadingSilence": {
+            "start": 9.39025,
+            "end": 10.709667
+          },
+          "trailingSilence": {
+            "start": 12.774708,
+            "end": 13.206
+          },
+          "outputStart": 6.835042,
+          "outputDuration": 2.180833,
+          "tempo": 1.08,
+          "measuredScale": 0.9299764908161512
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 8.105583,
+      "pacedDuration": 6.956958,
+      "edits": [
+        {
+          "text": "The distinctive feature is the connection: the homeowner’s choices travel with the conversation.",
+          "trimStart": 0.378208,
+          "trimEnd": 7.889417,
+          "originalCaptionStart": 0.46558349999999393,
+          "originalCaptionEnd": 7.385583499999996,
+          "speechStart": 0.518208,
+          "speechEnd": 7.749417,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.518208
+          },
+          "trailingSilence": {
+            "start": 7.749417,
+            "end": 8.105583
+          },
+          "outputStart": 0,
+          "outputDuration": 6.956958,
+          "tempo": 1.08,
+          "measuredScale": 0.9262101480600526
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "originalDuration": 72.83999999999999,
+  "pacedDuration": 55.172915,
+  "reviewAudio": "paced/17abc64ab3ec95f7/narration-review.wav",
+  "spokenTextUnchanged": true
+}

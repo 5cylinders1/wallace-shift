@@ -1,0 +1,375 @@
+{
+  "id": "datum",
+  "sourceTimingFile": "unpaced-timing-83a8bf5da25ec3b4.json",
+  "sourceTimingSha256": "83a8bf5da25ec3b493f55aa79c3db7b2d35c8224f6a6adc95dab3939d4b8a6ff",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "8f186788b8355d55c1df576b2660e9950512e5d5a6f6486535b253bd6fc9585b"
+    },
+    {
+      "file": "seasons.wav",
+      "sha256": "d8f157059fde8d828a7fe92ffca4e1a8058c11aeb2996ea0b4fe3b35955cde0b"
+    },
+    {
+      "file": "report.wav",
+      "sha256": "9c607fd032b938673d5a5cbbb4fa57303f441c5fb946c20e73ac6a52d59ac9ce"
+    },
+    {
+      "file": "symptom.wav",
+      "sha256": "0e9d967bbf25c398167660019670e0a53a05af9d18e7ace9396a6999d254c824"
+    },
+    {
+      "file": "guidance.wav",
+      "sha256": "9c18032b6d7427ffcd2dd2f32907f330867d9f5ab02db3ec70ab2eedc290adb6"
+    },
+    {
+      "file": "handoff.wav",
+      "sha256": "213b2ca69b77cac44024b051674bd774ff53278088f191c8260ce3911a3f9c44"
+    },
+    {
+      "file": "details.wav",
+      "sha256": "635329ca4442f56585938999783d239a7399227ea6ca8b340a8f10b8f327a2de"
+    },
+    {
+      "file": "result.wav",
+      "sha256": "441b672eccabd2790c84b158379cea8af984bf21d866c9294972083373728e9d"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 8.049667,
+      "pacedDuration": 6.629125,
+      "edits": [
+        {
+          "text": "The foundation work begins with something homeowners cannot see.",
+          "trimStart": 0,
+          "trimEnd": 3.1972080000000003,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 2.9,
+          "speechStart": 0,
+          "speechEnd": 3.057208,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 3.057208,
+            "end": 3.867208
+          },
+          "outputStart": 0,
+          "outputDuration": 2.965375,
+          "tempo": 1.08,
+          "measuredScale": 0.927488921584082
+        },
+        {
+          "text": "Wallace Shift built Datum to make that first conversation clearer.",
+          "trimStart": 3.727208,
+          "trimEnd": 7.676417,
+          "originalCaptionStart": 3.82,
+          "originalCaptionEnd": 7.34,
+          "speechStart": 3.867208,
+          "speechEnd": 7.536417,
+          "leadingSilence": {
+            "start": 3.057208,
+            "end": 3.867208
+          },
+          "trailingSilence": {
+            "start": 7.536417,
+            "end": 8.049667
+          },
+          "outputStart": 2.965375,
+          "outputDuration": 3.66375,
+          "tempo": 1.08,
+          "measuredScale": 0.9277174239195748
+        }
+      ]
+    },
+    {
+      "id": "seasons",
+      "originalDuration": 4.8225,
+      "pacedDuration": 3.924833,
+      "edits": [
+        {
+          "text": "An interactive cutaway shows the house and soil across the seasons.",
+          "trimStart": 0.39031249999999906,
+          "trimEnd": 4.620333,
+          "originalCaptionStart": 0.5303124999999991,
+          "originalCaptionEnd": 4.1703125,
+          "speechStart": 0.5303124999999991,
+          "speechEnd": 4.480333,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 4.480333,
+            "end": 4.8225
+          },
+          "outputStart": 0,
+          "outputDuration": 3.924833,
+          "tempo": 1.08,
+          "measuredScale": 0.9278520044997417
+        }
+      ]
+    },
+    {
+      "id": "report",
+      "originalDuration": 6.715667,
+      "pacedDuration": 5.585167,
+      "edits": [
+        {
+          "text": "A sample inspection report helps visitors understand what the service could deliver before they inquire.",
+          "trimStart": 0.41379199999999994,
+          "trimEnd": 6.434625,
+          "originalCaptionStart": 0.3478539999999999,
+          "originalCaptionEnd": 5.927854,
+          "speechStart": 0.553792,
+          "speechEnd": 6.294625,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.553792
+          },
+          "trailingSilence": {
+            "start": 6.294625,
+            "end": 6.715667
+          },
+          "outputStart": 0,
+          "outputDuration": 5.585167,
+          "tempo": 1.08,
+          "measuredScale": 0.9276402451288718
+        }
+      ]
+    },
+    {
+      "id": "symptom",
+      "originalDuration": 7.210417,
+      "pacedDuration": 5.669208,
+      "edits": [
+        {
+          "text": "The crack decoder starts with the visitor’s concern.",
+          "trimStart": 0.598792,
+          "trimEnd": 3.5990830000000003,
+          "originalCaptionStart": 0.4321459999999995,
+          "originalCaptionEnd": 2.9721459999999986,
+          "speechStart": 0.738792,
+          "speechEnd": 3.459083,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.738792
+          },
+          "trailingSilence": {
+            "start": 3.459083,
+            "end": 4.196292
+          },
+          "outputStart": 0,
+          "outputDuration": 2.786,
+          "tempo": 1.08,
+          "measuredScale": 0.9285765947369771
+        },
+        {
+          "text": "Choose where the crack appears and what it looks like.",
+          "trimStart": 4.056292,
+          "trimEnd": 7.155749999999999,
+          "originalCaptionStart": 4.032146000000001,
+          "originalCaptionEnd": 6.9321459999999995,
+          "speechStart": 4.196292,
+          "speechEnd": 7.01575,
+          "leadingSilence": {
+            "start": 3.459083,
+            "end": 4.196292
+          },
+          "trailingSilence": {
+            "start": 7.01575,
+            "end": 7.210417
+          },
+          "outputStart": 2.786,
+          "outputDuration": 2.883208,
+          "tempo": 1.08,
+          "measuredScale": 0.9302297369411041
+        }
+      ]
+    },
+    {
+      "id": "guidance",
+      "originalDuration": 8.984417,
+      "pacedDuration": 6.643333,
+      "edits": [
+        {
+          "text": "Answer a follow-up question and the displayed guidance changes.",
+          "trimStart": 0.810458,
+          "trimEnd": 4.736416999999999,
+          "originalCaptionStart": 0.20175000000000054,
+          "originalCaptionEnd": 4.341750000000001,
+          "speechStart": 0.950458,
+          "speechEnd": 4.596417,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.950458
+          },
+          "trailingSilence": {
+            "start": 4.596417,
+            "end": 5.611583
+          },
+          "outputStart": 0,
+          "outputDuration": 3.645875,
+          "tempo": 1.08,
+          "measuredScale": 0.9286584500755104
+        },
+        {
+          "text": "It is a guide, never a diagnosis.",
+          "trimStart": 5.471583000000001,
+          "trimEnd": 8.693917,
+          "originalCaptionStart": 5.501749999999998,
+          "originalCaptionEnd": 8.081750000000003,
+          "speechStart": 5.611583,
+          "speechEnd": 8.553917,
+          "leadingSilence": {
+            "start": 4.596417,
+            "end": 5.611583
+          },
+          "trailingSilence": {
+            "start": 8.553917,
+            "end": 8.984417
+          },
+          "outputStart": 3.645875,
+          "outputDuration": 2.997458,
+          "tempo": 1.08,
+          "measuredScale": 0.9302133174276782
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "originalDuration": 6.430292,
+      "pacedDuration": 5.213958,
+      "edits": [
+        {
+          "text": "That concern carries into the inspection request, so the visitor does not have to explain it again.",
+          "trimStart": 0.44662499999999994,
+          "trimEnd": 6.064667,
+          "originalCaptionStart": 0.43733350000000115,
+          "originalCaptionEnd": 5.737333500000005,
+          "speechStart": 0.586625,
+          "speechEnd": 5.924667,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.586625
+          },
+          "trailingSilence": {
+            "start": 5.924667,
+            "end": 6.430292
+          },
+          "outputStart": 0,
+          "outputDuration": 5.213958,
+          "tempo": 1.08,
+          "measuredScale": 0.9280738734242285
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "originalDuration": 8.627042,
+      "pacedDuration": 7.59075,
+      "edits": [
+        {
+          "text": "The form offers space for photos, property details, contact information, and a convenient visit window.",
+          "trimStart": 0.43362500000000004,
+          "trimEnd": 8.627042,
+          "originalCaptionStart": 0.5270415000000028,
+          "originalCaptionEnd": 8.627041500000004,
+          "speechStart": 0.573625,
+          "speechEnd": 8.627041500000004,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.573625
+          },
+          "trailingSilence": null,
+          "outputStart": 0,
+          "outputDuration": 7.59075,
+          "tempo": 1.08,
+          "measuredScale": 0.9264449740566115
+        }
+      ]
+    },
+    {
+      "id": "result",
+      "originalDuration": 13.792,
+      "pacedDuration": 11.0195,
+      "edits": [
+        {
+          "text": "The finished preview keeps the concern attached.",
+          "trimStart": 0,
+          "trimEnd": 4.886749999999999,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 4.239999999999995,
+          "speechStart": 0,
+          "speechEnd": 4.74675,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 4.74675,
+            "end": 5.898667
+          },
+          "outputStart": 0,
+          "outputDuration": 4.529542,
+          "tempo": 1.08,
+          "measuredScale": 0.9269027472246383
+        },
+        {
+          "text": "This fictional demonstration sends nothing.",
+          "trimStart": 5.758667,
+          "trimEnd": 8.643417000000001,
+          "originalCaptionStart": 5.779999999999994,
+          "originalCaptionEnd": 8.339999999999996,
+          "speechStart": 5.898667,
+          "speechEnd": 8.503417,
+          "leadingSilence": {
+            "start": 4.74675,
+            "end": 5.898667
+          },
+          "trailingSilence": {
+            "start": 8.503417,
+            "end": 9.533708
+          },
+          "outputStart": 4.529542,
+          "outputDuration": 2.680958,
+          "tempo": 1.08,
+          "measuredScale": 0.929355403414507
+        },
+        {
+          "text": "It connects useful education with a more informed inquiry.",
+          "trimStart": 9.393708,
+          "trimEnd": 13.496083,
+          "originalCaptionStart": 9.259999999999998,
+          "originalCaptionEnd": 13.019999999999996,
+          "speechStart": 9.533708,
+          "speechEnd": 13.356083,
+          "leadingSilence": {
+            "start": 8.503417,
+            "end": 9.533708
+          },
+          "trailingSilence": {
+            "start": 13.356083,
+            "end": 13.792
+          },
+          "outputStart": 7.2105,
+          "outputDuration": 3.809,
+          "tempo": 1.08,
+          "measuredScale": 0.9284865474267954
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "details/1: no trailing silence matched; retained extra source conservatively."
+  ],
+  "originalDuration": 64.632002,
+  "pacedDuration": 52.275874,
+  "reviewAudio": "paced/6c8522611ab83c4c/narration-review.wav",
+  "spokenTextUnchanged": true
+}

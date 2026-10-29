@@ -1,0 +1,15 @@
+This is Northvane, a roofing website concept by Wallace Shift. It helps homeowners understand the work and prepare for a useful first conversation.
+
+The opening illustration walks through the roof replacement, showing how the work comes together.
+
+The roof planner then turns choices into a budget. We are using its built-in sample house.
+
+Adjust the pitch and choose metal. The roof area and planning range respond. These prices are illustrative.
+
+Explore a payment scenario, with the monthly amount and total of payments visible together.
+
+The project questions gather the roof concern, payment approach, and timing, before asking for contact details.
+
+Those answers become a structured lead preview, alongside the estimate and payment already explored. Nothing is sent from this demonstration.
+
+The distinctive feature is the connection: the homeowner’s choices travel with the conversation.

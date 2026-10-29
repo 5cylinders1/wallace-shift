@@ -1,0 +1,221 @@
+{
+  "id": "roofing-crm",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/roofing-crm/higgsfield-grady-source.mp3",
+  "sourceSha256": "76b4ce9fb3732a5776d0975db0af2816057ada05516606280680bfaaf6fd2510",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "generationIdStatus": "Not exposed in supplied browser evidence; no identifier inferred.",
+    "quotedCredits": 5.7,
+    "quotedCreditsEvidence": "Production lead direct browser generation handoff.",
+    "browserEvidence": "output/narrated-previews/roofing-crm/higgsfield-generation.jpg",
+    "browserEvidenceNote": "The first history row is the roofing CRM narration and shows Grady and Seed Audio 1.0; the left CRM form displays 5.7 credits."
+  },
+  "alignmentReview": {
+    "status": "ASR mapping reviewed by delegated audio production agent; subjective listening and caption review pending",
+    "method": "exact token sequence alignment to independent ASR word timestamps, with explicit reviewed proper-name aliases only. Complete sentences use matched observed word spans; scene cuts prefer measured silence. No timing is invented for missing/substituted words. The derived full report joins work list to worklist using its complete observed span; raw recognition retained.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/roofing-crm/asr-orthography-reviewed.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/roofing-crm/asr-property-transcript.json",
+        "offset": 16.7,
+        "replaceStart": 16.7,
+        "replaceEnd": 24.3,
+        "removedWords": [
+          " Review",
+          " a",
+          " property's",
+          " contact",
+          " details,",
+          " record",
+          " source",
+          " and",
+          " weather",
+          " contacts.",
+          " Then",
+          " add",
+          " it",
+          " to",
+          " the",
+          " follow",
+          "-up",
+          " list.",
+          " list,"
+        ],
+        "addedWords": [
+          " Review",
+          " a",
+          " property's",
+          " contact",
+          " details,",
+          " record",
+          " source",
+          " and",
+          " weather",
+          " contacts,",
+          " then",
+          " add",
+          " it",
+          " to",
+          " the",
+          " follow",
+          "-up",
+          " list."
+        ],
+        "review": "Independent source16.7–31.3s crop removes duplicated list; use only through24.3s before Record. Its Record span is zero-length, so keep full-take outcome words. The later tighter context crop resolves contacts."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/roofing-crm/asr-context-transcript.json",
+        "offset": 20.4,
+        "replaceStart": 20.7,
+        "replaceEnd": 22.1,
+        "removedWords": [
+          " and",
+          " weather",
+          " contacts,"
+        ],
+        "addedWords": [
+          " and",
+          " weather",
+          " context."
+        ],
+        "review": "Independent original20.4–22.1s crop recognizes and weather context. Replace only weather/context after the preceding and, retaining exact observed spans; raw full/cropped contacts readings remain recorded."
+      }
+    ],
+    "aliasUses": [],
+    "issues": [],
+    "findings": [
+      "All 135 scripted tokens match after independent source crop substitution and compound spelling normalization.",
+      "Full recognition duplicated list at a chunk boundary; independent property crop contains it once.",
+      "Full and broad crop read weather contacts; independent source20.4–22.1s crop recognizes and weather context. No context alias was introduced; both conflicting raw reports remain retained.",
+      "Every internal scene boundary uses measured silence. All fictional/no-live-lookup/no-messages/no-calendar-invitations disclosures match recognized words.",
+      "This is ASR review only; pronunciation, natural delivery and final mix remain unlistened by this agent."
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 8.9385415,
+      "phrases": [
+        {
+          "text": "A roofing website starts a conversation.",
+          "start": 0,
+          "end": 2
+        },
+        {
+          "text": "This CRM demonstration by Wallace Shift shows how the next steps could be organized.",
+          "start": 3.38,
+          "end": 8.22
+        }
+      ]
+    },
+    {
+      "id": "weather",
+      "start": 8.9385415,
+      "end": 16.5956665,
+      "phrases": [
+        {
+          "text": "Open the storm map to explore sample weather and nearby properties.",
+          "start": 9.26,
+          "end": 12.66
+        },
+        {
+          "text": "It is a search aid, not proof of roof damage.",
+          "start": 13.5,
+          "end": 16.28
+        }
+      ]
+    },
+    {
+      "id": "property",
+      "start": 16.5956665,
+      "end": 24.413625,
+      "phrases": [
+        {
+          "text": "Review a property’s contact details, record source, and weather context.",
+          "start": 16.7,
+          "end": 21.459999999999997
+        },
+        {
+          "text": "Then add it to the follow-up list.",
+          "start": 22.299999999999997,
+          "end": 23.939999999999998
+        }
+      ]
+    },
+    {
+      "id": "outcome",
+      "start": 24.413625,
+      "end": 31.2504375,
+      "phrases": [
+        {
+          "text": "Record the contact outcome and an internal note, keeping the next step with the property.",
+          "start": 24.68,
+          "end": 30.82
+        }
+      ]
+    },
+    {
+      "id": "inspection",
+      "start": 31.2504375,
+      "end": 37.8665,
+      "phrases": [
+        {
+          "text": "Choose an inspection time and assign a team member.",
+          "start": 31.52,
+          "end": 34.24
+        },
+        {
+          "text": "The sample appointment updates the property’s status.",
+          "start": 34.86,
+          "end": 37.22
+        }
+      ]
+    },
+    {
+      "id": "worklist",
+      "start": 37.8665,
+      "end": 46.838375,
+      "phrases": [
+        {
+          "text": "The worklist and upcoming appointments show the change.",
+          "start": 38.14,
+          "end": 41.12
+        },
+        {
+          "text": "Customer records and sample website inquiries are organized in the same workspace.",
+          "start": 41.9,
+          "end": 46.08
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "start": 46.838375,
+      "end": 57.84,
+      "phrases": [
+        {
+          "text": "All records are fictional.",
+          "start": 47.1,
+          "end": 48.46
+        },
+        {
+          "text": "No live weather or contact lookup runs, and no messages or calendar invitations are sent.",
+          "start": 48.46,
+          "end": 54.72
+        },
+        {
+          "text": "The handoff to inspection is visible.",
+          "start": 55.64,
+          "end": 57.5
+        }
+      ]
+    }
+  ]
+}

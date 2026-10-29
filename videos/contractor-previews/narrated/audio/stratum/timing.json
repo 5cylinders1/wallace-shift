@@ -1,0 +1,539 @@
+{
+  "id": "stratum",
+  "complete": true,
+  "generatedAt": "2026-10-28T18:21:16.597Z",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "quotedCredits": 5.7,
+    "creditEvidence": "Production lead observed5.7quoted credits for the Stratum take; screenshot retained after generation shows Stratum history row and a later Datum generation form, whose5.8quote is not the Stratum price.",
+    "browserEvidence": "output/narrated-previews/stratum/higgsfield-generation.jpg",
+    "direction": "Calm, confident American male product narrator; natural conversational delivery with brisk pacing around155words per minute, clear diction and short pauses. Speech only."
+  },
+  "exactSpokenText": "Stratum is a roofing website concept by Wallace Shift, built around one live, interactive model.\n\nAs the visitor moves through the page, the same house helps explain the roof as a system, including the layers underneath.\n\nIn the roof studio, change the roof form and adjust the pitch. The model and its calculated measurements respond.\n\nChoose a different finish and see its illustrative planning range alongside the roof area.\n\nSwitch to an aerial view to inspect the design, then carry that choice into an inspection request.\n\nThe selected material, geometry, and range arrive together in the brief, keeping those choices connected.\n\nThis is a sample home, and the request remains an unsent demo preview. No inspection is booked.\n\nAn interactive explanation becomes a practical starting point for discussing a roof project. Built by Wallace Shift.",
+  "timingMethod": "Exact token sequence alignment to unprompted local ASR word timestamps, independently verified original-audio crops, one proper-name spelling alias and the root-authorized unscent-to-unsent spelling exception. Complete phrases retain recognized source spans. All seven internal scene cuts use measured silent intervals. No timing invented for missing words. Sentence boundaries refined against measured source silence, then remapped through each measured retained clip and pitch-preserving tempo change; no spoken text removed.",
+  "alignmentReview": {
+    "status": "ASR alignment reviewed with explicit root-authorized orthography exception; subjective listening and final caption review pending",
+    "method": "Exact token sequence alignment to unprompted local ASR word timestamps, independently verified original-audio crops, one proper-name spelling alias and the root-authorized unscent-to-unsent spelling exception. Complete phrases retain recognized source spans. All seven internal scene cuts use measured silent intervals. No timing invented for missing words.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-range-transcript.json",
+        "offset": 23,
+        "replaceStart": 23,
+        "replaceEnd": 28.4,
+        "removedWords": [
+          " Choose",
+          " a",
+          " different",
+          " finish",
+          " and",
+          " see",
+          " its",
+          " illustrative",
+          " planning",
+          " range",
+          " alongside",
+          " the",
+          " roof",
+          " area.",
+          " area."
+        ],
+        "addedWords": [
+          " Choose",
+          " a",
+          " different",
+          " finish",
+          " and",
+          " see",
+          " its",
+          " illustrative",
+          " planning",
+          " range",
+          " alongside",
+          " the",
+          " roof",
+          " area."
+        ],
+        "review": "Independent23–28.4s original-audio recognition contains roof area once. Resolves duplicate area at full-pass chunk boundary without discarding actual words."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-brief-orthography-reviewed.json",
+        "offset": 42.3,
+        "replaceStart": 42.3,
+        "replaceEnd": 49.7,
+        "removedWords": [
+          " This",
+          " is",
+          " a",
+          " sample",
+          " home,",
+          " and",
+          " the",
+          " request",
+          " remains",
+          " an",
+          " unscent",
+          " demo",
+          " preview.",
+          " No",
+          " inspection",
+          " is",
+          " booked."
+        ],
+        "addedWords": [
+          " This",
+          " is",
+          " a",
+          " sample",
+          " home,",
+          " and",
+          " the",
+          " request",
+          " remains",
+          " an",
+          " unsent",
+          " demo",
+          " preview.",
+          " No",
+          " inspection",
+          " is",
+          " booked."
+        ],
+        "review": "Explicit root-authorized unscent-to-unsent homophone spelling exception. Full unprompted ASR and independent42.3–49.7s brief crop recognize the same word/span as unscent. The approved spoken script says unsent, and the inspected Stratum request result explicitly says nothing has been sent. This is orthographic normalization only, not a substantive substitution or omission. Subjective listening is pending. The raw crop stays unchanged; only the documented derived report uses the spelling unsent."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Shift",
+        "recognized": "Schifft.",
+        "start": 56.36,
+        "end": 57.04,
+        "reviewedBy": "Codex source and independent transcript comparison",
+        "evidence": "Canonical brand is Wallace Shift. Full unprompted recognition and independent55.1–57.264s crop both recognize Schifft in the closing. This normalizes transcript spelling only; user accepted Grady voice but this name pronunciation is not separately listened/tested.",
+        "observedWords": [
+          {
+            "token": "schifft",
+            "text": " Schifft.",
+            "start": 56.36,
+            "end": 57.04,
+            "probability": 0.7290210723876953,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex roofing narrative agent under explicit root authority for reviewed name spellings and corroborated unscent-to-unsent orthography",
+    "reviewedAt": "2026-10-28T18:20:27.121650+00:00",
+    "orthographicException": {
+      "reviewer": "Codex roofing narrative agent under explicit root-authorized homophone exception",
+      "sourceReport": "output/narrated-previews/stratum/asr-brief-transcript.json",
+      "sourceReportSha256": "7dd2f970dfe3a27b96fe6c2879afcb986ba7a3912c677c09403ac203066660ca",
+      "reason": "Explicit root-authorized unscent-to-unsent homophone spelling exception. Full unprompted ASR and independent42.3–49.7s brief crop recognize the same word/span as unscent. The approved spoken script says unsent, and the inspected Stratum request result explicitly says nothing has been sent. This is orthographic normalization only, not a substantive substitution or omission. Subjective listening is pending.",
+      "changes": [
+        {
+          "original": " unscent",
+          "normalized": " unsent",
+          "cropStart": 3.46,
+          "cropEnd": 4.02,
+          "sourceStart": 45.76,
+          "sourceEnd": 46.31999999999999
+        }
+      ],
+      "independentEvidence": [
+        "asr-transcript.json",
+        "asr-brief-transcript.json",
+        "ending-end.png",
+        "evidence.json"
+      ],
+      "rawReportsPreserved": true,
+      "noListeningClaim": true
+    },
+    "evidence": [
+      "asr-transcript.json",
+      "asr-range-transcript.json",
+      "asr-brief-transcript.json",
+      "asr-brand-transcript.json",
+      "asr-brief-orthography-reviewed.json",
+      "alignment-review-config.json",
+      "alignment-report.json",
+      "higgsfield-generation.jpg",
+      "ending-end.png"
+    ],
+    "limitations": [
+      "No subjective listening review performed.",
+      "User accepted Grady voice; this does not separately verify this take’s pronunciation, pace or delivery.",
+      "Schifft-to-Shift is an explicit canonical-brand spelling normalization; raw recognition retained.",
+      "Crop first-word timestamps can include leading silence. Captions remain sentence-level, not word highlighting.",
+      "No pacing, sound mix, composition, or rendering performed by this alignment task."
+    ],
+    "pacingReview": "Transformation follows user feedback; subjective listening is not claimed. Independent paced-audio ASR and final playback review remain separate checks."
+  },
+  "processing": "Existing Higgsfield take, pitch-preserving atempo=1.08. Sentence-adjacent silence trimmed with 0.14s handles; original scene WAVs, imported timing and source hashes retained. No speech generation. Natural within-sentence pauses are preserved.",
+  "sources": [
+    {
+      "originalName": "higgsfield-grady-source.mp3",
+      "sha256": "d771428a83c113bb6804a12339d14d24bd899c767dfb9352dfd117de61d7d206",
+      "retainedFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "duration": 57.264,
+      "sampleRate": 24000,
+      "channels": 2,
+      "codec": "mp3"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "file": "paced/67242c0811ea6802/opening.wav",
+      "spoken": "Stratum is a roofing website concept by Wallace Shift, built around one live, interactive model.",
+      "duration": 6.073333,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 6.7645,
+      "phrases": [
+        {
+          "text": "Stratum is a roofing website concept by Wallace Shift, built around one live, interactive model.",
+          "start": 0,
+          "end": 5.943702725302009,
+          "sourceStart": 0,
+          "sourceEnd": 6.2,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0,
+          "originalSceneEnd": 6.2,
+          "paceMapping": {
+            "sourceSceneFile": "opening.wav",
+            "trimStart": 0,
+            "trimEnd": 6.5591669999999995,
+            "observedSpeechStart": 0,
+            "observedSpeechEnd": 6.419167,
+            "outputStart": 0,
+            "outputDuration": 6.073333,
+            "measuredScale": 0.9259305335570813,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "anatomy",
+      "file": "paced/67242c0811ea6802/anatomy.wav",
+      "spoken": "As the visitor moves through the page, the same house helps explain the roof as a system, including the layers underneath.",
+      "duration": 7.134125,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 6.7645,
+      "sourceEnd": 15.22625,
+      "phrases": [
+        {
+          "text": "As the visitor moves through the page, the same house helps explain the roof as a system, including the layers underneath.",
+          "start": 0.12983571927657986,
+          "end": 7.0042892807234205,
+          "sourceStart": 7.12,
+          "sourceEnd": 14.3,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0.35550000000000015,
+          "originalSceneEnd": 7.535500000000001,
+          "paceMapping": {
+            "sourceSceneFile": "anatomy.wav",
+            "trimStart": 0.236875,
+            "trimEnd": 7.9295,
+            "observedSpeechStart": 0.376875,
+            "observedSpeechEnd": 7.7895,
+            "outputStart": 0,
+            "outputDuration": 7.134125,
+            "measuredScale": 0.9273979948327132,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "file": "paced/67242c0811ea6802/shape.wav",
+      "spoken": "In the roof studio, change the roof form and adjust the pitch. The model and its calculated measurements respond.",
+      "duration": 6.073417,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 15.22625,
+      "sourceEnd": 22.782978999999997,
+      "phrases": [
+        {
+          "text": "In the roof studio, change the roof form and adjust the pitch.",
+          "start": 0.13014109531332282,
+          "end": 3.4004009046866774,
+          "sourceStart": 15.92,
+          "sourceEnd": 19.36,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0.6937499999999996,
+          "originalSceneEnd": 4.133749999999999,
+          "paceMapping": {
+            "sourceSceneFile": "shape.wav",
+            "trimStart": 0.641458,
+            "trimEnd": 4.439457999999999,
+            "observedSpeechStart": 0.781458,
+            "observedSpeechEnd": 4.299458,
+            "outputStart": 0,
+            "outputDuration": 3.530542,
+            "measuredScale": 0.9295792522380202,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "The model and its calculated measurements respond.",
+          "start": 3.660967727100004,
+          "end": 5.942991272899996,
+          "sourceStart": 20.12,
+          "sourceEnd": 22.18,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 4.893750000000001,
+          "originalSceneEnd": 6.953749999999999,
+          "paceMapping": {
+            "sourceSceneFile": "shape.wav",
+            "trimStart": 4.7623750000000005,
+            "trimEnd": 7.491917,
+            "observedSpeechStart": 4.902375,
+            "observedSpeechEnd": 7.351917,
+            "outputStart": 3.530542,
+            "outputDuration": 2.542875,
+            "measuredScale": 0.9316123364286025,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "finish",
+      "file": "paced/67242c0811ea6802/finish.wav",
+      "spoken": "Choose a different finish and see its illustrative planning range alongside the roof area.",
+      "duration": 4.8245,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 22.782978999999997,
+      "sourceEnd": 28.37325,
+      "phrases": [
+        {
+          "text": "Choose a different finish and see its illustrative planning range alongside the roof area.",
+          "start": 0.12992681409518286,
+          "end": 4.694573185904817,
+          "sourceStart": 23,
+          "sourceEnd": 27.86,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0.21702100000000257,
+          "originalSceneEnd": 5.077021000000002,
+          "paceMapping": {
+            "sourceSceneFile": "finish.wav",
+            "trimStart": 0.264625,
+            "trimEnd": 5.463166999999999,
+            "observedSpeechStart": 0.404625,
+            "observedSpeechEnd": 5.323167,
+            "outputStart": 0,
+            "outputDuration": 4.8245,
+            "measuredScale": 0.9280486721084489,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "file": "paced/67242c0811ea6802/view.wav",
+      "spoken": "Switch to an aerial view to inspect the design, then carry that choice into an inspection request.",
+      "duration": 5.503875,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 28.37325,
+      "sourceEnd": 34.810291500000005,
+      "phrases": [
+        {
+          "text": "Switch to an aerial view to inspect the design, then carry that choice into an inspection request.",
+          "start": 0.12977922915895068,
+          "end": 5.37409577084105,
+          "sourceStart": 28.66,
+          "sourceEnd": 34.2,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0.2867500000000014,
+          "originalSceneEnd": 5.826750000000004,
+          "paceMapping": {
+            "sourceSceneFile": "view.wav",
+            "trimStart": 0.254417,
+            "trimEnd": 6.19175,
+            "observedSpeechStart": 0.394417,
+            "observedSpeechEnd": 6.05175,
+            "outputStart": 0,
+            "outputDuration": 5.503875,
+            "measuredScale": 0.9269944939925048,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "file": "paced/67242c0811ea6802/handoff.wav",
+      "spoken": "The selected material, geometry, and range arrive together in the brief, keeping those choices connected.",
+      "duration": 6.342458,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 34.810291500000005,
+      "sourceEnd": 42.064396,
+      "phrases": [
+        {
+          "text": "The selected material, geometry, and range arrive together in the brief, keeping those choices connected.",
+          "start": 0.12967971621722077,
+          "end": 6.212778283782779,
+          "sourceStart": 35.2,
+          "sourceEnd": 41.66,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0.38970849999999757,
+          "originalSceneEnd": 6.849708499999991,
+          "paceMapping": {
+            "sourceSceneFile": "handoff.wav",
+            "trimStart": 0.318333,
+            "trimEnd": 7.165541999999999,
+            "observedSpeechStart": 0.458333,
+            "observedSpeechEnd": 7.025542,
+            "outputStart": 0,
+            "outputDuration": 6.342458,
+            "measuredScale": 0.9262836872658626,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "file": "paced/67242c0811ea6802/brief.wav",
+      "spoken": "This is a sample home, and the request remains an unsent demo preview. No inspection is booked.",
+      "duration": 6.160375,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 42.064396,
+      "sourceEnd": 49.822708,
+      "phrases": [
+        {
+          "text": "This is a sample home, and the request remains an unsent demo preview.",
+          "start": 0.1297685020037539,
+          "end": 4.438314497996246,
+          "sourceStart": 42.3,
+          "sourceEnd": 47.12,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0.23560399999999504,
+          "originalSceneEnd": 5.055603999999995,
+          "paceMapping": {
+            "sourceSceneFile": "brief.wav",
+            "trimStart": 0.563417,
+            "trimEnd": 5.491667,
+            "observedSpeechStart": 0.703417,
+            "observedSpeechEnd": 5.351667,
+            "outputStart": 0,
+            "outputDuration": 4.568083,
+            "measuredScale": 0.9269178714553848,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "No inspection is booked.",
+          "start": 4.696765464630068,
+          "end": 6.031692535369932,
+          "sourceStart": 47.98,
+          "sourceEnd": 49.26,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 5.915603999999995,
+          "originalSceneEnd": 7.195603999999996,
+          "paceMapping": {
+            "sourceSceneFile": "brief.wav",
+            "trimStart": 5.844,
+            "trimEnd": 7.576333,
+            "observedSpeechStart": 5.984,
+            "observedSpeechEnd": 7.436333,
+            "outputStart": 4.568083,
+            "outputDuration": 1.592292,
+            "measuredScale": 0.9191604616433448,
+            "tempo": 1.08
+          }
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "file": "paced/67242c0811ea6802/ending.wav",
+      "spoken": "An interactive explanation becomes a practical starting point for discussing a roof project. Built by Wallace Shift.",
+      "duration": 6.551042,
+      "sampleRate": 48000,
+      "channels": 2,
+      "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+      "sourceStart": 49.822708,
+      "sourceEnd": 57.264,
+      "phrases": [
+        {
+          "text": "An interactive explanation becomes a practical starting point for discussing a roof project.",
+          "start": 0.3126385879581862,
+          "end": 4.7916499070533956,
+          "sourceStart": 50.16,
+          "sourceEnd": 54.78,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 0.3372919999999979,
+          "originalSceneEnd": 4.9572920000000025,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "trimStart": 0,
+            "trimEnd": 5.3095,
+            "observedSpeechStart": 0.3372919999999979,
+            "observedSpeechEnd": 5.1695,
+            "outputStart": 0,
+            "outputDuration": 4.921417,
+            "measuredScale": 0.9269078067614653,
+            "tempo": 1.08
+          }
+        },
+        {
+          "text": "Built by Wallace Shift.",
+          "start": 5.052098170535784,
+          "end": 6.420360829464216,
+          "sourceStart": 55.46,
+          "sourceEnd": 57.04,
+          "sourceFile": "originals/higgsfield-d771428a83c113bb.mp3",
+          "originalSceneStart": 5.637292000000002,
+          "originalSceneEnd": 7.2172920000000005,
+          "paceMapping": {
+            "sourceSceneFile": "ending.wav",
+            "trimStart": 5.627917,
+            "trimEnd": 7.373749999999999,
+            "observedSpeechStart": 5.767917,
+            "observedSpeechEnd": 7.23375,
+            "outputStart": 4.921417,
+            "outputDuration": 1.629625,
+            "measuredScale": 0.93343693239846,
+            "tempo": 1.08
+          }
+        }
+      ]
+    }
+  ],
+  "duration": 48.663125,
+  "pacing": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 1,
+    "sourceTimingFile": "unpaced-timing-f27829618be0d635.json",
+    "sourceTimingSha256": "f27829618be0d63546aa0f69cf8157c87ace74c9855be1c68610cd2dbf127b02",
+    "report": "paced/67242c0811ea6802/pacing-report.json"
+  }
+}

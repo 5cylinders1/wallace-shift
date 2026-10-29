@@ -1,0 +1,656 @@
+{
+  "id": "roofing-crm",
+  "sourceTimingFile": "unpaced-timing-b8172ba78984e008.json",
+  "sourceTimingSha256": "b8172ba78984e008f6c9b0f4f2f6eae47e29bdab2d9b9379506e86c27fedd110",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "5e502632289271aebcd3a8a9989915a3a0cad4f42923478503a3b797ebee749a"
+    },
+    {
+      "file": "weather.wav",
+      "sha256": "8ba90ae6e251023671069f85e25adf0d9f9101a622078e344870a4239d71c3d4"
+    },
+    {
+      "file": "property.wav",
+      "sha256": "c6acbb02fd95929be09c1d9f84e9fe6195876b3e2b40258b04726af445677ef0"
+    },
+    {
+      "file": "outcome.wav",
+      "sha256": "29f89c55c849e6cee7f624239118796734c97e727b2b7849dd95fd6c21303ded"
+    },
+    {
+      "file": "inspection.wav",
+      "sha256": "19e6c373f9a8c2b6433e3523910a1c9c5ccad7d8eeeb3987ed7e768d11c6d5da"
+    },
+    {
+      "file": "worklist.wav",
+      "sha256": "37f9353e5a0a34c84794da14057d6148f0d4c9d7ca8d6638b7c16a0365824828"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "9fb86d108f8f23c8b1169d2ec244c0dd2ed806dbaf81f90036384ecbabcaad12"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 8.938542,
+      "pacedDuration": 7.194292,
+      "edits": [
+        {
+          "text": "A roofing website starts a conversation.",
+          "phrase": 1,
+          "desiredTrimStart": 0.39879200000000004,
+          "desiredTrimEnd": 2.694208,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 2,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.538792
+          },
+          "trailingSilence": {
+            "start": 2.554208,
+            "end": 3.455417
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.39879200000000004,
+          "trimEnd": 2.694208,
+          "observedSpeechStart": 0.538792,
+          "observedSpeechEnd": 2.554208,
+          "captionSourceStart": 0.538792,
+          "captionSourceEnd": 2.554208,
+          "outputStart": 0,
+          "outputDuration": 2.139792,
+          "measuredScale": 0.9322022674756992,
+          "tempo": 1.08
+        },
+        {
+          "text": "This CRM demonstration by Wallace Shift shows how the next steps could be organized.",
+          "phrase": 2,
+          "desiredTrimStart": 3.315417,
+          "desiredTrimEnd": 8.762375,
+          "originalCaptionStart": 3.38,
+          "originalCaptionEnd": 8.22,
+          "leadingSilence": {
+            "start": 2.554208,
+            "end": 3.455417
+          },
+          "trailingSilence": {
+            "start": 8.622375,
+            "end": 8.938542
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 3.315417,
+          "trimEnd": 8.762375,
+          "observedSpeechStart": 3.455417,
+          "observedSpeechEnd": 8.622375,
+          "captionSourceStart": 3.455417,
+          "captionSourceEnd": 8.622375,
+          "outputStart": 2.139792,
+          "outputDuration": 5.0545,
+          "measuredScale": 0.9279491415208267,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.39879200000000004,
+          "sourceEnd": 2.694208,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 2.139792,
+          "measuredScale": 0.9322022674756992,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 3.315417,
+          "sourceEnd": 8.762375,
+          "phrases": [
+            2
+          ],
+          "outputStart": 2.139792,
+          "outputDuration": 5.0545,
+          "measuredScale": 0.9279491415208267,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "weather",
+      "originalDuration": 7.657125,
+      "pacedDuration": 6.693208,
+      "edits": [
+        {
+          "text": "Open the storm map to explore sample weather and nearby properties.",
+          "phrase": 1,
+          "desiredTrimStart": 0.1975,
+          "desiredTrimEnd": 4.200792,
+          "originalCaptionStart": 0.3214585000000003,
+          "originalCaptionEnd": 3.7214585000000007,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.3375
+          },
+          "trailingSilence": {
+            "start": 4.060792,
+            "end": 4.584875
+          },
+          "sourceSceneFile": "weather.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.1975,
+          "trimEnd": 4.200792,
+          "observedSpeechStart": 0.3375,
+          "observedSpeechEnd": 4.060792,
+          "captionSourceStart": 0.3375,
+          "captionSourceEnd": 4.060792,
+          "outputStart": 0,
+          "outputDuration": 3.716917,
+          "measuredScale": 0.9284651232036034,
+          "tempo": 1.08
+        },
+        {
+          "text": "It is a search aid, not proof of roof damage.",
+          "phrase": 2,
+          "desiredTrimStart": 4.444875000000001,
+          "desiredTrimEnd": 7.657125,
+          "originalCaptionStart": 4.5614585000000005,
+          "originalCaptionEnd": 7.341458500000002,
+          "leadingSilence": {
+            "start": 4.060792,
+            "end": 4.584875
+          },
+          "trailingSilence": null,
+          "sourceSceneFile": "weather.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 4.444875000000001,
+          "trimEnd": 7.657125,
+          "observedSpeechStart": 4.584875,
+          "observedSpeechEnd": 7.341458500000002,
+          "captionSourceStart": 4.584875,
+          "captionSourceEnd": 7.341458500000002,
+          "outputStart": 3.716917,
+          "outputDuration": 2.976292,
+          "measuredScale": 0.9265443225153711,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.1975,
+          "sourceEnd": 4.200792,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 3.716917,
+          "measuredScale": 0.9284651232036034,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 4.444875000000001,
+          "sourceEnd": 7.657125,
+          "phrases": [
+            2
+          ],
+          "outputStart": 3.716917,
+          "outputDuration": 2.976292,
+          "measuredScale": 0.9265443225153711,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "property",
+      "originalDuration": 7.817958,
+      "pacedDuration": 6.437375,
+      "edits": [
+        {
+          "text": "Review a property’s contact details, record source, and weather context.",
+          "phrase": 1,
+          "desiredTrimStart": 0.41854199999999997,
+          "desiredTrimEnd": 5.35975,
+          "originalCaptionStart": 0.10433349999999919,
+          "originalCaptionEnd": 4.864333499999997,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.558542
+          },
+          "trailingSilence": {
+            "start": 5.21975,
+            "end": 5.8205
+          },
+          "sourceSceneFile": "property.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.41854199999999997,
+          "trimEnd": 5.35975,
+          "observedSpeechStart": 0.558542,
+          "observedSpeechEnd": 5.21975,
+          "captionSourceStart": 0.558542,
+          "captionSourceEnd": 5.21975,
+          "outputStart": 0,
+          "outputDuration": 4.583625,
+          "measuredScale": 0.9276324736785013,
+          "tempo": 1.08
+        },
+        {
+          "text": "Then add it to the follow-up list.",
+          "phrase": 2,
+          "desiredTrimStart": 5.6805,
+          "desiredTrimEnd": 7.694458,
+          "originalCaptionStart": 5.704333499999997,
+          "originalCaptionEnd": 7.344333499999998,
+          "leadingSilence": {
+            "start": 5.21975,
+            "end": 5.8205
+          },
+          "trailingSilence": {
+            "start": 7.554458,
+            "end": 7.817958
+          },
+          "sourceSceneFile": "property.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 5.6805,
+          "trimEnd": 7.694458,
+          "observedSpeechStart": 5.8205,
+          "observedSpeechEnd": 7.554458,
+          "captionSourceStart": 5.8205,
+          "captionSourceEnd": 7.554458,
+          "outputStart": 4.583625,
+          "outputDuration": 1.85375,
+          "measuredScale": 0.9204511712756672,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.41854199999999997,
+          "sourceEnd": 5.35975,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 4.583625,
+          "measuredScale": 0.9276324736785013,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 5.6805,
+          "sourceEnd": 7.694458,
+          "phrases": [
+            2
+          ],
+          "outputStart": 4.583625,
+          "outputDuration": 1.85375,
+          "measuredScale": 0.9204511712756672,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "outcome",
+      "originalDuration": 6.836792,
+      "pacedDuration": 5.999958,
+      "edits": [
+        {
+          "text": "Record the contact outcome and an internal note, keeping the next step with the property.",
+          "phrase": 1,
+          "desiredTrimStart": 0.274958,
+          "desiredTrimEnd": 6.739999999999999,
+          "originalCaptionStart": 0.26637500000000003,
+          "originalCaptionEnd": 6.406375000000001,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.414958
+          },
+          "trailingSilence": {
+            "start": 6.6,
+            "end": 6.836792
+          },
+          "sourceSceneFile": "outcome.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.274958,
+          "trimEnd": 6.739999999999999,
+          "observedSpeechStart": 0.414958,
+          "observedSpeechEnd": 6.6,
+          "captionSourceStart": 0.414958,
+          "captionSourceEnd": 6.6,
+          "outputStart": 0,
+          "outputDuration": 5.999958,
+          "measuredScale": 0.9280617202486853,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.274958,
+          "sourceEnd": 6.739999999999999,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.999958,
+          "measuredScale": 0.9280617202486853,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "inspection",
+      "originalDuration": 6.616083,
+      "pacedDuration": 5.593167,
+      "edits": [
+        {
+          "text": "Choose an inspection time and assign a team member.",
+          "phrase": 1,
+          "desiredTrimStart": 0.238875,
+          "desiredTrimEnd": 3.276417,
+          "originalCaptionStart": 0.26956249999999926,
+          "originalCaptionEnd": 2.9895625000000017,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.378875
+          },
+          "trailingSilence": {
+            "start": 3.136417,
+            "end": 3.656042
+          },
+          "sourceSceneFile": "inspection.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.238875,
+          "trimEnd": 3.276417,
+          "observedSpeechStart": 0.378875,
+          "observedSpeechEnd": 3.136417,
+          "captionSourceStart": 0.378875,
+          "captionSourceEnd": 3.136417,
+          "outputStart": 0,
+          "outputDuration": 2.825167,
+          "measuredScale": 0.9300832712765783,
+          "tempo": 1.08
+        },
+        {
+          "text": "The sample appointment updates the property’s status.",
+          "phrase": 2,
+          "desiredTrimStart": 3.5160419999999997,
+          "desiredTrimEnd": 6.4864999999999995,
+          "originalCaptionStart": 3.609562499999999,
+          "originalCaptionEnd": 5.9695624999999986,
+          "leadingSilence": {
+            "start": 3.136417,
+            "end": 3.656042
+          },
+          "trailingSilence": {
+            "start": 6.3465,
+            "end": 6.616083
+          },
+          "sourceSceneFile": "inspection.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 3.5160419999999997,
+          "trimEnd": 6.4864999999999995,
+          "observedSpeechStart": 3.656042,
+          "observedSpeechEnd": 6.3465,
+          "captionSourceStart": 3.656042,
+          "captionSourceEnd": 6.3465,
+          "outputStart": 2.825167,
+          "outputDuration": 2.768,
+          "measuredScale": 0.9318428336640343,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.238875,
+          "sourceEnd": 3.276417,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 2.825167,
+          "measuredScale": 0.9300832712765783,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 3.5160419999999997,
+          "sourceEnd": 6.4864999999999995,
+          "phrases": [
+            2
+          ],
+          "outputStart": 2.825167,
+          "outputDuration": 2.768,
+          "measuredScale": 0.9318428336640343,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "worklist",
+      "originalDuration": 8.971875,
+      "pacedDuration": 7.692,
+      "edits": [
+        {
+          "text": "The worklist and upcoming appointments show the change.",
+          "phrase": 1,
+          "desiredTrimStart": 0.17616699999999996,
+          "desiredTrimEnd": 3.614583,
+          "originalCaptionStart": 0.2734999999999985,
+          "originalCaptionEnd": 3.2534999999999954,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.316167
+          },
+          "trailingSilence": {
+            "start": 3.474583,
+            "end": 4.146292
+          },
+          "sourceSceneFile": "worklist.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.17616699999999996,
+          "trimEnd": 3.614583,
+          "observedSpeechStart": 0.316167,
+          "observedSpeechEnd": 3.474583,
+          "captionSourceStart": 0.316167,
+          "captionSourceEnd": 3.474583,
+          "outputStart": 0,
+          "outputDuration": 3.19225,
+          "measuredScale": 0.9284071502691937,
+          "tempo": 1.08
+        },
+        {
+          "text": "Customer records and sample website inquiries are organized in the same workspace.",
+          "phrase": 2,
+          "desiredTrimStart": 4.006292,
+          "desiredTrimEnd": 8.860958,
+          "originalCaptionStart": 4.0334999999999965,
+          "originalCaptionEnd": 8.213499999999996,
+          "leadingSilence": {
+            "start": 3.474583,
+            "end": 4.146292
+          },
+          "trailingSilence": {
+            "start": 8.720958,
+            "end": 8.971875
+          },
+          "sourceSceneFile": "worklist.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 4.006292,
+          "trimEnd": 8.860958,
+          "observedSpeechStart": 4.146292,
+          "observedSpeechEnd": 8.720958,
+          "captionSourceStart": 4.146292,
+          "captionSourceEnd": 8.720958,
+          "outputStart": 3.19225,
+          "outputDuration": 4.49975,
+          "measuredScale": 0.9268917779307577,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.17616699999999996,
+          "sourceEnd": 3.614583,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 3.19225,
+          "measuredScale": 0.9284071502691937,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 4.006292,
+          "sourceEnd": 8.860958,
+          "phrases": [
+            2
+          ],
+          "outputStart": 3.19225,
+          "outputDuration": 4.49975,
+          "measuredScale": 0.9268917779307577,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 11.001625,
+      "pacedDuration": 9.650625,
+      "edits": [
+        {
+          "text": "All records are fictional.",
+          "phrase": 1,
+          "desiredTrimStart": 0.1775,
+          "desiredTrimEnd": 2.100625,
+          "originalCaptionStart": 0.2616250000000022,
+          "originalCaptionEnd": 1.6216250000000016,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.3175
+          },
+          "trailingSilence": {
+            "start": 1.960625,
+            "end": 2.753708
+          },
+          "sourceSceneFile": "ending.wav",
+          "segment": 1,
+          "mergedSentenceCount": 2,
+          "trimStart": 0.1775,
+          "trimEnd": 8.236167,
+          "observedSpeechStart": 0.3175,
+          "observedSpeechEnd": 1.960625,
+          "captionSourceStart": 0.3175,
+          "captionSourceEnd": 1.6216250000000016,
+          "outputStart": 0,
+          "outputDuration": 7.469958,
+          "measuredScale": 0.9269470993155569,
+          "tempo": 1.08
+        },
+        {
+          "text": "No live weather or contact lookup runs, and no messages or calendar invitations are sent.",
+          "phrase": 2,
+          "desiredTrimStart": 1.4816250000000015,
+          "desiredTrimEnd": 8.236167,
+          "originalCaptionStart": 1.6216250000000016,
+          "originalCaptionEnd": 7.881625,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 8.096167,
+            "end": 8.793625
+          },
+          "sourceSceneFile": "ending.wav",
+          "segment": 1,
+          "mergedSentenceCount": 2,
+          "trimStart": 0.1775,
+          "trimEnd": 8.236167,
+          "observedSpeechStart": 1.6216250000000016,
+          "observedSpeechEnd": 8.096167,
+          "captionSourceStart": 1.6216250000000016,
+          "captionSourceEnd": 8.096167,
+          "outputStart": 0,
+          "outputDuration": 7.469958,
+          "measuredScale": 0.9269470993155569,
+          "tempo": 1.08
+        },
+        {
+          "text": "The handoff to inspection is visible.",
+          "phrase": 3,
+          "desiredTrimStart": 8.661625,
+          "desiredTrimEnd": 11.001625,
+          "originalCaptionStart": 8.801625000000001,
+          "originalCaptionEnd": 10.661625,
+          "leadingSilence": null,
+          "trailingSilence": null,
+          "sourceSceneFile": "ending.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 8.661625,
+          "trimEnd": 11.001625,
+          "observedSpeechStart": 8.801625000000001,
+          "observedSpeechEnd": 10.661625,
+          "captionSourceStart": 8.801625000000001,
+          "captionSourceEnd": 10.661625,
+          "outputStart": 7.469958,
+          "outputDuration": 2.180667,
+          "measuredScale": 0.9319089743589745,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.1775,
+          "sourceEnd": 8.236167,
+          "phrases": [
+            1,
+            2
+          ],
+          "outputStart": 0,
+          "outputDuration": 7.469958,
+          "measuredScale": 0.9269470993155569,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 8.661625,
+          "sourceEnd": 11.001625,
+          "phrases": [
+            3
+          ],
+          "outputStart": 7.469958,
+          "outputDuration": 2.180667,
+          "measuredScale": 0.9319089743589745,
+          "tempo": 1.08
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "weather/2: no trailing silence matched; retained extra source conservatively.",
+    "ending/3: no trailing silence matched; retained extra source conservatively."
+  ],
+  "originalDuration": 57.84,
+  "pacedDuration": 49.260625,
+  "reviewAudio": "paced/1a433c7c2eeb9745/narration-review.wav",
+  "spokenTextUnchanged": true
+}

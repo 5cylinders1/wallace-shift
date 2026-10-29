@@ -1,0 +1,289 @@
+{
+  "id": "stratum",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/higgsfield-grady-source.mp3",
+  "sourceSha256": "d771428a83c113bb6804a12339d14d24bd899c767dfb9352dfd117de61d7d206",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "quotedCredits": 5.7,
+    "creditEvidence": "Production lead observed5.7quoted credits for the Stratum take; screenshot retained after generation shows Stratum history row and a later Datum generation form, whose5.8quote is not the Stratum price.",
+    "browserEvidence": "output/narrated-previews/stratum/higgsfield-generation.jpg",
+    "direction": "Calm, confident American male product narrator; natural conversational delivery with brisk pacing around155words per minute, clear diction and short pauses. Speech only."
+  },
+  "alignmentReview": {
+    "status": "ASR alignment reviewed with explicit root-authorized orthography exception; subjective listening and final caption review pending",
+    "method": "Exact token sequence alignment to unprompted local ASR word timestamps, independently verified original-audio crops, one proper-name spelling alias and the root-authorized unscent-to-unsent spelling exception. Complete phrases retain recognized source spans. All seven internal scene cuts use measured silent intervals. No timing invented for missing words.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-range-transcript.json",
+        "offset": 23,
+        "replaceStart": 23,
+        "replaceEnd": 28.4,
+        "removedWords": [
+          " Choose",
+          " a",
+          " different",
+          " finish",
+          " and",
+          " see",
+          " its",
+          " illustrative",
+          " planning",
+          " range",
+          " alongside",
+          " the",
+          " roof",
+          " area.",
+          " area."
+        ],
+        "addedWords": [
+          " Choose",
+          " a",
+          " different",
+          " finish",
+          " and",
+          " see",
+          " its",
+          " illustrative",
+          " planning",
+          " range",
+          " alongside",
+          " the",
+          " roof",
+          " area."
+        ],
+        "review": "Independent23–28.4s original-audio recognition contains roof area once. Resolves duplicate area at full-pass chunk boundary without discarding actual words."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-brief-orthography-reviewed.json",
+        "offset": 42.3,
+        "replaceStart": 42.3,
+        "replaceEnd": 49.7,
+        "removedWords": [
+          " This",
+          " is",
+          " a",
+          " sample",
+          " home,",
+          " and",
+          " the",
+          " request",
+          " remains",
+          " an",
+          " unscent",
+          " demo",
+          " preview.",
+          " No",
+          " inspection",
+          " is",
+          " booked."
+        ],
+        "addedWords": [
+          " This",
+          " is",
+          " a",
+          " sample",
+          " home,",
+          " and",
+          " the",
+          " request",
+          " remains",
+          " an",
+          " unsent",
+          " demo",
+          " preview.",
+          " No",
+          " inspection",
+          " is",
+          " booked."
+        ],
+        "review": "Explicit root-authorized unscent-to-unsent homophone spelling exception. Full unprompted ASR and independent42.3–49.7s brief crop recognize the same word/span as unscent. The approved spoken script says unsent, and the inspected Stratum request result explicitly says nothing has been sent. This is orthographic normalization only, not a substantive substitution or omission. Subjective listening is pending. The raw crop stays unchanged; only the documented derived report uses the spelling unsent."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Shift",
+        "recognized": "Schifft.",
+        "start": 56.36,
+        "end": 57.04,
+        "reviewedBy": "Codex source and independent transcript comparison",
+        "evidence": "Canonical brand is Wallace Shift. Full unprompted recognition and independent55.1–57.264s crop both recognize Schifft in the closing. This normalizes transcript spelling only; user accepted Grady voice but this name pronunciation is not separately listened/tested.",
+        "observedWords": [
+          {
+            "token": "schifft",
+            "text": " Schifft.",
+            "start": 56.36,
+            "end": 57.04,
+            "probability": 0.7290210723876953,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/stratum/asr-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex roofing narrative agent under explicit root authority for reviewed name spellings and corroborated unscent-to-unsent orthography",
+    "reviewedAt": "2026-10-28T18:20:27.121650+00:00",
+    "orthographicException": {
+      "reviewer": "Codex roofing narrative agent under explicit root-authorized homophone exception",
+      "sourceReport": "output/narrated-previews/stratum/asr-brief-transcript.json",
+      "sourceReportSha256": "7dd2f970dfe3a27b96fe6c2879afcb986ba7a3912c677c09403ac203066660ca",
+      "reason": "Explicit root-authorized unscent-to-unsent homophone spelling exception. Full unprompted ASR and independent42.3–49.7s brief crop recognize the same word/span as unscent. The approved spoken script says unsent, and the inspected Stratum request result explicitly says nothing has been sent. This is orthographic normalization only, not a substantive substitution or omission. Subjective listening is pending.",
+      "changes": [
+        {
+          "original": " unscent",
+          "normalized": " unsent",
+          "cropStart": 3.46,
+          "cropEnd": 4.02,
+          "sourceStart": 45.76,
+          "sourceEnd": 46.31999999999999
+        }
+      ],
+      "independentEvidence": [
+        "asr-transcript.json",
+        "asr-brief-transcript.json",
+        "ending-end.png",
+        "evidence.json"
+      ],
+      "rawReportsPreserved": true,
+      "noListeningClaim": true
+    },
+    "evidence": [
+      "asr-transcript.json",
+      "asr-range-transcript.json",
+      "asr-brief-transcript.json",
+      "asr-brand-transcript.json",
+      "asr-brief-orthography-reviewed.json",
+      "alignment-review-config.json",
+      "alignment-report.json",
+      "higgsfield-generation.jpg",
+      "ending-end.png"
+    ],
+    "limitations": [
+      "No subjective listening review performed.",
+      "User accepted Grady voice; this does not separately verify this take’s pronunciation, pace or delivery.",
+      "Schifft-to-Shift is an explicit canonical-brand spelling normalization; raw recognition retained.",
+      "Crop first-word timestamps can include leading silence. Captions remain sentence-level, not word highlighting.",
+      "No pacing, sound mix, composition, or rendering performed by this alignment task."
+    ]
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 6.7645,
+      "phrases": [
+        {
+          "text": "Stratum is a roofing website concept by Wallace Shift, built around one live, interactive model.",
+          "start": 0,
+          "end": 6.2
+        }
+      ]
+    },
+    {
+      "id": "anatomy",
+      "start": 6.7645,
+      "end": 15.22625,
+      "phrases": [
+        {
+          "text": "As the visitor moves through the page, the same house helps explain the roof as a system, including the layers underneath.",
+          "start": 7.12,
+          "end": 14.3
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "start": 15.22625,
+      "end": 22.782978999999997,
+      "phrases": [
+        {
+          "text": "In the roof studio, change the roof form and adjust the pitch.",
+          "start": 15.92,
+          "end": 19.36
+        },
+        {
+          "text": "The model and its calculated measurements respond.",
+          "start": 20.12,
+          "end": 22.18
+        }
+      ]
+    },
+    {
+      "id": "finish",
+      "start": 22.782978999999997,
+      "end": 28.37325,
+      "phrases": [
+        {
+          "text": "Choose a different finish and see its illustrative planning range alongside the roof area.",
+          "start": 23,
+          "end": 27.86
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "start": 28.37325,
+      "end": 34.810291500000005,
+      "phrases": [
+        {
+          "text": "Switch to an aerial view to inspect the design, then carry that choice into an inspection request.",
+          "start": 28.66,
+          "end": 34.2
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "start": 34.810291500000005,
+      "end": 42.064396,
+      "phrases": [
+        {
+          "text": "The selected material, geometry, and range arrive together in the brief, keeping those choices connected.",
+          "start": 35.2,
+          "end": 41.66
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "start": 42.064396,
+      "end": 49.822708,
+      "phrases": [
+        {
+          "text": "This is a sample home, and the request remains an unsent demo preview.",
+          "start": 42.3,
+          "end": 47.12
+        },
+        {
+          "text": "No inspection is booked.",
+          "start": 47.98,
+          "end": 49.26
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "start": 49.822708,
+      "end": 57.264,
+      "phrases": [
+        {
+          "text": "An interactive explanation becomes a practical starting point for discussing a roof project.",
+          "start": 50.16,
+          "end": 54.78
+        },
+        {
+          "text": "Built by Wallace Shift.",
+          "start": 55.46,
+          "end": 57.04
+        }
+      ]
+    }
+  ]
+}

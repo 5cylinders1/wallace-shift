@@ -1,0 +1,350 @@
+{
+  "id": "mitre",
+  "sourceFile": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/mitre/higgsfield-grady-source.mp3",
+  "sourceSha256": "a758f8912fa73decf108e4b4ac7fa89942b8fad169a76badad2d96fbd8679e3b",
+  "timeBase": "source-seconds",
+  "provider": {
+    "name": "Higgsfield",
+    "route": "browser",
+    "model": "Seed Audio 1.0",
+    "voice": "Grady",
+    "generationId": null,
+    "quotedCredits": 5.7,
+    "creditEvidence": "Production lead observed 5.7 quoted credits for Mitre. Retained screenshot confirms Mitre as the last downloaded history row; its left-side form contains a later CRM script, so that form quote is not independent proof of Mitre cost.",
+    "browserEvidence": "output/narrated-previews/mitre/higgsfield-generation.jpg",
+    "direction": "Calm, confident American male product narrator; natural conversational delivery with brisk pacing around 155 words per minute, clear diction and short natural pauses. Speech only."
+  },
+  "alignmentReview": {
+    "status": "ASR alignment reviewed; subjective listening pending",
+    "method": "exact token sequence alignment to independent ASR word timestamps, with explicit reviewed proper-name aliases only. Complete sentences use matched observed word spans; scene cuts prefer measured silence. No timing is invented for missing/substituted words.",
+    "noListeningClaim": true,
+    "asrReport": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/mitre/asr-transcript.json",
+    "cropEvidence": [
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/mitre/asr-intro-transcript.json",
+        "offset": 0,
+        "replaceStart": 0,
+        "replaceEnd": 8.7,
+        "removedWords": [
+          " The",
+          " mitter",
+          " and",
+          " rift",
+          " opens",
+          " with",
+          " a",
+          " room",
+          " that",
+          " builds",
+          " as",
+          " you",
+          " scroll.",
+          " Wallace",
+          " Shift",
+          " created",
+          " this",
+          " editorial",
+          " website",
+          " for",
+          " a",
+          " fictional",
+          " cabinetmaker."
+        ],
+        "addedWords": [
+          " The",
+          " mitter",
+          " and",
+          " rift",
+          " opens",
+          " with",
+          " a",
+          " room",
+          " that",
+          " builds",
+          " as",
+          " you",
+          " scroll.",
+          " Wallace",
+          " Shift",
+          " created",
+          " this",
+          " editorial",
+          " website",
+          " for",
+          " a",
+          " fictional",
+          " cabinetmaker."
+        ],
+        "review": "Independent full intro recognition corroborates identity and the extra leading article. Exact-take script updated by one non-substantive article under production lead authorization; original script retained. No capability changes."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/mitre/asr-finished-transcript.json",
+        "offset": 18.1,
+        "replaceStart": 18.1,
+        "replaceEnd": 24.4,
+        "removedWords": [
+          " Short",
+          " chapters",
+          " explain",
+          " each",
+          " stage,",
+          " then",
+          " the",
+          " finished",
+          " room",
+          " brings",
+          " the",
+          " materials",
+          " and",
+          " proportions",
+          " together."
+        ],
+        "addedWords": [
+          " Short",
+          " chapters",
+          " explain",
+          " each",
+          " stage,",
+          " then",
+          " the",
+          " finished",
+          " room",
+          " brings",
+          " the",
+          " materials",
+          " and",
+          " proportions",
+          " together."
+        ],
+        "review": "Independent finished-room sentence recognition recovers a positive-duration Short word; replacement ends before the next sentence The attached at 24.42 by full-pass recognition."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/mitre/asr-services-transcript.json",
+        "offset": 24.7,
+        "replaceStart": 24.7,
+        "replaceEnd": 33.6,
+        "removedWords": [
+          " The",
+          " rest",
+          " of",
+          " the",
+          " site",
+          " makes",
+          " that",
+          " first",
+          " impression",
+          " useful,",
+          " introducing",
+          " kitchens,",
+          " pantries,",
+          " built",
+          "-ins,",
+          " stone,",
+          " and",
+          " light."
+        ],
+        "addedWords": [
+          " The",
+          " rest",
+          " of",
+          " the",
+          " site",
+          " makes",
+          " that",
+          " first",
+          " impression",
+          " useful,",
+          " introducing",
+          " kitchens,",
+          " pantries,",
+          " built",
+          "-ins,",
+          " stone,",
+          " and",
+          " light."
+        ],
+        "review": "Independent service sentence recognition resolves the next-sentence The that full-pass ASR incorrectly attached to the end of together, allowing a measured-silence scene cut."
+      },
+      {
+        "file": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/mitre/asr-ending-clean-transcript.json",
+        "offset": 46.6,
+        "replaceStart": 46.6,
+        "replaceEnd": 56.328,
+        "removedWords": [
+          " The",
+          " imagery",
+          " is",
+          " rendered",
+          " and",
+          " contacts",
+          " are",
+          " placeholders.",
+          " The",
+          " Easy",
+          " to",
+          " understand."
+        ],
+        "addedWords": [
+          " The",
+          " imagery",
+          " is",
+          " rendered",
+          " and",
+          " contacts",
+          " are",
+          " placeholders.",
+          " The",
+          " distinction",
+          " is",
+          " making",
+          " the",
+          " whole",
+          " room",
+          " and",
+          " the",
+          " thinking",
+          " behind",
+          " it",
+          " easy",
+          " to",
+          " understand."
+        ],
+        "review": "Independent ending recognition recovers the complete distinction sentence omitted by full-pass recognition. All substantive words preserved."
+      }
+    ],
+    "aliasUses": [
+      {
+        "expected": "Mitre",
+        "recognized": "mitter",
+        "start": 0.1,
+        "end": 0.3,
+        "reviewedBy": "Codex source and independent transcript comparison",
+        "evidence": "Canonical fictional concept name Mitre and Rift; full unprompted ASR plus independent 0–8.7s and 0–3.8s crops consistently recognize mitter and rift. Spelling normalization only, subjective pronunciation review pending.",
+        "observedWords": [
+          {
+            "token": "mitter",
+            "text": " mitter",
+            "start": 0.1,
+            "end": 0.3,
+            "probability": 0.7549203336238861,
+            "source": "/Users/matthewwallace/.codex/worktrees/contractor-demo-previews/WallaceShiftLogoSite/output/narrated-previews/mitre/asr-intro-transcript.json",
+            "sourceOffset": 0
+          }
+        ]
+      }
+    ],
+    "issues": [],
+    "reviewedBy": "Codex production subagent under production lead delegation",
+    "exactTakeAdjustment": {
+      "change": "Added leading The to opening spoken script.",
+      "evidence": [
+        "asr-transcript.json",
+        "asr-intro-transcript.json",
+        "asr-name-transcript.json"
+      ],
+      "meaning": "Article only. Fictional Mitre and Rift identity and all capability/disclosure words unchanged.",
+      "authorization": "Production lead permitted non-substantive article/contraction take updates; listening remains pending."
+    }
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "end": 8.7536875,
+      "phrases": [
+        {
+          "text": "The Mitre and Rift opens with a room that builds as you scroll.",
+          "start": 0,
+          "end": 3.28
+        },
+        {
+          "text": "Wallace Shift created this editorial website for a fictional cabinetmaker.",
+          "start": 4.34,
+          "end": 8.2
+        }
+      ]
+    },
+    {
+      "id": "assembly",
+      "start": 8.7536875,
+      "end": 18.073354000000002,
+      "phrases": [
+        {
+          "text": "A continuous rendered sequence moves from the empty interior through cabinetry, stone, and lighting.",
+          "start": 9.06,
+          "end": 15.22
+        },
+        {
+          "text": "The visitor controls the pace.",
+          "start": 16.34,
+          "end": 17.78
+        }
+      ]
+    },
+    {
+      "id": "finished",
+      "start": 18.073354000000002,
+      "end": 24.6795625,
+      "phrases": [
+        {
+          "text": "Short chapters explain each stage, then the finished room brings the materials and proportions together.",
+          "start": 18.1,
+          "end": 24.42
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "start": 24.6795625,
+      "end": 33.6190835,
+      "phrases": [
+        {
+          "text": "The rest of the site makes that first impression useful, introducing kitchens, pantries, built-ins, stone, and light.",
+          "start": 24.7,
+          "end": 33.04
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "start": 33.6190835,
+      "end": 40.308291499999996,
+      "phrases": [
+        {
+          "text": "A clear process explains the journey from measuring and drawing through workshop construction and fitting.",
+          "start": 34.02,
+          "end": 39.64
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "start": 40.308291499999996,
+      "end": 46.468708500000005,
+      "phrases": [
+        {
+          "text": "Material details show the palette behind the kitchen, with a contact section providing the next step.",
+          "start": 40.74,
+          "end": 46.22
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "start": 46.468708500000005,
+      "end": 56.328,
+      "phrases": [
+        {
+          "text": "The imagery is rendered and contacts are placeholders.",
+          "start": 46.6,
+          "end": 49.88
+        },
+        {
+          "text": "The distinction is making the whole room, and the thinking behind it, easy to understand.",
+          "start": 50.82,
+          "end": 55.64
+        }
+      ]
+    }
+  ]
+}

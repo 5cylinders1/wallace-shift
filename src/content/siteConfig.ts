@@ -190,6 +190,7 @@ export const footer = {
   // https://developers.google.com/search/docs/appearance/preferred-sources
   preferredSource: {
     href: 'https://www.google.com/preferences/source?q=wallaceshift.com',
+    badge: '/brand/google-preferred-source-dark-en.png',
     icon: '/brand/google-g.png',
     text: 'Add as a preferred source',
     label: 'Add as a preferred source on Google: Wallace Shift (opens in a new tab)',

@@ -1,0 +1,628 @@
+{
+  "id": "halcyon",
+  "sourceTimingFile": "unpaced-timing-af10e603c9db8252.json",
+  "sourceTimingSha256": "af10e603c9db825221465e7ad61dc91f34b362496c117a62ff5ea31fd2c202ac",
+  "settings": {
+    "tempo": 1.08,
+    "handleSeconds": 0.14,
+    "targetSentenceGapSeconds": 0.25,
+    "silenceThresholdDb": -42,
+    "minimumSilenceSeconds": 0.12,
+    "algorithm": 2
+  },
+  "feedback": "User watched Velar: keep this voice and tighten pacing; it felt slow.",
+  "subjectiveListening": "Not claimed by this transformation helper.",
+  "originalFiles": [
+    {
+      "file": "opening.wav",
+      "sha256": "1ca37d4d0c9300c5626109a1369567753d61906cb13262dc897e309682f0e3e4"
+    },
+    {
+      "file": "materials.wav",
+      "sha256": "b6af51df36a3df1db7f268c97b6f953b6e9704338f646f10eee7a47c24631eed"
+    },
+    {
+      "file": "photo.wav",
+      "sha256": "dbab716b0f7ee40541d79388f921b79deaa158ff6ecc3a7ecb545fceb24620c3"
+    },
+    {
+      "file": "comparison.wav",
+      "sha256": "f5a4838e6a048645263db0207c0c4ff6cbb703bcf638acb3ac5f71f6800d2ff0"
+    },
+    {
+      "file": "planning.wav",
+      "sha256": "78c3254e642ec0fd663a9129b81c8723a074881d976579b82a5bae8e861e8ebc"
+    },
+    {
+      "file": "handoff.wav",
+      "sha256": "80fdfc89dea09ce9c68a8c39f1c72a2622688de06d9d723adeb8827012ce39a3"
+    },
+    {
+      "file": "brief.wav",
+      "sha256": "dcec3fb64214c15a86ad828c4d457d585bc82ff769ece522b7093db22590ace7"
+    },
+    {
+      "file": "ending.wav",
+      "sha256": "1d5b6a768ef6b12526320582f3643252bb7fad4646cc23d5bc0b1433888b3f64"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opening",
+      "originalDuration": 9.222583,
+      "pacedDuration": 7.909917,
+      "edits": [
+        {
+          "text": "Halcyon is Wallace Shift’s architectural roofing concept.",
+          "phrase": 1,
+          "desiredTrimStart": 0,
+          "desiredTrimEnd": 3.436958,
+          "originalCaptionStart": 0,
+          "originalCaptionEnd": 3.06,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 3.296958,
+            "end": 4.099417
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0,
+          "trimEnd": 3.436958,
+          "observedSpeechStart": 0,
+          "observedSpeechEnd": 3.296958,
+          "captionSourceStart": 0,
+          "captionSourceEnd": 3.296958,
+          "outputStart": 0,
+          "outputDuration": 3.187833,
+          "measuredScale": 0.9275158439527046,
+          "tempo": 1.08
+        },
+        {
+          "text": "A cinematic estate view introduces a premium, material-led experience.",
+          "phrase": 2,
+          "desiredTrimStart": 3.9594169999999997,
+          "desiredTrimEnd": 9.046167,
+          "originalCaptionStart": 4.06,
+          "originalCaptionEnd": 8.58,
+          "leadingSilence": {
+            "start": 3.296958,
+            "end": 4.099417
+          },
+          "trailingSilence": {
+            "start": 8.906167,
+            "end": 9.222583
+          },
+          "sourceSceneFile": "opening.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 3.9594169999999997,
+          "trimEnd": 9.046167,
+          "observedSpeechStart": 4.099417,
+          "observedSpeechEnd": 8.906167,
+          "captionSourceStart": 4.099417,
+          "captionSourceEnd": 8.906167,
+          "outputStart": 3.187833,
+          "outputDuration": 4.722083,
+          "measuredScale": 0.928310414311692,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0,
+          "sourceEnd": 3.436958,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 3.187833,
+          "measuredScale": 0.9275158439527046,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 3.9594169999999997,
+          "sourceEnd": 9.046167,
+          "phrases": [
+            2
+          ],
+          "outputStart": 3.187833,
+          "outputDuration": 4.722083,
+          "measuredScale": 0.928310414311692,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "originalDuration": 6.198583,
+      "pacedDuration": 5.31625,
+      "edits": [
+        {
+          "text": "A detailed gallery brings the materials, their character, and their planning information together.",
+          "phrase": 1,
+          "desiredTrimStart": 0.209625,
+          "desiredTrimEnd": 5.943167,
+          "originalCaptionStart": 0.3173959999999987,
+          "originalCaptionEnd": 5.537395999999999,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.349625
+          },
+          "trailingSilence": {
+            "start": 5.803167,
+            "end": 6.198583
+          },
+          "sourceSceneFile": "materials.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.209625,
+          "trimEnd": 5.943167,
+          "observedSpeechStart": 0.349625,
+          "observedSpeechEnd": 5.803167,
+          "captionSourceStart": 0.349625,
+          "captionSourceEnd": 5.803167,
+          "outputStart": 0,
+          "outputDuration": 5.31625,
+          "measuredScale": 0.9272191605119489,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.209625,
+          "sourceEnd": 5.943167,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.31625,
+          "measuredScale": 0.9272191605119489,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "photo",
+      "originalDuration": 9.52175,
+      "pacedDuration": 7.9975,
+      "edits": [
+        {
+          "text": "The visualizer accepts a photograph, then offers material and finish choices.",
+          "phrase": 1,
+          "desiredTrimStart": 0.300292,
+          "desiredTrimEnd": 5.482666999999999,
+          "originalCaptionStart": 0.39885400000000004,
+          "originalCaptionEnd": 4.958853999999999,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.440292
+          },
+          "trailingSilence": {
+            "start": 5.342667,
+            "end": 6.032458
+          },
+          "sourceSceneFile": "photo.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.300292,
+          "trimEnd": 5.482666999999999,
+          "observedSpeechStart": 0.440292,
+          "observedSpeechEnd": 5.342667,
+          "captionSourceStart": 0.440292,
+          "captionSourceEnd": 5.342667,
+          "outputStart": 0,
+          "outputDuration": 4.806833,
+          "measuredScale": 0.9275347692901422,
+          "tempo": 1.08
+        },
+        {
+          "text": "A new generation requires permission to send the image.",
+          "phrase": 2,
+          "desiredTrimStart": 5.898854000000001,
+          "desiredTrimEnd": 9.335375,
+          "originalCaptionStart": 6.038854000000001,
+          "originalCaptionEnd": 8.918854,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 9.195375,
+            "end": 9.52175
+          },
+          "sourceSceneFile": "photo.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 5.898854000000001,
+          "trimEnd": 9.335375,
+          "observedSpeechStart": 6.038854000000001,
+          "observedSpeechEnd": 9.195375,
+          "captionSourceStart": 6.038854000000001,
+          "captionSourceEnd": 9.195375,
+          "outputStart": 4.806833,
+          "outputDuration": 3.190667,
+          "measuredScale": 0.9284584613334241,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.300292,
+          "sourceEnd": 5.482666999999999,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 4.806833,
+          "measuredScale": 0.9275347692901422,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 5.898854000000001,
+          "sourceEnd": 9.335375,
+          "phrases": [
+            2
+          ],
+          "outputStart": 4.806833,
+          "outputDuration": 3.190667,
+          "measuredScale": 0.9284584613334241,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "originalDuration": 8.425875,
+      "pacedDuration": 7.304042,
+      "edits": [
+        {
+          "text": "Here we use prepared sample studies.",
+          "phrase": 1,
+          "desiredTrimStart": 0.274833,
+          "desiredTrimEnd": 2.780958,
+          "originalCaptionStart": 0.33708349999999854,
+          "originalCaptionEnd": 2.457083499999996,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.414833
+          },
+          "trailingSilence": {
+            "start": 2.640958,
+            "end": 3.323333
+          },
+          "sourceSceneFile": "comparison.wav",
+          "segment": 1,
+          "mergedSentenceCount": 2,
+          "trimStart": 0.274833,
+          "trimEnd": 8.156583000000001,
+          "observedSpeechStart": 0.414833,
+          "observedSpeechEnd": 2.640958,
+          "captionSourceStart": 0.414833,
+          "captionSourceEnd": 2.457083499999996,
+          "outputStart": 0,
+          "outputDuration": 7.304042,
+          "measuredScale": 0.9267030798997683,
+          "tempo": 1.08
+        },
+        {
+          "text": "Switch from metal to slate, then compare the result with the original home.",
+          "phrase": 2,
+          "desiredTrimStart": 2.317083499999996,
+          "desiredTrimEnd": 8.156583000000001,
+          "originalCaptionStart": 2.457083499999996,
+          "originalCaptionEnd": 7.817083499999995,
+          "leadingSilence": null,
+          "trailingSilence": {
+            "start": 8.016583,
+            "end": 8.425875
+          },
+          "sourceSceneFile": "comparison.wav",
+          "segment": 1,
+          "mergedSentenceCount": 2,
+          "trimStart": 0.274833,
+          "trimEnd": 8.156583000000001,
+          "observedSpeechStart": 2.457083499999996,
+          "observedSpeechEnd": 8.016583,
+          "captionSourceStart": 2.457083499999996,
+          "captionSourceEnd": 8.016583,
+          "outputStart": 0,
+          "outputDuration": 7.304042,
+          "measuredScale": 0.9267030798997683,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.274833,
+          "sourceEnd": 8.156583000000001,
+          "phrases": [
+            1,
+            2
+          ],
+          "outputStart": 0,
+          "outputDuration": 7.304042,
+          "measuredScale": 0.9267030798997683,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "originalDuration": 8.249292,
+      "pacedDuration": 6.408125,
+      "edits": [
+        {
+          "text": "Enter a roof area to explore an illustrative planning range.",
+          "phrase": 1,
+          "desiredTrimStart": 0.37745799999999996,
+          "desiredTrimEnd": 4.293082999999999,
+          "originalCaptionStart": 0.41118749999999693,
+          "originalCaptionEnd": 4.011187499999998,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.517458
+          },
+          "trailingSilence": {
+            "start": 4.153083,
+            "end": 5.220958
+          },
+          "sourceSceneFile": "planning.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.37745799999999996,
+          "trimEnd": 4.293082999999999,
+          "observedSpeechStart": 0.517458,
+          "observedSpeechEnd": 4.153083,
+          "captionSourceStart": 0.517458,
+          "captionSourceEnd": 4.153083,
+          "outputStart": 0,
+          "outputDuration": 3.638458,
+          "measuredScale": 0.9292151316839586,
+          "tempo": 1.08
+        },
+        {
+          "text": "The photograph itself does not measure the roof.",
+          "phrase": 2,
+          "desiredTrimStart": 5.080958000000001,
+          "desiredTrimEnd": 8.059292000000001,
+          "originalCaptionStart": 5.091187499999997,
+          "originalCaptionEnd": 7.691187499999998,
+          "leadingSilence": {
+            "start": 4.153083,
+            "end": 5.220958
+          },
+          "trailingSilence": {
+            "start": 7.919292,
+            "end": 8.249292
+          },
+          "sourceSceneFile": "planning.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 5.080958000000001,
+          "trimEnd": 8.059292000000001,
+          "observedSpeechStart": 5.220958,
+          "observedSpeechEnd": 7.919292,
+          "captionSourceStart": 5.220958,
+          "captionSourceEnd": 7.919292,
+          "outputStart": 3.638458,
+          "outputDuration": 2.769667,
+          "measuredScale": 0.9299383480831901,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.37745799999999996,
+          "sourceEnd": 4.293082999999999,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 3.638458,
+          "measuredScale": 0.9292151316839586,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 5.080958000000001,
+          "sourceEnd": 8.059292000000001,
+          "phrases": [
+            2
+          ],
+          "outputStart": 3.638458,
+          "outputDuration": 2.769667,
+          "measuredScale": 0.9299383480831901,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "originalDuration": 6.569958,
+      "pacedDuration": 5.677,
+      "edits": [
+        {
+          "text": "Those material and budget choices carry into a consultation brief, alongside the project and timeline.",
+          "phrase": 1,
+          "desiredTrimStart": 0.32787499999999997,
+          "desiredTrimEnd": 6.442374999999999,
+          "originalCaptionStart": 0.36189599999999444,
+          "originalCaptionEnd": 6.141895999999996,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.467875
+          },
+          "trailingSilence": {
+            "start": 6.302375,
+            "end": 6.569958
+          },
+          "sourceSceneFile": "handoff.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.32787499999999997,
+          "trimEnd": 6.442374999999999,
+          "observedSpeechStart": 0.467875,
+          "observedSpeechEnd": 6.302375,
+          "captionSourceStart": 0.467875,
+          "captionSourceEnd": 6.302375,
+          "outputStart": 0,
+          "outputDuration": 5.677,
+          "measuredScale": 0.9284487693188322,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.32787499999999997,
+          "sourceEnd": 6.442374999999999,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 5.677,
+          "measuredScale": 0.9284487693188322,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "brief",
+      "originalDuration": 6.806417,
+      "pacedDuration": 5.54925,
+      "edits": [
+        {
+          "text": "Review the resulting preview.",
+          "phrase": 1,
+          "desiredTrimStart": 0.177417,
+          "desiredTrimEnd": 2.016292,
+          "originalCaptionStart": 0.27193749999999994,
+          "originalCaptionEnd": 1.571937499999997,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.317417
+          },
+          "trailingSilence": {
+            "start": 1.876292,
+            "end": 2.460042
+          },
+          "sourceSceneFile": "brief.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.177417,
+          "trimEnd": 2.016292,
+          "observedSpeechStart": 0.317417,
+          "observedSpeechEnd": 1.876292,
+          "captionSourceStart": 0.317417,
+          "captionSourceEnd": 1.876292,
+          "outputStart": 0,
+          "outputDuration": 1.705792,
+          "measuredScale": 0.9276280334443613,
+          "tempo": 1.08
+        },
+        {
+          "text": "Nothing is sent, stored, or booked in this demonstration.",
+          "phrase": 2,
+          "desiredTrimStart": 2.320042,
+          "desiredTrimEnd": 6.465542,
+          "originalCaptionStart": 2.3919374999999974,
+          "originalCaptionEnd": 5.9119375000000005,
+          "leadingSilence": {
+            "start": 1.876292,
+            "end": 2.460042
+          },
+          "trailingSilence": {
+            "start": 6.325542,
+            "end": 6.806417
+          },
+          "sourceSceneFile": "brief.wav",
+          "segment": 2,
+          "mergedSentenceCount": 1,
+          "trimStart": 2.320042,
+          "trimEnd": 6.465542,
+          "observedSpeechStart": 2.460042,
+          "observedSpeechEnd": 6.325542,
+          "captionSourceStart": 2.460042,
+          "captionSourceEnd": 6.325542,
+          "outputStart": 1.705792,
+          "outputDuration": 3.843458,
+          "measuredScale": 0.92713979013388,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.177417,
+          "sourceEnd": 2.016292,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 1.705792,
+          "measuredScale": 0.9276280334443613,
+          "tempo": 1.08
+        },
+        {
+          "sourceStart": 2.320042,
+          "sourceEnd": 6.465542,
+          "phrases": [
+            2
+          ],
+          "outputStart": 1.705792,
+          "outputDuration": 3.843458,
+          "measuredScale": 0.92713979013388,
+          "tempo": 1.08
+        }
+      ]
+    },
+    {
+      "id": "ending",
+      "originalDuration": 7.573542,
+      "pacedDuration": 6.648833,
+      "edits": [
+        {
+          "text": "A premium website connecting visual inspiration with a more specific project conversation, by Wallace Shift.",
+          "phrase": 1,
+          "desiredTrimStart": 0.41054199999999996,
+          "desiredTrimEnd": 7.573542,
+          "originalCaptionStart": 0.4855415000000036,
+          "originalCaptionEnd": 7.305541499999997,
+          "leadingSilence": {
+            "start": 0,
+            "end": 0.550542
+          },
+          "trailingSilence": null,
+          "sourceSceneFile": "ending.wav",
+          "segment": 1,
+          "mergedSentenceCount": 1,
+          "trimStart": 0.41054199999999996,
+          "trimEnd": 7.573542,
+          "observedSpeechStart": 0.550542,
+          "observedSpeechEnd": 7.305541499999997,
+          "captionSourceStart": 0.550542,
+          "captionSourceEnd": 7.305541499999997,
+          "outputStart": 0,
+          "outputDuration": 6.648833,
+          "measuredScale": 0.928219042300712,
+          "tempo": 1.08
+        }
+      ],
+      "segments": [
+        {
+          "sourceStart": 0.41054199999999996,
+          "sourceEnd": 7.573542,
+          "phrases": [
+            1
+          ],
+          "outputStart": 0,
+          "outputDuration": 6.648833,
+          "measuredScale": 0.928219042300712,
+          "tempo": 1.08
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "ending/1: no trailing silence matched; retained extra source conservatively."
+  ],
+  "originalDuration": 62.568,
+  "pacedDuration": 52.810917,
+  "reviewAudio": "paced/c0dd6238f8da2cd4/narration-review.wav",
+  "spokenTextUnchanged": true
+}
