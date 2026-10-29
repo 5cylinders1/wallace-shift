@@ -15,7 +15,7 @@ import './InteriorPage.css'
 import './ApproachPage.css'
 
 const checkpoints = [
-  { id: 'approach-start', label: 'Find the gaps' },
+  { id: 'approach-start', label: 'Find the friction' },
   { id: 'approach-build', label: 'Build around the work' },
   { id: 'approach-launch', label: 'Support the next step' },
 ]

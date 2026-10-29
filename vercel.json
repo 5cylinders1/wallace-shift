@@ -4,6 +4,14 @@
   "trailingSlash": false,
   "headers": [
     {
+      "source": "/bucyrus-auto/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/bucyrus-auto/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
       "source": "/resources/blog/wallace-shift-business-systems-worksheets.xlsx",
       "headers": [
         {
@@ -18,6 +26,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/bucyrus-auto",
+      "destination": "/demos/bucyrus-auto"
+    },
     {
       "source": "/",
       "has": [{ "type": "host", "value": "roofers.wallaceshift.com" }],

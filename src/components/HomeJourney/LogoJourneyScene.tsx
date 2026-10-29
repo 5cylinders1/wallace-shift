@@ -13,10 +13,10 @@ import { createJourneyShiftRules } from './journeyShiftRules'
 import { createJourneyAscent } from './journeyAscent'
 import { createJourneyPower } from './journeyPower'
 import { createJourneySpin } from './journeySpin'
-import { sampleBlueprintDraw, type JourneyFrame } from './journeyDirector'
+import { sampleBlueprintDraw, type JourneyFrameSource } from './journeyDirector'
 
 interface LogoJourneySceneProps {
-  frame: { current: JourneyFrame }
+  frame: JourneyFrameSource
   onFailure?: () => void
   onReady?: () => void
 }
@@ -55,7 +55,7 @@ function watchRenderer(gl: WebGLRenderer, report: () => void) {
 }
 
 /** Manual Canvas avoids a second always-running WebGL loop on the homepage.
- * Two wake frames allow the parent scroll measurement to settle first. */
+ * Refresh the scroll pose before drawing, regardless of RAF callback order. */
 function JourneyFrames({ frame, ready, report, reportReady }: {
   frame: LogoJourneySceneProps['frame']; ready: boolean; report: () => void; reportReady: () => void
 }) {
@@ -72,6 +72,7 @@ function JourneyFrames({ frame, ready, report, reportReady }: {
     const update = (now: number) => {
       handle = 0
       if (stopped || document.hidden) { previous = null; return }
+      frame.sync?.()
       if (!ready || frame.current.visible <= .001) {
         previous = null
         if (!cleared) { gl.clear(); cleared = true }

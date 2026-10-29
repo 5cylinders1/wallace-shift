@@ -271,3 +271,10 @@ export function sampleJourneyFrame(scroll: number, layout: JourneyLayout,
     surge: surge * quiz * (1 - closing),
   }
 }
+
+/** Shared pose with a render-time refresh, so WebGL never consumes the
+ * previous scroll tick while CSS sticky positioning uses the current one. */
+export interface JourneyFrameSource {
+  current: JourneyFrame
+  sync?: () => void
+}
