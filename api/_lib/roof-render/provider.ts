@@ -69,7 +69,8 @@ async function boundedJson(response: Response): Promise<unknown> {
   }
 }
 
-export async function renderRoof(request: RenderRequest, apiKey: string): Promise<RenderResult> {
+/** Any photo edit with a server-built prompt; the roof studios and the paint studio share it. */
+export async function renderRoof(request: Pick<RenderRequest, 'photo' | 'prompt' | 'quality' | 'output'>, apiKey: string): Promise<RenderResult> {
   const signal = AbortSignal.timeout(160_000)
   try {
     const response = await fetch('https://api.openai.com/v1/images/edits', {
