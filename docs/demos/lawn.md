@@ -73,8 +73,17 @@ so no warping was applied. `scripts/lawn/export.py` writes the WebP set and
    with the pool, trees and drive excluded. NAIP is public domain, which is why
    it is analysed and Mapbox/Google imagery is not (their terms forbid deriving
    data from imagery).
-4. **Adjust**: tap another outline to pick the house; paint or erase lawn; Reset;
-   or type a size. Keyboard users can use the typed size.
+   **New builds** are often missing from both outline datasets (found 2026-10-29
+   on a new south Overland Park street: the page picked the house next door and
+   the real one couldn't be tapped). Now, when a rooftop/parcel address has no
+   outline within 15 m, the server samples NAIP at the point (`getSamples`); on
+   roof (NDVI < 0.1) it frames the address, not the neighbour. The page makes the
+   same check on its infrared (`autoHome`) and marks the house with a dashed
+   stand-in square the size of the neighbours' median outline. On grass (a big
+   lot's parcel point) the nearest outlined house is still chosen.
+4. **Adjust**: tap your house to pick it: an outline (taps within 3 m snap to it),
+   or anywhere else to mark an unmapped house; paint or erase lawn; Reset; or type
+   a size. Keyboard users can use the typed size.
 5. **Price** (`estimate/pricing.ts`, shared with the server): base + rate per
    1,000 sq ft, times a frequency factor, never under the minimum, shown as a ±
    spread. Until the rates are set the page says "Sample rates for this concept."
