@@ -17,9 +17,13 @@ export default function BucyrusAppointment() {
   const [details, setDetails] = useState<RequestDetails>(EMPTY_REQUEST)
   const [errors, setErrors] = useState<Partial<RequestDetails>>({})
   const [preview, setPreview] = useState(false)
+  const [today, setToday] = useState('')
   const nameRef = useRef<HTMLInputElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
   const restoreFocus = useRef(false)
+
+  // Resolve the visitor's local date after hydration, not at build time.
+  useEffect(() => { setToday(localToday()) }, [])
 
   useEffect(() => {
     if (preview) resultRef.current?.focus()
@@ -85,6 +89,7 @@ export default function BucyrusAppointment() {
       <strong>Try the appointment demo</strong>
       <p>This form creates a preview in your browser. Details are not sent or saved. To request service, call <a href="tel:+19134209865">(913) 420-9865</a>.</p>
     </div>
+    <noscript><p className="ba-form-notice">The form preview needs JavaScript. Call the shop to discuss your vehicle.</p></noscript>
 
     {preview ? <div className="ba-form-result" ref={resultRef} tabIndex={-1} aria-labelledby={`${id}-result`}>
       <h3 id={`${id}-result`}>Request preview ready. Nothing has been sent or booked.</h3>
@@ -121,7 +126,7 @@ export default function BucyrusAppointment() {
         </div>
         <div className="ba-field">
           <label htmlFor={`${id}-date`}>Preferred date <span>(optional)</span></label>
-          <input {...fieldProps('date')} type="date" min={localToday()} max="2099-12-31" onChange={event => update('date', event.target.value)} />
+          <input {...fieldProps('date')} type="date" min={today || undefined} max="2099-12-31" onChange={event => update('date', event.target.value)} />
           <span className="ba-field-help" id={`${id}-date-help`}>A preference, not a confirmed appointment.</span>
           {fieldError('date')}
         </div>
@@ -137,7 +142,7 @@ export default function BucyrusAppointment() {
         </div>
       </div>
       <div className="ba-form-footer">
-        <button type="submit" className="ba-button">Preview appointment request <span aria-hidden="true">↗</span></button>
+        <button type="submit" className="ba-button" disabled={!today}>Preview appointment request <span aria-hidden="true">↗</span></button>
         <button type="button" className="ba-button-secondary" onClick={clear}>Clear form</button>
       </div>
       <p className="ba-form-fineprint">Demo only. No appointment is reserved, and no message is sent.</p>

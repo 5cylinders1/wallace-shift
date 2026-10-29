@@ -13,8 +13,9 @@ export default function BucyrusFilm() {
   const [failed, setFailed] = useState<string[]>([])
   const [announcement, setAnnouncement] = useState('')
   const [paused, setPaused] = useState(false)
-  const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  const [visible, setVisible] = useState(() => !document.hidden)
+  // Keep the server and first client frame static and identical.
+  const [reduced, setReduced] = useState(true)
+  const [visible, setVisible] = useState(false)
   const [inView, setInView] = useState(true)
   const ready = loaded.length > 0 && loaded.length + failed.length === filmShots.length
   const running = ready && !paused && !reduced && visible && inView
@@ -23,6 +24,15 @@ export default function BucyrusFilm() {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)')
     const onMotion = () => setReduced(media.matches)
     const onVisibility = () => setVisible(!document.hidden)
+    onMotion()
+    onVisibility()
+    // Images can finish loading before hydration attaches their onLoad handlers.
+    images.current.forEach((image, index) => {
+      if (!image?.complete) return
+      const asset = filmShots[index].asset
+      const record = image.naturalWidth ? setLoaded : setFailed
+      record(previous => previous.includes(asset) ? previous : [...previous, asset])
+    })
     media.addEventListener('change', onMotion)
     document.addEventListener('visibilitychange', onVisibility)
     const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting))

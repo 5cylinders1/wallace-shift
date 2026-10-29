@@ -84,3 +84,20 @@ Resource sizes measured from the production output: approximately 68 KB gzip for
 There is no verified Bucyrus appointment inbox, so no live delivery claim or delivery test was made. Current hours, operating street address, and specific services need owner confirmation. Source evidence and precise image prompts are in the adjacent audit and imagery documents. The existing contractors host rewrite was preserved and inspected, but production behavior was not reverified.
 
 Commit message: `feat: build Bucyrus Auto and Drivetrain demo on contractors route`
+
+## Service pages and vehicle guide expansion
+
+October 29, 2026: expanded the local demo to six rendered pages. The owner approval gate remains: `noindex, nofollow`, no sitemap entry and no gallery tile. Service details use four approved categories; the source audit records limits and symptom guidance sources.
+
+Validation completed:
+
+- `npm run build`: passed, including deployment/compiler inventory, public/private bundle boundaries and blog checks.
+- `node scripts/test-bucyrus-seo.mjs`: all three suites passed, covering six built documents, real development/preview responses, metadata uniqueness, initial content, schema, internal links, public assets, noindex and unknown-path 404 behavior.
+- `node scripts/test-bucyrus-public.mjs`: seven tests passed; existing public access and private peer boundaries retained.
+- `node scripts/test-bucyrus-film.mjs`: passed all five-shot timeline/camera/loop checks.
+- `node scripts/test-demo-access.mjs`: 36 tests passed.
+- `node scripts/test-demo-preview.mjs`: 599 HTTP responses passed with mocked provider behavior; no live email/provider call.
+- Browser review: maintenance page at 1280px and 390px, vehicle guide at both sizes, and production-build homepage form. No horizontal overflow at 390px; FAQ and symptom disclosures expanded using Enter with a visible focus outline. No console errors/warnings observed on reviewed pages. Native empty-field validation and completed appointment preview passed; result explicitly said nothing was sent/booked, and test details were cleared.
+- Production-build asset measurement: Bucyrus JS 42,449 bytes (12,774 gzip), CSS 19,889 bytes (4,922 gzip), excluding the existing shared React/runtime bundle and fonts. Home HTML 15,650 bytes; maintenance 10,591; guide 14,702. These are artifact sizes, not Lighthouse/Core Web Vitals results. Reused responsive WebP assets; no new image downloads or libraries.
+
+The added route rendering was previewed locally, not deployed during this update. Actual shop appointment delivery remains unconfigured. Screenshot: `output/bucyrus/seo-vehicle-guide-desktop.png` (ignored local artifact).

@@ -33,3 +33,23 @@ The user supplied the root folder `Bucyrus Auto & Drivetrain` and described the 
 ## Owner confirmation before business launch
 
 Confirm operating address, hours, service scope, rights to selected real photographs, and appointment delivery destination. Confirm submission receipt with an end-to-end delivery test before replacing the demo form notice with a delivery claim.
+
+
+## Service-page and vehicle-guide expansion
+
+Reviewed October 29, 2026. The expansion develops four user-authorized demo categories: standard maintenance, auto repair, drivetrain concerns, and modifications/upgrades. The pages describe how to prepare an enquiry; they do not establish a detailed shop service menu. Specific vehicle eligibility, parts acceptance, diagnostic work, pricing, booking availability, and modification capability remain subject to shop confirmation. No new certifications, warranties, reviews, performance results, hours, street address, or roadside-assistance offering were established.
+
+The vehicle guide provides general symptom education and conservative next steps, not a diagnosis, inspection, repair instruction, or determination that a vehicle is safe to drive. It must be used while parked. Urgent symptoms lead to a safe stop and roadside assistance, not the demo appointment form. A steady check engine light accompanied by shaking or loss of power is also treated as urgent. Oil-pressure guidance refers to a warning with the engine running, not a normal ignition-on lamp check. The source links establish educational provenance, not AAA approval or affiliation.
+
+Inspected primary educational sources and the limited concepts used:
+
+- [AAA diagnostic-code and check-engine guidance](https://www.aaa.com/autorepair/codetranslator): steady versus flashing check engine warnings; fault codes are clues for evaluation rather than confirmed repairs.
+- [AAA common vehicle problems](https://ww1.aaa.com/autorepair/articles/13-common-car-problems-explained): overheating signs and stopping safely with the engine off. Causes, prices, repair instructions, fluid identification tables, and mileage rules were not copied into the demo.
+- [AAA brake warning signs](https://mwg.aaa.com/via/car/brake-check-service-tips): weak braking and a sinking pedal warrant stopping and arranging assistance; no instructions for driving with weak brakes.
+- [AAA car care guide](https://assets.goaaa.com/image/upload/v1698431472/AAA_Guide_CarCare_final.pdf), printed pages 10, 16–18: urgency of steering difficulty, oil-pressure warnings and a check-engine light with changed drivability; hot radiator-cap caution; difference between oil pressure and an oil service reminder.
+- [AAA belts and hoses guide](https://exchange.aaa.com/wp-content/uploads/2012/09/AAA-Car-Care-Belts-Hoses.pdf), page 1: do not start or drive with a fuel leak; fuel leaks create a fire risk. The demo uses a conservative suspected-leak precaution and avoids do-it-yourself inspection.
+- [AAA roadside-emergency guidance](https://info.oregon.aaa.com/what-happens-when-your-road-trip-goes-awry/): avoid sparks/flames where fuel fumes or leaks are present.
+- [AAA automotive glossary](https://exchange.aaa.com/wp-content/uploads/2012/09/AAA-Auto-Repair-Glossary.pdf): broad drivetrain function and component examples. This is general automotive background, not evidence that Bucyrus services each named component.
+- [Ford maintenance guidance](https://www.me.ford.com/en/yem/ownersite/basic-maintenance/oil-change/): use vehicle-specific maintenance guidance; operating conditions can affect intervals. No Ford-specific schedule or recommendation is applied to all makes.
+
+The observation prompts (year/make/model, mileage, when a symptom occurred, recent work, and project goals) are original intake questions. They are not a diagnostic decision tree or paraphrases of one source article. Keep each individual webpage/PDF-derived portion under 200 words, including repeated safety callouts, and verbatim excerpts under 25 words per source. The current short safety summaries are distributed across the sources above; do not expand the full guide from any single article. Avoid adding source-derived causes or repair-price ranges merely for SEO length.
