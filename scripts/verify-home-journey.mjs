@@ -679,7 +679,7 @@ await test('journey stays out of the static WebGL import graph and remeasures up
   }
 })
 
-await test('desktop services stay sticky when WebGL fails, while the static mobile layout remains natural', async () => {
+await test('services remain in document flow with or without WebGL and motion', async () => {
   const css = await read('src/components/HomeJourney/HomeJourney.css')
   const headerRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
     .flatMap(([, selectors, declarations]) => selectors.split(',').map(selector => ({ selector: selector.trim(), declarations })))
@@ -695,8 +695,8 @@ await test('desktop services stay sticky when WebGL fails, while the static mobi
     }
     return position
   }
-  assert.equal(positionFor(true, true), 'sticky')
-  assert.equal(positionFor(true, false), 'sticky', 'a rendering failure must not release the heading')
+  assert.equal(positionFor(true, true), 'relative')
+  assert.equal(positionFor(true, false), 'relative', 'a rendering failure must not pin the heading over service copy')
   assert.equal(positionFor(false, false), 'relative')
   assert.match(await read('src/components/HomeJourney/HomeJourney.tsx'), /data-scroll=\{interactive\}/)
 })

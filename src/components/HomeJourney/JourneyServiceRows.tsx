@@ -7,8 +7,7 @@ import { ServiceRow } from '../Services/ServiceRow'
 import '../Services/Services.css'
 import './JourneyServiceRows.css'
 
-/** Restore the original outcome choreography inside the pinned services
- * sequence. Selection uses the visible space BELOW the sticky heading. */
+/** Select the outcome nearest the centre of the visible service rows. */
 export function JourneyServiceRows() {
   const rootRef = useRef<HTMLDivElement>(null)
   const rowRefs = useRef<(HTMLButtonElement | null)[]>([])
