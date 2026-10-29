@@ -7,8 +7,7 @@ const PHONE = 'tel:+19134209865'
 function Arrow() { return <span aria-hidden="true">↗</span> }
 function Wordmark() {
   return <a className="ba-wordmark" href="#home" aria-label="Bucyrus Auto and Drivetrain home">
-    <span className="ba-mark" aria-hidden="true">B<span>↗</span></span>
-    <span>BUCYRUS AUTO<small>& DRIVETRAIN</small></span>
+    <span className="ba-logo-window"><img src={`${MEDIA}/logo.jpg`} alt="Bucyrus Auto and Drivetrain LLC" width="960" height="960" /></span>
   </a>
 }
 

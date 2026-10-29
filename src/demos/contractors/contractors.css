@@ -105,6 +105,7 @@ ol, ul { padding: 0; list-style: none; }
 .ct-features { display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--ct-line); font-size: 14px; font-weight: 600; }
 .ct-features li { display: flex; gap: 10px; }
 .ct-features li::before { content: ''; width: 6px; height: 6px; margin-top: 8px; border-radius: 50%; background: var(--ct-accent-deep); flex: none; }
+.ct-demo-note { padding-left: 12px; border-left: 2px solid var(--ct-line); color: var(--ct-muted); font-size: 13px; line-height: 1.5; }
 .ct-demo-actions { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; margin-top: auto; padding-top: 10px; }
 .ct-link-strong { display: inline-flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 700; border-bottom: 1.5px solid var(--ct-ink); }
 .ct-link-strong:hover { color: var(--ct-accent-deep); border-color: var(--ct-accent-deep); }
@@ -208,14 +209,16 @@ button { font: inherit; }
 
 .ct-preview { width: min(1180px, calc(100vw - 40px)); max-width: none; max-height: calc(100dvh - 40px); padding: 0; border: 1px solid #edf1f233; border-radius: 18px; background: var(--ct-ink); color: var(--ct-pearl); box-shadow: 0 30px 120px #0008; }
 .ct-preview::backdrop { background: #080d12d9; backdrop-filter: blur(5px); }
-.ct-preview-inner { display: flex; flex-direction: column; min-width: 0; }
+.ct-preview-inner { display: flex; flex-direction: column; min-width: 0; container-type: inline-size; }
 .ct-preview-head { display: flex; justify-content: space-between; gap: 20px; align-items: center; padding: 22px 26px; }
 .ct-preview-head .ct-eyebrow { color: var(--ct-silver); font-size: 10px; margin-bottom: 5px; }
 .ct-preview-head h2 { font-size: clamp(23px, 3vw, 34px); font-weight: 500; line-height: 1.15; letter-spacing: -.02em; }
 .ct-preview-close { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-width: 90px; min-height: 44px; padding: 0 12px; border: 1px solid #edf1f259; border-radius: 999px; background: none; color: var(--ct-pearl); font-weight: 600; font-size: 13px; cursor: pointer; }
 .ct-preview-close span { font-size: 23px; font-weight: 400; }
 .ct-preview-close:hover { border-color: var(--ct-accent); color: var(--ct-accent-hover); }
-.ct-preview-video { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 61dvh; object-fit: contain; background: #000; }
+/* Keep the previous fitted picture size while reserving a native-control rail.
+   Capping both dimensions prevents object-fit from enlarging into that rail. */
+.ct-preview-video { display: block; align-self: center; width: min(100%, calc(61dvh * 16 / 9)); height: calc(min(100cqw * 9 / 16, 61dvh) + 60px); aspect-ratio: auto; max-height: none; object-fit: contain; object-position: center top; background: #000; }
 .ct-preview-foot { display: flex; justify-content: space-between; align-items: start; gap: 28px; padding: 24px 26px; }
 .ct-preview-foot > div { max-width: 70ch; }
 .ct-preview-foot p { color: var(--ct-silver); font-size: 14px; line-height: 1.6; }
@@ -256,8 +259,14 @@ button { font: inherit; }
   .ct-preview-head .ct-eyebrow { font-size: 9px; letter-spacing: .08em; }
   .ct-preview-close { min-width: 70px; padding-inline: 10px; gap: 7px; }
   .ct-preview-foot { padding: 18px 16px; }
-  .ct-preview-video { max-height: 55dvh; }
+  /* Keep native controls below the 16:9 picture, including its burned captions.
+     Dialog content is viewport minus 16px outer space and two 1px borders. */
+  .ct-preview-video { height: calc((100vw - 18px) * 9 / 16 + 60px); aspect-ratio: auto; max-height: none; object-position: center top; }
   .ct-preview-foot .ct-button { width: 100%; }
+}
+@media (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
+  /* Retain the previous 61dvh fitted picture size and put controls underneath. */
+  .ct-preview-video { align-self: center; width: min(100%, calc(61dvh * 16 / 9)); height: calc(61dvh + 60px); aspect-ratio: auto; max-height: none; object-position: center top; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ct-slider { scroll-behavior: auto; }

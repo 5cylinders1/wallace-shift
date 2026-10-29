@@ -130,7 +130,7 @@ test('documents redirect while assets, API aliases, and encoded paths deny witho
 })
 
 test('only exact previews, gallery and public asset namespace remain public', async () => {
-  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/assets/public.js', '/demos/roofers-offer/index.html', '/src/demos/roofers-offer/main.tsx', '/demos/contractors/index.html', '/src/demos/contractors/main.tsx', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg']) assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/assets/public.js', '/demos/roofers-offer/index.html', '/src/demos/roofers-offer/main.tsx', '/demos/contractors/index.html', '/src/demos/contractors/main.tsx', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg', '/demos/lawn/preview.jpg']) assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
   assert.equal((await access.gateDemoRequest(new Request(origin + '/demos/roofers-4/preview.jpg/extra')))?.status, 303)
 })
 
@@ -164,6 +164,15 @@ test('Stillwater aliases use the pool access request and keep implementation pri
   assert.equal(access.verifyDemoGrant(invite, origin, 'invite').demo, 'pools')
   const authorized = { headers: { cookie: `${access.DEMO_COOKIE}=${session()}` } }
   assert.equal(await access.gateDemoRequest(new Request(origin + '/stillwater', authorized)), null)
+})
+
+test('Trawsome is a public demo: page, media, source and rate-limited estimator need no access', async () => {
+  for (const path of ['/trawsome', '/trawsome/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%74rawsome', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-finished.webp', '/public/demos/lawn/edge.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('lawn'), 'roofers', 'Public demos have no access-request key')
+  // Opening the public lawn directory must not open its gated neighbours.
+  for (const path of ['/demos/lawn-2/', '/demos/lawnx/index.html', '/src/demos/lawnx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
 test('session authorizes all demo resources on its origin only; invite cannot be a cookie', async () => {

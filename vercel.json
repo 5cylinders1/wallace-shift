@@ -2,6 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/bucyrus-auto",
+      "has": [{ "type": "host", "value": "contractors.wallaceshift.com" }],
+      "destination": "https://wallaceshift.com/bucyrus-auto",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/bucyrus-auto/:path*",
@@ -9,6 +17,14 @@
     },
     {
       "source": "/demos/bucyrus-auto/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/trawsome/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/lawn/:path*",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
@@ -123,6 +139,10 @@
     {
       "source": "/mitre",
       "destination": "/demos/cabinetry-2"
+    },
+    {
+      "source": "/trawsome",
+      "destination": "/demos/lawn"
     }
   ]
 }

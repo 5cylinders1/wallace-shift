@@ -75,6 +75,10 @@ dist-ssr
 /videos/contractor-previews/*/gsap.min.js
 /videos/contractor-previews/*/*.ttf
 !/videos/contractor-previews/fonts/*.ttf
+/videos/contractor-previews/*/soundtrack.wav
+/videos/contractor-previews/narrated/music/*.mp3
+/videos/contractor-previews/narrated/audio/**/*.wav
+/videos/contractor-previews/__pycache__/
 
 # Original Higgsfield downloads; imported demo files live in the project folders.
 /d4839bcc-392d-4679-8a9f-10557f75c641.zip

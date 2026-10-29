@@ -4,6 +4,8 @@ export const contractorPreviewIds = [
   'northvane', 'alder-stone', 'contour', 'halcyon', 'velar', 'stratum',
   'datum', 'tambour', 'mitre', 'stillwater', 'roofing-crm',
 ]
+// Public demos shown as tiles without a preview film; they open the demo directly.
+export const contractorOpenDemoIds = ['trawsome']
 export const contractorPreviewFiles = contractorPreviewIds.flatMap(id =>
   ['mp4', 'jpg', 'vtt'].map(extension => `media/demo-previews/${id}.${extension}`),
 )
