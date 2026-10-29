@@ -1,8 +1,8 @@
-# Wallace Shift: 12 new article drafts
+# Wallace Shift: 12 article source drafts
 
-All 12 articles are written as unpublished editorial drafts, following the [research plan](../../2026-10-25-next-articles.md). They contain complete prose, worked examples, copyable resources, FAQs, and links to supporting sources. Together they contain approximately 21,000 words, including tables and references.
+These are the 12 original editorial drafts from the [research plan](../../2026-10-25-next-articles.md). They contain complete prose, worked examples, copyable resources, FAQs, and links to supporting sources. Together they contain approximately 21,000 words, including tables and references.
 
-These documents are kept outside the blog publishing directory. No publication dates or author attribution have been assigned, and none of this batch has been published.
+The source drafts remain here for reference. On October 26, 2026, they were converted into post files in [the blog content directory](../../../../content/blog/posts), with Wallace Shift as the organizational author and publication metadata for October 26. The post files are included in the next site build; conversion does not mean they have been deployed to production.
 
 ## Read the articles
 
@@ -26,13 +26,21 @@ The order below follows the research plan's recommended writing and publishing p
 ## Companion resources
 
 - [Article worksheets workbook](outputs/01a170df-bb4d-7da1-bebf-b8f3dfc3394e/Wallace-Shift-Article-Worksheets.xlsx): a start sheet and one worksheet per article, including an editable CRM budget calculator. Blank response cells let readers apply the prompts to their own business.
-- [Proposed article metadata](article-metadata.json): titles, slugs, descriptions, primary questions, direct answers, categories, and draft status for the later blog conversion.
+- [Original proposed article metadata](article-metadata.json): the planning snapshot used for conversion. The frontmatter in each blog post is now authoritative for publication metadata.
 - Editorial source and consistency notes: [CRM articles](_crm-review.md), [automation articles](_automation-review.md), and [website, migration, measurement, and portal articles](_website-systems-review.md).
 
 The shared Cedar Lane Maintenance example is fictional. Budgets are illustrative calculations, not vendor quotes or Wallace Shift pricing. The AI worksheet contains expected outcomes for a future evaluation; no model run or customer result is claimed.
 
-## Next pass: prepare the blog posts
+## Blog conversion
 
-Convert the drafts into the existing blog content format, confirm attribution and publication dates, and decide which workbook resources to offer with each post. Add links among the new posts once their URLs are ready, then run the blog's content and rendering checks before release. Existing article links in these drafts already point to current blog URLs.
+The post versions use the existing blog format, retain the researched body and sources, and provide the direct answer through the article template. They include contextual links among the new posts and to existing articles. Four existing guides also link into the new set.
 
-Suggested commit message: `docs(blog): draft twelve CRM and automation articles with worksheets`
+Each new post names its matching sheet and links to the shared workbook, served from `/resources/blog/wallace-shift-business-systems-worksheets.xlsx`. The public workbook is an exact copy of the reviewed source workbook above.
+
+The original drafts and proposed metadata here are retained as editorial records. Future published-content edits belong in `content/blog/posts`, rather than in these source drafts.
+
+Conversion checks passed: all 18 blog tests and the full site build, including the 28-post blog verification. The emitted new pages have valid local links and section anchors; the workbook's source, public copy, build output, and local HTTP download are byte-identical. Production attachment headers are configured for the workbook's exact URL and take effect on deployment.
+
+Browser visual review remains unverified: both browser connections failed to reach the local preview. The build and file checks above passed; no deployment was performed in this conversion pass.
+
+Suggested commit message: `feat(blog): add twelve CRM and automation guides with worksheets`

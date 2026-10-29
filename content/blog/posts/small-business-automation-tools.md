@@ -1,6 +1,7 @@
 ---
 status: published
 publishedAt: "2026-10-25T19:14:48Z"
+updatedAt: "2026-10-26T13:03:43Z"
 slug: small-business-automation-tools
 title: "Small Business Automation Tools: How to Choose What Fits"
 description: "Compare native automation, Zapier, Make, n8n, and custom integrations by workflow fit, usage, maintenance, and recovery when something fails."
@@ -105,6 +106,8 @@ Success means the intended record and task exist once, the correct owner can fin
 
 The team should also disconnect a test connection or simulate a failed destination in a safe environment. That reveals whether recovery is understandable before real inquiries depend on it.
 
+When a running workflow fails, the [automation recovery checklist](/blog/automation-failure-recovery-checklist) helps identify completed actions, choose the remaining work, and check the result before retrying.
+
 ## Copy this automation tool acceptance test
 
 Use one copy per candidate. Record evidence rather than a score based on impressions.
@@ -137,6 +140,8 @@ Compare a completed workflow at your volume, including maintenance and connected
 ### Does automation need AI?
 
 No. Start by identifying which steps have clear rules and which require judgment. If you add AI to interpret an inquiry or draft a response, define how its result is checked before it affects a customer or a business record.
+
+Our [AI versus rules inquiry exercise](/blog/ai-vs-rules-based-automation-inquiries) provides fictional cases for comparing a rules baseline with a bounded, reviewable interpretation task.
 
 ### Can the owner build the first workflow?
 

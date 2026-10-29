@@ -1,6 +1,7 @@
 ---
 status: published
 publishedAt: "2026-10-25T19:14:48Z"
+updatedAt: "2026-10-26T13:03:43Z"
 slug: automate-client-onboarding
 title: "How to Automate Client Onboarding Without Losing the Human Handoff"
 description: "Map client onboarding from an agreed start to a verified handoff. Includes prerequisites, failure handling, a worked example, and a copyable workflow brief."
@@ -18,6 +19,8 @@ A new client agrees to proceed. Someone creates a project, sends a welcome messa
 Automating onboarding can make the handoffs visible and reduce repeated preparation. The starting point is a defined process, including what happens when the client cannot follow the standard path.
 
 This guide covers client onboarding after an agreed decision to work together. It does not assume that every inquiry should become a project or receive the same sequence of messages.
+
+For the earlier stage, our [website form-to-CRM handoff guide](/blog/connect-website-form-to-crm) explains how to preserve an incoming request, distinguish repeats from new work, and assign its next action.
 
 ## Define the beginning and end of onboarding
 
@@ -65,6 +68,8 @@ Ask for the details needed for the current stage. Pre-fill information already c
 W3C's forms guidance recommends asking for information needed to complete the process, along with useful instructions and feedback. Apply that principle to your onboarding forms, even when they are hosted outside your own site. [W3C's forms tutorial](https://www.w3.org/WAI/tutorials/forms/).
 
 Keep account passwords and unrelated sensitive material out of a general intake form. Where access is required, use the relevant platform's invitation or access-management process and document who needs access. Confirm the available permissions for the actual tools involved.
+
+If clients need ongoing access to documents, appointments, or requests, use the [client portal versus CRM guide](/blog/client-portal-vs-crm-service-business) to define their permitted actions and the staff work behind them.
 
 ## Design reminders around current status
 

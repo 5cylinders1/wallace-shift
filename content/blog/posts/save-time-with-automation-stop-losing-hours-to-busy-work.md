@@ -1,7 +1,7 @@
 ---
 status: published
 publishedAt: "2026-10-25T06:34:58Z"
-updatedAt: "2026-10-25T18:58:05Z"
+updatedAt: "2026-10-26T13:03:43Z"
 slug: save-time-with-automation-stop-losing-hours-to-busy-work
 title: "Save Time With Automation: Which Tasks Should You Start With?"
 description: "Find repeatable work worth automating, compare tools by workflow needs, and calculate net time savings. Includes a printable automation worksheet."
@@ -57,6 +57,8 @@ For each candidate, answer five questions:
 Frequency is one factor. A monthly report that takes hours may deserve attention before a daily task that takes seconds. A checklist may be enough for low-volume work with frequent exceptions.
 
 Choose a candidate with visible effort, clear rules, and a manageable consequence if the pilot fails. Simplify unnecessary steps before connecting the remaining ones.
+
+If the difficulty is coordinating customer records in a sheet, the [spreadsheet versus CRM exercise](/blog/spreadsheet-vs-crm-service-business) helps separate working-rule problems from capabilities that need a different system.
 
 ## Five workflows worth examining
 
@@ -172,5 +174,7 @@ Check the tools you already use. A native reminder, task rule, template, or shar
 ## Choose one process to examine
 
 Pick a task your team repeats, record how it works, and identify the person who can confirm a successful result. That gives you something concrete to test and estimate.
+
+Before commissioning an investigation, use our [automation audit scope and deliverables guide](/blog/automation-audit-scope-deliverables-cost) to compare the evidence, findings, exclusions, and implementation work a proposal includes.
 
 Wallace Shift's [automation services](/services#automation) begin by mapping repeated work, handoffs, and the tools involved. Our paid automation audit traces the work, assesses its cost and failure points, and returns a prioritized plan. Workflow builds and ongoing support have defined scopes; platform subscriptions and third-party usage are separate costs. Review the [automation pricing and scope](/pricing#automation) or [tell us which process is taking your time](/contact).
