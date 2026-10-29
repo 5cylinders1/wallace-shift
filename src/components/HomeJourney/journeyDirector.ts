@@ -48,6 +48,8 @@ export interface JourneyLayout {
   servicesHeaderHeight: number
   servicesHeadingRight: number
   servicesHeadingBaseline: number
+  servicesLogoWidth?: number
+  processHeadingBaseline?: number
   processTop: number
   processHeight: number
   processHeadingRight: number
@@ -191,16 +193,19 @@ export function sampleJourneyFrame(scroll: number, layout: JourneyLayout,
   const quizCharge = mix(QUIZ_POWER.chargeFloor
     + QUIZ_POWER.chargeRange * Math.pow(power, .6) + .55 * surge, .12, closing)
   const visualTop = Math.max(0, layout.servicesTop - scroll)
-  // Keep the ORIGINAL pinned baseline even after the heading itself releases.
-  // anchorScale supplies a fixed half-height offset in the renderer, so even
-  // the Make chapter's scale increase cannot pull the logo up or down.
-  const baseline = Math.max(layout.headerOffset, layout.servicesTop - scroll) + layout.servicesHeadingBaseline
+  // Hold the compact mark in the sticky header through all three rows, then
+  // carry it down and grow it into the process chapter on the same scroll beat.
+  const baseline = Math.max(layout.headerOffset, layout.servicesTop - scroll)
+    + mix(layout.servicesHeadingBaseline, layout.processHeadingBaseline ?? layout.servicesHeadingBaseline, moveRight)
   const headingY = 1 - 2 * (baseline - visualTop) / h
-  const servicesWidth = Math.min(240, Math.max(160, w * .14))
+  const processWidth = Math.min(240, Math.max(160, w * .14))
+  const servicesWidth = layout.servicesLogoWidth ?? processWidth
   const servicesScale = servicesWidth / w
+  const processScale = processWidth / w
+  const movingScale = mix(servicesScale, processScale, moveRight)
   const servicesX = (layout.servicesHeadingRight + 75 + servicesWidth / 2) * 2 / w - 1
-  const processX = Math.min(1 - servicesScale - .08,
-    (Math.max(layout.servicesHeadingRight, layout.processHeadingRight) + 100 + servicesWidth / 2) * 2 / w - 1)
+  const processX = Math.min(1 - processScale - .08,
+    (Math.max(layout.servicesHeadingRight, layout.processHeadingRight) + 100 + processWidth / 2) * 2 / w - 1)
   // The closing mark is centred on the enquiry card and grown to fill it.
   // Both come from the card's measured place in the grid, so the composition
   // follows the real layout instead of a fraction of the viewport that has to
@@ -231,8 +236,8 @@ export function sampleJourneyFrame(scroll: number, layout: JourneyLayout,
     x: mix(mix(mix(1 + servicesScale, mix(servicesX, processX, moveRight), entry), .61, quiz),
       cardCenterX / w * 2 - 1, closing),
     y: mix(mix(headingY, -.03, quiz), 1 - 2 * (cardCenterY - visualTop) / h, closing),
-    scale: mix(mix(servicesScale * (1 + ASCENT_GROWTH * ascent), .21, quiz), closingScale, closing),
-    anchorScale: servicesScale * (1 - quiz),
+    scale: mix(mix(movingScale * (1 + ASCENT_GROWTH * ascent), .21, quiz), closingScale, closing),
+    anchorScale: movingScale * (1 - quiz),
     yaw: .08 * quiz * (1 - closing),
     split: .14 * make * (1 - assembled) * (1 - quiz),
     partTurn: Math.PI * 2 * Math.max(leftSpin, rightSpin),

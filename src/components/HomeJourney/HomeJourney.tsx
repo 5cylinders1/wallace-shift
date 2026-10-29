@@ -126,9 +126,10 @@ export function HomeJourney() {
         servicesTop: top(section), servicesRowsBottom: top(rows) + rows.offsetHeight,
         servicesHeaderHeight: heading.offsetHeight,
         servicesHeadingRight: headingText.getBoundingClientRect().right,
-        // Keep the following animation chapters on their established baseline.
-        servicesHeadingBaseline: Math.max(baseline.getBoundingClientRect().top - heading.getBoundingClientRect().top,
-          (Math.max(260, Math.min(window.innerHeight * .32, 340)) + panels[0].title.offsetHeight) / 2 + 22),
+        servicesHeadingBaseline: baseline.getBoundingClientRect().top - heading.getBoundingClientRect().top,
+        servicesLogoWidth: Math.min(140, (heading.offsetHeight - 56) / .549),
+        // The compact service mark moves down to the existing process baseline.
+        processHeadingBaseline: (Math.max(260, Math.min(window.innerHeight * .32, 340)) + panels[0].title.offsetHeight) / 2 + 22,
         processTop: top(process), processHeight: process.offsetHeight,
         processHeadingRight: Math.max(...panels.map(item => item.title.getBoundingClientRect().right)),
         quizTop: top(quiz), closingTop: top(closing), end: top(root) + root.offsetHeight,
@@ -142,11 +143,11 @@ export function HomeJourney() {
       // the pair occupy exactly one screen. The footer's own height does not
       // depend on this, so the measurement settles in one pass.
       root.style.setProperty('--journey-footer-height', `${closingFooter.offsetHeight}px`)
-      // The logo retains the services baseline. Align each chapter's last
-      // title line to it, independent of line count or font loading.
+      // Align process titles to their own baseline, independent of the
+      // compact services header and its moving mark.
       if (live) for (const item of panels) {
         const titleBaseline = item.baseline.getBoundingClientRect().top - item.copy.getBoundingClientRect().top
-        item.panel.style.setProperty('--journey-panel-padding', `${Math.max(24, layout.servicesHeadingBaseline - titleBaseline)}px`)
+        item.panel.style.setProperty('--journey-panel-padding', `${Math.max(24, layout.processHeadingBaseline! - titleBaseline)}px`)
       }
       const findPanel = panels[1]
       const findCopy = findPanel.copy.getBoundingClientRect()
@@ -157,7 +158,6 @@ export function HomeJourney() {
     const update = () => {
       pending = 0
       frame.current = sampleJourneyFrame(window.scrollY, layout, power.current)
-      root.style.setProperty("--journey-visual-start", `${Math.max(0, layout.processTop - Math.max(window.scrollY, layout.servicesTop))}px`)
       root.style.setProperty('--journey-visibility', String(frame.current.visible))
       root.style.setProperty('--journey-x', `${(frame.current.x + 1) * 50}%`)
       root.style.setProperty('--journey-y', `${(1 - frame.current.y) * 50}%`)
