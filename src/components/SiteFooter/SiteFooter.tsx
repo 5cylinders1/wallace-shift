@@ -58,21 +58,6 @@ export function SiteFooter() {
                 </li>
               </ul>
             </nav>
-            <a
-              className="site-footer__preferred-source"
-              href={footer.preferredSource.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={footer.preferredSource.badge}
-                alt={footer.preferredSource.label}
-                width={676}
-                height={213}
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
           </div>
         </div>
 
