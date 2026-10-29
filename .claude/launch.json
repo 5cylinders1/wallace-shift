@@ -49,6 +49,15 @@
         "set -a; . ./.demo-preview.local; set +a; exec npm run dev -- --port 5182 --strictPort"
       ],
       "port": 5182
+    },
+    {
+      "name": "complete-painting-demo-preview",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "set -a; . ./.demo-preview.local; set +a; exec npm run dev -- --port 5183 --strictPort"
+      ],
+      "port": 5183
     }
   ]
 }

@@ -7,7 +7,7 @@ only the paint and the prep around it:
     finished   -> weathered   (old faded paint, peeling trim, rot)
     weathered  -> prepped     (washed, scraped, masked, drop cloths)
     prepped    -> primed      (rot replaced, trim and bare spots primed)
-    primed + finished -> painted (new colors, masking still on)
+    finished + primed -> painted (new colors, masking still on)
 
 Every call is logged with its prompt, token usage and cost in
 output/painting/ledger.json, and no call starts that could take the total
@@ -81,13 +81,16 @@ STEPS = {
         'trim, porch columns and railing) and the new boards are coated in flat bright-white primer; the sanded and '
         'bare spots on the siding are spot-primed with irregular patches of flat white primer, so the old faded '
         'yellow siding shows between them. The door is still the old faded red. Everything else is unchanged. ' + LOOK),
-    'painted': (['primed', 'finished'],
+    # v1 was an edit of `primed` toward the finished colors; it drifted to navy.
+    # v2 starts from the finished house and only adds the masking back.
+    'painted': (['finished', 'primed'],
         'Both images show the same house from the same tripod position. Produce the first image exactly as it is, '
-        "with the clear plastic over the windows and door, the blue painter's tape, the bagged lanterns and the canvas "
-        'drop cloths on the beds and porch all still in place, with one change: the siding and trim are now freshly '
-        'painted exactly as in the second image: deep blue-green lap siding with a soft satin sheen and crisp '
-        'warm-white trim, every board in the same place as in the second image. Keep the camera, framing, light and '
-        'every building detail identical. ' + LOOK),
+        'keeping its deep blue-green lap siding, warm-white trim, colors, sheen, light and every detail identical, '
+        "with one change: add the job's masking exactly as it appears in the second image: clear plastic sheeting "
+        "taped with blue painter's tape over every window and over the front door, the two lanterns bagged in "
+        'clear plastic, and canvas drop cloths covering the foundation beds, the porch floor and the porch steps. '
+        'Do not change the paint colors. Keep the camera, framing and every building detail identical to the first '
+        'image. ' + LOOK),
     'interior': ([],
         'A calm, freshly painted living room in a Kansas family home: walls in a soft warm greige with a smooth even '
         'finish, crisp white painted crown molding, baseboards and window casings, a sharp clean line where the wall '

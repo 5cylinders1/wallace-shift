@@ -64,7 +64,12 @@ test('legacy rewrites and local mounts share one deployed lawn function', async 
     assert.ok(vite.includes(`'/api/lawn-${action}': '/api/lawn.ts'`))
   }
   assert.ok(vite.includes("'/api/lawn': '/api/lawn.ts'"))
-  assert.equal(config.maxDuration, 20)
+  // Complete Painting's photo previews share this function and can take minutes.
+  for (const action of ['render', 'request']) {
+    assert.equal(vercel.rewrites.find(rule => rule.source === `/api/paint-${action}`)?.destination, `/api/lawn?action=paint-${action}`)
+    assert.ok(vite.includes(`'/api/paint-${action}': '/api/lawn.ts'`))
+  }
+  assert.equal(config.maxDuration, 180)
 })
 
 test('deployed entry inventory stays within 12 functions including Node middleware', async context => {
@@ -149,4 +154,56 @@ test('aliases retain the same per-action rate limit scopes', async () => {
     assert.equal(keys.at(-1), keys.at(-2), 'Both aliases must share the same counter')
   }
   assert.equal(keys.length, 6)
+})
+
+test('Complete Painting endpoints dispatch through the shared function', async () => {
+  for (const key of Object.keys(process.env)) if (/^(PAINT_|OPENAI_API_KEY$)/.test(key)) delete process.env[key]
+  const paintUrls = action => [`/api/paint-${action}`, `/api/lawn?action=paint-${action}`]
+
+  // Off by default outside local dev: the page is told why, and no paid call can start.
+  for (const url of paintUrls('render')) {
+    const status = await call(url)
+    assert.equal(status.status, 200)
+    assert.equal(status.body.ok, true)
+    assert.equal(status.body.enabled, false)
+    assert.match(status.body.message, /switched off|waiting/)
+    const render = await call(url, { method: 'POST', body: { photo: 'data:image/jpeg;base64,AAAA', body: 'navy', trim: 'keep', door: 'keep', quality: 'low', consent: true } })
+    assert.equal(render.status, 503)
+    assert.equal(render.body.error, 'disabled')
+  }
+  // Enabled for an origin but without the usage-limit store, it still refuses before any paid call.
+  process.env.PAINT_RENDER_ENABLED = 'true'
+  process.env.PAINT_RENDER_ORIGIN = 'https://contractors.wallaceshift.com'
+  process.env.OPENAI_API_KEY = 'fixture-only'
+  const sameOrigin = { 'content-type': 'application/json', host: 'contractors.wallaceshift.com', origin: 'https://contractors.wallaceshift.com' }
+  const unlimited = await call('/api/paint-render', { method: 'POST', headers: sameOrigin, body: {} })
+  assert.equal(unlimited.status, 503)
+  assert.match(unlimited.body.message, /usage limits/)
+  const elsewhere = await call('/api/paint-render', { method: 'POST', headers: { ...sameOrigin, origin: 'https://example.test' }, body: {} })
+  assert.equal(elsewhere.status, 403)
+
+  const estimate = { name: 'Test Visitor', phone: '913 555 0100', email: 'visitor@example.test', contact: 'call', location: 'Bonner Springs', projects: ['exterior', 'carpentry'], timing: 'season', colors: 'Harbor navy siding · Bright white trim · Barn red door' }
+  for (const url of paintUrls('request')) {
+    assert.deepEqual((await call(url, { method: 'POST', body: { company: 'test bot trap' } })).body, { ok: true })
+    assert.equal((await call(url, { method: 'POST', body: { ...estimate, projects: [] } })).status, 400)
+    assert.equal((await call(url, { method: 'POST', body: { ...estimate, projects: ['roofing'] } })).status, 400)
+    const unsent = await call(url, { method: 'POST', body: estimate })
+    assert.deepEqual(unsent.body, { ok: false, error: 'not_configured' }, 'Nothing may be reported as sent without an inbox')
+  }
+
+  process.env.RESEND_API_KEY = 'fixture-only'
+  process.env.PAINT_REQUEST_TO_EMAIL = 'owner@example.test'
+  process.env.CONTACT_FROM_EMAIL = 'site@example.test'
+  const sent = []
+  globalThis.fetch = async (url, options) => {
+    assert.equal(url, 'https://api.resend.com/emails')
+    sent.push(JSON.parse(options.body))
+    return Response.json({ id: 'fixture' })
+  }
+  assert.deepEqual((await call('/api/paint-request', { method: 'POST', body: estimate })).body, { ok: true })
+  assert.equal(sent.length, 1)
+  assert.deepEqual(sent[0].to, ['owner@example.test'])
+  assert.equal(sent[0].reply_to, 'visitor@example.test')
+  assert.match(sent[0].text, /Project: Exterior painting, Rotten wood replacement/)
+  assert.match(sent[0].text, /Colors from the studio: Harbor navy siding/)
 })

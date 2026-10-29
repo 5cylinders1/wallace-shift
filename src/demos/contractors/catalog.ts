@@ -1,7 +1,7 @@
 /** Individual demos in the contractor collection. Preview media is public;
  * interactive routes continue through the existing demo-access agreement,
  * except open demos, which are public and have no preview film. */
-export type TradeCategoryId = 'roofing' | 'cabinetry' | 'pools' | 'lawn' | 'foundation' | 'business'
+export type TradeCategoryId = 'roofing' | 'cabinetry' | 'pools' | 'lawn' | 'painting' | 'foundation' | 'business'
 
 interface DemoBase {
   id: string
@@ -39,6 +39,7 @@ export const categories: { id: TradeCategoryId; name: string; description: strin
   { id: 'cabinetry', name: 'Kitchens & cabinetry', description: 'Two ways to bring a room, its materials and the planning conversation into focus.' },
   { id: 'pools', name: 'Pools & outdoor living', description: 'From an empty backyard to a pool plan worth discussing.' },
   { id: 'lawn', name: 'Lawn & yard care', description: 'From an overgrown yard to an instant price for the next mow.' },
+  { id: 'painting', name: 'House painting', description: 'From faded and peeling to a new color, with a preview on the visitor’s own house.' },
   { id: 'foundation', name: 'Foundation repair', description: 'Make an unseen problem easier to understand before the inspection.' },
   { id: 'business', name: 'Business systems', description: 'The team’s side of the work: sample customer records, follow-ups and inspections.' },
 ]
@@ -137,6 +138,14 @@ export const trades: TradeDemo[] = [
     disclosure: 'Concept prepared for a real local business, not its official website. Generated yard imagery; sample prices.',
   },
   {
+    kind: 'open', id: 'complete-painting', category: 'painting', trade: 'House painting', name: 'Complete Painting',
+    summary: 'A concept for a real Bonner Springs painting company. A timelapse takes one house from faded and peeling to a fresh new color; a color studio repaints a photo of the visitor’s own house.',
+    features: ['Timelapse repaint, stage by stage', 'AI color studio for the visitor’s own photo'],
+    thumbnail: '/demos/painting/preview.jpg', thumbnailAlt: 'Complete Painting: a two-story house half faded yellow and half freshly painted deep blue-green',
+    productionPath: '/complete-painting', localPath: '/demos/painting/',
+    disclosure: 'Concept prepared for a real local business, not its official website. Generated house imagery; AI color previews.',
+  },
+  {
     id: 'datum', category: 'foundation', trade: 'Foundation repair', name: 'Datum',
     summary: 'A 3D cutaway reveals the house, basement and soil through a Kansas City year. Explore symptoms and the repair approaches associated with them.',
     features: ['Interactive house-and-soil cutaway', 'Crack decoder and sample inspection report'],
@@ -154,7 +163,7 @@ export const trades: TradeDemo[] = [
   },
 ]
 
-export const nextTrades = ['HVAC', 'Solar', 'Remodelers', 'Builders', 'General contractors', 'Flooring', 'Painting']
+export const nextTrades = ['HVAC', 'Solar', 'Remodelers', 'Builders', 'General contractors', 'Flooring']
 
 export function demoHref(demo: TradeDemo, hostname: string): string {
   return hostname === 'contractors.wallaceshift.com' ? demo.productionPath : demo.localPath

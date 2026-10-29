@@ -1,5 +1,5 @@
 /**
- * The color studio's choices, shared by the page and /api/paint. The server
+ * The color studio's choices, shared by the page and /api/paint-render. The server
  * builds every prompt from these allowlisted ids (plus a validated custom
  * hex), never from visitor text. Names are plain descriptions rather than
  * any paint brand's color names.
