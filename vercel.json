@@ -28,6 +28,14 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
+      "source": "/complete-painting/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/painting/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
       "source": "/resources/blog/wallace-shift-business-systems-worksheets.xlsx",
       "headers": [
         {
@@ -53,6 +61,14 @@
     {
       "source": "/api/lawn-request",
       "destination": "/api/lawn?action=request"
+    },
+    {
+      "source": "/api/paint-render",
+      "destination": "/api/lawn?action=paint-render"
+    },
+    {
+      "source": "/api/paint-request",
+      "destination": "/api/lawn?action=paint-request"
     },
     {
       "source": "/bucyrus-auto",
@@ -155,6 +171,10 @@
     {
       "source": "/trawsome",
       "destination": "/demos/lawn"
+    },
+    {
+      "source": "/complete-painting",
+      "destination": "/demos/painting"
     }
   ]
 }

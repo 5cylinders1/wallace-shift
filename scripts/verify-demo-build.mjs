@@ -15,9 +15,9 @@ async function files(directory, prefix = '') {
   return nested.flat()
 }
 const output = await files(root)
-const privateHtml = output.filter(path => /^demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/).*\.html$/.test(path))
+const privateHtml = output.filter(path => /^demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/).*\.html$/.test(path))
 const sourceHtml = (await files(new URL('../demos/', import.meta.url)))
-  .filter(path => !/^(?:roofers-offer|contractors|bucyrus-auto|lawn)\//.test(path) && path.endsWith('.html'))
+  .filter(path => !/^(?:roofers-offer|contractors|bucyrus-auto|lawn|painting)\//.test(path) && path.endsWith('.html'))
   .map(path => `demos/${path}`)
 assert.deepEqual(privateHtml.toSorted(), sourceHtml.toSorted(), 'Every private demo entry must be emitted exactly once')
 for (const path of privateHtml) {
@@ -26,7 +26,7 @@ for (const path of privateHtml) {
   assert.ok(bundles.length, `Missing compiled bundles: ${path}`)
   for (const bundle of bundles) assert.ok(bundle.startsWith('/demo-assets/'), `${path} exposes ${bundle}`)
 }
-for (const path of ['index.html', 'request-demo/index.html', 'demo-agreement/index.html', 'demo-admin/index.html', 'demos/roofers-offer/index.html', 'demos/contractors/index.html', 'demos/bucyrus-auto/index.html', 'demos/lawn/index.html']) {
+for (const path of ['index.html', 'request-demo/index.html', 'demo-agreement/index.html', 'demo-admin/index.html', 'demos/roofers-offer/index.html', 'demos/contractors/index.html', 'demos/bucyrus-auto/index.html', 'demos/lawn/index.html', 'demos/painting/index.html']) {
   const html = await readFile(new URL(path, root), 'utf8')
   assert.ok(!html.includes('/demo-assets/'), `Public page depends on private bundles: ${path}`)
 }

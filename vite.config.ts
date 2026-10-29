@@ -129,6 +129,8 @@ const DEV_API_ROUTES: Record<string, string> = {
   '/api/lawn-suggest': '/api/lawn.ts',
   '/api/lawn-lookup': '/api/lawn.ts',
   '/api/lawn-request': '/api/lawn.ts',
+  '/api/paint-render': '/api/lawn.ts',
+  '/api/paint-request': '/api/lawn.ts',
 }
 
 function devApiRoutes(): Plugin {
@@ -139,7 +141,7 @@ function devApiRoutes(): Plugin {
       const env = loadEnv(server.config.mode, server.config.root, '')
       // Server-side settings only: never anything a VITE_ prefix would expose.
       for (const [key, value] of Object.entries(env)) {
-        if (/^(OPENAI_API_KEY$|ROOF_|LAWN_|RESEND_API_KEY$|CONTACT_FROM_EMAIL$|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
+        if (/^(OPENAI_API_KEY$|ROOF_|LAWN_|PAINT_|RESEND_API_KEY$|CONTACT_FROM_EMAIL$|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
       }
       server.middlewares.use(async (req, res, next) => {
         const path = (req.url ?? '').split('?')[0]
@@ -192,7 +194,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|trawsome|demos\/bucyrus-auto|demos\/lawn)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|demos\/bucyrus-auto|demos\/lawn|demos\/painting)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -225,7 +227,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -252,6 +254,7 @@ function roofingDemoRoutes(): Plugin {
         '/stratum': '/demos/roofers-6/index.html',
         '/stillwater': '/demos/pools/index.html',
         '/trawsome': '/demos/lawn/index.html',
+        '/complete-painting': '/demos/painting/index.html',
         '/mitre': '/demos/cabinetry-2/index.html',
         '/bucyrus-auto': '/demos/bucyrus-auto/index.html',
       }
@@ -269,7 +272,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `/demos/cabinetry/index.html${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|painting|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -299,6 +302,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         contractors: 'demos/contractors/index.html',
         bucyrusAuto: 'demos/bucyrus-auto/index.html',
         lawnTrawsome: 'demos/lawn/index.html',
+        paintingComplete: 'demos/painting/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',

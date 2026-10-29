@@ -22,9 +22,12 @@ const names = {
   northvane: 'Northvane Roofing', 'alder-stone': 'Alder & Stone', contour: 'Contour Roofing',
   halcyon: 'Halcyon Roofworks', velar: 'Velar Roof Atelier', stratum: 'Stratum Roofing Co.',
   datum: 'Datum', tambour: 'Tambour', mitre: 'Mitre & Rift', stillwater: 'Stillwater Pool Co.',
-  'roofing-crm': 'Roofing CRM workspace', trawsome: 'Trawsome Lawn Care',
+  'roofing-crm': 'Roofing CRM workspace', trawsome: 'Trawsome Lawn Care', 'complete-painting': 'Complete Painting',
 }
-const openDemoPaths = { trawsome: { local: '/demos/lawn/', production: '/trawsome' } }
+const openDemoPaths = {
+  trawsome: { local: '/demos/lawn/', production: '/trawsome' },
+  'complete-painting': { local: '/demos/painting/', production: '/complete-painting' },
+}
 const report = {
   target: baseUrl, recordedAt: new Date().toISOString(), mode: 'unauthenticated browser lab',
   viewport: { desktop: { width: 1440, height: 1000 }, mobile: { width: 390, height: 844 } },
@@ -134,7 +137,7 @@ try {
   check('CRM separately categorized', await page.locator('#category-business article').count() === 1 && await page.locator('#category-business').getByRole('heading', { name: names['roofing-crm'], exact: true }).count() === 1)
   check('No initial video requests', mp4Requests.length === 0, mp4Requests)
   check('No initial mounted video elements', await page.locator('video').count() === 0)
-  check('Six category jump links', await page.getByRole('navigation', { name: 'Browse demos by trade' }).getByRole('link').count() === 6)
+  check('Seven category jump links', await page.getByRole('navigation', { name: 'Browse demos by trade' }).getByRole('link').count() === 7)
   for (const id of contractorOpenDemoIds) {
     const card = page.getByRole('article').filter({ has: page.getByRole('heading', { name: names[id], exact: true }) })
     const expectedPath = new URL(baseUrl).hostname === 'contractors.wallaceshift.com' ? openDemoPaths[id].production : openDemoPaths[id].local
@@ -150,7 +153,7 @@ try {
     })))
   }
   check('Every poster has descriptive alt text', await page.locator('article img').evaluateAll(images => images.every(image => image.alt.trim().length > 12)))
-  for (const category of ['pools', 'lawn', 'foundation', 'business']) check(`${category}: single-item navigation absent`, await page.locator(`#category-${category} .ct-slider-controls`).count() === 0)
+  for (const category of ['pools', 'lawn', 'painting', 'foundation', 'business']) check(`${category}: single-item navigation absent`, await page.locator(`#category-${category} .ct-slider-controls`).count() === 0)
   const roofRow = page.locator('#slider-roofing')
   await roofRow.scrollIntoViewIfNeeded()
   check('Roofing row visibly overflows', await roofRow.evaluate(row => row.scrollWidth > row.clientWidth + 100))

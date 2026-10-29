@@ -175,6 +175,14 @@ test('Trawsome is a public demo: page, media, source and rate-limited estimator 
   for (const path of ['/demos/lawn-2/', '/demos/lawnx/index.html', '/src/demos/lawnx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
+test('Complete Painting is a public demo: page, media, source and capped color studio need no access', async () => {
+  for (const path of ['/complete-painting', '/complete-painting/', '/demos/painting', '/demos/painting/', '/demos/painting/index.html', '/src/demos/painting/main.tsx', '/demos/painting/hero-weathered.webp', '/demos/painting/studio/sample.jpg', '/public/demos/painting/preview.jpg', '/api/paint-render', '/api/paint-request', '/api/lawn?action=paint-render']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('painting'), 'roofers', 'Public demos have no access-request key')
+  for (const path of ['/demos/painting-2/', '/demos/paintingx/index.html', '/src/demos/paintingx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('session authorizes all demo resources on its origin only; invite cannot be a cookie', async () => {
   const token = session()
   for (const path of ['/northvane', '/velar', '/demo-assets/any.js', '/api/roof-suggest']) assert.equal(await access.gateDemoRequest(new Request(origin + path, { headers: { cookie: `${access.DEMO_COOKIE}=${token}` } })), null)

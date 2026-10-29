@@ -30,9 +30,10 @@ demo on the contractors host (local entries elsewhere) and to
 
 Entries are `kind: 'film'` (a gated demo with a public preview film, watched in
 the modal) or `kind: 'open'` (a public demo with no film: the tile links straight
-to it and shows its disclosure on the card). Trawsome Lawn Care, a concept for a
-real business, is the only open tile; the gallery test lists it in
-`contractorOpenDemoIds` in `scripts/contractor-preview-contract.mjs`.
+to it and shows its disclosure on the card). Trawsome Lawn Care and Complete
+Painting, concepts for real businesses, are the open tiles; the gallery test
+lists them in `contractorOpenDemoIds` in `scripts/contractor-preview-contract.mjs`.
+Complete Painting added a seventh category, House painting (`docs/demos/painting.md`).
 
 ## Access
 
