@@ -66,6 +66,9 @@ dist-ssr
 /output/
 /review-assets/
 /tmp/
+/example-contractor-website.mov
+/live-watch.MOV
+/live-watch-better.MOV
 /videos/contractor-previews/*/clips/
 /videos/contractor-previews/*/.hyperframes/
 /videos/contractor-previews/*/renders/
