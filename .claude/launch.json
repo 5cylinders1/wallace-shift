@@ -40,6 +40,15 @@
         "set -a; . ./.demo-preview.local; set +a; exec npm run dev -- --port 5181 --strictPort"
       ],
       "port": 5181
+    },
+    {
+      "name": "trawsome-demo-preview",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "set -a; . ./.demo-preview.local; set +a; exec npm run dev -- --port 5182 --strictPort"
+      ],
+      "port": 5182
     }
   ]
 }

@@ -1,8 +1,9 @@
 /** Individual demos in the contractor collection. Preview media is public;
- * interactive routes continue through the existing demo-access agreement. */
-export type TradeCategoryId = 'roofing' | 'cabinetry' | 'pools' | 'foundation' | 'business'
+ * interactive routes continue through the existing demo-access agreement,
+ * except open demos, which are public and have no preview film. */
+export type TradeCategoryId = 'roofing' | 'cabinetry' | 'pools' | 'lawn' | 'foundation' | 'business'
 
-export interface TradeDemo {
+interface DemoBase {
   id: string
   category: TradeCategoryId
   trade: string
@@ -12,28 +13,49 @@ export interface TradeDemo {
   features: string[]
   thumbnail: string
   thumbnailAlt: string
+  productionPath: string
+  localPath: string
+  disclosure: string
+}
+
+/** A gated demo with a public preview film. */
+export interface FilmDemo extends DemoBase {
+  kind: 'film'
   video: string
   captions: string
   durationSeconds: number
-  productionPath: string
-  localPath: string
   accessKey: string
-  disclosure: string
 }
+
+/** A public demo without a film: its tile opens the demo itself. */
+export interface OpenDemo extends DemoBase {
+  kind: 'open'
+}
+
+export type TradeDemo = FilmDemo | OpenDemo
 
 export const categories: { id: TradeCategoryId; name: string; description: string }[] = [
   { id: 'roofing', name: 'Roofing', description: 'Six approaches to explaining a roof project, from a first estimate to a material study.' },
   { id: 'cabinetry', name: 'Kitchens & cabinetry', description: 'Two ways to bring a room, its materials and the planning conversation into focus.' },
   { id: 'pools', name: 'Pools & outdoor living', description: 'From an empty backyard to a pool plan worth discussing.' },
+  { id: 'lawn', name: 'Lawn & yard care', description: 'From an overgrown yard to an instant price for the next mow.' },
   { id: 'foundation', name: 'Foundation repair', description: 'Make an unseen problem easier to understand before the inspection.' },
   { id: 'business', name: 'Business systems', description: 'The team’s side of the work: sample customer records, follow-ups and inspections.' },
 ]
 
-const preview = (id: string) => ({
+// Rounded up from the encoded narrated deliveries; checked against each MP4.
+const previewDurations = {
+  northvane: 63, 'alder-stone': 60, contour: 62, halcyon: 61,
+  velar: 66, stratum: 57, datum: 60, tambour: 56, mitre: 57,
+  stillwater: 51, 'roofing-crm': 57,
+} as const
+
+const preview = (id: keyof typeof previewDurations) => ({
+  kind: 'film' as const,
   thumbnail: `/media/demo-previews/${id}.jpg`,
   video: `/media/demo-previews/${id}.mp4`,
   captions: `/media/demo-previews/${id}.vtt`,
-  durationSeconds: 36,
+  durationSeconds: previewDurations[id],
 })
 const roofingDisclosure = 'Fictional demo brand. Estimator figures are illustrative planning ranges, not a quote.'
 
@@ -107,6 +129,14 @@ export const trades: TradeDemo[] = [
     disclosure: 'Fictional demo brand. Pool construction and project details are illustrative.',
   },
   {
+    kind: 'open', id: 'trawsome', category: 'lawn', trade: 'Lawn & yard care', name: 'Trawsome Lawn Care',
+    summary: 'A concept for a real Stilwell lawn care business. The yard is mowed pass by pass as you scroll; an instant estimate measures the lawn from aerial imagery and prices a visit.',
+    features: ['Scroll-driven mowing story', 'Automatic lawn measurement and instant estimate'],
+    thumbnail: '/demos/lawn/preview.jpg', thumbnailAlt: 'Trawsome Lawn Care: a freshly striped lawn in front of a craftsman house at sunset',
+    productionPath: '/trawsome', localPath: '/demos/lawn/',
+    disclosure: 'Concept prepared for a real local business, not its official website. Generated yard imagery; sample prices.',
+  },
+  {
     id: 'datum', category: 'foundation', trade: 'Foundation repair', name: 'Datum',
     summary: 'A 3D cutaway reveals the house, basement and soil through a Kansas City year. Explore symptoms and the repair approaches associated with them.',
     features: ['Interactive house-and-soil cutaway', 'Crack decoder and sample inspection report'],
@@ -130,7 +160,7 @@ export function demoHref(demo: TradeDemo, hostname: string): string {
   return hostname === 'contractors.wallaceshift.com' ? demo.productionPath : demo.localPath
 }
 
-export function accessHref(demo: TradeDemo): string {
+export function accessHref(demo: FilmDemo): string {
   return `/request-demo/?demo=${encodeURIComponent(demo.accessKey)}`
 }
 

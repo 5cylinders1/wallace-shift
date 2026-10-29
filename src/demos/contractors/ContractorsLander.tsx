@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import { accessHref, categories, nextTrades, previewDuration, trades, type TradeDemo } from './catalog'
+import { accessHref, categories, demoHref, nextTrades, previewDuration, trades, type FilmDemo, type TradeDemo } from './catalog'
 import DemoPreview from './DemoPreview'
 
 const STUDIO = 'https://www.wallaceshift.com'
@@ -15,27 +15,38 @@ function Wordmark() {
   </a>
 }
 
-function DemoCard({ demo, onWatch }: { demo: TradeDemo; onWatch: (demo: TradeDemo) => void }) {
+function DemoCard({ demo, onWatch }: { demo: TradeDemo; onWatch: (demo: FilmDemo) => void }) {
+  // Open demos have no film: the tile goes straight to the public demo.
+  const href = demo.kind === 'open' ? demoHref(demo, window.location.hostname) : undefined
+  const image = <img src={demo.thumbnail} alt={demo.thumbnailAlt} width="1600" height="900" loading="lazy" />
   return <article className="ct-demo">
-    <button type="button" className="ct-demo-image" onClick={() => onWatch(demo)} aria-label={`Watch ${demo.name} demo, ${previewDuration(demo.durationSeconds)}`}>
-      <img src={demo.thumbnail} alt={demo.thumbnailAlt} width="1600" height="900" loading="lazy" />
-      <span className="ct-play" aria-hidden="true">▶</span>
-      <span className="ct-video-duration">{previewDuration(demo.durationSeconds)}</span>
-    </button>
+    {demo.kind === 'film'
+      ? <button type="button" className="ct-demo-image" onClick={() => onWatch(demo)} aria-label={`Watch ${demo.name} demo, ${previewDuration(demo.durationSeconds)}`}>
+        {image}
+        <span className="ct-play" aria-hidden="true">▶</span>
+        <span className="ct-video-duration">{previewDuration(demo.durationSeconds)}</span>
+      </button>
+      : <a className="ct-demo-image" href={href} aria-label={`Open the ${demo.name} demo`}>
+        {image}
+        <span className="ct-video-duration">Open demo</span>
+      </a>}
     <div className="ct-demo-body">
       <p className="ct-demo-trade">{demo.trade}</p>
       <h3>{demo.name}</h3>
       <p className="ct-demo-summary">{demo.summary}</p>
       <ul className="ct-features">{demo.features.map(feature => <li key={feature}>{feature}</li>)}</ul>
+      {demo.kind === 'open' && <p className="ct-demo-note">{demo.disclosure}</p>}
       <div className="ct-demo-actions">
-        <button type="button" className="ct-link-strong" onClick={() => onWatch(demo)}>Watch demo <span aria-hidden="true">▶</span></button>
-        <a className="ct-link" href={accessHref(demo)}>Request interactive access <Arrow diagonal /></a>
+        {demo.kind === 'film' ? <>
+          <button type="button" className="ct-link-strong" onClick={() => onWatch(demo)}>Watch demo <span aria-hidden="true">▶</span></button>
+          <a className="ct-link" href={accessHref(demo)}>Request interactive access <Arrow diagonal /></a>
+        </> : <a className="ct-link-strong" href={href}>Open the demo <Arrow diagonal /></a>}
       </div>
     </div>
   </article>
 }
 
-function CategoryRow({ category, demos, onWatch }: { category: typeof categories[number]; demos: TradeDemo[]; onWatch: (demo: TradeDemo) => void }) {
+function CategoryRow({ category, demos, onWatch }: { category: typeof categories[number]; demos: TradeDemo[]; onWatch: (demo: FilmDemo) => void }) {
   const sliderRef = useRef<HTMLUListElement>(null)
   const [position, setPosition] = useState({ first: 0, atEnd: false })
   const multiple = demos.length > 1
@@ -88,10 +99,11 @@ function CategoryRow({ category, demos, onWatch }: { category: typeof categories
 }
 
 export default function ContractorsLander() {
-  const [activeDemo, setActiveDemo] = useState<TradeDemo | null>(null)
-  const watchDemo = useCallback((demo: TradeDemo) => setActiveDemo(demo), [])
+  const [activeDemo, setActiveDemo] = useState<FilmDemo | null>(null)
+  const watchDemo = useCallback((demo: FilmDemo) => setActiveDemo(demo), [])
   const closePreview = useCallback(() => setActiveDemo(null), [])
-  const featured = trades.find(demo => demo.featured) ?? trades[0]
+  const films = trades.filter((demo): demo is FilmDemo => demo.kind === 'film')
+  const featured = films.find(demo => demo.featured) ?? films[0]
   return <div className="ct-site">
     <a className="ct-skip" href="#main">Skip to content</a>
     <div className="ct-dark">
@@ -151,7 +163,7 @@ export default function ContractorsLander() {
         <div className="ct-next">
           <p className="ct-eyebrow">Planned for the collection</p>
           <ul>{nextTrades.map(trade => <li key={trade}>{trade}</li>)}</ul>
-          <p className="ct-next-ask">Demo brands and project records are fictional. Live connections and automations require an agreed implementation. <a href={`${STUDIO}/contact`}>Tell us how your business works <Arrow diagonal /></a></p>
+          <p className="ct-next-ask">Demo brands and project records are fictional unless a card says otherwise. Live connections and automations require an agreed implementation. <a href={`${STUDIO}/contact`}>Tell us how your business works <Arrow diagonal /></a></p>
         </div>
       </div>
     </section>
@@ -196,7 +208,7 @@ export default function ContractorsLander() {
           <a href={`${STUDIO}/services`}>Services</a>
           <a href={`${STUDIO}/contact`}>Contact</a>
         </nav>
-        <p className="ct-copyright">© {new Date().getFullYear()} Wallace Shift. Demo brands are fictional.</p>
+        <p className="ct-copyright">© {new Date().getFullYear()} Wallace Shift. Demo brands are fictional unless a card says otherwise.</p>
       </div>
     </footer>
   </div>

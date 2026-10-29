@@ -28,6 +28,12 @@ pages of one document.
 demo on the contractors host (local entries elsewhere) and to
 `/request-demo/?demo=<key>`.
 
+Entries are `kind: 'film'` (a gated demo with a public preview film, watched in
+the modal) or `kind: 'open'` (a public demo with no film: the tile links straight
+to it and shows its disclosure on the card). Trawsome Lawn Care, a concept for a
+real business, is the only open tile; the gallery test lists it in
+`contractorOpenDemoIds` in `scripts/contractor-preview-contract.mjs`.
+
 ## Access
 
 The lander is public. `/demos/contractors` and `/src/demos/contractors` are

@@ -208,8 +208,9 @@ async function verifyGuestRoute(demo, configuration) {
 
 export async function main() {
   const configuration = baseConfiguration()
-  assert.equal(trades.length, contractorPreviewIds.length, 'Gallery/acceptance inventory count differs')
-  assert.deepEqual(new Set(trades.map(demo => demo.id)), new Set(contractorPreviewIds), 'Gallery/acceptance inventory IDs differ')
+  const films = trades.filter(demo => demo.kind === 'film')
+  assert.equal(films.length, contractorPreviewIds.length, 'Gallery/acceptance inventory count differs')
+  assert.deepEqual(new Set(films.map(demo => demo.id)), new Set(contractorPreviewIds), 'Gallery/acceptance inventory IDs differ')
   const report = {
     startedAt: new Date().toISOString(), target: configuration.target, origin: configuration.origin,
     mode: 'Read-only public GET requests with no authentication; redirects never followed',
@@ -232,7 +233,7 @@ export async function main() {
     const mp4 = report.assets.find(item => item.id === id && item.extension === 'mp4')
     if (mp4.local) report.ranges.push(await verifyRange(id, mp4.local, configuration))
     else report.ranges.push({ id, checks: [{ name: 'Local MP4 exists for bounded range comparison', passed: false }] })
-    report.routes.push(await verifyGuestRoute(trades.find(demo => demo.id === id), configuration))
+    report.routes.push(await verifyGuestRoute(films.find(demo => demo.id === id), configuration))
     await save()
     const checked = [...report.assets, ...report.ranges, ...report.routes].filter(item => item.id === id)
     console.log(`${id}: ${checked.every(item => item.checks.every(check => check.passed)) ? 'passed' : 'FAILED'} (3 assets, bounded range, guest gate)`)

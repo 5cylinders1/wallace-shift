@@ -27,7 +27,7 @@ async function walk(directory, prefix = '', result = privateFiles) {
   for (const item of await readdir(directory, { withFileTypes: true })) {
     const path = `${prefix}/${item.name}`
     if (item.isDirectory()) await walk(join(directory, item.name), path, result)
-    else if (item.name.endsWith('.html') && !/^\/(?:roofers-offer|contractors|bucyrus-auto)\//.test(path)) result.push(`/demos${path}`)
+    else if (item.name.endsWith('.html') && !/^\/(?:roofers-offer|contractors|bucyrus-auto|lawn)\//.test(path)) result.push(`/demos${path}`)
   }
 }
 function assetsFrom(html) {
@@ -119,7 +119,7 @@ try {
     assert.match(result.headers.get('cache-control'), /no-store/)
   }
 
-  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/', '/bucyrus-auto', '/demos/bucyrus-auto/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg']) await checkStatus(path, 200)
+  for (const path of ['/', '/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/', '/bucyrus-auto', '/demos/bucyrus-auto/', '/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg', '/trawsome', '/demos/lawn/', '/demos/lawn/preview.jpg']) await checkStatus(path, 200)
   for (const file of contractorPreviewFiles) {
     const path = `/${file}`
     const response = await checkStatus(path, 200, { method: 'HEAD' })
@@ -134,7 +134,7 @@ try {
       assert.match((await checkStatus(path, 200)).body, /^WEBVTT\s/)
     }
   }
-  for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/']) {
+  for (const path of ['/request-demo/', '/demo-agreement/', '/demo-admin/', '/demos/roofers-offer/', '/demos/contractors/', '/demos/lawn/']) {
     const page = await request(path)
     for (const asset of assetsFrom(page.body)) {
       assert.equal(asset.startsWith('/demo-assets/'), false, `${path} imports a private generated asset`)

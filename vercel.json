@@ -20,6 +20,14 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
+      "source": "/trawsome/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/lawn/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
       "source": "/resources/blog/wallace-shift-business-systems-worksheets.xlsx",
       "headers": [
         {
@@ -131,6 +139,10 @@
     {
       "source": "/mitre",
       "destination": "/demos/cabinetry-2"
+    },
+    {
+      "source": "/trawsome",
+      "destination": "/demos/lawn"
     }
   ]
 }
