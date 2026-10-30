@@ -43,6 +43,8 @@ export type StageId = (typeof stages)[number]['id']
 export interface Service {
   id: string
   title: string
+  /** For the services hall's index. */
+  short: string
   body: string
   points: string[]
   image: { src: string; alt: string }
@@ -52,6 +54,7 @@ export const services: Service[] = [
   {
     id: 'exterior',
     title: 'Exterior painting',
+    short: 'Exterior',
     body: 'Siding, trim, doors and porches, prepared properly so the new color holds up to Kansas sun, storms and winters.',
     points: ['Washing, scraping and sanding', 'Caulking and priming bare wood', 'Body, trim and door colors'],
     image: { src: '/demos/painting/service-exterior.webp', alt: 'A deep blue-green house with warm white trim and a golden ochre front door' },
@@ -59,6 +62,7 @@ export const services: Service[] = [
   {
     id: 'interior',
     title: 'Interior painting',
+    short: 'Interior',
     body: 'Walls, ceilings and trim with clean lines and even coverage, and your rooms protected while the work is underway.',
     points: ['Walls and ceilings', 'Baseboards, casings and crown', 'Furniture and floors covered'],
     image: { src: '/demos/painting/service-interior.webp', alt: 'A freshly painted living room in warm greige with crisp white trim' },
@@ -66,6 +70,7 @@ export const services: Service[] = [
   {
     id: 'cabinets',
     title: 'Cabinet refinishing',
+    short: 'Cabinets',
     body: 'A new color on the cabinets you already have: one of the biggest changes a kitchen can get without a remodel.',
     points: ['Kitchen and bath cabinets', 'Smooth, durable finish', 'A new look without new boxes'],
     image: { src: '/demos/painting/service-cabinets.webp', alt: 'Shaker kitchen cabinets refinished in deep sage green with brass pulls' },
@@ -73,6 +78,7 @@ export const services: Service[] = [
   {
     id: 'carpentry',
     title: 'Rotten wood replacement',
+    short: 'Rotten wood',
     body: 'Soft, rotted trim is never painted over. The damage is assessed, the rotten wood removed and new wood installed, then primed and painted to match.',
     points: ['Fascia, sills and corner boards', 'Porch columns and railings', 'Primed and painted to match'],
     image: { src: '/demos/painting/service-carpentry.webp', alt: 'A new primed white fascia board and corner trim beside blue-green siding' },
@@ -80,6 +86,7 @@ export const services: Service[] = [
   {
     id: 'commercial',
     title: 'Commercial painting',
+    short: 'Commercial',
     body: 'Storefronts, offices and rental properties, scheduled around the way your business runs.',
     points: ['Storefronts and offices', 'Rental and investment properties', 'Interior and exterior'],
     image: { src: '/demos/painting/service-commercial.webp', alt: 'A small storefront freshly painted in warm off-white with charcoal window frames' },

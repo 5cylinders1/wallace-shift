@@ -25,11 +25,21 @@ export function Wordmark() {
 
 const subscribeScroll = (onChange: () => void) => {
   window.addEventListener('scroll', onChange, { passive: true })
-  return () => window.removeEventListener('scroll', onChange)
+  window.addEventListener('resize', onChange)
+  return () => {
+    window.removeEventListener('scroll', onChange)
+    window.removeEventListener('resize', onChange)
+  }
+}
+
+/** True while the hero's photo is behind the header: until the next section's sheet slides up under it. */
+const overHero = () => {
+  const sheet = document.querySelector('.cp-sheet')
+  return sheet ? sheet.getBoundingClientRect().top > 72 : false
 }
 
 export default function Header() {
-  const scrolled = useSyncExternalStore(subscribeScroll, () => window.scrollY > 12, () => false)
+  const dark = useSyncExternalStore(subscribeScroll, overHero, () => true)
   const [open, setOpen] = useState(false)
   const toggle = useRef<HTMLButtonElement>(null)
   const menu = useRef<HTMLDivElement>(null)
@@ -63,7 +73,7 @@ export default function Header() {
   }, [open])
 
   return (
-    <header className={`cp-header${scrolled || open ? ' is-solid' : ''}`}>
+    <header className={`cp-header${open || !dark ? ' is-solid' : ' is-over'}`}>
       <a className="cp-skip" href="#main">Skip to content</a>
       <div className="cp-header-inner">
         <a href="#top" className="cp-header-brand" aria-label={`${business.name}, back to top`}><Wordmark /></a>
