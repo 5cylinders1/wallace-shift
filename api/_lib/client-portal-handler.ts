@@ -5,7 +5,7 @@ import { identity, login, type Identity } from './portal-auth.js'
 import { allEngagements, audit, getValue, mutateLedger, setValue } from './portal-store.js'
 import { accessible, changeLedger, draft, field, generateDueInvoices } from './portal-ledger.js'
 import { charge, finishSetup, handleStripeEvent, quote, refreshPayments, resetFailedPayment, setupCard } from './portal-stripe.js'
-import { paymentConsent } from '../../src/client-portal/model.js'
+import { automaticInvoice, firstUnsettledInvoice, scheduleConsent } from '../../src/client-portal/model.js'
 import type { Engagement } from '../../src/client-portal/model.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
@@ -55,12 +55,21 @@ async function runBilling(origin: string): Promise<{ generated: number; attempte
   // Round-robin continuation prevents a slow processor or blocked record starving later clients.
   const started = Date.now()
   const cursor = await getValue<string>('billing-cursor') ?? ''
-  const due = entries.filter(v => v.state === 'issued' && v.autopay?.enabled && v.invoices.some(i => i.status === 'open' && !i.attempt && i.due <= new Date().toISOString().slice(0, 10))).sort((a, b) => a.id.localeCompare(b.id))
+  const today = new Date().toISOString().slice(0, 10)
+  const due = entries.filter(v => v.state === 'issued' && v.autopay?.enabled && v.invoices.some(i => automaticInvoice(v, i, today) && i.status === 'open' && !i.attempt && i.due <= today)).sort((a, b) => a.id.localeCompare(b.id))
   const ordered = [...due.filter(e => e.id > cursor), ...due.filter(e => e.id <= cursor)]
   for (const e of ordered) {
     if (Date.now() - started > 28000) break
-    const invoice = e.invoices.find(i => i.status === 'open' && !i.attempt && i.due <= new Date().toISOString().slice(0, 10))!
-    try { await charge(e, invoice, origin, true); attempted++ } catch { failed.push(e.id) }
+    // Settle the initial invoice before recurring service, including when both fall on the same date.
+    for (let current = e; Date.now() - started <= 28000;) {
+      const invoice = firstUnsettledInvoice(current)
+      if (!invoice || invoice.status !== 'open' || invoice.attempt || invoice.due > today || !automaticInvoice(current, invoice, today)) break
+      try {
+        const intent = await charge(current, invoice, origin, true); attempted++
+        if (intent.status !== 'succeeded') break
+        current = (await allEngagements()).find(v => v.id === e.id)!
+      } catch { failed.push(e.id); break }
+    }
     await setValue('billing-cursor', e.id, 7 * 86400)
   }
   return { generated, attempted, failed }
@@ -109,7 +118,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (['setup-card', 'finish-setup', 'quote', 'pay', 'authorize', 'reset-payment'].includes(String(body.action)) && who.admin) throw new DemoError('client_authorization_required', 403)
     if (body.action === 'setup-card') { demoJson(res, 200, { ok: true, url: await setupCard(e, origin) }); return }
     if (body.action === 'finish-setup') { await finishSetup(e, field(body.sessionId)); demoJson(res, 200, { ok: true }); return }
-    if (body.action === 'quote') { demoJson(res, 200, { ok: true, quote: await quote(e) }); return }
+    if (body.action === 'quote') {
+      const invoice = e.invoices.find(i => i.id === body.invoiceId)
+      if (body.invoiceId !== undefined && !invoice) throw new DemoError('not_found', 404)
+      demoJson(res, 200, { ok: true, quote: await quote(e, invoice) }); return
+    }
     if (body.action === 'refresh') { await refreshPayments(e); demoJson(res, 200, { ok: true }); return }
     if (body.action === 'reset-payment') {
       const invoice = e.invoices.find(i => i.id === body.invoiceId)
@@ -118,16 +131,19 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (body.action === 'pay' || body.action === 'authorize') {
       if (body.consent !== true || !e.signature || !['issued', 'canceled'].includes(e.state)) throw new DemoError('authorization_required', 409)
-      const quoted = await quote(e)
-      if (body.total !== quoted.total) throw new DemoError('quote_changed', 409)
-      const automatic = e.cadence !== 'once' && e.state === 'issued'
       const invoice = e.invoices.find(i => i.id === body.invoiceId)
+      const quoted = await quote(e, invoice)
+      if (body.total !== quoted.total) throw new DemoError('quote_changed', 409)
+      const today = new Date().toISOString().slice(0, 10)
+      const automatic = invoice ? automaticInvoice(e, invoice, today) : e.cadence !== 'once' && e.state === 'issued' && (!e.endDate || today <= e.endDate)
+      if (automatic && e.initialPayment && (body.recurringTotal !== quoted.recurringTotal || body.initialTotal !== quoted.initialTotal)) throw new DemoError('quote_changed', 409)
       const scheduleOnly = body.action === 'authorize' && automatic && !e.invoices.some(i => i.status === 'open' || i.status === 'processing') && e.nextDue && (!e.endDate || e.nextDue <= e.endDate)
       if (!scheduleOnly && (!invoice || !['open', 'processing'].includes(invoice.status))) throw new DemoError('invoice_not_open', 409)
+      if (!scheduleOnly && firstUnsettledInvoice(e)?.id !== invoice!.id) throw new DemoError('earlier_invoice_required', 409)
       if (automatic) await mutateLedger(entries => {
         const current = accessible(entries, e.id, who)
         if (current.state !== 'issued' || current.paymentMethod !== e.paymentMethod) throw new DemoError('conflict_retry', 409)
-        current.autopay = { enabled: true, at: new Date().toISOString(), feeBps: quoted.bps, consent: paymentConsent(e.amount, quoted.fee, e.cadence, true) }
+        current.autopay = { enabled: true, at: new Date().toISOString(), feeBps: quoted.bps, agreementHash: current.agreementHash, consent: scheduleConsent(current, quoted.bps) }
         audit(current, who.email, 'Automatic payment authorization recorded')
       })
       if (scheduleOnly || (automatic && invoice!.due > new Date().toISOString().slice(0, 10))) { demoJson(res, 200, { ok: true, scheduled: true }); return }

@@ -23,6 +23,12 @@ export function draft(body: Record<string, unknown>, actor: string): Engagement 
     scope: field(body.scope, 10000), exclusions: field(body.exclusions, 5000), delivery: field(body.delivery, 5000), amount, cadence,
     firstDue: dateField(body.firstDue), endDate: body.endDate ? dateField(body.endDate) : '', state: 'draft', agreement: '', agreementHash: '', invoices: [], audit: [],
   }
+  if (body.initialPayment !== undefined) {
+    const initial = body.initialPayment as Record<string, unknown> | null
+    if (cadence === 'once' || !initial || typeof initial !== 'object' || Array.isArray(initial) || !Number.isSafeInteger(initial.amount) || Number(initial.amount) < 50 || Number(initial.amount) > 100_000_000) throw new DemoError('invalid_amount', 400)
+    e.initialPayment = { amount: Number(initial.amount), due: dateField(initial.due) }
+    if (e.initialPayment.due < new Date().toISOString().slice(0, 10) || e.initialPayment.due > e.firstDue) throw new DemoError('invalid_initial_date', 400)
+  }
   if (e.firstDue < new Date().toISOString().slice(0, 10) || (e.endDate && e.endDate < e.firstDue)) throw new DemoError('invalid_date', 400)
   e.agreement = starterAgreement(e, 'Kansas')
   e.agreementHash = hash(e.agreement)
@@ -40,9 +46,11 @@ export function changeLedger(entries: Engagement[], body: Record<string, unknown
   if (['issue', 'complete', 'record-payment', 'void'].includes(String(action)) && !who.admin) throw new DemoError('forbidden', 403)
   if (action === 'issue' && who.admin) {
     if (e.state !== 'draft') throw new DemoError('already_issued', 409)
-    e.state = 'issued'; e.issuedAt = new Date().toISOString(); e.invoices.push(createInvoice(e, e.firstDue))
+    e.state = 'issued'; e.issuedAt = new Date().toISOString()
+    if (e.initialPayment) e.invoices.push(createInvoice(e, e.initialPayment.due, 'initial'))
+    e.invoices.push(createInvoice(e, e.firstDue, e.cadence === 'once' ? undefined : 'recurring'))
     e.nextDue = nextDueDate(e.firstDue, e.cadence, e.firstDue)
-    audit(e, who.email, 'Agreement issued and first invoice created')
+    audit(e, who.email, e.initialPayment ? 'Agreement issued with initial and recurring invoices' : 'Agreement issued and first invoice created')
     return
   }
   if (action === 'sign' && !who.admin) {
@@ -90,10 +98,10 @@ export function changeLedger(entries: Engagement[], body: Record<string, unknown
 export function generateDueInvoices(entries: Engagement[], today: string): number {
   let count = 0
   for (const e of entries) {
-    if (e.state !== 'issued' || !e.signature || !e.autopay?.enabled || e.cadence === 'once' || !e.nextDue || e.nextDue > today || (e.endDate && e.nextDue > e.endDate)) continue
+    if (e.state !== 'issued' || !e.signature || !e.autopay?.enabled || (e.initialPayment && e.autopay.agreementHash !== e.agreementHash) || e.cadence === 'once' || !e.nextDue || e.nextDue > today || (e.endDate && (e.nextDue > e.endDate || today > e.endDate))) continue
     // Do not compound failed collections. Resolve the outstanding invoice first.
     if (e.invoices.some(i => i.status === 'open' || i.status === 'processing')) continue
-    if (!e.invoices.some(i => i.due === e.nextDue)) { e.invoices.push(createInvoice(e, e.nextDue)); count++ }
+    if (!e.invoices.some(i => i.kind !== 'initial' && i.due === e.nextDue)) { e.invoices.push(createInvoice(e, e.nextDue, 'recurring')); count++ }
     e.nextDue = nextDueDate(e.nextDue, e.cadence, e.firstDue)
     audit(e, 'Billing schedule', 'Recurring invoice generated')
   }

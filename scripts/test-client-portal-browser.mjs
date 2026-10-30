@@ -26,11 +26,14 @@ await page.route('**/api/client-portal', async route => {
     const body = request.postDataJSON(); sent.push(body)
     if (body.action === 'verify-code') loggedIn = true
     if (body.action === 'sign') { assert.equal(body.consent, true); assert.equal(body.agreementHash, 'test-hash'); record.signature = { name: body.name, email: sample.email, at: new Date().toISOString(), hash: 'test-hash' } }
-    if (body.action === 'quote') result.quote = { bps: 300, fee: Math.round(record.amount * .03), total: record.amount + Math.round(record.amount * .03), card: 'visa ending 4242' }
+    if (body.action === 'quote') {
+      const amount = record.invoices.find(i => i.id === body.invoiceId)?.amount ?? record.amount
+      result.quote = { bps: 300, fee: Math.round(amount * .03), total: amount + Math.round(amount * .03), invoiceId: body.invoiceId, recurringTotal: record.amount + Math.round(record.amount * .03), initialTotal: record.initialPayment ? Math.round(record.initialPayment.amount * 1.03) : undefined, card: 'visa ending 4242' }
+    }
     if (body.action === 'authorize') { assert.equal(body.consent, true); record.autopay = { enabled: true, feeBps: 300 }; result.scheduled = true }
     if (body.action === 'report-payment') { record.invoices[0].method = body.method; record.invoices[0].reference = body.reference; record.invoices[0].reportedAt = new Date().toISOString() }
     if (body.action === 'record-payment') { assert.equal(body.confirmed, true); record.invoices[0].status = 'paid'; record.invoices[0].paidAt = new Date().toISOString() }
-    if (body.action === 'create') { assert.equal(body.cadence, 'monthly'); assert.equal(body.amount, 45000); record = { ...record, ...body, state: 'draft', signature: undefined, invoices: [] }; result.id = record.id }
+    if (body.action === 'create') { assert.equal(body.cadence, 'monthly'); assert.equal(body.amount, 45000); assert.deepEqual(body.initialPayment, { amount: 120000, due: today }); assert.equal(body.firstDue, '2099-01-31'); assert.equal(body.endDate, '2099-04-30'); record = { ...record, ...body, state: 'draft', signature: undefined, invoices: [] }; result.id = record.id }
     if (body.action === 'logout') loggedIn = false
   }
   await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(result) })
@@ -78,15 +81,43 @@ try {
   await page.getByLabel('Scope of work').fill('Sample support scope.')
   await page.getByLabel('Exclusions and third party costs').fill('Sample exclusions.')
   await page.getByLabel('Delivery, milestones, and acceptance criteria').fill('Sample acceptance criteria.')
-  await page.getByLabel('Full invoice amount (USD)').fill('450.00')
   await page.getByLabel('Billing schedule').selectOption('monthly')
-  await page.getByLabel('First invoice due').fill(today)
+  await page.getByLabel('Recurring amount (USD)').fill('450.00')
+  await page.getByLabel('Recurring start date').fill('2099-01-31')
+  await page.getByLabel('Recurring end date (optional)').fill('2099-04-30')
+  await page.getByLabel('Include a separate initial payment').uncheck()
+  assert.equal(await page.getByLabel('Initial payment amount (USD)').count(), 0)
+  await page.getByLabel('Include a separate initial payment').check()
+  await page.getByLabel('Initial payment amount (USD)').fill('1200.00')
+  await page.getByLabel('Initial payment date').fill(today)
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'Recurring form must fit mobile')
+  await page.screenshot({ path: `${output}/owner-create-mobile.png`, fullPage: true })
   await page.setViewportSize({ width: 1440, height: 1100 })
   await page.screenshot({ path: `${output}/owner-create-desktop.png`, fullPage: true })
   await page.getByRole('button', { name: 'Create draft & review agreement' }).click()
-  await page.getByRole('button', { name: 'Issue agreement & first invoice' }).waitFor()
+  await page.getByRole('button', { name: 'Issue agreement & invoices' }).waitFor()
   admin = false
   record = { ...record, state: 'issued', signature: { name: 'Sample Signer', email: sample.email, at: new Date().toISOString(), hash: 'test-hash' }, nextDue: '2099-01-31', invoices: [{ id: 'SAMPLE-002', due: today, amount: record.amount, fee: 1350, status: 'paid' }] }
+  await page.reload()
+  record.invoices = [
+    { id: 'SAMPLE-INITIAL', kind: 'initial', due: today, amount: 120000, fee: 0, status: 'open' },
+    { id: 'SAMPLE-RECURRING', kind: 'recurring', due: '2099-01-31', amount: 45000, fee: 0, status: 'open' },
+  ]
+  await page.reload()
+  await page.getByRole('button', { name: 'Review payment total', exact: true }).waitFor()
+  assert.equal(await page.getByRole('button', { name: 'Review payment total', exact: true }).count(), 1)
+  await page.getByRole('button', { name: 'Review payment total', exact: true }).click()
+  await page.getByRole('button', { name: 'Authorize payment schedule' }).waitFor()
+  assert.match(await page.locator('.cp-check').innerText(), /1,236.00/)
+  assert.match(await page.locator('.cp-check').innerText(), /463.50/)
+  assert.match(await page.locator('.cp-check').innerText(), /2099-04-30/)
+  assert.equal(await page.getByRole('button', { name: 'Authorize payment schedule' }).isDisabled(), true)
+  await page.screenshot({ path: `${output}/split-schedule-desktop.png`, fullPage: true })
+  await page.setViewportSize({ width: 390, height: 844 })
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
+  await page.screenshot({ path: `${output}/split-schedule-mobile.png`, fullPage: true })
+  record.invoices.forEach(i => { i.status = 'paid' })
+  record.nextDue = '2099-02-28'
   await page.reload()
   await page.getByRole('heading', { name: 'Upcoming automatic payments' }).waitFor()
   assert.equal(await page.getByRole('button', { name: 'Pay by cash, check, or Zelle with no fee' }).count(), 0)
@@ -96,7 +127,7 @@ try {
   assert.equal(record.autopay.enabled, true)
   assert.equal(sent.some(action => action.action === 'pay'), false, 'This test must not submit a payment')
   assert.deepEqual(errors, [])
-  console.log(JSON.stringify({ passed: true, scope: 'Mocked sample records; no payments or emails sent', screenshots: output, checked: ['sign in', 'signature and download', 'fee disclosure and consent gate', 'offline pending state', 'owner receipt confirmation', 'recurring draft creation', 'future automatic payment authorization', '390px overflow', 'browser runtime errors'] }, null, 2))
+  console.log(JSON.stringify({ passed: true, scope: 'Mocked sample records; no payments or emails sent', screenshots: output, checked: ['sign in', 'signature and download', 'fee disclosure and consent gate', 'offline pending state', 'owner receipt confirmation', 'separate initial and recurring terms', 'optional initial payment', 'recurring end date', 'per invoice quote and consent', 'future automatic payment authorization', '390px overflow', 'browser runtime errors'] }, null, 2))
 } catch (error) {
   await page.screenshot({ path: `${output}/failure.png`, fullPage: true })
   console.error(JSON.stringify({ errors, failedRequests, body: (await page.locator('body').innerText()).slice(0, 2500), html: (await page.content()).slice(0, 2500) }))

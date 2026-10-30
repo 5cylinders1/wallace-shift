@@ -28,7 +28,7 @@ const { default: deployedHandler, config: deployedConfig } = await load('api/dem
 const { draft, changeLedger, generateDueInvoices } = await load('api/_lib/portal-ledger.ts')
 const { mutateLedger } = await load('api/_lib/portal-store.ts')
 const { hash, ownerEmail } = await load('api/_lib/portal-auth.ts')
-const { nextDueDate } = await load('src/client-portal/model.ts')
+const { nextDueDate, createInvoice } = await load('src/client-portal/model.ts')
 const { surchargeBps, verifyWebhook, charge, reconcileIntent, resetFailedPayment } = await load('api/_lib/portal-stripe.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch
 let store, stripeCalls, stripeResult, deliveredEmails, failStripe
@@ -41,6 +41,12 @@ function engagement(cadence = 'once', signed = true) {
   const e = draft({ client: 'Example client', email: client.email, title: 'Test project', scope: 'A defined test deliverable.', exclusions: 'Hosting is billed separately.', delivery: 'Acceptance by written review.', amount: 10000, cadence, firstDue: today }, owner.email)
   changeLedger([e], { action: 'issue', id: e.id }, owner)
   if (signed) changeLedger([e], { action: 'sign', id: e.id, name: 'Test Signer', consent: true, agreementHash: e.agreementHash }, client)
+  e.stripeCustomer = 'cus_test'; e.paymentMethod = 'pm_test'; return e
+}
+function phased(initialDue = today, recurringDue = today, endDate = '') {
+  const e = draft({ client: 'Example client', email: client.email, title: 'Setup and support', scope: 'Initial setup and recurring support.', exclusions: 'Hosting excluded.', delivery: 'Client review.', amount: 45000, cadence: 'monthly', firstDue: recurringDue, endDate, initialPayment: { amount: 120000, due: initialDue } }, owner.email)
+  changeLedger([e], { action: 'issue', id: e.id }, owner)
+  changeLedger([e], { action: 'sign', id: e.id, name: 'Test Signer', consent: true, agreementHash: e.agreementHash }, client)
   e.stripeCustomer = 'cus_test'; e.paymentMethod = 'pm_test'; return e
 }
 const save = entries => store.values.set('portal:engagements', JSON.stringify(entries))
@@ -70,7 +76,7 @@ beforeEach(() => {
       if (failStripe) throw new Error('Simulated lost network response')
       if (path === 'payment_intents') {
         const params = new URLSearchParams(init.body)
-        const intent = { id: 'pi_test', status: 'succeeded', customer: 'cus_test', amount: Number(params.get('amount')), currency: 'usd', metadata: { engagement: params.get('metadata[engagement]'), invoice: params.get('metadata[invoice]'), attempt: params.get('metadata[attempt]') }, ...stripeResult }
+        const intent = { ...stripeResult, id: `pi_test${params.get('metadata[attempt]').replaceAll('-', '')}`, customer: 'cus_test', amount: Number(params.get('amount')), currency: 'usd', metadata: { engagement: params.get('metadata[engagement]'), invoice: params.get('metadata[invoice]'), attempt: params.get('metadata[attempt]') }, status: stripeResult?.status ?? 'succeeded' }
         stripeResult = intent
         return Response.json(intent)
       }
@@ -314,4 +320,85 @@ test('passwordless sign in sends only to known accounts, codes are single use, l
   assert.equal((await call(undefined, '', { headers: { ...headers, cookie } })).body.authenticated, false)
   const unknown = await call({ action: 'send-code', email: 'unknown@example.test' }, '')
   assert.equal(unknown.statusCode, 200); assert.equal(deliveredEmails.length, 1)
+})
+
+test('initial payment has independent terms, invoice identity, and calendar anchor', () => {
+  const e = phased(today, '2099-01-31', '2099-04-30')
+  assert.deepEqual(e.invoices.map(i => [i.kind, i.amount, i.due]), [['initial', 120000, today], ['recurring', 45000, '2099-01-31']])
+  assert.equal(e.nextDue, '2099-02-28')
+  assert.match(e.agreement, /1,200.00/); assert.match(e.agreement, /450.00/)
+  assert.match(e.agreement, /2099-01-31/); assert.match(e.agreement, /2099-04-30/)
+  assert.equal(e.signature.hash, hash(e.agreement))
+  assert.equal(new Set(phased().invoices.map(i => i.id)).size, 2)
+  const legacy = engagement('monthly'); delete legacy.invoices[0].kind
+  assert.equal(legacy.invoices[0].id, createInvoice(legacy, today).id)
+  assert.equal(legacy.initialPayment, undefined)
+})
+test('draft rejects invalid initial amounts and dates and reversed recurring dates', () => {
+  const body = { ...phased(), state: undefined }
+  for (const initialPayment of [null, [], { amount: 0, due: today }, { amount: 49, due: today }, { amount: 1.5, due: today }, { amount: 100000001, due: today }, { amount: 100, due: '2020-01-01' }, { amount: 100, due: '2099-01-01' }, { amount: 100, due: '2027-02-30' }]) {
+    assert.throws(() => draft({ ...body, initialPayment }, owner.email))
+  }
+  assert.throws(() => draft({ ...body, cadence: 'once' }, owner.email))
+  assert.throws(() => draft({ ...body, firstDue: '2099-01-31', endDate: '2099-01-30' }, owner.email))
+  assert.equal(draft({ ...body, initialPayment: undefined }, owner.email).invoices.length, 0)
+})
+test('each phase is quoted separately and both totals require consent before payment', async () => {
+  const e = phased(today, '2099-01-31'); save([e])
+  const initialQuote = (await call({ action: 'quote', id: e.id, invoiceId: e.invoices[0].id })).body.quote
+  const recurringQuote = (await call({ action: 'quote', id: e.id, invoiceId: e.invoices[1].id })).body.quote
+  assert.equal(initialQuote.total, 123600); assert.equal(initialQuote.fee, 3600)
+  assert.equal(initialQuote.recurringTotal, 46350); assert.equal(initialQuote.invoiceId, e.invoices[0].id)
+  assert.equal(recurringQuote.total, 46350); assert.equal(recurringQuote.fee, 1350)
+  const body = { action: 'pay', id: e.id, invoiceId: e.invoices[0].id, consent: true, total: 123600, initialTotal: 123600, recurringTotal: 46350 }
+  assert.equal((await call({ ...body, recurringTotal: 45000 })).body.error, 'quote_changed')
+  assert.equal((await call({ ...body, invoiceId: e.invoices[1].id, total: 46350 })).body.error, 'earlier_invoice_required')
+  assert.equal((await call(body)).statusCode, 200)
+  const saved = ledger()[0]
+  assert.deepEqual(saved.invoices.map(i => [i.status, i.fee]), [['paid', 3600], ['open', 0]])
+  assert.equal(saved.autopay.agreementHash, e.agreementHash)
+  assert.match(saved.autopay.consent, /1,236.00/); assert.match(saved.autopay.consent, /463.50/)
+  assert.match(saved.autopay.consent, /2099-01-31/)
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 0)
+})
+test('future initial payment authorizes both phases without charging early', async () => {
+  const e = phased('2099-01-01', '2099-02-01'); save([e])
+  const result = await call({ action: 'pay', id: e.id, invoiceId: e.invoices[0].id, consent: true, total: 123600, initialTotal: 123600, recurringTotal: 46350 })
+  assert.equal(result.body.scheduled, true)
+  assert.equal(ledger()[0].autopay.enabled, true)
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 0)
+  assert.equal(stripeCalls.filter(v => v.url.endsWith('/payment_intents')).length, 0)
+  await assert.rejects(charge(ledger()[0], ledger()[0].invoices[0], 'http://localhost:5176', true), /payment_not_ready/)
+})
+test('billing settles initial then recurring on the same day with distinct idempotency keys', async () => {
+  const e = phased(today, today, today)
+  e.autopay = { enabled: true, feeBps: 300, agreementHash: e.agreementHash }; save([e])
+  const result = await call({ action: 'run-billing' }, adminToken)
+  assert.equal(result.body.attempted, 2); assert.deepEqual(result.body.failed, [])
+  const attempts = stripeCalls.filter(v => v.url.endsWith('/payment_intents'))
+  assert.deepEqual(attempts.map(v => Number(new URLSearchParams(v.init.body).get('amount'))), [123600, 46350])
+  assert.equal(new Set(attempts.map(v => v.init.headers['Idempotency-Key'])).size, 2)
+  assert.ok(ledger()[0].invoices.every(i => i.status === 'paid'))
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 0)
+})
+test('initial failure blocks recurring charges and old generic authorization cannot cover initial payments', async () => {
+  const e = phased(); e.autopay = { enabled: true, feeBps: 300 }; save([e])
+  assert.deepEqual((await call({ action: 'run-billing' }, adminToken)).body.failed, [e.id])
+  assert.equal(stripeCalls.filter(v => v.url.endsWith('/payment_intents')).length, 0)
+  e.autopay.agreementHash = e.agreementHash; save([e]); stripeResult = { status: 'requires_payment_method' }
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 1)
+  assert.deepEqual(ledger()[0].invoices.map(i => i.status), ['processing', 'open'])
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 0)
+})
+test('inclusive recurring end date stops generation and overdue automatic attempts after it', async () => {
+  const e = engagement('monthly'); e.endDate = today; e.autopay = { enabled: true, feeBps: 300 }
+  e.invoices = []; e.nextDue = today
+  assert.equal(generateDueInvoices([e], today), 1)
+  assert.equal(generateDueInvoices([e], '2099-01-01'), 0)
+  // An already-issued unpaid invoice remains payable, but must not auto-charge past the end.
+  e.endDate = '2020-01-01'; save([e])
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 0)
+  await assert.rejects(charge(e, e.invoices[0], 'http://localhost:5176', true), /payment_not_ready/)
+  assert.equal((await call({ action: 'pay', id: e.id, invoiceId: e.invoices[0].id, total: 10300, consent: true })).statusCode, 200)
+  assert.equal(ledger()[0].invoices[0].attempt.automatic, false)
 })
