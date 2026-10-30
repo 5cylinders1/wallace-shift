@@ -52,6 +52,7 @@ interface RoofToolProps {
   onEstimate: (estimate: LeadContext['ballpark']) => void
   onAddress: (address: RoofAddress | null) => void
   presentation?: RoofToolPresentation
+  mobileSteps?: boolean
 }
 
 type Phase = StageMode
@@ -113,7 +114,17 @@ interface Paid {
  * size, with no address) and the homeowner sets the pitch on the drawing.
  * `quoteRoof` turns either into a price that updates as the ridge is dragged.
  */
-export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps) {
+export function RoofTool({ onEstimate, onAddress, presentation, mobileSteps = false }: RoofToolProps) {
+  const [mobileStep, setMobileStep] = useState(0)
+  const mobileTitles = ['Your house', 'Roof pitch', 'Material', 'Roof details', 'Review']
+  const mobileHeadingRef = useRef<HTMLHeadingElement>(null)
+  const moveMobileStep = (next: number) => {
+    setMobileStep(next)
+    requestAnimationFrame(() => {
+      mobileHeadingRef.current?.focus({ preventScroll: true })
+      mobileHeadingRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' })
+    })
+  }
   const sample = presentation?.sample ?? SAMPLE
   const [phase, setPhase] = useState<Phase>('idle')
   const [address, setAddress] = useState('')
@@ -308,6 +319,7 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
 
   const find = async (target: LookupTarget) => {
     if (busy) return
+    setMobileStep(0)
     stopMeasuring()
     requestRef.current?.abort()
     const controller = new AbortController()
@@ -351,11 +363,13 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
   }
 
   const useSample = () => {
+    setMobileStep(0)
     requestRef.current?.abort()
     showLookup(sample)
   }
 
   const useManual = () => {
+    setMobileStep(0)
     requestRef.current?.abort()
     stopMeasuring()
     setLookup(null)
@@ -539,6 +553,8 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
   const solarSize = activeMaterial === 'solar' ? (sizes.find((size) => size.kw === solarKw) ?? sizes.find((size) => size.kw === 7) ?? sizes[sizes.length - 1]) : null
 
   const ready = footprint > 0
+  // A lookup or expired measurement can invalidate later steps immediately.
+  const activeMobileStep = ready ? mobileStep : 0
   const quote = useMemo(
     () =>
       ready
@@ -646,7 +662,7 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
   const measureCopy = canMeasure && !outlineMode
 
   return (
-    <div ref={rootRef} className="rf-roof" data-reveal data-phase={phase} data-ready={ready}>
+    <div ref={rootRef} className={`rf-roof${mobileSteps ? ' rf-roof--mobile-steps' : ''}`} data-reveal data-phase={phase} data-ready={ready} data-mobile-step={activeMobileStep}>
       {!presentation?.hideHeading && (
         <div className="rf-roof__head">
           <p className="rf-roof__eyebrow">{roofTool.eyebrow}</p>
@@ -657,6 +673,18 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
         </div>
       )}
 
+      {mobileSteps && (
+        <div className="rf-roof__mobile-progress">
+          <p>Step {activeMobileStep + 1} of {mobileTitles.length}</p>
+          <h3 ref={mobileHeadingRef} tabIndex={-1}>{mobileTitles[activeMobileStep]}</h3>
+          <nav aria-label="Estimator steps">
+            {mobileTitles.map((title, index) => (
+              <button key={title} type="button" aria-label={`${index + 1}. ${title}`} aria-current={index === activeMobileStep ? 'step' : undefined}
+                disabled={index > 0 && !ready} onClick={() => moveMobileStep(index)}>{index + 1}</button>
+            ))}
+          </nav>
+        </div>
+      )}
       <div className="rf-roof__body">
         <div className="rf-roof__visual">
           <RoofStage
@@ -1017,6 +1045,7 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
             </h3>
             {quote ? (
               <div className="rf-roof__estimate">
+                {mobileSteps && <p className="rf-roof__mobile-summary">{OPTIONS.material.find(option => option.value === activeMaterial)?.label}{solarSize ? ` (${solarSize.kw} kW)` : ''} · {layers === '2' ? 'Two layers' : 'One layer'} · {OPTIONS.shape.find(option => option.value === activeShape)?.label} roof</p>}
                 <dl className="rf-roof__math">
                   <div>
                     <dt>{phase === 'manual' ? 'Ground covered' : measured ? 'Measured footprint' : 'Outline'}</dt>
@@ -1115,6 +1144,14 @@ export function RoofTool({ onEstimate, onAddress, presentation }: RoofToolProps)
         </div>
       </div>
 
+      {mobileSteps && (
+        <div className="rf-roof__mobile-nav">
+          {activeMobileStep > 0 && <button type="button" className="rf-button rf-button--ghost" onClick={() => moveMobileStep(activeMobileStep - 1)}>Back</button>}
+          {activeMobileStep < mobileTitles.length - 1 && <button type="button" className="rf-button rf-button--primary" disabled={!ready || measuring}
+            onClick={() => moveMobileStep(activeMobileStep + 1)}>Continue <span aria-hidden="true">→</span></button>}
+          {activeMobileStep === 0 && !ready && <p>Find your roof or enter your home size to continue.</p>}
+        </div>
+      )}
       <p className="rf-visually-hidden" aria-live="polite">
         {announce}
       </p>

@@ -39,3 +39,14 @@
     display: none;
   }
 }
+
+@media (max-width: 899px) {
+  .rf-mobile-bar--estimate { grid-template-columns: 1fr; gap: 8px; }
+  .rf-mobile-bar__price { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 2px 8px; }
+  .rf-mobile-bar__price > span { font-size: .75rem; color: var(--rf-muted); }
+  .rf-mobile-bar__price strong { font-size: clamp(1rem, 4.8vw, 1.3rem); font-variant-numeric: tabular-nums; }
+  .rf-mobile-bar__price small { grid-column: 1 / -1; font-size: .6875rem; color: var(--rf-muted); }
+  .rf-mobile-bar--estimate a { min-height: 44px; touch-action: manipulation; }
+  body:has(.rf-mobile-bar--estimate) { padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px)); }
+  body:has(.rf-header.is-open) .rf-mobile-bar--estimate { visibility: hidden; }
+}

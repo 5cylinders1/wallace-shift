@@ -1116,3 +1116,69 @@
   line-height: 1.5;
   color: var(--rf-on-dark-muted);
 }
+
+/* Northvane opts into the phone flow; shared estimators and desktop keep their layout. */
+.rf-roof__mobile-progress,
+.rf-roof__mobile-nav { display: none; }
+
+@media (max-width: 899px) {
+  .rf-roof--mobile-steps { padding-bottom: 120px; }
+  .rf-roof--mobile-steps .rf-roof__mobile-progress { display: grid; gap: 10px; margin-bottom: 18px; }
+  .rf-roof__mobile-progress p { color: var(--rf-roof-copper-text); font-size: .8125rem; }
+  .rf-roof__mobile-progress h3 { font-size: 1.65rem; scroll-margin-top: 12px; }
+  .rf-roof__mobile-progress nav { display: flex; gap: 8px; }
+  .rf-roof__mobile-progress button { flex: 1; min-height: 44px; border: 1px solid var(--rf-roof-line); background: transparent; color: inherit; font: inherit; cursor: pointer; }
+  .rf-roof__mobile-progress button[aria-current='step'] { background: var(--rf-roof-copper); color: #14181c; font-weight: 750; }
+  .rf-roof__mobile-progress button:disabled { opacity: .4; cursor: default; }
+  .rf-roof--mobile-steps .rf-roof__body { display: flex; flex-direction: column; gap: 16px; }
+  .rf-roof--mobile-steps .rf-roof__steps { width: 100%; order: 0; }
+  .rf-roof--mobile-steps .rf-roof__visual { width: 100%; order: 1; }
+  .rf-roof--mobile-steps .rf-stage { width: min(100%, 300px); margin-inline: auto; }
+  .rf-roof--mobile-steps .rf-roof__step { padding: 18px; }
+  .rf-roof--mobile-steps .rf-roof__step-title { display: none; }
+  .rf-roof--mobile-steps:not([data-mobile-step='0']) [data-step='house'],
+  .rf-roof--mobile-steps:not([data-mobile-step='1']) [data-step='pitch'],
+  .rf-roof--mobile-steps[data-mobile-step='0'] [data-step='estimate'],
+  .rf-roof--mobile-steps[data-mobile-step='1'] [data-step='estimate'],
+  .rf-roof--mobile-steps:not([data-mobile-step='0']) .rf-roof__visual,
+  .rf-roof--mobile-steps:not([data-phase='found']) .rf-roof__visual { display: none; }
+  .rf-roof--mobile-steps[data-mobile-step='2'] .rf-roof__estimate > :not(.rf-roof__material):not(.rf-roof__solar-size),
+  .rf-roof--mobile-steps[data-mobile-step='3'] .rf-roof__estimate > :not(.rf-roof__pair),
+  .rf-roof--mobile-steps[data-mobile-step='4'] .rf-roof__material,
+  .rf-roof--mobile-steps[data-mobile-step='4'] .rf-roof__solar-size,
+  .rf-roof--mobile-steps[data-mobile-step='4'] .rf-roof__pair { display: none; }
+  .rf-roof--mobile-steps .rf-roof__pair { grid-template-columns: 1fr; gap: 24px; }
+  .rf-roof--mobile-steps .rf-roof__mobile-nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .rf-roof__mobile-nav .rf-button { flex: 1; min-height: 48px; touch-action: manipulation; }
+  .rf-roof__mobile-nav .rf-button:disabled { opacity: .4; cursor: default; }
+  .rf-roof__mobile-nav p { width: 100%; font-size: .8125rem; color: var(--rf-on-dark-muted); }
+  .rf-roof--mobile-steps .rf-roof__estimate { gap: 16px; }
+  .rf-roof--mobile-steps .rf-roof__material .rf-seg__options { grid-template-columns: 1fr; }
+  .rf-roof--mobile-steps .rf-pitch__svg { max-height: 136px; }
+  .rf-roof--mobile-steps .rf-roof__step,
+  .rf-roof--mobile-steps .rf-roof__estimate > .rf-roof__material,
+  .rf-roof--mobile-steps .rf-roof__estimate > .rf-roof__pair,
+  .rf-roof--mobile-steps .rf-roof__estimate > .rf-roof__math { animation: rf-mobile-step-in .22s ease-out; }
+  @keyframes rf-mobile-step-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+}
+@media (max-width: 899px) and (prefers-reduced-motion: reduce) {
+  .rf-roof--mobile-steps .rf-roof__step,
+  .rf-roof--mobile-steps .rf-roof__estimate > * { animation: none; }
+}
+
+@media (max-width: 899px) {
+  .rf-roof--mobile-steps .rf-pitch { gap: 10px; }
+}
+
+@media (max-width: 899px) {
+  .rf-roof--mobile-steps .rf-pitch__styles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+  .rf-roof--mobile-steps .rf-pitch__style { padding: 6px; }
+  .rf-roof--mobile-steps .rf-pitch__style span { font-size: .6875rem; }
+  .rf-roof--mobile-steps .rf-pitch__scale { display: none; }
+  .rf-roof__mobile-nav .rf-button::after { display: none; }
+}
+
+.rf-roof__mobile-summary { display: none; }
+@media (max-width: 899px) {
+  .rf-roof--mobile-steps[data-mobile-step='4'] .rf-roof__mobile-summary { display: block; color: var(--rf-on-dark-muted); font-size: .875rem; }
+}
