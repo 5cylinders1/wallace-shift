@@ -1,6 +1,6 @@
 # Wallace Shift client portal
 
-Implemented at `/client-portal`. Owners and clients use the same email-code sign in; `PORTAL_ADMIN_EMAIL` determines the owner role. No production configuration, payment, or deployment is performed by this change.
+Implemented at `/client-portal`. Owners and clients use the same email-code sign in. By default the owner is the existing demo admin (`DEMO_ADMIN_EMAIL`, falling back to `CONTACT_TO_EMAIL`); an optional `PORTAL_ADMIN_EMAIL` overrides it. Portal and demo sessions remain separate. No production configuration, payment, or deployment is performed by this change.
 
 ## Workflow
 
@@ -19,7 +19,7 @@ Use server-side environment variables. Never prefix secrets with `VITE_`.
 
 | Variable | Purpose |
 | --- | --- |
-| `PORTAL_ADMIN_EMAIL` | Exact normalized owner email; grants access to all client records. |
+| `PORTAL_ADMIN_EMAIL` | Optional owner override. Otherwise reuses `DEMO_ADMIN_EMAIL` / `CONTACT_TO_EMAIL`. Grants access to all client records. |
 | `DEMO_AUDIT_REDIS_URL`, `DEMO_AUDIT_REDIS_TOKEN` | Existing durable Redis REST store; use a dedicated persistent, backed-up database with no eviction. Falls back to the repository’s configured limiter Redis only if the dedicated pair is absent. Never use a disposable/evicting limiter database for contracts. |
 | `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` | Existing verified sending setup for requested sign in codes. |
 | `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY` | Matching Stripe test keys first, then matching live keys after validation. |
@@ -37,13 +37,15 @@ The public `/api/client-portal` route rewrites to the existing `demo-admin` func
 
 The origin allowlist uses existing `nodeDemoOrigin`: wallaceshift.com, www.wallaceshift.com, the existing subdomains, or `DEMO_ACCESS_ORIGIN`. Set the latter if testing on an additional HTTPS preview domain. Localhost is allowed in local development.
 
+Local Vite needs the sign in email and durable storage configuration in its own server environment or ignored `.env.local`. A working deployed demo login does not configure localhost. `.demo-preview.local` only supports synthetic demo preview sessions and does not provide email or storage services. Preserve unrelated local environment settings when adding credentials.
+
 `vercel.json` includes a daily job at **14:00 UTC** (9 a.m. CDT / 8 a.m. CST): `/api/client-portal?action=cron`. Invoice dates use UTC calendar dates, not elapsed 30-day intervals. Enable the job and `CRON_SECRET` on the production project; verify a production execution in Vercel. A processing or declined payment is not silently retried. Clients can resume bank authentication or reset a failed attempt, replace the card, and authorize again. The owner’s **Run due billing** action is available for recovery; it can make real, previously authorized charges.
 
 The job is bounded by the serverless runtime and stores a round-robin cursor. If volume exceeds a run’s time budget, continue via another authorized run or increase scheduler frequency on an appropriate hosting plan. For higher volume, migrate the ledger to a relational database with per-record transactions and a durable job queue. The current ledger uses whole-document Redis compare-and-set and is intended for a small client roster.
 
 ## Stripe setup and verification
 
-Register a webhook using the pinned `2025-06-30.basil` API shape. Subscribe to `payment_intent.succeeded`, `payment_intent.processing`, `payment_intent.payment_failed`, `payment_intent.canceled`, `payment_intent.requires_action`, `charge.refunded`, and relevant `charge.dispute.*` events. Stripe requires the raw body; the endpoint disables automatic body parsing. Configure customer payment receipts in Stripe.
+Register a webhook using the pinned `2025-06-30.basil` API shape. Subscribe to `payment_intent.succeeded`, `payment_intent.processing`, `payment_intent.payment_failed`, `payment_intent.canceled`, `payment_intent.requires_action`, `charge.refunded`, and relevant `charge.dispute.*` events. Normal portal actions accept Vercel's parsed JSON bodies. Stripe signature verification uses the original bytes, including the raw stream restored by Vercel's Node helpers; it never serializes a parsed object to reconstruct a signature payload. Configure customer payment receipts in Stripe.
 
 Before accepting real clients, run a test-mode end-to-end transaction for each path: successful credit card, debit card with no fee, declined card, 3DS challenge, canceled setup, duplicate request, delayed webhook, recurring first/future charge, cancellation during processing, and a refund. Confirm the actual Stripe objects, portal balances, receipt email, and stored consent. Verify that the deployed cron is running. The repository tests mock Stripe/Redis/email and cannot establish live account compatibility or merchant approval.
 

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { beforeEach, after, test } from 'node:test'
 import { createHmac } from 'node:crypto'
+import { Readable } from 'node:stream'
 import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -26,7 +27,7 @@ const { default: handler } = await load('api/_lib/client-portal-handler.ts')
 const { default: deployedHandler, config: deployedConfig } = await load('api/demo-admin.ts')
 const { draft, changeLedger, generateDueInvoices } = await load('api/_lib/portal-ledger.ts')
 const { mutateLedger } = await load('api/_lib/portal-store.ts')
-const { hash } = await load('api/_lib/portal-auth.ts')
+const { hash, ownerEmail } = await load('api/_lib/portal-auth.ts')
 const { nextDueDate } = await load('src/client-portal/model.ts')
 const { surchargeBps, verifyWebhook, charge, reconcileIntent, resetFailedPayment } = await load('api/_lib/portal-stripe.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch
@@ -93,6 +94,70 @@ test('deployed rewrite shares existing function and preserves raw webhook bytes'
   save([engagement()])
   const response = await call(undefined, clientToken, { url: '/api/demo-admin?portal=client', dispatch: deployedHandler })
   assert.equal(response.statusCode, 200); assert.equal(response.body.engagements.length, 1)
+})
+test('deployed owner sign in accepts Vercel parsed JSON and reuses the demo owner', async () => {
+  delete process.env.PORTAL_ADMIN_EMAIL
+  process.env.DEMO_ADMIN_EMAIL = owner.email
+  const response = await call({ action: 'send-code', email: owner.email }, '', {
+    url: '/api/demo-admin?portal=client', dispatch: deployedHandler,
+    body: { action: 'send-code', email: owner.email },
+  })
+  assert.equal(response.statusCode, 200)
+  assert.equal(deliveredEmails.length, 1)
+  assert.deepEqual(deliveredEmails[0].to, [owner.email])
+  assert.equal((await call(undefined, adminToken)).body.admin, true)
+})
+test('owner configuration respects explicit override and contact fallback without accepting malformed overrides', () => {
+  process.env.DEMO_ADMIN_EMAIL = 'demo@example.test'
+  assert.equal(ownerEmail(), owner.email)
+  delete process.env.PORTAL_ADMIN_EMAIL
+  assert.equal(ownerEmail(), 'demo@example.test')
+  delete process.env.DEMO_ADMIN_EMAIL
+  process.env.CONTACT_TO_EMAIL = 'contact@example.test'
+  assert.equal(ownerEmail(), 'contact@example.test')
+  process.env.PORTAL_ADMIN_EMAIL = 'invalid-address'
+  assert.throws(ownerEmail, /portal_not_configured/)
+  delete process.env.PORTAL_ADMIN_EMAIL; delete process.env.CONTACT_TO_EMAIL
+  assert.throws(ownerEmail, /portal_not_configured/)
+})
+test('parsed JSON requests retain validation and body limits', async () => {
+  const oversized = await call({}, '', { body: { action: 'send-code', email: owner.email, extra: 'x'.repeat(65536) } })
+  assert.equal(oversized.statusCode, 413)
+  assert.equal((await call({}, '', { body: ['send-code'] })).statusCode, 400)
+  assert.equal((await call({}, '', { body: null })).statusCode, 400)
+  assert.equal(deliveredEmails.length, 0)
+})
+test('Stripe uses restored raw stream when Vercel exposes a parsed body', async () => {
+  const raw = '{ "type": "account.updated", "data": { "object": { "id": "acct_test" } } }\n'
+  const timestamp = Math.floor(Date.now() / 1000)
+  const signature = createHmac('sha256', process.env.STRIPE_WEBHOOK_SECRET).update(`${timestamp}.${raw}`).digest('hex')
+  for (const [wire, status] of [[raw, 200], [JSON.stringify(JSON.parse(raw)), 400]]) {
+    const stream = Readable.from([Buffer.from(wire)])
+    const response = await call({}, '', {
+      url: '/api/demo-admin?portal=client&action=webhook', dispatch: deployedHandler,
+      body: JSON.parse(raw), on: stream.on.bind(stream),
+      headers: { 'stripe-signature': `t=${timestamp},v1=${signature}` },
+    })
+    assert.equal(response.statusCode, status)
+  }
+  assert.equal((await call({}, '', { url: '/api/client-portal?action=webhook', body: JSON.parse(raw) })).body.error, 'raw_body_required')
+})
+test('missing email configuration fails before consuming verification budgets', async () => {
+  delete process.env.RESEND_API_KEY
+  const response = await call({ action: 'send-code', email: owner.email }, '')
+  assert.equal(response.body.error, 'email_not_configured')
+  assert.equal([...store.values.keys()].some(key => key.startsWith('client-portal:')), false)
+  assert.equal(deliveredEmails.length, 0)
+})
+test('email transport failure returns an actionable sign in error', async () => {
+  const configuredFetch = globalThis.fetch
+  globalThis.fetch = (url, init) => {
+    if (url === 'https://api.resend.com/emails') throw new Error('Simulated transport failure')
+    return configuredFetch(url, init)
+  }
+  const response = await call({ action: 'send-code', email: owner.email }, '')
+  assert.equal(response.statusCode, 503)
+  assert.equal(response.body.error, 'email_unavailable')
 })
 test('private access and role boundaries: no anonymous or other-client record leakage', async () => {
   const e = engagement(); save([e])
