@@ -8,6 +8,7 @@
     "check:deployment": "node scripts/test-vercel-typescript.mjs && node scripts/test-lawn-api.mjs",
     "build": "npm run check:deployment && tsc -b && vite build && vite build --mode demos && node scripts/verify-demo-build.mjs && node scripts/verify-blog-build.mjs",
     "test:blog": "node scripts/test-blog.mjs && node scripts/test-blog-preview.mjs",
+    "test:portal": "node scripts/test-client-portal.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "demo:invite": "node scripts/create-demo-invite.mjs",

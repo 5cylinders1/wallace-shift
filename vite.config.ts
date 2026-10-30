@@ -8,6 +8,7 @@ import demoRequestHandler from './api/demo-request.ts'
 import demoAccessHandler from './api/demo-access.ts'
 import demoAgreementHandler from './api/demo-agreement.ts'
 import demoAdminHandler from './api/demo-admin.ts'
+import clientPortalHandler from './api/_lib/client-portal-handler.ts'
 import { blogPlugin } from './blog/vite-plugin.ts'
 import { bucyrusPlugin } from './bucyrus/vite-plugin.ts'
 
@@ -178,7 +179,7 @@ function demoAccessRoutes(): Plugin {
   const install = (server: import('vite').ViteDevServer | import('vite').PreviewServer) => {
     const env = loadEnv(server.config.mode, server.config.root, '')
     for (const [key, value] of Object.entries(env)) {
-      if (/^(DEMO_|RESEND_API_KEY$|CONTACT_|RATE_LIMIT_|KV_REST_API_|UPSTASH_REDIS_REST_)/.test(key) && !process.env[key]) process.env[key] = value
+      if (/^(DEMO_|PORTAL_|STRIPE_|CRON_SECRET$|RESEND_API_KEY$|CONTACT_|RATE_LIMIT_|KV_REST_API_|UPSTASH_REDIS_REST_)/.test(key) && !process.env[key]) process.env[key] = value
     }
     server.middlewares.use(async (req, res, next) => {
       try {
@@ -203,6 +204,7 @@ function demoAccessRoutes(): Plugin {
         if (url.pathname === '/api/demo-access') return await demoAccessHandler(req, res)
         if (url.pathname === '/api/demo-agreement') return await demoAgreementHandler(req, res)
         if (url.pathname === '/api/demo-admin') return await demoAdminHandler(req, res)
+        if (url.pathname === '/api/client-portal') return await clientPortalHandler(req, res)
         next()
       } catch {
         if (!res.headersSent) {

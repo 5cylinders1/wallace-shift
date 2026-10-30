@@ -1,0 +1,158 @@
+.client-portal { min-height: 100vh; background: #edf1f2; color: #121a21; color-scheme: light; font-family: var(--font-sans); font-size: 14px; line-height: 1.6; }
+.client-portal * { box-sizing: border-box; }
+.client-portal h1, .client-portal h2, .client-portal h3, .client-portal p { margin: 0; }
+.client-portal h1 { font-size: clamp(28px, 3vw, 42px); font-weight: 600; line-height: 1.2; letter-spacing: -.03em; text-wrap: balance; }
+.client-portal h2 { font-size: 21px; letter-spacing: -.02em; font-weight: 650; }
+.client-portal h3 { font-size: 19px; font-weight: 650; }
+.client-portal p { max-width: 72ch; }
+.client-portal a { color: inherit; text-underline-offset: 4px; }
+.client-portal button, .client-portal input, .client-portal select, .client-portal textarea { font: inherit; }
+.client-portal button { cursor: pointer; }
+.client-portal button:disabled { opacity: .5; cursor: not-allowed; }
+.client-portal :focus-visible { outline: 3px solid #175c99; outline-offset: 4px; }
+.client-portal ::selection { background: #c5e0f7; color: #121a21; }
+.client-portal input, .client-portal textarea { caret-color: #175c99; }
+.cp-header { display: flex; align-items: center; gap: 32px; min-height: 88px; padding: 20px clamp(24px, 4vw, 64px); background: #080d12; color: #edf1f2; }
+.cp-brand { display: inline-flex; align-items: center; gap: 14px; text-decoration: none; font-size: 12px; font-weight: 750; letter-spacing: .12em; }
+.cp-header-label { font-size: 12px; color: #adbac3; border-left: 1px solid #465360; padding-left: 28px; }
+.cp-header > button { margin-left: auto; color: #edf1f2; }
+.cp-header :focus-visible { outline-color: #83c3ff; }
+.cp-notice { position: sticky; z-index: 2; top: 0; background: #dceaf5; color: #163e60; padding: 14px 5%; border-bottom: 1px solid #b6cedf; }
+.cp-notice:empty { display: none; }
+.cp-notice-error { color: #842a21; background: #f9e5df; border-color: #e3b9ae; }
+.cp-login { max-width: 1280px; margin: 0 auto; padding: clamp(50px, 8vw, 120px) 40px; display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(40px, 8vw, 120px); align-items: start; }
+.cp-login h1 { font-size: clamp(40px, 5vw, 66px); }
+.cp-login section > p { margin-top: 28px; max-width: 36ch; font-size: 17px; color: #52616b; }
+.cp-login-note { border-top: 1px solid #c3cdd3; margin-top: 52px; padding-top: 26px; max-width: 38ch; }
+.cp-login-note p { margin-top: 10px; color: #52616b; }
+.cp-login-form { background: #fff; padding: clamp(24px, 4vw, 44px); border-radius: 12px; box-shadow: 0 16px 40px rgb(8 13 18 / 7%); }
+.cp-login-form > p { margin: 10px 0 26px; color: #52616b; }
+.cp-login-form .cp-primary { width: 100%; margin: 14px 0; }
+.cp-login-form small { display: block; margin-top: 18px; color: #52616b; }
+.cp-primary, .cp-secondary { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 11px 20px; border-radius: 6px; border: 1px solid transparent; font-weight: 650 !important; font-size: 13px !important; text-align: center; line-height: 1.5; }
+.cp-primary { color: #fff; background: #175c99; }
+.cp-primary:hover:not(:disabled) { background: #114979; }
+.cp-secondary { background: transparent; border-color: #9eafb9; color: #203949; }
+.cp-secondary:hover:not(:disabled) { background: #dce4e9; }
+.cp-text-button { background: none; border: 0; padding: 8px 0; min-height: 40px; color: #175c99; text-decoration: underline; text-underline-offset: 4px; font-size: 13px !important; }
+.cp-text-button:hover { text-decoration-thickness: 2px; }
+.cp-field { display: grid; gap: 7px; margin-bottom: 20px; min-width: 0; }
+.cp-field > span { font-size: 12px; font-weight: 650; }
+.cp-field input, .cp-field select, .cp-field textarea { width: 100%; min-width: 0; padding: 11px 13px; border: 1px solid #9aabb7; border-radius: 5px; background: #fff; color: #121a21; min-height: 44px; }
+.cp-field input[readonly] { background: #edf1f2; }
+.cp-field textarea { resize: vertical; }
+.cp-field input::placeholder, .cp-field textarea::placeholder { color: #5b6b77; }
+.cp-workspace { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1600px; margin: 0 auto; min-height: calc(100vh - 160px); }
+.cp-sidebar { padding: 36px 22px; border-right: 1px solid #c7d1d7; }
+.cp-sidebar h2 { font-size: 15px; }
+.cp-account { color: #52616b; font-size: 11px; overflow-wrap: anywhere; margin-top: 5px !important; }
+.cp-sidebar nav { display: grid; gap: 5px; margin: 30px -10px 24px; }
+.cp-sidebar nav button { display: grid; text-align: left; padding: 13px 10px; gap: 3px; background: none; border: 1px solid transparent; border-radius: 6px; color: #121a21; overflow-wrap: anywhere; }
+.cp-sidebar nav button:hover { background: #e0e8ed; }
+.cp-sidebar nav button.is-current { background: #dbe8f2; border-color: #b9cede; }
+.cp-sidebar nav strong { font-size: 13px; }
+.cp-sidebar nav span { font-size: 11px; color: #445965; }
+.cp-sidebar nav small { color: #175c99; font-size: 10px; }
+.cp-support { display: block; font-size: 12px; margin-top: 40px; color: #52616b !important; }
+.cp-main { padding: 44px clamp(24px, 4vw, 66px) 70px; min-width: 0; }
+.cp-project-heading { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
+.cp-project-heading p { margin-top: 12px; color: #52616b; }
+.cp-project-heading p span { margin: 0 10px; }
+.cp-status { display: inline-flex; padding: 5px 10px; border-radius: 4px; background: #dce5eb; color: #304d60; font-size: 11px; font-weight: 650; text-transform: capitalize; white-space: normal; }
+.cp-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; padding: 30px 0; margin-top: 22px; border-top: 1px solid #c7d1d7; }
+.cp-summary > div { display: grid; gap: 5px; }
+.cp-summary span { font-size: 11px; color: #52616b; }
+.cp-summary strong { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cp-summary small { color: #52616b; font-size: 10px; }
+.cp-tabs { display: flex; gap: 28px; border-bottom: 1px solid #b7c5ce; margin-bottom: 32px; }
+.cp-tabs button { padding: 14px 0; font-size: 12px; color: #52616b; border: 0; border-bottom: 2px solid transparent; background: none; margin-bottom: -1px; }
+.cp-tabs button[aria-current] { border-bottom-color: #175c99; color: #175c99; font-weight: 700; }
+.cp-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+.cp-callout { background: #dce7ef; border-radius: 6px; padding: 17px 20px; font-size: 13px; color: #294b64; margin-bottom: 22px !important; }
+.cp-invoice { border: 1px solid #bdcbd4; border-radius: 12px; margin-bottom: 22px; padding: 26px; background: #f8fafb; }
+.cp-invoice-top { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+.cp-invoice-top h3 { font-size: 27px; font-variant-numeric: tabular-nums; }
+.cp-invoice-top p { font-size: 11px; margin-top: 5px; color: #52616b; }
+.cp-invoice-breakdown { display: grid; grid-template-columns: 1fr auto; gap: 9px; border-top: 1px solid #d2dce2; padding-top: 20px; margin-top: 22px; font-size: 13px; }
+.cp-invoice-breakdown strong { font-variant-numeric: tabular-nums; }
+.cp-invoice-links { display: flex; gap: 20px; justify-content: space-between; align-items: center; margin-top: 10px; }
+.cp-invoice-links > span { font-size: 11px; color: #52616b; }
+.cp-payment { border-top: 1px solid #c7d1d7; padding-top: 22px; margin-top: 18px; }
+.cp-payment > p { margin-bottom: 14px; }
+.cp-payment > button { margin-right: 16px; margin-top: 8px; }
+.cp-fee-note { font-size: 12px; color: #52616b; }
+.cp-check { display: flex; gap: 12px; align-items: flex-start; margin: 22px 0; font-size: 12px; line-height: 1.8; }
+.cp-check input { width: 18px; height: 18px; flex: 0 0 18px; margin: 3px 0 0; accent-color: #175c99; }
+.cp-quote { margin: 22px 0; max-width: 500px; }
+.cp-quote > span { display: block; font-size: 12px; color: #52616b; margin-bottom: 15px; }
+.cp-quote > div { display: flex; justify-content: space-between; gap: 15px; padding: 5px 0; font-variant-numeric: tabular-nums; }
+.cp-quote .cp-total { border-top: 1px solid #bdcbd4; padding-top: 12px; margin-top: 10px; font-size: 16px; }
+.cp-offline { margin-top: 20px; max-width: 550px; }
+.cp-offline p { margin-bottom: 18px; white-space: pre-wrap; }
+.cp-offline small { display: block; margin-top: 10px; color: #52616b; }
+.cp-admin-actions { margin-top: 22px; padding-top: 20px; border-top: 1px solid #c7d1d7; }
+.cp-admin-actions p { font-size: 12px; color: #52616b; margin-bottom: 15px; overflow-wrap: anywhere; }
+.cp-admin-actions details { margin-bottom: 16px; }
+.cp-admin-actions summary { cursor: pointer; color: #175c99; padding: 8px 0; }
+.cp-admin-actions form { max-width: 500px; margin-top: 14px; }
+.cp-document { font-family: inherit; white-space: pre-wrap; overflow-wrap: anywhere; max-width: 75ch; font-size: 13px; line-height: 1.95; background: #fff; border: 1px solid #c7d1d7; border-radius: 8px; padding: clamp(20px, 4vw, 48px); margin: 0 0 28px; }
+.cp-sign-form { max-width: 620px; }
+.cp-sign-form h3 { margin: 30px 0 20px; }
+.cp-signature { border-top: 1px solid #c7d1d7; padding-top: 20px; }
+.cp-signature p { margin-top: 8px; }
+.cp-signature small { display: block; margin-top: 10px; overflow-wrap: anywhere; color: #52616b; }
+.cp-activity { list-style: none; padding: 0; margin: 22px 0; }
+.cp-activity li { border-top: 1px solid #c7d1d7; padding: 18px 0; display: flex; justify-content: space-between; gap: 25px; }
+.cp-activity strong { display: block; font-size: 13px; }
+.cp-activity span, .cp-activity time { font-size: 11px; color: #52616b; overflow-wrap: anywhere; }
+.cp-activity time { flex-shrink: 0; }
+.cp-cancel { border-top: 1px solid #c7d1d7; margin-top: 44px; padding-top: 16px; }
+.cp-cancel p { font-size: 12px; margin-bottom: 18px; }
+.cp-cancel button { margin-right: 20px; }
+.cp-empty { max-width: 620px; padding: 45px 0; }
+.cp-empty p, .cp-intro { margin: 22px 0 30px !important; color: #52616b; }
+.cp-empty-line { padding: 24px 0; color: #52616b; }
+.cp-create-form { max-width: 760px; }
+.cp-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+.cp-footer { display: flex; justify-content: space-between; gap: 20px; padding: 24px clamp(24px, 4vw, 64px); border-top: 1px solid #c7d1d7; color: #52616b; font-size: 11px; }
+@media (max-width: 900px) {
+  .cp-workspace { grid-template-columns: 220px minmax(0, 1fr); }
+  .cp-main { padding: 30px 24px 55px; }
+  .cp-summary { grid-template-columns: 1fr 1fr; }
+  .cp-project-heading { display: block; }
+  .cp-project-heading > .cp-status { margin-top: 14px; }
+}
+@media (max-width: 650px) {
+  .cp-header { min-height: 76px; gap: 16px; padding: 18px 20px; flex-wrap: wrap; }
+  .cp-brand { gap: 10px; font-size: 10px; }
+  .cp-header-label { padding-left: 14px; font-size: 11px; }
+  .cp-header > button { font-size: 11px !important; }
+  .cp-login { grid-template-columns: 1fr; padding: 40px 22px 60px; gap: 34px; }
+  .cp-login-note { display: none; }
+  .cp-login section > p { font-size: 15px; margin-top: 18px; }
+  .cp-workspace { display: block; }
+  .cp-sidebar { border-right: 0; border-bottom: 1px solid #c7d1d7; padding: 22px; }
+  .cp-sidebar nav { display: flex; overflow-x: auto; margin: 18px 0; padding: 4px; }
+  .cp-sidebar nav button { flex: 0 0 190px; }
+  .cp-sidebar .cp-support { margin-top: 18px; }
+  .cp-main { padding: 30px 20px 45px; }
+  .cp-tabs { gap: 18px; }
+  .cp-tabs button { font-size: 11px; }
+  .cp-summary { gap: 20px; padding: 22px 0; }
+  .cp-summary strong { font-size: 15px; }
+  .cp-invoice { padding: 20px; }
+  .cp-invoice-top { flex-wrap: wrap; gap: 10px; }
+  .cp-invoice-links { display: block; }
+  .cp-invoice-links > span { display: block; }
+  .cp-form-grid { grid-template-columns: 1fr; }
+  .cp-activity li { display: block; }
+  .cp-activity time { display: block; margin-top: 8px; }
+  .cp-primary, .cp-secondary { max-width: 100%; }
+}
+@media print {
+  .cp-header, .cp-sidebar, .cp-tabs, .cp-cancel, .cp-footer, .cp-notice, .client-portal button, .cp-sign-form { display: none !important; }
+  .cp-workspace { display: block; }
+  .cp-main { padding: 0; }
+  .client-portal, .cp-document { background: white; color: black; }
+  .cp-document { border: 0; padding: 0; }
+}

@@ -40,6 +40,7 @@ export const WATER_HERO_EXPERIMENT_PATH = '/experiments/water-hero'
 export const PIT_STOP_EXPERIMENT_PATH = '/experiments/pit-stop'
 
 export const routeMeta: RouteMeta[] = [
+  { path: '/client-portal', title: 'Client Portal | Wallace Shift', description: 'Review agreements, invoices, and payments with Wallace Shift.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
   {
     path: '/',
     title: 'Wallace Shift | Custom CRMs, AI & Automation',

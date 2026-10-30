@@ -1,3 +1,4 @@
+import clientPortalHandler from './_lib/client-portal-handler.js'
 import { randomInt } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import {
@@ -8,7 +9,7 @@ import {
 } from './_lib/demo-access.js'
 import { consumeVerificationCode, reserveVerificationCode } from './_lib/demo-agreement-store.js'
 
-export const config = { maxDuration: 15 }
+export const config = { maxDuration: 60, api: { bodyParser: false } }
 
 async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> {
   if (!/^application\/json(?:\s*;|$)/i.test(nodeHeader(req, 'content-type') ?? '')) throw new DemoError('invalid', 400)
@@ -39,6 +40,7 @@ async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> 
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  if (new URL(req.url ?? '/', 'http://local.invalid').searchParams.get('portal') === 'client') return clientPortalHandler(req, res)
   try {
     if (req.method !== 'GET' && req.method !== 'POST') {
       res.setHeader('allow', 'GET, POST')

@@ -56,6 +56,7 @@ export function SiteFooter() {
                 <li>
                   <PageLink href="/contact">Start a project</PageLink>
                 </li>
+                <li><PageLink href="/client-portal">Client portal</PageLink></li>
               </ul>
             </nav>
           </div>
