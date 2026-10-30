@@ -55,7 +55,9 @@ Scrolling drives it. The hero is full bleed and pins for about 4.9 screens:
 the title lifts toward the viewer as the camera pulls back (0.55 screens), the
 repaint plays (2.8), the finished house holds under a close-out offer (0.55),
 then the statement section slides up over it like a sheet while the house tips
-back into the dark (1). A caption and a five-part stage rail track progress;
+back into the dark (1). The frames are drawn into a wider view of the street
+(below), so the house sits among its trees and neighbours at about half the
+screen's width instead of filling it. A caption and a five-part stage rail track progress;
 each stage button scrolls to that stage's hold. Wide screens open slightly
 close and settle on the whole house; tall screens open on the porch, filling
 the screen, then pull back to a full-width band with the caption above and the
@@ -67,9 +69,10 @@ dev, `?hero=0.66` jumps to that moment.
 All house, room and storefront photographs are generated illustrations,
 disclosed in the footer. Made with gpt-image-2 by `scripts/painting/generate.py`
 under an approved **$5** cap (Matthew, 2026-10-29), logged with prompts in
-`output/painting/ledger.json` (ignored). **$2.02 spent over 15 calls**: 5 hero
+`output/painting/ledger.json` (ignored). **$2.20 spent over 16 calls**: 5 hero
 frames plus one regenerated `painted` frame (v1 drifted to navy), 4 section
-photos, 4 prepared studio looks and 1 browser test render.
+photos, 4 prepared studio looks, 1 browser test render and 1 outpaint for the
+wider view.
 
 The finished house was generated first; `weathered` is an edit of it,
 `prepped` of `weathered`, `primed` of `prepped`, and `painted` adds the
@@ -80,8 +83,24 @@ the finished frame, so sky, trees and lawn are pixel-identical in every stage
 and no reveal can show a seam. `painted` is also colour-matched to the finished
 siding (median residual ΔE 2.3) so the last fade has no hue jump. Composite
 needs numpy, Pillow and opencv-python-headless in a scratch virtualenv;
+the same goes for the wider view below;
 `scripts/painting/export.py` writes the WebP set, `studio/sample.jpg` and
 `preview.jpg` (run with `PAINTING_PYTHON=<venv>/bin/python`).
+
+### The wider view
+
+The generated house filled about 80% of its frame, which made a full-bleed
+hero all house. `scripts/painting/outpaint.py` shrank the finished frame into
+the middle of a new canvas and had gpt-image-2 paint the border: the full
+tree canopies, neighbouring yards and houses, more lawn and a public
+sidewalk. The model also redraws the middle a little smaller and shifted, so
+`scripts/painting/scene.py` finds where the original frame really sits (SIFT
+on the trees, sky and lawn near its edges), colour-matches the surroundings
+and blends the original finished frame back in over a 7% feather. It writes
+`hero-surround.webp` (and `-mobile`) and prints the inset that `SCENE` in
+`Hero.tsx` uses. The canvas draws the plate, then each stage's frame at that
+inset with a 5% feather, over pixels that already match. The closing photo
+uses the same plate.
 
 ## Scroll choreography
 
@@ -101,7 +120,9 @@ with GSAP ScrollTrigger; no WebGL.
 - **Color studio, estimate form**: tip up off the floor as they arrive.
 - **Process wall** (`Process.tsx`): at 900×600 and up the steps stand on the
   inside of a curved wall that swings in, then pins for about 3 screens while
-  the view pans one step at a time.
+  the view pans one step at a time. Each step has a line icon (clipboard,
+  water and scraper, primer brush on a new board, roller, house signed off);
+  the card facing you fills its icon tile.
 - **About** photo turns as you pass it, FAQ answers unfold, and the closing
   photo eases back from the front door. Headings and short copy arrive out of
   the depth (`data-near`).

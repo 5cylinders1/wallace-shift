@@ -98,12 +98,14 @@ export const services: Service[] = [
  * exterior repaint; confirm the wording with the business before launch.
  */
 export const process = [
-  { title: 'Walkthrough & estimate', body: 'We look at the house with you, talk colors and condition, and put the scope in writing.' },
-  { title: 'Wash & scrape', body: 'Dirt and mildew washed off, loose paint scraped and sanded, windows and plants covered.' },
-  { title: 'Repair & prime', body: 'Rotten wood replaced with new boards, gaps caulked, bare wood primed so paint can grip.' },
-  { title: 'Paint', body: 'Body, trim and door in your colors, with clean lines where they meet.' },
-  { title: 'Clean up & walkthrough', body: 'Masking off, site cleaned, and a final look together before we call it complete.' },
-]
+  { icon: 'estimate', title: 'Walkthrough & estimate', body: 'We look at the house with you, talk colors and condition, and put the scope in writing.' },
+  { icon: 'wash', title: 'Wash & scrape', body: 'Dirt and mildew washed off, loose paint scraped and sanded, windows and plants covered.' },
+  { icon: 'prime', title: 'Repair & prime', body: 'Rotten wood replaced with new boards, gaps caulked, bare wood primed so paint can grip.' },
+  { icon: 'paint', title: 'Paint', body: 'Body, trim and door in your colors, with clean lines where they meet.' },
+  { icon: 'done', title: 'Clean up & walkthrough', body: 'Masking off, site cleaned, and a final look together before we call it complete.' },
+] as const
+
+export type StepIcon = (typeof process)[number]['icon']
 
 export const faqs = [
   {
