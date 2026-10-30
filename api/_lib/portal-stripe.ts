@@ -1,7 +1,7 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 import { DemoError } from './demo-access.js'
 import { allEngagements, audit, mutateLedger } from './portal-store.js'
-import { paymentConsent, type Engagement, type Invoice } from '../../src/client-portal/model.js'
+import { automaticInvoice, feeFor, firstUnsettledInvoice, paymentConsent, scheduleConsent, type Engagement, type Invoice } from '../../src/client-portal/model.js'
 
 type Params = Record<string, string | number | boolean>
 type Card = { id: string; customer: string; type: string; card?: { funding: string; last4: string; brand: string; country?: string }; billing_details?: { address?: { country?: string; state?: string } } }
@@ -67,13 +67,14 @@ export async function finishSetup(e: Engagement, sessionId: string): Promise<voi
     audit(current, e.email, 'Payment method saved; payment authorization required')
   })
 }
-export async function quote(e: Engagement): Promise<{ bps: number; fee: number; total: number; card: string }> {
+export async function quote(e: Engagement, invoice?: Invoice) {
   if (!e.paymentMethod) throw new DemoError('card_required', 409)
   const card = await stripe<Card>(`payment_methods/${e.paymentMethod}`)
   if (card.customer !== e.stripeCustomer || card.type !== 'card') throw new DemoError('invalid_card', 409)
   const bps = surchargeBps(card)
-  const fee = Math.round(e.amount * bps / 10000)
-  return { bps, fee, total: e.amount + fee, card: `${card.card?.brand ?? 'Card'} ending ${card.card?.last4 ?? ''}` }
+  const amount = invoice?.amount ?? e.amount
+  const fee = feeFor(amount, bps)
+  return { bps, fee, total: amount + fee, invoiceId: invoice?.id, recurringTotal: e.amount + feeFor(e.amount, bps), initialTotal: e.initialPayment ? e.initialPayment.amount + feeFor(e.initialPayment.amount, bps) : undefined, card: `${card.card?.brand ?? 'Card'} ending ${card.card?.last4 ?? ''}` }
 }
 export async function reconcileIntent(intent: Intent): Promise<void> {
   await mutateLedger(entries => {
@@ -96,15 +97,17 @@ export async function reconcileIntent(intent: Intent): Promise<void> {
 }
 export async function charge(e: Engagement, invoice: Invoice, origin: string, automatic: boolean, expectedFee?: number): Promise<Intent> {
   if (!e.signature || !['issued', 'canceled'].includes(e.state) || !e.paymentMethod || (automatic && e.state !== 'issued')) throw new DemoError('payment_not_ready', 409)
-  const currentQuote = await quote(e)
+  const currentQuote = await quote(e, invoice)
   if (expectedFee !== undefined && expectedFee !== currentQuote.fee) throw new DemoError('quote_changed', 409)
   const attempt = await mutateLedger(entries => {
     const current = entries.find(v => v.id === e.id)!
     const item = current.invoices.find(v => v.id === invoice.id)!
     if (!current.signature || !['issued', 'canceled'].includes(current.state) || (automatic && current.state !== 'issued') || !current.paymentMethod || current.paymentMethod !== e.paymentMethod || (item.status !== 'open' && item.status !== 'processing')) throw new DemoError('payment_not_ready', 409)
-    if (automatic && (!current.autopay?.enabled || currentQuote.bps > current.autopay.feeBps)) throw new DemoError('authorization_required', 409)
+    if (firstUnsettledInvoice(current)?.id !== item.id) throw new DemoError('earlier_invoice_required', 409)
+    if (automatic && (!automaticInvoice(current, item) || item.due > new Date().toISOString().slice(0, 10))) throw new DemoError('payment_not_ready', 409)
+    if (automatic && (!current.autopay?.enabled || currentQuote.bps > current.autopay.feeBps || (current.initialPayment && current.autopay.agreementHash !== current.agreementHash))) throw new DemoError('authorization_required', 409)
     if (!item.attempt) {
-      item.attempt = { id: randomUUID(), startedAt: new Date().toISOString(), method: current.paymentMethod, fee: currentQuote.fee, consent: paymentConsent(item.amount, currentQuote.fee, e.cadence, automatic), automatic, origin }
+      item.attempt = { id: randomUUID(), startedAt: new Date().toISOString(), method: current.paymentMethod, fee: currentQuote.fee, consent: automatic ? scheduleConsent(current, currentQuote.bps) : paymentConsent(item.amount, currentQuote.fee, e.cadence, false), automatic, origin }
       item.status = 'processing'
       audit(current, automatic ? 'Authorized automatic payment' : e.email, `Payment attempt reserved for ${item.id}`)
     }

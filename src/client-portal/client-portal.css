@@ -114,6 +114,9 @@
 .cp-empty-line { padding: 24px 0; color: #52616b; }
 .cp-create-form { max-width: 760px; }
 .cp-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+.cp-billing-group { min-width: 0; margin: 8px 0 28px; padding: 22px; border: 1px solid #bdcbd4; border-radius: 8px; }
+.cp-billing-group legend { padding: 0 8px; font-size: 16px; font-weight: 700; }
+.cp-billing-group > p { font-size: 13px; color: #52616b; line-height: 1.7; }
 .cp-footer { display: flex; justify-content: space-between; gap: 20px; padding: 24px clamp(24px, 4vw, 64px); border-top: 1px solid #c7d1d7; color: #52616b; font-size: 11px; }
 @media (max-width: 900px) {
   .cp-workspace { grid-template-columns: 220px minmax(0, 1fr); }
