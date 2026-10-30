@@ -1,6 +1,6 @@
 import { createHash, randomBytes, randomInt } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { DemoError, demoCookie, nodeHeader, normalizeDemoEmail, readDemoCookie } from './demo-access.js'
+import { DemoError, demoAdminEmail, demoCookie, nodeHeader, normalizeDemoEmail, readDemoCookie } from './demo-access.js'
 import { consumeVerificationCode, reserveVerificationCode } from './demo-agreement-store.js'
 import { allEngagements, getValue, redis, setValue } from './portal-store.js'
 
@@ -11,8 +11,8 @@ type Pending = { nonce: string; recipientHash: string; exp: number; email: strin
 export type Identity = { email: string; admin: boolean }
 export function ownerEmail(): string {
   const email = process.env.PORTAL_ADMIN_EMAIL?.trim()
-  if (!email) throw new DemoError('portal_not_configured', 503)
-  return normalizeDemoEmail(email)
+  try { return email ? normalizeDemoEmail(email) : demoAdminEmail() }
+  catch { throw new DemoError('portal_not_configured', 503) }
 }
 export async function identity(req: IncomingMessage): Promise<Identity | null> {
   const token = readDemoCookie(nodeHeader(req, 'cookie'), SESSION)
@@ -30,6 +30,9 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
   if (body.action === 'send-code') {
     const email = normalizeDemoEmail(body.email)
     const owner = ownerEmail()
+    const key = process.env.RESEND_API_KEY?.trim()
+    const from = process.env.CONTACT_FROM_EMAIL?.trim()
+    if (!key || !from || /[\r\n]/.test(from)) throw new DemoError('email_not_configured', 503)
     const nonce = randomBytes(32).toString('hex')
     const pending: Pending = { email, nonce, recipientHash: hash(email), exp: Math.floor(Date.now() / 1000) + 600 }
     const code = randomInt(0, 1_000_000).toString().padStart(6, '0')
@@ -38,15 +41,14 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
     res.setHeader('set-cookie', demoCookie(PENDING, nonce, origin, 600))
     const known = email === owner || (await allEngagements()).some(e => e.email === email && e.state !== 'draft')
     if (known) {
-      const key = process.env.RESEND_API_KEY
-      const from = process.env.CONTACT_FROM_EMAIL
-      if (!key || !from) throw new DemoError('email_not_configured', 503)
-      const response = await fetch('https://api.resend.com/emails', {
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
         method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json', 'idempotency-key': `portal-login/${nonce}` },
         body: JSON.stringify({ from, to: [email], subject: 'Your Wallace Shift portal sign in code', text: `Your sign in code is ${code}. It expires in 10 minutes. Do not share this code. Signing in does not sign an agreement or authorize a payment.` }),
         signal: AbortSignal.timeout(10000),
-      })
-      if (!response.ok) throw new DemoError('email_unavailable', 503)
+        })
+        if (!response.ok) throw new Error('Email delivery failed')
+      } catch { throw new DemoError('email_unavailable', 503) }
     }
     return
   }

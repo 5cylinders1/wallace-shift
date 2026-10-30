@@ -9,6 +9,12 @@ type Quote = { bps: number; fee: number; total: number; card: string }
 type Result = { ok: boolean; error?: string; id?: string; url?: string; quote?: Quote; clientSecret?: string; status?: string; scheduled?: boolean; failed?: string[] } & Partial<Session>
 const errorMessages: Record<string, string> = {
   not_configured: 'The portal is not connected yet. Please contact Wallace Shift.', portal_not_configured: 'The portal is not connected yet. Please contact Wallace Shift.',
+  email_not_configured: 'Email sign in is not configured for this site yet. Please contact Wallace Shift.',
+  email_unavailable: 'We could not send your sign in code. Please wait a minute and try again.',
+  unavailable: 'Sign in storage is temporarily unavailable. Please try again shortly.',
+  storage_unavailable: 'Your portal records are temporarily unavailable. Please try again shortly.',
+  temporarily_unavailable: 'The portal is temporarily unavailable. Please try again shortly.',
+  raw_body_required: 'The server could not read this request. Please contact Wallace Shift.',
   access_required: 'Your session has ended. Sign in again to continue.', code_invalid: 'That code is incorrect. Check your email and try again.', code_expired: 'Your code expired. Request a new code.',
   rate_limited: 'Please wait before requesting another code. Too many attempts may require waiting an hour.',
   stripe_not_configured: 'Card payments are not available yet. Please contact Wallace Shift.', agreement_changed: 'The agreement changed. Refresh and review the latest copy before signing.',

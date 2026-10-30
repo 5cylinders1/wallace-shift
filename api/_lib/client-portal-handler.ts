@@ -9,17 +9,38 @@ import { paymentConsent } from '../../src/client-portal/model.js'
 import type { Engagement } from '../../src/client-portal/model.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
-async function rawBody(req: IncomingMessage): Promise<string> {
+async function rawBody(req: IncomingMessage, requireRaw = false): Promise<string> {
   const parsed = (req as IncomingMessage & { body?: unknown }).body
   if (parsed !== undefined) {
-    if (!Buffer.isBuffer(parsed) && typeof parsed !== 'string') throw new DemoError('raw_body_required', 400)
-    const raw = parsed.toString()
-    if (Buffer.byteLength(raw) > 65536) throw new DemoError('too_large', 413)
-    return raw
+    if (Buffer.isBuffer(parsed) || typeof parsed === 'string' || !requireRaw) {
+      const raw = Buffer.isBuffer(parsed) ? parsed.toString('utf8') : typeof parsed === 'string' ? parsed : JSON.stringify(parsed)
+      if (typeof raw !== 'string') throw new DemoError('invalid_fields', 400)
+      if (Buffer.byteLength(raw) > 65536) throw new DemoError('too_large', 413)
+      return raw
+    }
+    // Vercel's Node helpers expose parsed req.body AND restore the original
+    // bytes through data/end events. Never reconstruct a signed webhook from JSON.
+    if (typeof req.on !== 'function') throw new DemoError('raw_body_required', 400)
   }
-  const chunks: Buffer[] = []; let size = 0
-  for await (const chunk of req) { const buffer = Buffer.from(chunk); size += buffer.length; if (size > 65536) throw new DemoError('too_large', 413); chunks.push(buffer) }
-  return Buffer.concat(chunks).toString('utf8')
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = []; let size = 0; let settled = false
+    const finish = (error?: Error) => {
+      if (settled) return
+      settled = true; clearTimeout(timer)
+      if (error) reject(error)
+      else resolve(Buffer.concat(chunks).toString('utf8'))
+    }
+    const timer = setTimeout(() => finish(new DemoError('invalid_fields', 408)), 10000)
+    req.on('data', (chunk: Buffer | string) => {
+      if (settled) return
+      const buffer = Buffer.from(chunk); size += buffer.length
+      if (size > 65536) { finish(new DemoError('too_large', 413)); return }
+      chunks.push(buffer)
+    })
+    req.on('end', () => finish())
+    req.on('error', () => finish(new DemoError('invalid_fields', 400)))
+    req.on('aborted', () => finish(new DemoError('invalid_fields', 400)))
+  })
 }
 function clientView(e: Engagement, who: Identity): unknown {
   if (who.admin) return e
@@ -49,7 +70,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const url = new URL(req.url ?? '/', 'http://local.invalid')
     if (url.searchParams.get('action') === 'webhook') {
       if (req.method !== 'POST') throw new DemoError('method_not_allowed', 405)
-      await handleStripeEvent(await rawBody(req), nodeHeader(req, 'stripe-signature') ?? '')
+      await handleStripeEvent(await rawBody(req, true), nodeHeader(req, 'stripe-signature') ?? '')
       demoJson(res, 200, { ok: true }); return
     }
     const origin = nodeDemoOrigin(req)
