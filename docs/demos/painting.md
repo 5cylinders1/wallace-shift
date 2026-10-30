@@ -120,9 +120,16 @@ with GSAP ScrollTrigger; no WebGL.
 - **Color studio, estimate form**: tip up off the floor as they arrive.
 - **Process wall** (`Process.tsx`): at 900×600 and up the steps stand on the
   inside of a curved wall that swings in, then pins for about 3 screens while
-  the view pans one step at a time. Each step has a line icon (clipboard,
-  water and scraper, primer brush on a new board, roller, house signed off);
-  the card facing you fills its icon tile.
+  the view pans one step at a time. The top half of each card is a swatch of
+  the house's lap siding at that stage with the step playing on it, in the
+  hero's language: the walkthrough circles problem spots on the old paint, the
+  wash rinses the grime off, primer goes on in strokes, the new color rolls on
+  course by course, and the finished corner catches the light as the check
+  draws. Each loop is a GSAP timeline that plays only on the card facing you
+  (or, on narrow screens, while the card is in view). The step's line icon sits
+  in a white badge at the centre; the number is a small chip in the corner.
+  Without motion each swatch rests in a composed state, so the five read as
+  the job's progression.
 - **About** photo turns as you pass it, FAQ answers unfold, and the closing
   photo eases back from the front door. Headings and short copy arrive out of
   the depth (`data-near`).

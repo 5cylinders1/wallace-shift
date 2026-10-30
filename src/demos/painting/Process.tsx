@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from 'react'
+import { useRef, type CSSProperties, type ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -51,9 +51,96 @@ const ICONS: Record<StepIcon, ReactNode> = {
   done: (
     <>
       <path d="M3.5 11L12 3.8l8.5 7.2M5.5 9.5v11h13v-11" />
-      <path d="M8.8 14.8l2.3 2.3 4.3-4.6" className="cp-icon-check" />
+      <path d="M8.8 14.8l2.3 2.3 4.3-4.6" className="cp-icon-check" pathLength={1} />
     </>
   ),
+}
+
+/** Inline custom properties (`--course`) alongside ordinary styles. */
+const withVars = (style: Record<string, string | number>) => style as CSSProperties
+/** Problem spots the walkthrough circles, as [left, top]. */
+const MARKS = [['14%', '22%'], ['76%', '58%'], ['20%', '68%']]
+const DROPS = ['8%', '19%', '31%', '44%', '67%', '79%', '91%']
+/** Spot-primer strokes, as [course, left %, width %]. */
+const STROKES = [[0, 6, 30], [1, 52, 34], [2, 12, 24], [2, 64, 20], [3, 70, 24], [4, 4, 32], [5, 44, 40], [6, 20, 28], [6, 74, 18], [7, 58, 32]]
+const COURSES = 8
+
+/**
+ * The top half of each card: a swatch of the house's siding at that stage of
+ * the job, with the step happening on it. The same language as the hero: the
+ * walkthrough circles problem spots on the old paint, the wash rinses the
+ * grime off, primer goes on in strokes, the new color rolls on course by
+ * course, and the finished corner catches the light.
+ */
+function Swatch({ icon, index }: { icon: StepIcon; index: number }) {
+  return (
+    <div className={`cp-step-panel is-${icon}`} aria-hidden="true">
+      {icon === 'estimate' && (
+        <>
+          <span className="cp-panel-light" />
+          {MARKS.map(([left, top]) => <i key={left} className="cp-panel-mark" style={{ left, top }} />)}
+        </>
+      )}
+      {icon === 'wash' && (
+        <>
+          <span className="cp-panel-dirt" />
+          <span className="cp-panel-sheen" />
+          {DROPS.map((left) => <i key={left} className="cp-panel-drop" style={{ left }} />)}
+        </>
+      )}
+      {icon === 'prime' && STROKES.map(([course, left, width]) => (
+        <i key={`${course}-${left}`} className="cp-panel-stroke" style={withVars({ '--course': course, left: `${left}%`, width: `${width}%` })} />
+      ))}
+      {icon === 'paint' && Array.from({ length: COURSES }, (_, course) => (
+        <i key={course} className={`cp-panel-course${course >= COURSES / 2 ? ' is-later' : ''}`} style={withVars({ '--course': course, transformOrigin: course % 2 ? '100% 50%' : '0% 50%' })} />
+      ))}
+      {icon === 'done' && (
+        <>
+          <span className="cp-panel-fascia" />
+          <span className="cp-panel-trim" />
+          <span className="cp-panel-gloss" />
+        </>
+      )}
+      <span className="cp-panel-boards" />
+      <span className="cp-panel-number">0{index + 1}</span>
+      <span className="cp-panel-badge"><svg viewBox="0 0 24 24">{ICONS[icon]}</svg></span>
+    </div>
+  )
+}
+
+/** Each swatch's step as a looping timeline, paused until its card is the one in view. */
+function loopFor(panel: HTMLElement, icon: StepIcon) {
+  const q = gsap.utils.selector(panel)
+  const width = () => panel.offsetWidth
+  const height = () => panel.offsetHeight
+  // Until a loop first plays, its swatch keeps the composed resting state from the CSS.
+  const loop = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 0.5, defaults: { immediateRender: false } })
+  if (icon === 'estimate') {
+    loop
+      .fromTo(q('.cp-panel-light'), { x: () => -width() * 0.5 }, { x: () => width(), duration: 3.2, ease: 'sine.inOut' })
+      .fromTo(q('.cp-panel-mark'), { scale: 0.3, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.45, stagger: 0.7, ease: 'back.out(2.4)' }, 0.5)
+      .to(q('.cp-panel-mark'), { autoAlpha: 0, duration: 0.5, ease: 'power1.in' }, '+=1.1')
+  } else if (icon === 'wash') {
+    loop
+      .fromTo(q('.cp-panel-sheen'), { y: () => -height() }, { y: () => height(), duration: 2.4, ease: 'none' }, 0)
+      .fromTo(q('.cp-panel-dirt'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 1.8, ease: 'power1.inOut' }, 0.3)
+      .fromTo(q('.cp-panel-drop'), { y: -24, autoAlpha: 1 }, { y: () => height() + 12, duration: 1.1, ease: 'power1.in', stagger: { each: 0.2, from: 'random' } }, 0.2)
+      .to(q('.cp-panel-dirt'), { autoAlpha: 1, duration: 0.9, ease: 'power1.inOut' }, '+=1.2')
+  } else if (icon === 'prime') {
+    loop
+      .fromTo(q('.cp-panel-stroke'), { scaleX: 0, autoAlpha: 1 }, { scaleX: 1, duration: 0.5, stagger: 0.17, ease: 'power2.out' })
+      .to(q('.cp-panel-stroke'), { autoAlpha: 0, duration: 0.7, ease: 'power1.inOut' }, '+=1.4')
+  } else if (icon === 'paint') {
+    loop
+      .fromTo(q('.cp-panel-course'), { scaleX: 0, autoAlpha: 1 }, { scaleX: 1, duration: 0.6, stagger: 0.24, ease: 'power1.inOut' })
+      .to(q('.cp-panel-course'), { autoAlpha: 0, duration: 0.8, ease: 'power1.inOut' }, '+=1.4')
+  } else {
+    loop
+      .fromTo(q('.cp-panel-gloss'), { x: () => -width() * 0.45 }, { x: () => width() * 1.1, duration: 2.8, ease: 'sine.inOut' })
+      .fromTo(q('.cp-icon-check'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7, ease: 'power2.out' }, 0.4)
+      .to(q('.cp-icon-check'), { strokeDashoffset: -1, duration: 0.5, ease: 'power2.in' }, '+=1.6')
+  }
+  return loop
 }
 
 /**
@@ -77,6 +164,11 @@ export default function Process() {
       section.classList.add('is-ring')
       // `enter` swings the wall round as the section arrives; `progress` pans along it while pinned.
       const view = { enter: -1.4, progress: 0 }
+      // Only the card facing you plays its step, and only while the wall is on screen.
+      const loops = cards.map((card, index) => loopFor(card.querySelector<HTMLElement>('.cp-step-panel')!, process[index].icon))
+      let front = -1
+      let onScreen = false
+      const syncLoops = () => loops.forEach((loop, index) => (onScreen && index === front ? loop.play() : loop.pause()))
 
       const place = () => {
         const width = cards[0].offsetWidth
@@ -92,6 +184,11 @@ export default function Process() {
           card.style.visibility = opacity <= 0.001 ? 'hidden' : ''
           card.classList.toggle('is-front', off < 0.5)
         })
+        const facing = Math.abs(at - Math.round(at)) < 0.5 ? Math.round(at) : -1
+        if (facing !== front) {
+          front = facing
+          syncLoops()
+        }
       }
 
       gsap.to(view, { enter: 0, ease: 'none', onUpdate: place, scrollTrigger: { trigger: section, start: 'top bottom', end: 'top top', scrub: 0.6 } })
@@ -106,6 +203,7 @@ export default function Process() {
         invalidateOnRefresh: true,
         onRefresh: place,
       })
+      ScrollTrigger.create({ trigger: section, start: 'top bottom', end: 'bottom top', onToggle: ({ isActive }) => { onScreen = isActive; syncLoops() } })
       place()
 
       return () => {
@@ -121,10 +219,12 @@ export default function Process() {
     })
 
     media.add(narrowMotion, () => {
-      gsap.utils.toArray<HTMLElement>('.cp-steps > li', section).forEach((card) => {
+      gsap.utils.toArray<HTMLElement>('.cp-steps > li', section).forEach((card, index) => {
         gsap.fromTo(card,
           { autoAlpha: 0, rotationY: -28, z: -160, x: 40, transformPerspective: 900, transformOrigin: '0% 50%' },
           { autoAlpha: 1, rotationY: 0, z: 0, x: 0, ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'top 70%', scrub: 0.5 } })
+        const loop = loopFor(card.querySelector<HTMLElement>('.cp-step-panel')!, process[index].icon)
+        ScrollTrigger.create({ trigger: card, start: 'top 85%', end: 'bottom 15%', onToggle: ({ isActive }) => (isActive ? loop.play() : loop.pause()) })
       })
     })
 
@@ -144,14 +244,11 @@ export default function Process() {
             <ol className="cp-steps">
               {process.map((step, index) => (
                 <li key={step.title}>
-                  <div className="cp-step-top">
-                    <span className="cp-step-index">0{index + 1}</span>
-                    <span className="cp-step-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24">{ICONS[step.icon]}</svg>
-                    </span>
+                  <Swatch icon={step.icon} index={index} />
+                  <div className="cp-step-copy">
+                    <h3>{step.title}</h3>
+                    <p>{step.body}</p>
                   </div>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
                 </li>
               ))}
             </ol>
