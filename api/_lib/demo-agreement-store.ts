@@ -65,14 +65,14 @@ redis.call('SET', KEYS[1], ARGV[1], 'EX', ARGV[2])
 return 'ok'`
 
 type VerificationChallenge = Pick<InviteGrant, 'nonce' | 'recipientHash' | 'exp'>
-type VerificationNamespace = 'demo-agreement' | 'demo-admin'
+type VerificationNamespace = 'demo-agreement' | 'demo-admin' | 'client-portal'
 
 export async function reserveVerificationCode(invite: VerificationChallenge, email: string, codeHash: string, now = Math.floor(Date.now() / 1000), namespace: VerificationNamespace = 'demo-agreement'): Promise<void> {
   const ttl = Math.min(DEMO_VERIFICATION_SECONDS, invite.exp - now)
   if (ttl <= 0) throw new DemoError('invite_expired', 403)
   const result = await evaluate(RESERVE_CODE, [
     `${namespace}:code:${invite.nonce}`,
-    `${namespace}:cooldown:${namespace === 'demo-admin' ? invite.recipientHash : invite.nonce}`,
+    `${namespace}:cooldown:${namespace !== 'demo-agreement' ? invite.recipientHash : invite.nonce}`,
     `${namespace}:send:${invite.recipientHash}:${Math.floor(now / 3600)}`,
     `${namespace}:send:day:${Math.floor(now / 86400)}`,
   ], [JSON.stringify({ email, recipientHash: invite.recipientHash, codeHash, attempts: 0, expiresAt: now + ttl }), String(ttl)])

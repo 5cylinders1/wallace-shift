@@ -14,7 +14,7 @@ export const privacyMeta = {
   eyebrow: 'Privacy',
   heading: 'What this site collects.',
   supporting:
-    'Short, because the site does very little. This describes what actually happens, not what a generic template says might happen.',
+    'How we handle enquiries, private access, client agreements, and payment records.',
 }
 
 export interface PrivacySection {
@@ -30,12 +30,13 @@ export const privacySections: PrivacySection[] = [
       'When you contact us or request a demo, we collect the details you submit: your name, email address, business name where requested, and any website or message you provide.',
       'We collect it so we can reply to you. We do not sell it, rent it, trade it, or add it to a marketing list you did not ask to join.',
       'For private demo access, we verify your approved email address and record your full name, business name, verified email, acceptance time, invitation identifier, and the exact version and text of the agreement you accept. We use this record to manage access and document your agreement with Wallace Shift LLC.',
+      'The client portal stores your contact details, service scope, signed agreement text and fingerprint, typed signature, verified email, signature time, invoices, payment authorizations, payment references, and account activity. We use these records to provide services, manage billing, and document your instructions. Client portal sign in cookies expire after eight hours; sign in verification expires after ten minutes.',
     ],
   },
   {
     heading: 'What we do not collect',
     paragraphs: [
-      'This site runs no analytics, no advertising pixels, no tracking scripts, no session recording, and no chat widget.',
+      'We do not run advertising pixels, marketing analytics, session recording, or a chat widget. When you use electronic payments, Stripe processes payment and fraud prevention information through its hosted checkout and, when needed, its payment verification script. Card numbers and security codes are handled by Stripe rather than stored in our portal.',
       'Private demos use essential cookies for your pending invitation, email verification, and approved access. These are not advertising cookies. Verification lasts up to ten minutes, and visitor invitation and access cookies last no longer than the invitation’s 72-hour window. The site owner can separately sign in with an emailed code; the admin access cookie lasts up to 30 days or until the owner signs out of that browser. We use temporary counters and hashed identifiers to limit repeated requests and verification attempts.',
     ],
   },
@@ -49,6 +50,8 @@ export const privacySections: PrivacySection[] = [
       'Google Fonts, which serves the two typefaces the site uses.',
       'Resend, which processes contact and demo request emails and delivers email verification codes.',
       'Our configured Redis storage provider, which stores temporary verification data, request counters, and demo agreement acceptance records.',
+      'Stripe, which securely stores payment methods, processes electronic payments, and provides payment status and receipts. We store Stripe reference identifiers and payment authorization records, not full card details.',
+      'Our configured Redis storage provider also stores client agreements, invoice records, account activity, and temporary portal sessions. Resend delivers portal sign in codes.',
     ],
   },
   {
@@ -56,6 +59,7 @@ export const privacySections: PrivacySection[] = [
     paragraphs: [
       'Enquiries stay in our email while useful to the enquiry or project and for a reasonable period afterwards for reference. Verification codes expire after ten minutes and temporary request counters expire automatically.',
       'Agreement acceptance records are kept separately from temporary access data. They do not automatically expire when demo access ends, because we may need them to document the agreement or address a dispute. We review deletion requests in light of those needs and any legal obligations.',
+      'Client agreements, invoices, payment authorizations, and receipt records do not automatically expire when you sign out or cancel service. We retain records needed for accounting, contractual, tax, and dispute obligations and review deletion requests against those requirements.',
     ],
   },
   {
@@ -77,4 +81,4 @@ export const privacySections: PrivacySection[] = [
  * string rather than a build timestamp so it reflects a real review of
  * the policy rather than the date of an unrelated deploy.
  */
-export const privacyLastUpdated = '13 October 2026'
+export const privacyLastUpdated = '30 October 2026'

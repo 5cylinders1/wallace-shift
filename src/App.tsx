@@ -49,6 +49,8 @@ const experiments: Record<string, ComponentType> = {
   [PIT_STOP_EXPERIMENT_PATH]: PitStopExperimentPage,
 }
 
+const ClientPortal = lazy(() => import('./client-portal/ClientPortal').then(module => ({ default: module.ClientPortal })))
+
 function App() {
   const path = useRoutePath()
 
@@ -70,6 +72,7 @@ function App() {
   }, [path])
 
   const Experiment = experiments[path]
+  if (path === '/client-portal') return <Suspense fallback={<p role="status">Loading client portal…</p>}><ClientPortal /></Suspense>
   if (Experiment) {
     return (
       <main id="main">
