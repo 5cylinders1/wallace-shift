@@ -4,9 +4,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Header, { Wordmark } from './Header'
 import Hero from './Hero'
+import Services from './Services'
+import Process from './Process'
 import ColorStudio from './visualizer/ColorStudio'
 import EstimateForm from './estimate/EstimateForm'
-import { business, faqs, process, services } from './content'
+import { business, faqs } from './content'
+import { prefersMotion } from './motion'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -17,7 +20,12 @@ const faqSchema = JSON.stringify({
   mainEntity: faqs.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
 })
 
-function Proof() {
+/**
+ * The first section after the hero. While the hero is pinned it slides up
+ * over the finished house like a sheet laid on top, and its title assembles
+ * out of the depth behind it.
+ */
+function Statement() {
   const items = [
     { value: `${business.experienceYears} years`, label: 'of painting experience' },
     { value: 'Inside & out', label: 'homes and businesses' },
@@ -25,73 +33,25 @@ function Proof() {
     { value: '7 days', label: 'weekdays 8–5, weekends 8–noon' },
   ]
   return (
-    <section className="cp-proof" aria-label="At a glance">
-      <ul className="cp-proof-inner">
-        {items.map((item) => (
-          <li key={item.value} className="cp-reveal">
-            <strong>{item.value}</strong>
-            <span>{item.label}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
-}
-
-function Services() {
-  return (
-    <section id="services" className="cp-section cp-services" aria-labelledby="cp-services-title">
-      <div className="cp-section-head cp-reveal">
-        <p className="cp-eyebrow">Services</p>
-        <h2 id="cp-services-title">One crew for the <em>whole</em> job.</h2>
-        <p>Prep, repairs and paint handled together, so nothing falls between trades.</p>
-      </div>
-      <div className="cp-service-list">
-        {services.map((service, index) => (
-          <article key={service.id} className="cp-service cp-reveal">
-            <div className="cp-service-media">
-              <img
-                src={service.image.src}
-                srcSet={`${service.image.src.replace('.webp', '-small.webp')} 720w, ${service.image.src} 1200w`}
-                sizes="(max-width: 760px) 100vw, 44vw"
-                alt={service.image.alt}
-                width={1200}
-                height={800}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="cp-service-copy">
-              <p className="cp-service-index">0{index + 1}</p>
-              <h3>{service.title}</h3>
-              <p>{service.body}</p>
-              <ul>{service.points.map((point) => <li key={point}>{point}</li>)}</ul>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function Process() {
-  return (
-    <section id="process" className="cp-section cp-process" aria-labelledby="cp-process-title">
-      <div className="cp-process-inner">
-        <div className="cp-section-head cp-reveal">
-          <p className="cp-eyebrow">Process</p>
-          <h2 id="cp-process-title">What a full repaint <em>involves.</em></h2>
-          <p>The same steps you watched at the top of the page, in order.</p>
-        </div>
-        <ol className="cp-steps">
-          {process.map((step, index) => (
-            <li key={step.title} className="cp-reveal">
-              <span className="cp-step-index">0{index + 1}</span>
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
+    <section className="cp-sheet" aria-labelledby="cp-sheet-title">
+      <div className="cp-sheet-inner">
+        <p className="cp-eyebrow" data-near>{business.name}</p>
+        <h2 id="cp-sheet-title" className="cp-sheet-title">
+          <span data-line>Every good coat</span>{' '}
+          <span data-line>starts with the work</span>{' '}
+          <span data-line><em>you don’t see.</em></span>
+        </h2>
+        <p className="cp-sheet-lede" data-near>
+          Washing, scraping, rot repair and primer are what let paint last. Complete Painting handles all of it, with {business.experienceYears} years of experience behind every job.
+        </p>
+        <ul className="cp-proof" aria-label="At a glance">
+          {items.map((item) => (
+            <li key={item.value} data-near>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
             </li>
           ))}
-        </ol>
+        </ul>
       </div>
     </section>
   )
@@ -101,19 +61,19 @@ function About() {
   return (
     <section id="about" className="cp-section cp-about" aria-labelledby="cp-about-title">
       <div className="cp-about-inner">
-        <div className="cp-about-media cp-reveal">
+        <div className="cp-about-media" data-pass>
           <img src="/demos/painting/service-carpentry.webp" alt="New primed fascia and corner trim beside freshly painted blue-green siding" loading="lazy" decoding="async" width={1200} height={800} />
         </div>
-        <div className="cp-about-copy cp-reveal">
-          <p className="cp-eyebrow">About</p>
-          <h2 id="cp-about-title">{business.experienceYears} years with a brush. <em>Complete</em> on every job.</h2>
-          <p>
+        <div className="cp-about-copy">
+          <p className="cp-eyebrow" data-near>About</p>
+          <h2 id="cp-about-title" data-near>{business.experienceYears} years with a brush. <em>Complete</em> on every job.</h2>
+          <p data-near>
             Complete Painting is a local painting company in {business.home}, registered as an LLC in {business.registered} and built on {business.experienceYears} years of painting experience.
           </p>
-          <p>
+          <p data-near>
             The mission is simple: reliable, high-quality painting for every client, done with integrity and professionalism, and not finished until you’re satisfied.
           </p>
-          <dl className="cp-hours">
+          <dl className="cp-hours" data-near>
             {business.hours.map((row) => (
               <div key={row.days}>
                 <dt>{row.days}</dt>
@@ -121,7 +81,7 @@ function About() {
               </div>
             ))}
           </dl>
-          <div className="cp-about-actions">
+          <div className="cp-about-actions" data-near>
             <a className="cp-button cp-button-ink" href="#estimate">Request an estimate</a>
             <a className="cp-button cp-button-line" href={business.smsHref}>Text us</a>
           </div>
@@ -135,14 +95,14 @@ function Faq() {
   return (
     <section id="faq" className="cp-section cp-faq" aria-labelledby="cp-faq-title">
       <div className="cp-faq-inner">
-        <div className="cp-section-head cp-reveal">
-          <p className="cp-eyebrow">Questions</p>
-          <h2 id="cp-faq-title">Good to know.</h2>
-          <p>Serving {business.area}.</p>
+        <div className="cp-section-head">
+          <p className="cp-eyebrow" data-near>Questions</p>
+          <h2 id="cp-faq-title" data-near>Good to know.</h2>
+          <p data-near>Serving {business.area}.</p>
         </div>
         <div className="cp-faq-list">
           {faqs.map(({ q, a }) => (
-            <details key={q} className="cp-reveal">
+            <details key={q} data-unfold>
               <summary>{q}</summary>
               <p>{a}</p>
             </details>
@@ -157,14 +117,14 @@ function Faq() {
 function Closing() {
   return (
     <section className="cp-closing" aria-labelledby="cp-closing-title">
-      <picture>
+      <picture className="cp-closing-media">
         <source media="(max-width: 760px)" srcSet="/demos/painting/hero-finished-mobile.webp" />
         <img src="/demos/painting/hero-finished.webp" alt="" loading="lazy" decoding="async" />
       </picture>
-      <div className="cp-closing-inner cp-reveal">
-        <h2 id="cp-closing-title">Ready to see your house <em>complete?</em></h2>
-        <p>Tell us what needs painting, or call and talk it through.</p>
-        <div className="cp-hero-actions">
+      <div className="cp-closing-inner">
+        <h2 id="cp-closing-title" data-near>Ready to see your house <em>complete?</em></h2>
+        <p data-near>Tell us what needs painting, or call and talk it through.</p>
+        <div className="cp-hero-actions" data-near>
           <a className="cp-button cp-button-ochre" href="#estimate">Request an estimate</a>
           <a className="cp-button cp-button-glass" href={business.phoneHref}>Call {business.phone}</a>
         </div>
@@ -228,19 +188,62 @@ export default function CompleteApp() {
   const root = useRef<HTMLDivElement>(null)
   const [colors, setColors] = useState('')
 
+  // The rest of the walk-through: text arrives out of the depth, big panels
+  // tip up off the floor, pictures turn as you pass them. The hero, services
+  // and process scenes run their own pinned timelines.
   useGSAP(() => {
     const media = gsap.matchMedia()
-    media.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.utils.toArray<HTMLElement>('.cp-reveal').forEach((element) => {
+    media.add(prefersMotion, () => {
+      gsap.fromTo('.cp-sheet-title [data-line]',
+        { autoAlpha: 0, z: -420, yPercent: 50, rotationX: -18, transformPerspective: 900, transformOrigin: '50% 100%' },
+        { autoAlpha: 1, z: 0, yPercent: 0, rotationX: 0, stagger: 0.14, ease: 'power2.out', scrollTrigger: { trigger: '.cp-sheet', start: 'top 92%', end: 'top 18%', scrub: 0.6 } })
+
+      gsap.utils.toArray<HTMLElement>('[data-near]').forEach((element) => {
+        const group = element.parentElement ? Array.from(element.parentElement.children).filter((child) => child.hasAttribute('data-near')) : []
         gsap.from(element, {
           autoAlpha: 0,
-          y: 22,
-          duration: 0.8,
+          z: -240,
+          y: 26,
+          transformPerspective: 900,
+          duration: 1,
+          delay: Math.max(0, group.indexOf(element)) * 0.08,
           ease: 'power3.out',
-          scrollTrigger: { trigger: element, start: 'top 88%', once: true },
+          clearProps: 'transform',
+          scrollTrigger: { trigger: element, start: 'top 90%', once: true },
         })
       })
+
+      gsap.utils.toArray<HTMLElement>('[data-rise]').forEach((element) => {
+        gsap.fromTo(element,
+          { autoAlpha: 0.15, rotationX: 22, z: -220, y: 70, transformPerspective: 1600, transformOrigin: '50% 100%' },
+          { autoAlpha: 1, rotationX: 0, z: 0, y: 0, ease: 'none', scrollTrigger: { trigger: element, start: 'top bottom', end: 'top 45%', scrub: 0.5 } })
+      })
+
+      gsap.utils.toArray<HTMLElement>('[data-pass]').forEach((element) => {
+        gsap.fromTo(element,
+          { rotationY: 16, z: -160, transformPerspective: 1200 },
+          { rotationY: -8, z: 0, ease: 'none', scrollTrigger: { trigger: element, start: 'top bottom', end: 'bottom 30%', scrub: 0.5 } })
+      })
+
+      gsap.utils.toArray<HTMLElement>('[data-unfold]').forEach((element, index) => {
+        gsap.from(element, {
+          autoAlpha: 0,
+          rotationX: -75,
+          transformPerspective: 800,
+          transformOrigin: '50% 0%',
+          duration: 0.9,
+          delay: (index % 6) * 0.06,
+          ease: 'power3.out',
+          clearProps: 'transform',
+          scrollTrigger: { trigger: element, start: 'top 92%', once: true },
+        })
+      })
+
+      // A last look at the house: the camera eases back from the front door.
+      gsap.fromTo('.cp-closing-media img', { scale: 1.32, yPercent: 6 }, { scale: 1, yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.cp-closing', start: 'top bottom', end: 'bottom bottom', scrub: 0.6 } })
     })
+    // Web fonts change heading heights, and with them every pinned scene's position.
+    document.fonts?.ready.then(() => ScrollTrigger.refresh())
     return () => media.revert()
   }, { scope: root })
 
@@ -254,15 +257,15 @@ export default function CompleteApp() {
       <Header />
       <main id="main">
         <Hero />
-        <Proof />
+        <Statement />
         <Services />
         <section id="studio" className="cp-section cp-studio-section" aria-labelledby="cp-studio-title">
-          <div className="cp-section-head cp-reveal">
-            <p className="cp-eyebrow">Color studio</p>
-            <h2 id="cp-studio-title">See your house in a new color <em>before the first coat.</em></h2>
-            <p>Upload a photo of your house, pick siding, trim and door colors, and get a realistic preview in about a minute. Or try the sample house first.</p>
+          <div className="cp-section-head">
+            <p className="cp-eyebrow" data-near>Color studio</p>
+            <h2 id="cp-studio-title" data-near>See your house in a new color <em>before the first coat.</em></h2>
+            <p data-near>Upload a photo of your house, pick siding, trim and door colors, and get a realistic preview in about a minute. Or try the sample house first.</p>
           </div>
-          <div className="cp-reveal">
+          <div data-rise>
             <ColorStudio onUseColors={applyColors} />
           </div>
         </section>
@@ -270,16 +273,16 @@ export default function CompleteApp() {
         <About />
         <section id="estimate" className="cp-section cp-estimate" aria-labelledby="cp-estimate-title">
           <div className="cp-estimate-inner">
-            <div className="cp-section-head cp-reveal">
-              <p className="cp-eyebrow">Estimate</p>
-              <h2 id="cp-estimate-title">Tell us about <em>the job.</em></h2>
-              <p>A few details and we’ll be in touch to set up a time to look at it with you.</p>
-              <ul className="cp-estimate-contact">
+            <div className="cp-section-head">
+              <p className="cp-eyebrow" data-near>Estimate</p>
+              <h2 id="cp-estimate-title" data-near>Tell us about <em>the job.</em></h2>
+              <p data-near>A few details and we’ll be in touch to set up a time to look at it with you.</p>
+              <ul className="cp-estimate-contact" data-near>
                 <li><span>Call or text</span><a href={business.phoneHref}>{business.phone}</a></li>
                 <li><span>Email</span><a href={`mailto:${business.email}`}>{business.email}</a></li>
               </ul>
             </div>
-            <div className="cp-reveal">
+            <div data-rise>
               <EstimateForm colors={colors} onClearColors={() => setColors('')} />
             </div>
           </div>

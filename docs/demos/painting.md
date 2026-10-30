@@ -44,19 +44,23 @@ and floors covered".
 
 ## Hero timelapse
 
-`Hero.tsx` plays one house from one camera through five frames on a canvas:
+`Hero.tsx` repaints one house from one camera across five frames on a canvas:
 before, wash & scrape, repair & prime, paint, complete. Each transition reveals
 the next frame the way the work happens: a soft edge sweeps down the house
 (washing), primer appears in short strokes along the boards, the new color
 goes on course by course from the eaves down with alternating directions and a
-feathered wet edge, then the masking fades off. It autoplays once (about 14 s)
-when the hero is on screen, then holds on the finished house; visitors can
-pause, replay, drag the timeline or jump to a stage. Reduced motion shows
-stills with stage buttons and no autoplay. In dev, `?hero=0.66` holds a moment.
+feathered wet edge, then the masking fades off.
 
-Desktop shows the frame at 16:9 below the headline with the controls overlaid
-on the lawn; at 900 px and below the controls sit under the frame, and at
-760 px and below the frame is 4:3, edge to edge, with short stage labels.
+Scrolling drives it. The hero is full bleed and pins for about 4.9 screens:
+the title lifts toward the viewer as the camera pulls back (0.55 screens), the
+repaint plays (2.8), the finished house holds under a close-out offer (0.55),
+then the statement section slides up over it like a sheet while the house tips
+back into the dark (1). A caption and a five-part stage rail track progress;
+each stage button scrolls to that stage's hold. Wide screens open slightly
+close and settle on the whole house; tall screens open on the porch, filling
+the screen, then pull back to a full-width band with the caption above and the
+rail below. Reduced motion shows stills with stage buttons and no pinning. In
+dev, `?hero=0.66` jumps to that moment.
 
 ### Imagery provenance
 
@@ -78,6 +82,32 @@ siding (median residual ΔE 2.3) so the last fade has no hue jump. Composite
 needs numpy, Pillow and opencv-python-headless in a scratch virtualenv;
 `scripts/painting/export.py` writes the WebP set, `studio/sample.jpg` and
 `preview.jpg` (run with `PAINTING_PYTHON=<venv>/bin/python`).
+
+## Scroll choreography
+
+The page is meant to feel like walking through a space. CSS 3D transforms
+with GSAP ScrollTrigger; no WebGL.
+
+- **Statement sheet** (`Statement` in `CompleteApp.tsx`): overlaps the hero's
+  last screen (`.cp-is-staged .cp-sheet` pulls it up by one hero height) and
+  its title lines arrive out of the depth.
+- **Services hall** (`Services.tsx`): the dark section opens out of a door-sized
+  clip-path. At 900×600 and up it pins for about 4.5 screens and the camera
+  walks down a hall: the title, then each board swings in from alternating
+  walls, holds square to the viewer (`stepped()` in `motion.ts`) and passes by.
+  The floorboards are drawn on a 2D canvas in matching perspective. A real 3D
+  floor plane was tried and dropped: its layer was thousands of pixels deep and
+  made the browser drop other layers.
+- **Color studio, estimate form**: tip up off the floor as they arrive.
+- **Process wall** (`Process.tsx`): at 900×600 and up the steps stand on the
+  inside of a curved wall that swings in, then pins for about 3 screens while
+  the view pans one step at a time.
+- **About** photo turns as you pass it, FAQ answers unfold, and the closing
+  photo eases back from the front door. Headings and short copy arrive out of
+  the depth (`data-near`).
+- Narrower screens get per-item tilts instead of pinned scenes; reduced
+  motion gets plain lists. The header stays light over the hero until the
+  sheet passes under it.
 
 ## Color studio
 
