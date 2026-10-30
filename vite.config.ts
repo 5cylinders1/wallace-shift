@@ -9,6 +9,7 @@ import demoAccessHandler from './api/demo-access.ts'
 import demoAgreementHandler from './api/demo-agreement.ts'
 import demoAdminHandler from './api/demo-admin.ts'
 import { blogPlugin } from './blog/vite-plugin.ts'
+import { bucyrusPlugin } from './bucyrus/vite-plugin.ts'
 
 /**
  * Emits one real HTML file per route, plus `sitemap.xml` and `robots.txt`.
@@ -285,7 +286,7 @@ function roofingDemoRoutes(): Plugin {
 }
 
 export default defineConfig(({ mode }): UserConfig => ({
-  plugins: [react(), ...(mode === 'demos' ? [] : [prerenderRoutes(), publicDemoBoundary(), blogPlugin()]), demoAccessRoutes(), devApiRoutes(), roofingDemoRoutes()],
+  plugins: [react(), ...(mode === 'demos' ? [] : [prerenderRoutes(), publicDemoBoundary(), blogPlugin(), bucyrusPlugin()]), demoAccessRoutes(), devApiRoutes(), roofingDemoRoutes()],
   // The public pass copies static media once. The second pass adds only the
   // demo documents and their fully isolated JS/CSS dependency graph.
   build: {
