@@ -11,17 +11,25 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 /**
  * The timelapse: five frames of one house from one camera
  * (scripts/painting/generate.py, composited onto one plate by
- * scripts/painting/composite.py so only the paint and prep ever change).
- * Scrolling drives it. Each transition reveals the next frame the way the
- * work happens: washed top to bottom, primed in short strokes along the
- * boards, painted course by course, then the masking comes off.
+ * scripts/painting/composite.py so only the paint and prep ever change),
+ * drawn into a wider view of the street (scripts/painting/outpaint.py and
+ * scene.py) so the house sits in its surroundings instead of filling the
+ * screen. Scrolling drives it. Each transition reveals the next frame the
+ * way the work happens: washed top to bottom, primed in short strokes along
+ * the boards, painted course by course, then the masking comes off.
  */
 const SOURCE = { width: 1536, height: 1024 }
-/** The house in source pixels, and the point the crop keeps centered. */
+/** The wider view, and where the frames sit in it (printed by scene.py). */
+const SCENE = { width: 1536, height: 1024, x: 344.3, y: 195.8, scale: 0.6044 }
+/** The house in frame pixels. */
 const HOUSE = { left: 136, right: 1352, top: 80, bottom: 868 }
-const FOCUS = { x: 745, y: 470 }
+/** The house's centre in the wider view, which every crop keeps in frame. */
+const FOCUS = { x: SCENE.x + 745 * SCENE.scale, y: SCENE.y + ((HOUSE.top + HOUSE.bottom) / 2) * SCENE.scale }
+const HOUSE_WIDTH = (HOUSE.right - HOUSE.left) * SCENE.scale
 /** About two siding courses per painted band. */
 const BAND = 30
+/** Each frame fades into the wider view over this share of its width; scene.py blends over 7%, so the fade lands on matching pixels. */
+const FEATHER = 0.05
 
 type Kind = 'wash' | 'strokes' | 'bands' | 'fade'
 /** Spans are relative shares of the timelapse's stretch of scroll. */
@@ -102,7 +110,8 @@ const STROKES = (() => {
 })()
 
 function sources(mobile: boolean) {
-  return stages.map((stage) => `/demos/painting/hero-${stage.id}${mobile ? '-mobile' : ''}.webp`)
+  const suffix = mobile ? '-mobile' : ''
+  return [`/demos/painting/hero-surround${suffix}.webp`, ...stages.map((stage) => `/demos/painting/hero-${stage.id}${suffix}.webp`)]
 }
 
 function load(src: string) {
@@ -116,32 +125,57 @@ function load(src: string) {
 }
 
 /**
- * Where the photo sits for a camera `pull` from 0 (the opening shot) to 1
- * (the working view). Wide screens open a little close and settle on the
- * whole house. Tall ones open on the porch, filling the screen, then pull
- * back to a full-width band with room above and below for the captions.
+ * Where the wider view sits for a camera `pull` from 0 (the opening shot) to
+ * 1 (the working view). Wide screens open a touch close and settle on the
+ * whole street. Tall ones open filling the screen, then pull back to a
+ * full-width band, the house nearly edge to edge, with room above and below
+ * for the captions.
  */
 function framing(width: number, height: number, pull: number, dpr: number) {
-  const cover = Math.max(width / SOURCE.width, height / SOURCE.height)
+  const cover = Math.max(width / SCENE.width, height / SCENE.height)
   const tall = width / height < 1.1
-  const near = tall ? cover : cover * 1.08
+  const near = tall ? cover : cover * 1.06
   const far = tall
-    ? Math.max(width / SOURCE.width, Math.min(width / (SOURCE.width * 0.55), (height - 320 * dpr) / SOURCE.height))
+    ? Math.max(width / SCENE.width, Math.min((width * 0.88) / HOUSE_WIDTH, (height - 320 * dpr) / SCENE.height))
     : cover
   const scale = near + (far - near) * pull
-  const w = SOURCE.width * scale
-  const h = SOURCE.height * scale
+  const w = SCENE.width * scale
+  const h = SCENE.height * scale
   const x = w >= width ? clamp(width / 2 - FOCUS.x * scale, width - w, 0) : (width - w) / 2
   const y = h >= height ? clamp(height / 2 - FOCUS.y * scale, height - h, 0) : (height - h) * 0.56
   return { scale, x, y, width: w, height: h }
 }
 
-function painter(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
+/** A frame with its edges faded out, so it melts into the wider view behind it. */
+function feathered(image: HTMLImageElement) {
+  const canvas = document.createElement('canvas')
+  const width = (canvas.width = image.naturalWidth)
+  const height = (canvas.height = image.naturalHeight)
+  const ctx = canvas.getContext('2d')!
+  ctx.drawImage(image, 0, 0)
+  ctx.globalCompositeOperation = 'destination-in'
+  const edge = width * FEATHER
+  for (const [size, horizontal] of [[width, true], [height, false]] as const) {
+    const gradient = horizontal ? ctx.createLinearGradient(0, 0, width, 0) : ctx.createLinearGradient(0, 0, 0, height)
+    gradient.addColorStop(0, 'rgba(0,0,0,0)')
+    gradient.addColorStop(edge / size, '#000')
+    gradient.addColorStop(1 - edge / size, '#000')
+    gradient.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, width, height)
+  }
+  return canvas
+}
+
+function painter(canvas: HTMLCanvasElement, [surround, ...photos]: HTMLImageElement[]) {
   const ctx = canvas.getContext('2d')!
   const mask = document.createElement('canvas')
   const maskCtx = mask.getContext('2d')!
+  const frames = photos.map(feathered)
   let dpr = 1
   let fit = framing(1, 1, 0, 1)
+  /** The frames' rectangle on the canvas, and frame pixels to canvas pixels. */
+  let frame = { x: 0, y: 0, width: 0, height: 0, scale: 1 }
 
   // Layout size, not the on-screen box: the stage is scaled while it recedes.
   const resize = () => {
@@ -153,12 +187,12 @@ function painter(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
     canvas.height = mask.height = Math.round(height * dpr)
   }
 
-  const sx = (x: number) => fit.x + x * fit.scale
-  const sy = (y: number) => fit.y + y * fit.scale
-  const draw = (target: CanvasRenderingContext2D, image: HTMLImageElement) => target.drawImage(image, fit.x, fit.y, fit.width, fit.height)
+  const sx = (x: number) => frame.x + x * frame.scale
+  const sy = (y: number) => frame.y + y * frame.scale
+  const draw = (target: CanvasRenderingContext2D, image: HTMLCanvasElement) => target.drawImage(image, frame.x, frame.y, frame.width, frame.height)
 
   /** Draws `image` over the canvas wherever `shape` paints the mask. */
-  const reveal = (image: HTMLImageElement, shape: (target: CanvasRenderingContext2D) => void) => {
+  const reveal = (image: HTMLCanvasElement, shape: (target: CanvasRenderingContext2D) => void) => {
     maskCtx.globalCompositeOperation = 'source-over'
     maskCtx.clearRect(0, 0, mask.width, mask.height)
     maskCtx.fillStyle = '#000'
@@ -168,11 +202,11 @@ function painter(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
     ctx.drawImage(mask, 0, 0)
   }
 
-  const transitions: Record<Kind, (image: HTMLImageElement, t: number) => void> = {
+  const transitions: Record<Kind, (image: HTMLCanvasElement, t: number) => void> = {
     // Water sheeting down the house: a soft edge travels from the roof to the lawn.
     wash: (image, t) => reveal(image, (target) => {
-      const feather = fit.height * 0.22
-      const edge = fit.y - feather + smooth(t) * (fit.height + feather * 2)
+      const feather = frame.height * 0.22
+      const edge = frame.y - feather + smooth(t) * (frame.height + feather * 2)
       const gradient = target.createLinearGradient(0, edge - feather, 0, edge + feather)
       gradient.addColorStop(0, 'rgba(0,0,0,1)')
       gradient.addColorStop(1, 'rgba(0,0,0,0)')
@@ -185,7 +219,7 @@ function painter(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
       for (const stroke of STROKES) {
         const local = clamp((t - stroke.start) / 0.2)
         if (local <= 0) continue
-        target.rect(sx(stroke.x), sy(stroke.y), stroke.length * smooth(local) * fit.scale, (BAND / 2 + 1) * fit.scale)
+        target.rect(sx(stroke.x), sy(stroke.y), stroke.length * smooth(local) * frame.scale, (BAND / 2 + 1) * frame.scale)
       }
       target.fill()
       if (t > 0.9) {
@@ -198,7 +232,7 @@ function painter(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
     // The main coat: course by course from the eaves down, each pass left or right like a painter working the wall.
     bands: (image, t) => reveal(image, (target) => {
       const rows = Math.ceil((HOUSE.bottom - HOUSE.top) / BAND)
-      const feather = 70 * fit.scale
+      const feather = 70 * frame.scale
       const left = sx(HOUSE.left - 30)
       const right = sx(HOUSE.right + 30)
       target.fillRect(0, 0, mask.width, sy(HOUSE.top))
@@ -209,7 +243,7 @@ function painter(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
         const local = smooth(clamp((t - (i / rows) * 0.78) / 0.22))
         if (local <= 0) continue
         const top = sy(HOUSE.top + i * BAND)
-        const height = BAND * fit.scale + 1
+        const height = BAND * frame.scale + 1
         const reach = left + (right - left + feather) * local
         const forward = i % 2 === 0
         const edge = forward ? reach : right - (reach - left)
@@ -231,14 +265,37 @@ function painter(canvas: HTMLCanvasElement, images: HTMLImageElement[]) {
 
   const render = (progress: number, pull: number) => {
     fit = framing(canvas.width, canvas.height, pull, dpr)
+    const scale = fit.scale * SCENE.scale
+    frame = { x: fit.x + SCENE.x * fit.scale, y: fit.y + SCENE.y * fit.scale, width: SOURCE.width * scale, height: SOURCE.height * scale, scale }
     const { base, kind, t } = momentAt(progress)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    draw(ctx, images[base])
-    if (kind && t > 0) transitions[kind](images[base + 1], t)
+    ctx.drawImage(surround, fit.x, fit.y, fit.width, fit.height)
+    draw(ctx, frames[base])
+    if (kind && t > 0) transitions[kind](frames[base + 1], t)
   }
 
   resize()
   return { render, resize }
+}
+
+/**
+ * The same picture in plain HTML: the wider view with one stage's frame
+ * faded into it. Shown before the canvas is ready, and as the stills when
+ * motion is reduced.
+ */
+function Scene({ stage, className }: { stage: string; className?: string }) {
+  return (
+    <div className={`cp-hero-scene${className ? ` ${className}` : ''}`}>
+      <picture>
+        <source media="(max-width: 760px)" srcSet="/demos/painting/hero-surround-mobile.webp" />
+        <img src="/demos/painting/hero-surround.webp" alt="" fetchPriority="high" />
+      </picture>
+      <picture>
+        <source media="(max-width: 760px)" srcSet={`/demos/painting/hero-${stage}-mobile.webp`} />
+        <img src={`/demos/painting/hero-${stage}.webp`} alt="" className="cp-hero-scene-frame" fetchPriority="high" />
+      </picture>
+    </div>
+  )
 }
 
 export default function Hero() {
@@ -347,16 +404,10 @@ export default function Hero() {
       <div className="cp-hero-stage">
         <div className="cp-hero-media" aria-hidden="true">
           {reduced ? (
-            <picture>
-              <source media="(max-width: 760px)" srcSet={`/demos/painting/hero-${stages[still].id}-mobile.webp`} />
-              <img src={`/demos/painting/hero-${stages[still].id}.webp`} alt="" className="cp-hero-still" />
-            </picture>
+            <Scene stage={stages[still].id} />
           ) : (
             <>
-              <picture>
-                <source media="(max-width: 760px)" srcSet="/demos/painting/hero-weathered-mobile.webp" />
-                <img src="/demos/painting/hero-weathered.webp" alt="" className={`cp-hero-still is-near${ready ? ' is-hidden' : ''}`} fetchPriority="high" />
-              </picture>
+              <Scene stage="weathered" className={`is-near${ready ? ' is-hidden' : ''}`} />
               <canvas ref={canvas} className="cp-hero-canvas" />
             </>
           )}

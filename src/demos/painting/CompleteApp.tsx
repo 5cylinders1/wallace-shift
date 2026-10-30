@@ -118,8 +118,8 @@ function Closing() {
   return (
     <section className="cp-closing" aria-labelledby="cp-closing-title">
       <picture className="cp-closing-media">
-        <source media="(max-width: 760px)" srcSet="/demos/painting/hero-finished-mobile.webp" />
-        <img src="/demos/painting/hero-finished.webp" alt="" loading="lazy" decoding="async" />
+        <source media="(max-width: 760px)" srcSet="/demos/painting/hero-surround-mobile.webp" />
+        <img src="/demos/painting/hero-surround.webp" alt="" loading="lazy" decoding="async" />
       </picture>
       <div className="cp-closing-inner">
         <h2 id="cp-closing-title" data-near>Ready to see your house <em>complete?</em></h2>

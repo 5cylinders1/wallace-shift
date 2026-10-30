@@ -171,12 +171,32 @@ h1 em, h2 em {
   transform-origin: 50% 12%;
   isolation: isolate;
 }
-.cp-hero-media { position: absolute; inset: 0; transform-origin: 50% 46%; }
-.cp-hero-still, .cp-hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cp-hero-still { object-fit: cover; object-position: 48.5% 30%; transition: opacity 0.6s var(--cp-ease); }
-.cp-hero-still.is-near { transform: scale(1.08); }
-.cp-hero-still.is-hidden { opacity: 0; }
-@media (max-aspect-ratio: 11 / 10) { .cp-hero-still.is-near { transform: none; } }
+.cp-hero-media { position: absolute; inset: 0; transform-origin: 50% 46%; container-type: size; }
+.cp-hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* The HTML stand-in for the canvas: the wider view covering the stage, with
+   the frame placed and feathered where Hero.tsx's SCENE puts it. */
+.cp-hero-scene {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, 150cqh);
+  aspect-ratio: 3 / 2;
+  translate: -50% -50%;
+  transition: opacity 0.6s var(--cp-ease);
+}
+.cp-hero-scene img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cp-hero-scene .cp-hero-scene-frame {
+  inset: 19.121% auto auto 22.415%;
+  width: 60.44%;
+  height: auto;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent), linear-gradient(transparent, #000 7.5%, #000 92.5%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent), linear-gradient(transparent, #000 7.5%, #000 92.5%, transparent);
+  mask-composite: intersect;
+}
+.cp-hero-scene.is-near { transform: scale(1.06); }
+.cp-hero-scene.is-hidden { opacity: 0; }
+@media (max-aspect-ratio: 11 / 10) { .cp-hero-scene.is-near { transform: none; } }
 .cp-hero-top, .cp-hero-shade, .cp-hero-dim { position: absolute; pointer-events: none; }
 .cp-hero-top { inset: 0 0 auto; height: 200px; background: linear-gradient(to bottom, rgba(9, 15, 14, 0.55), rgba(9, 15, 14, 0)); }
 .cp-hero-shade {
@@ -293,7 +313,6 @@ h1 em, h2 em {
 .cp-hero.is-still .cp-hero-hud { top: calc(var(--cp-header) + env(safe-area-inset-top) + 16px); bottom: auto; left: auto; grid-template-columns: auto; }
 .cp-hero.is-still .cp-hero-hud::before, .cp-hero.is-still .cp-hero-caption { display: none; }
 .cp-hero.is-still .cp-hero-rail li.is-reached .cp-rail-track span { transform: none; }
-.cp-hero.is-still .cp-hero-still { object-position: 48.5% 30%; }
 
 /* The statement: a sheet that slides over the finished house. */
 .cp-sheet {
@@ -519,6 +538,21 @@ h1 em, h2 em {
 .cp-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
 .cp-steps li { display: grid; align-content: start; gap: 12px; padding: clamp(22px, 2.4vw, 30px); border-radius: 20px; background: var(--cp-white); box-shadow: 0 1px 0 var(--cp-line), 0 24px 50px -32px rgba(23, 32, 31, 0.35); }
 .cp-step-index { font: 600 clamp(44px, 4.6vw, 68px)/0.85 var(--cp-display); letter-spacing: -0.05em; color: var(--cp-ochre); }
+.cp-step-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.cp-step-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: clamp(52px, 4.4vw, 64px);
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: rgba(43, 70, 69, 0.08);
+  color: var(--cp-green);
+  transition: background-color 0.5s var(--cp-ease), color 0.5s var(--cp-ease);
+}
+.cp-step-icon svg { width: 58%; height: 58%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.cp-step-icon .cp-icon-accent { fill: var(--cp-ochre-soft); }
+.cp-step-icon .cp-icon-check { stroke: var(--cp-ochre); stroke-width: 2; }
 .cp-steps h3 { font-size: clamp(21px, 1.8vw, 26px); line-height: 1.08; letter-spacing: -0.025em; }
 .cp-steps p { font-size: 15.5px; color: var(--cp-muted); }
 
@@ -535,7 +569,7 @@ h1 em, h2 em {
   top: 0;
   left: calc(var(--card) / -2);
   width: var(--card);
-  min-height: min(360px, 44vh);
+  min-height: min(340px, 42vh);
   grid-template-rows: 1fr auto auto;
   translate: 0 -50%;
   backface-visibility: hidden;
@@ -543,6 +577,8 @@ h1 em, h2 em {
 }
 .is-ring .cp-step-index { font-size: clamp(64px, 6vw, 96px); }
 .is-ring .cp-steps li.is-front { box-shadow: 0 1px 0 var(--cp-line), 0 50px 80px -40px rgba(23, 32, 31, 0.5); }
+.is-ring .cp-steps li.is-front .cp-step-icon { background: var(--cp-green); color: var(--cp-white); }
+.is-ring .cp-steps li.is-front .cp-icon-check { stroke: var(--cp-ochre-soft); }
 
 /* About */
 .cp-about-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(32px, 6vw, 96px); }
