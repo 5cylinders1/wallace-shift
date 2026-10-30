@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react'
+import { money } from '../pricing'
 import { brand } from '../brand'
 import { estimate, WALLACE_SHIFT_CONTACT_URL } from '../content'
 import {
@@ -219,6 +220,12 @@ export function EstimateForm({ context, prefill }: EstimateFormProps) {
                 else void submit()
               }}
             >
+              {context.ballpark && <div className="rf-estimate__attachment">
+                <strong>Your estimate is attached</strong>
+                <span>{money(context.ballpark.low)}–{money(context.ballpark.high)}</span>
+                <p>{context.ballpark.summary}</p>
+                <a href="#estimator">Edit roof estimate</a>
+              </div>}
               <div className="rf-lead-form__progress">
                 <p>
                   Step {step + 1} of {STEP_TITLES.length}

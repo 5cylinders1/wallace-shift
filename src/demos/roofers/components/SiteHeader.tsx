@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { brand } from '../brand'
-import { nav, WALLACE_SHIFT_URL } from '../content'
+import { nav } from '../content'
 import { pageHref, type PageId } from '../routes'
 import { BrandMark } from './BrandMark'
 import './SiteHeader.css'
@@ -59,16 +59,6 @@ export function SiteHeader({ page }: { page: PageId }) {
         <a className="rf-header__brand" href={pageHref('home')} aria-label={page === 'home' ? `${brand.company}, back to top` : `${brand.company} home`}>
           <BrandMark />
           <span className="rf-header__name">{brand.company}</span>
-        </a>
-        <a
-          className="rf-header__demo"
-          href={WALLACE_SHIFT_URL}
-          target="_blank"
-          rel="noopener"
-          title="This is a concept site designed by Wallace Shift"
-        >
-          <span className="rf-header__demo-short">Demo</span>
-          <span className="rf-header__demo-long">Demo by Wallace Shift</span>
         </a>
 
         <nav className="rf-header__nav" aria-label="Sections">

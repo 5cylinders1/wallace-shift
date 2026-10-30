@@ -36,7 +36,7 @@ export function HomePage() {
         <EstimateForm context={{ ballpark, payment }} prefill={roofAddress} />
       </main>
       <SiteFooter />
-      <MobileActionBar />
+      <MobileActionBar ballpark={ballpark} estimator />
     </>
   )
 }

@@ -251,3 +251,11 @@
 .rf-estimate__result-lede {
   color: var(--rf-slate);
 }
+
+.rf-estimate__attachment { display: none; }
+@media (max-width: 899px) {
+  .rf-estimate__attachment { scroll-margin-top: 12px; display: grid; gap: 6px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--rf-line); background: var(--rf-paper); }
+  .rf-estimate__attachment > span { font-size: 1.4rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+  .rf-estimate__attachment p { font-size: .8125rem; color: var(--rf-muted); }
+  .rf-estimate__attachment a { min-height: 44px; display: flex; align-items: center; font-size: .875rem; }
+}

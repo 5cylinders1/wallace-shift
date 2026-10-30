@@ -13,7 +13,7 @@ export function Estimator({ onBallpark, onAddress }: EstimatorProps) {
   return (
     <section id="estimator" className="rf-estimator" aria-labelledby="rf-roof-title">
       <div className="rf-container">
-        <RoofTool onEstimate={onBallpark} onAddress={onAddress} />
+        <RoofTool mobileSteps onEstimate={onBallpark} onAddress={onAddress} />
       </div>
     </section>
   )

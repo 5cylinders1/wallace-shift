@@ -87,3 +87,10 @@ dist-ssr
 /17546f83-11ff-4bac-ba85-5fd6221c0441/
 /1e35bf70-26c6-43df-b5ec-93c0ee9fb1cf.zip
 /1e35bf70-26c6-43df-b5ec-93c0ee9fb1cf/
+
+# Root-level review recordings and source videos stay local.
+# Production media under public/ and video project folders remains tracked.
+/*.[mM][pP]4
+/*.[mM][oO][vV]
+/*.[wW][eE][bB][mM]
+/*.[mM]4[vV]

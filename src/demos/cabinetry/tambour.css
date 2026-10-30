@@ -139,10 +139,6 @@ body { margin: 0; background: #f4efe7; }
 
 /* ---------- Demo strip, header, menu ---------- */
 
-.tb-demo-strip { background: #0e0b09; color: var(--tb-muted-light); font-size: 0.72rem; letter-spacing: 0.08em; }
-.tb-demo-strip-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 34px; }
-.tb-demo-strip p > span:first-child { color: var(--tb-paper); text-transform: uppercase; letter-spacing: 0.18em; }
-.tb-demo-strip a { text-decoration: none; color: var(--tb-paper); white-space: nowrap; }
 
 .tb-header {
   position: sticky;
@@ -698,7 +694,6 @@ body { margin: 0; background: #f4efe7; }
 @media (max-width: 720px) {
   .tb-site { font-size: 1rem; }
   :root .tb-site { --tb-header: 64px; }
-  .tb-demo-strip-more { display: none; }
   .tb-wordmark-trade { display: none; }
   .tb-wordmark-name { font-size: 1.45rem; }
   .tb-header-actions .tb-button { display: none; }
@@ -768,7 +763,6 @@ body { margin: 0; background: #f4efe7; }
 }
 
 @media (max-width: 380px) {
-  .tb-demo-strip a { display: none; }
   .tb-swatch h3 { font-size: 1.15rem; }
 }
 
