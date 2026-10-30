@@ -67,10 +67,6 @@ export default function HalcyonRoofworks() {
 
   return <div className="hr-site">
     <a className="hr-skip" href="#main">Skip to content</a>
-    <div className="hr-demo-bar">
-      <span>Wallace Shift · Roofing demo 04 · A fictional contractor concept</span>
-      <a href={roofingGalleryPath}>All designs <Arrow /></a>
-    </div>
     <header className={`hr-header ${menuOpen ? 'is-open' : ''}`}>
       <div className="hr-wrap hr-header-inner">
         <Brand />

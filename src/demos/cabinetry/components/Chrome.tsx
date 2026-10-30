@@ -17,15 +17,6 @@ export function Wordmark({ light = false }: { light?: boolean }) {
   </a>
 }
 
-export function DemoStrip() {
-  return <div className="tb-demo-strip">
-    <div className="tb-wrap tb-demo-strip-inner">
-      <p><span>Wallace Shift</span> · Contractor demo<span className="tb-demo-strip-more"> · Tambour is a fictional cabinetmaker</span></p>
-      <a href={galleryPath}>All demos <span aria-hidden="true">↗</span></a>
-    </div>
-  </div>
-}
-
 export function Header({ page }: { page: Page }) {
   const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 40)
   const [open, setOpen] = useState(false)

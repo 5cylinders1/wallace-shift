@@ -46,30 +46,6 @@
   white-space: nowrap;
 }
 
-.rf-header__demo {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 0 9px;
-  border: 1px dashed var(--rf-line-strong);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--rf-muted);
-  white-space: nowrap;
-}
-
-.rf-header__demo:hover {
-  color: var(--rf-ink);
-  border-color: var(--rf-ink);
-}
-
-.rf-header__demo-long {
-  display: none;
-}
-
 .rf-header__nav {
   display: none;
   margin-left: auto;
@@ -224,15 +200,6 @@
   }
   .rf-header__name {
     font-size: 1rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .rf-header__demo-short {
-    display: none;
-  }
-  .rf-header__demo-long {
-    display: inline;
   }
 }
 

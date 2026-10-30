@@ -33,7 +33,6 @@ export default function BucyrusAuto({ path = BUCYRUS_HOME }: { path?: string }) 
   const home = !service && !guide
   return <div className="ba-site" id="home">
     <a className="ba-skip" href="#main">Skip to content</a>
-    <div className="ba-demo-bar">A website concept for Bucyrus Auto & Drivetrain <span>by Wallace Shift · Demo only</span></div>
     <header className="ba-header">
       <div className="ba-wrap ba-header-inner">
         <Wordmark />

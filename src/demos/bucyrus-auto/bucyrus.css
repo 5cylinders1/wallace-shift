@@ -68,17 +68,6 @@ h1,h2,h3,p,figure {
 .ba-skip:focus {
   top:16px;
 }
-.ba-demo-bar {
-  background:#e5e8e4;
-  color:#525b58;
-  font-size:11px;
-  text-align:center;
-  padding:9px 24px;
-  letter-spacing:.035em;
-}
-.ba-demo-bar span {
-  margin-left:18px;
-}
 .ba-header {
   background:#eee;
 }
@@ -677,13 +666,6 @@ h2 em {
 @media(max-width:760px) {
   .ba-wrap {
     width:calc(100% - 40px);
-  }
-  .ba-demo-bar {
-    font-size:9px;
-    padding:8px 12px;
-  }
-  .ba-demo-bar span {
-    display:none;
   }
   .ba-header-inner {
     height:112px;

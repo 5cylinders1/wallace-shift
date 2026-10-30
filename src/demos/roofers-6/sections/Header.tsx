@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { brand, nav } from '../content'
-import { galleryPath } from '../routes'
 
 export function Mark({ className = '' }: { className?: string }) {
   return <svg className={`st-mark ${className}`} viewBox="0 0 40 40" fill="none" aria-hidden="true">
@@ -56,10 +55,6 @@ export default function Header() {
   const close = () => setOpen(false)
 
   return <>
-    <div className="st-demo-bar">
-      <span>Wallace Shift · Roofing demo 06 · A fictional contractor concept</span>
-      <a href={galleryPath}>All designs <span aria-hidden="true">↗</span></a>
-    </div>
     <header className={`st-header ${solid || open ? 'is-solid' : ''} ${open ? 'is-open' : ''}`}>
       <div className="st-wrap st-header-inner">
         <Wordmark />

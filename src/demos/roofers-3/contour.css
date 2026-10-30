@@ -20,8 +20,6 @@ svg { display:block; }
 .ct-kicker { font-size:10px; line-height:1.6; letter-spacing:.12em; font-weight:650; }
 .ct-skip { position:absolute; left:20px; top:-100px; z-index:30; background:white; padding:16px; }
 .ct-skip:focus { top:20px; }
-.ct-demo-bar { min-height:32px; display:flex; align-items:center; justify-content:space-between; padding:8px 56px; background:#f1f2ef; color:#676e6c; font-size:8px; letter-spacing:.12em; }
-.ct-demo-bar a { font-size:9px; letter-spacing:.02em; display:flex; gap:14px; }
 .ct-header { height:104px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--ct-line); gap:30px; }
 .ct-brand { display:inline-flex; align-items:center; gap:10px; width:max-content; }
 .ct-brand > svg { width:36px; height:36px; color:var(--ct-orange); }
@@ -228,7 +226,6 @@ svg { display:block; }
 }
 @media(max-width:1100px) {
   .ct-wrap { width:calc(100% - 64px); }
-  .ct-demo-bar { padding-inline:32px; }
   .ct-header nav { gap:18px; font-size:10px; }
   .ct-nav-cta { margin-left:0; gap:14px; padding:13px; }
   .ct-hero { grid-template-columns:.9fr 1.1fr; gap:10px; min-height:530px; }
@@ -249,8 +246,6 @@ svg { display:block; }
 }
 @media(max-width:900px) {
   .ct-wrap { width:calc(100% - 40px); }
-  .ct-demo-bar { padding:8px 20px; font-size:6px; letter-spacing:.08em; }
-  .ct-demo-bar a { font-size:7px; gap:7px; }
   .ct-header { height:85px; position:relative; }
   .ct-brand > span { font-size:28px; }
   .ct-brand > svg { width:31px; }

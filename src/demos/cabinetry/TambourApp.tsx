@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { titles } from './content'
 import { usePageMotion } from './motion'
 import { scrollToHash, usePage } from './routes'
-import { DemoStrip, Footer, Header } from './components/Chrome'
+import { Footer, Header } from './components/Chrome'
 import ConsultationPage from './pages/ConsultationPage'
 import Home from './pages/Home'
 import InvestmentPage from './pages/InvestmentPage'
@@ -26,7 +26,6 @@ export default function TambourApp() {
 
   return <div className={`tb-site is-${page.kind}`}>
     <a className="tb-skip" href="#main">Skip to content</a>
-    <DemoStrip />
     <Header page={page} />
     {page.kind === 'home' && <Home />}
     {(page.kind === 'kitchens' || page.kind === 'baths' || page.kind === 'built-ins') && <RoomPage key={page.kind} page={page.kind} />}
