@@ -7,6 +7,7 @@ import { accessible, changeLedger, draft, field, generateDueInvoices } from './p
 import { charge, finishSetup, handleStripeEvent, quote, refreshPayments, resetFailedPayment, setupCard } from './portal-stripe.js'
 import { automaticInvoice, firstUnsettledInvoice, scheduleConsent } from '../../src/client-portal/model.js'
 import type { Engagement } from '../../src/client-portal/model.js'
+import { issueAndEmail } from './portal-email.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
 async function rawBody(req: IncomingMessage, requireRaw = false): Promise<string> {
@@ -43,8 +44,10 @@ async function rawBody(req: IncomingMessage, requireRaw = false): Promise<string
   })
 }
 function clientView(e: Engagement, who: Identity): unknown {
-  if (who.admin) return e
   const view = structuredClone(e)
+  if (view.issueEmail) { delete view.issueEmail.payload; delete view.issueEmail.access }
+  if (who.admin) return view
+  delete view.issueEmail
   delete view.stripeCustomer; delete view.paymentMethod; delete view.setup
   view.invoices.forEach(invoice => { delete invoice.attempt })
   return { ...view, hasCard: Boolean(e.paymentMethod) }
@@ -94,13 +97,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (req.method === 'POST' && (nodeHeader(req, 'origin') !== origin || nodeHeader(req, 'sec-fetch-site') === 'cross-site' || !nodeHeader(req, 'content-type')?.startsWith('application/json'))) throw new DemoError('forbidden', 403)
     const body = req.method === 'POST' ? JSON.parse(await rawBody(req)) as Record<string, unknown> : {}
     if (!body || typeof body !== 'object' || Array.isArray(body)) throw new DemoError('invalid_fields', 400)
-    if (['send-code', 'verify-code', 'logout'].includes(String(body.action))) {
+    if (['send-code', 'verify-code', 'logout', 'open-invitation'].includes(String(body.action))) {
       await login(req, res, origin, body); demoJson(res, 200, { ok: true }); return
     }
     const who = await identity(req)
     if (req.method === 'GET') {
       if (!who) { demoJson(res, 200, { ok: true, authenticated: false }); return }
-      const entries = (await allEngagements()).filter(e => who.admin || (e.email === who.email && e.state !== 'draft'))
+      const entries = (await allEngagements()).filter(e => (!who.engagementId || who.engagementId === e.id) && (who.admin || (e.email === who.email && e.state !== 'draft')))
       demoJson(res, 200, { ok: true, authenticated: true, ...who, engagements: entries.map(e => clientView(e, who)),
         stripeReady: Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_WEBHOOK_SECRET),
         publishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? '',
@@ -114,6 +117,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       demoJson(res, 200, { ok: true, id: e.id }); return
     }
     if (body.action === 'run-billing' && who.admin) { demoJson(res, 200, { ok: true, ...await runBilling(origin) }); return }
+    if (body.action === 'issue' || body.action === 'retry-issue-email') {
+      const emailStatus = await issueAndEmail(body.id, who, origin, body.action === 'retry-issue-email')
+      demoJson(res, 200, { ok: true, emailStatus }); return
+    }
     const e = accessible(await allEngagements(), body.id, who)
     if (['setup-card', 'finish-setup', 'quote', 'pay', 'authorize', 'reset-payment'].includes(String(body.action)) && who.admin) throw new DemoError('client_authorization_required', 403)
     if (body.action === 'setup-card') { demoJson(res, 200, { ok: true, url: await setupCard(e, origin) }); return }

@@ -150,4 +150,4 @@ When it can demonstrate important requirements that suitable existing options do
 
 Choose a task that is difficult today and complete the decision brief. Keep examples of the current process, the tools involved, and the exceptions a solution must handle.
 
-Wallace Shift's [custom CRM and business system work](/services#web-apps) starts with a paid definition sprint to assess the workflow and what existing tools can do. The resulting plan informs any separately scoped build. [Tell us what your team needs to see or do more easily](/contact), and bring the workflow rather than a predetermined feature list.
+Wallace Shift's [custom CRM and business system work](/services#web-apps) starts by assessing the workflow and what existing tools can do. Small builds include focused scoping; larger systems or unclear requirements start with a paid definition sprint to inform a separately scoped build. [Tell us what your team needs to see or do more easily](/contact), and bring the workflow rather than a predetermined feature list.

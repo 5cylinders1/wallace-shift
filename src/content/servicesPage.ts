@@ -62,7 +62,7 @@ export const serviceDetails: ServiceDetail[] = [
       'You need a shared view of customers, jobs, and outstanding work',
     ],
     notFor:
-      'Start with a paid definition sprint. We assess what your existing tools can do before recommending a custom build. Migration, integrations, and more complex requirements are scoped explicitly; you keep the resulting plan.',
+      'We assess what your existing tools can do before recommending a custom build. Small builds include focused scoping; larger systems or unclear requirements start with a paid definition sprint. Migration and more complex requirements are scoped explicitly.',
     pricingAnchor: '/pricing#web-apps',
     pricingLabel: 'System pricing — definition, build, and partnership',
     example: { href: '/demos/roofers-offer/#dashboard', label: 'See a sample CRM workflow' },
@@ -89,7 +89,7 @@ export const serviceDetails: ServiceDetail[] = [
       'You have a specific task to assess for AI, and someone who can judge the output',
     ],
     notFor:
-      'Automation starts with a paid audit. AI work and provider costs are scoped for the task; complex AI systems are not included in the standard build packages. We agree what happens when a result needs review or a connection fails.',
+      'A clearly defined follow-up setup can begin without a paid audit. When the problem needs investigation, an audit establishes the priorities. Larger workflows, AI work, and provider costs are scoped separately. We agree what happens when a result needs review or a connection fails.',
     pricingAnchor: '/pricing#automation',
     pricingLabel: 'Automation pricing and AI scope',
     example: { href: '/demos/roofers-offer/#collection', label: 'Explore the AI roofing concepts' },

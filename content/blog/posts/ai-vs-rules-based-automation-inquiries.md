@@ -147,4 +147,4 @@ Assign an owner to update them and revisit the affected cases. Changing an offer
 
 ## Bring a defined task and examples
 
-Wallace Shift scopes [AI integrations and workflow automation](/services#automation) around the task, inputs, review criteria, and people operating the result. Workflow automation begins with a paid audit; AI work and provider costs are scoped for the particular task. [Discuss the inquiry decision you want to improve](/contact), with a few examples and the outcomes you expect.
+Wallace Shift scopes [AI integrations and workflow automation](/services#automation) around the task, inputs, review criteria, and people operating the result. Clearly defined follow-up setups include focused scoping; a paid audit is available when the problem needs investigation. AI work and provider costs are scoped for the particular task. [Discuss the inquiry decision you want to improve](/contact), with a few examples and the outcomes you expect.

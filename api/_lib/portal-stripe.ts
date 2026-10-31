@@ -12,7 +12,7 @@ export async function stripe<T>(path: string, params?: Params, key?: string, met
     method, headers: { authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, 'Stripe-Version': '2025-06-30.basil', ...(params ? { 'content-type': 'application/x-www-form-urlencoded' } : {}), ...(key ? { 'Idempotency-Key': key } : {}) },
     body: params ? new URLSearchParams(Object.entries(params).map(([k, v]): [string, string] => [k, String(v)])) : undefined,
     signal: AbortSignal.timeout(20000),
-  })
+  }).catch(() => { throw new DemoError('stripe_unavailable', 502) })
   const data = await response.json() as T & { error?: { payment_intent?: Intent } }
   if (!response.ok) {
     if (data.error?.payment_intent) return data.error.payment_intent as T
@@ -38,13 +38,13 @@ export async function setupCard(e: Engagement, origin: string): Promise<string> 
     await mutateLedger(entries => { const current = entries.find(v => v.id === e.id)!; current.stripeCustomer = customer.id })
     e.stripeCustomer = customer.id
   }
-  if (e.setup && e.setup.expiresAt > Date.now() / 1000) {
+  if (e.setup && !e.setup.completed && e.setup.expiresAt > Date.now() / 1000) {
     const previous = await stripe<{ url: string | null; status: string }>(`checkout/sessions/${e.setup.id}`)
     if (previous.status === 'open' && previous.url) return previous.url
   }
   const session = await stripe<{ id: string; url: string; expires_at: number }>('checkout/sessions', {
-    mode: 'setup', customer: e.stripeCustomer, 'payment_method_types[0]': 'card', billing_address_collection: 'required',
-    'setup_intent_data[usage]': 'off_session', 'setup_intent_data[metadata][engagement]': e.id,
+    mode: 'setup', currency: 'usd', customer: e.stripeCustomer, 'payment_method_types[0]': 'card', billing_address_collection: 'required',
+    'setup_intent_data[metadata][engagement]': e.id,
     'metadata[engagement]': e.id,
     'custom_text[submit][message]': 'Save your card securely. Return to Wallace Shift to review the exact total and authorize payment. Saving a card does not authorize a charge.',
     success_url: `${origin}/client-portal?engagement=${e.id}&setup={CHECKOUT_SESSION_ID}`, cancel_url: `${origin}/client-portal?engagement=${e.id}`,
@@ -54,6 +54,7 @@ export async function setupCard(e: Engagement, origin: string): Promise<string> 
 }
 export async function finishSetup(e: Engagement, sessionId: string): Promise<void> {
   if (!e.signature || e.setup?.id !== sessionId) throw new DemoError('invalid_setup', 400)
+  if (e.setup.completed && e.paymentMethod) return
   const session = await stripe<{ status: string; customer: string; setup_intent: string }>(`checkout/sessions/${sessionId}`)
   if (session.status !== 'complete' || session.customer !== e.stripeCustomer) throw new DemoError('invalid_setup', 400)
   const setup = await stripe<{ status: string; customer: string; payment_method: string }>(`setup_intents/${session.setup_intent}`)
@@ -61,9 +62,10 @@ export async function finishSetup(e: Engagement, sessionId: string): Promise<voi
   await mutateLedger(entries => {
     const current = entries.find(v => v.id === e.id)!
     if (current.setup?.id !== sessionId || current.invoices.some(i => (i.status === 'open' && i.attempt) || i.status === 'processing')) throw new DemoError('conflict_retry', 409)
+    if (current.setup.completed) return
     current.paymentMethod = setup.payment_method
     current.autopay = undefined // A changed card always requires fresh authorization.
-    current.setup = undefined
+    current.setup.completed = true
     audit(current, e.email, 'Payment method saved; payment authorization required')
   })
 }

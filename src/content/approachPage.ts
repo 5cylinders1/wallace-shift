@@ -100,8 +100,8 @@ export const approachStages: ApproachStage[] = [
 
 /**
  * Where each service actually becomes paid. Figures must match
- * `pricing.ts` exactly — the definition sprint and the automation audit
- * are both fixed-fee there, not "starts at".
+ * `pricing.ts` exactly. Small setups include focused scoping; paid
+ * discovery is reserved for work that needs a separate investigation.
  */
 export const servicePaths = {
   eyebrow: 'Where it becomes paid',
@@ -111,14 +111,14 @@ export const servicePaths = {
   items: [
     {
       service: 'CRMs & systems',
-      step: '$2,500 system definition sprint',
-      note: 'One week. Users, workflows, roles, integrations, and edge cases mapped before anyone commits to a build price. Applied to the project total if the build begins within 30 days.',
+      step: 'Focused builds from $5,000',
+      note: 'One clearly defined workflow, with focused scoping included. For larger systems or unclear requirements, a $2,500 definition sprint maps the work first. That fee is applied to the project total if the build begins within 30 days.',
       href: '/pricing#web-apps',
     },
     {
       service: 'AI & automation',
-      step: '$1,000 automation audit',
-      note: 'Three to five business days. The repetitive work traced and costed, with a prioritized plan. Credited toward qualifying builds of $5,000 or more. AI requirements are scoped explicitly; complex AI systems are separate work.',
+      step: 'Follow-up setups from $500',
+      note: 'Budget $500 to $1,000 for one small setup in an existing tool. Larger connected workflows start at $2,500. If investigation is needed, a $1,000 audit provides a prioritized plan and is credited toward qualifying builds of $5,000 or more. Software costs and AI work are separate.',
       href: '/pricing#automation',
     },
     {

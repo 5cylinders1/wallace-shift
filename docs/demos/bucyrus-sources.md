@@ -34,6 +34,14 @@ The user supplied the root folder `Bucyrus Auto & Drivetrain` and described the 
 
 Confirm operating address, hours, service scope, rights to selected real photographs, and appointment delivery destination. Confirm submission receipt with an end-to-end delivery test before replacing the demo form notice with a delivery claim.
 
+## User-supplied Google Maps embed — October 30, 2026
+
+The homepage location section uses the exact Google Maps embed supplied by the user. Browser inspection confirmed the Bucyrus Auto & Drivetrain LLC listing and the embed's own `https://maps.google.com/?cid=1297566101423142398` destination, reused for the standalone map links.
+
+The embedded listing displays “NEW LOCATION PENDING” alongside the Pflumm Road address. The surrounding copy therefore asks visitors to call to confirm the current location, hours and availability; no new street address or operating hours are asserted in site copy or structured data. Ratings and other information inside the frame are supplied live by Google, not copied into the website's claims.
+
+Business name, city and service wording appear in visible copy beside the map. The iframe has a concise descriptive title for accessibility and no child keyword text, consistent with the [HTML iframe content model](https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element) and [W3C iframe title guidance](https://www.w3.org/WAI/WCAG21/Techniques/html/H64.html). The existing noindex/nofollow policy remains unchanged.
+
 
 ## Service-page and vehicle-guide expansion
 

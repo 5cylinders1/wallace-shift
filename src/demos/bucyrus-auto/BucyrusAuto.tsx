@@ -5,6 +5,8 @@ import { bucyrusServices } from './serviceContent'
 
 const MEDIA = '/media/bucyrus'
 const PHONE = 'tel:+19134209865'
+const MAP_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3897.0086917377043!2d-94.74467872335109!3d38.760826771753415!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87c0b95c0f38fbb3%3A0x1201e17e93ea35fe!2sBucyrus%20Auto%20%26%20Drivetrain%20LLC!5e1!3m2!1sen!2sus!4v1793381640631!5m2!1sen!2sus'
+const MAP_LINK = 'https://maps.google.com/?cid=1297566101423142398'
 
 function Arrow() { return <span aria-hidden="true">↗</span> }
 function Wordmark() {
@@ -24,6 +26,35 @@ function Hero() {
       <a className="ba-hero-phone" href={PHONE}>Or give us a call <strong>(913) 420-9865</strong></a>
     </div>
     <p className="ba-image-note">Illustrative car imagery · Not customer vehicles</p>
+  </section>
+}
+
+function Location() {
+  return <section className="ba-location" id="location" aria-labelledby="location-title">
+    <div className="ba-wrap ba-location-grid">
+      <div className="ba-location-copy">
+        <p className="ba-eyebrow">04 / FIND US IN BUCYRUS</p>
+        <h2 id="location-title">Your route<br />to the <em>shop.</em></h2>
+        <p className="ba-location-name">Bucyrus Auto &amp; Drivetrain LLC</p>
+        <p>Auto repair, maintenance and drivetrain care in Bucyrus, Kansas. Let’s talk about what your vehicle needs.</p>
+        <a className="ba-button" href={MAP_LINK} target="_blank" rel="noopener noreferrer">Open in Google Maps <Arrow /></a>
+        <a className="ba-location-phone" href={PHONE}>(913) 420-9865 <Arrow /></a>
+        <p className="ba-location-note">Call ahead to confirm the current location, hours and appointment availability.</p>
+      </div>
+      <div className="ba-location-map">
+        <div className="ba-map-heading"><span className="ba-map-dot" aria-hidden="true" /><span>BUCYRUS, KANSAS</span><span aria-hidden="true">↗</span></div>
+        <iframe
+          src={MAP_EMBED}
+          title="Map showing Bucyrus Auto & Drivetrain LLC in Bucyrus, Kansas"
+          width="600"
+          height="450"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+        <p className="ba-map-caption">Plan your visit <span aria-hidden="true">·</span> <a href={MAP_LINK} target="_blank" rel="noopener noreferrer">View the shop on Google Maps <Arrow /></a></p>
+      </div>
+    </div>
   </section>
 }
 
@@ -69,6 +100,7 @@ export default function BucyrusAuto({ path = BUCYRUS_HOME }: { path?: string }) 
         <div className="ba-appointment-copy"><p className="ba-eyebrow">03 / LET’S TALK ABOUT YOUR CAR</p><h2 id="appointment-title">Your next<br />good <em>mile.</em></h2><p>Start with a few details about your vehicle and what you need. An appointment request is the beginning of a conversation, not a confirmed booking.</p><div className="ba-contact-block"><span>CALL THE SHOP</span><a href={PHONE}>(913) 420-9865 <Arrow /></a><p>Bucyrus, Kansas<br />Call for current hours and directions.</p></div><a className="ba-text-link" href="https://www.facebook.com/p/Bucyrus-Auto-Drivetrain-LLC-100090214147272/" target="_blank" rel="noreferrer">Find the shop on Facebook <Arrow /></a></div>
         <div className="ba-appointment-card"><h3>Request an appointment</h3><BucyrusAppointment /></div>
       </section>
+      <Location />
       </>}
     </main>
     <footer className="ba-footer"><div className="ba-wrap"><div className="ba-footer-top"><Wordmark /><p>Here for the road ahead.</p><a href="#home">Back to top ↑</a></div><nav className="ba-footer-nav" aria-label="Auto care links">{bucyrusServices.map(item => <a href={`${BUCYRUS_HOME}/services/${item.slug}`} key={item.slug} aria-current={service?.slug === item.slug ? 'page' : undefined}>{item.name}</a>)}<a href={`${BUCYRUS_HOME}/vehicle-guide`} aria-current={guide ? 'page' : undefined}>Vehicle symptom guide</a>{!home && <a href={`${BUCYRUS_HOME}#appointment`}>Request an appointment</a>}</nav><div className="ba-footer-bottom"><p>Website concept by <a href="https://www.wallaceshift.com">Wallace Shift</a>. Not the shop’s official website.</p><p>Hero vehicles are illustrative. Appointment form is a demo.</p></div></div></footer>

@@ -196,9 +196,9 @@ export interface EngagementItem {
    * Original package-detail provenance:
    * DRAFTED BY CLAUDE ON 2026-09-12 — NOT YET APPROVED.
    *
-   * Editorial updates preserve the existing prices, scope, exclusions and
-   * terms. They do not constitute approval of new commercial commitments.
-   * Keep this flag until the package details have had commercial review.
+   * Entry pricing and scope revised at Matthew's request on 2026-10-30:
+   * focused builds from $5,000 and small follow-up setups from $500.
+   * Other package terms retain their original provenance.
    */
   category?: string
   tagline?: string
@@ -223,17 +223,17 @@ export const engagementGroups: EngagementGroup[] = [
     label: 'Custom CRMs & business systems',
     heading: 'Start with the workflow. Build from there.',
     supporting:
-      'We map how your team handles customers, work and information before agreeing a build price. The focused build below covers one primary workflow; a broader CRM needs its own agreed scope.',
+      'Start with one useful workflow, then expand as needed. Small builds include focused scoping. For a broader CRM or unclear requirements, a paid definition sprint establishes the plan before we quote the build.',
     items: [
       {
         index: '01',
         title: 'System definition sprint',
         description:
-          'We map the people, steps, permissions, tool connections and exceptions in your process, then define the technical approach before you commit to a build.',
+          'For larger systems or unclear requirements, we map the people, steps, permissions, connections and exceptions, then define the technical approach and a costed build plan.',
         price: '2,500',
         startsAt: false,
         window: '1 week',
-        note: 'Applied to the project total when the build begins within 30 days.',
+        note: 'Not required for every small build. Applied to the project total when the build begins within 30 days.',
         category: 'Discovery and technical plan',
         tagline: 'Understand the work first.',
         bestFor:
@@ -252,23 +252,25 @@ export const engagementGroups: EngagementGroup[] = [
         index: '02',
         title: 'Focused system build',
         description:
-          'A focused customer portal, booking system, internal tool, or dashboard built around one primary business workflow.',
-        price: '18,000',
+          'A customer portal, internal tool, or dashboard built around one clearly defined workflow, with up to five main views, two user roles, and one straightforward integration.',
+        price: '5,000',
         startsAt: true,
-        window: '6–10 weeks',
+        window: 'Timeline agreed with scope',
         category: 'Custom portal, tool, or dashboard',
         tagline: 'Put one workflow in order.',
         bestFor:
           'Businesses running a core workflow on spreadsheets, email, or software that was never meant for it.',
         scope: [
-          'Everything in the definition sprint',
-          'One primary business workflow, built end to end',
-          'Customer portal, booking system, internal tool, or dashboard',
-          'Interface designed around the people who use it',
+          'Focused scoping and a written build plan',
+          'One clearly defined business workflow',
+          'Up to five main views and two user roles',
+          'Access controls for the agreed roles',
+          'One straightforward integration, subject to API access',
           'Responsive across desktop and mobile',
+          'Testing, deployment, documentation, and handover',
         ],
         ctaLabel: 'Discuss a system build',
-        note: 'Multi-tenant SaaS, extensive user roles, legacy data migration, native mobile apps, advanced compliance such as HIPAA or PCI, complex AI systems, and large integration counts are scoped separately.',
+        note: 'Broader CRMs, additional workflows, complex booking rules, migration, extra integrations, native apps, multi-tenant SaaS, complex AI, and advanced compliance are quoted separately. Launch support and any defect correction period are agreed in writing.',
       },
       {
         index: '03',
@@ -279,7 +281,7 @@ export const engagementGroups: EngagementGroup[] = [
         startsAt: true,
         priceUnit: '/month',
         window: '3-month initial term',
-        note: 'Rolling monthly after the initial term, with 30 days’ notice.',
+        note: 'Optional. The initial term starts at $13,500 total. Capacity and priorities are agreed in writing. Rolling monthly afterward, with 30 days’ notice.',
         category: 'Reserved ongoing capacity',
         tagline: 'Keep improving the system.',
         bestFor:
@@ -300,7 +302,7 @@ export const engagementGroups: EngagementGroup[] = [
     label: 'AI integrations & workflow automation',
     heading: 'Find the repeated work. Connect the steps.',
     supporting:
-      'Start with repetitive admin, missed follow-up and disconnected tools. For AI integrations, we confirm the task, data access and human review needed before quoting.',
+      'Start with a small follow-up setup using tools you already have. If the problem needs investigation, choose a paid audit first. Larger workflows and AI integrations receive their own scope and quote.',
     items: [
       {
         index: '01',
@@ -310,7 +312,7 @@ export const engagementGroups: EngagementGroup[] = [
         price: '1,000',
         startsAt: false,
         window: '3–5 business days',
-        note: 'Credited toward qualifying automation builds of $5,000 or more.',
+        note: 'Optional for clearly defined setups. Credited toward qualifying automation builds of $5,000 or more.',
         category: 'Measured opportunity report',
         tagline: 'Know where to start.',
         bestFor:
@@ -325,24 +327,25 @@ export const engagementGroups: EngagementGroup[] = [
       },
       {
         index: '02',
-        title: 'Workflow build',
+        title: 'Follow-up setup',
         description:
-          'One focused workflow connecting the systems, follow-up, and handoffs that currently consume time or fall through the cracks.',
-        price: '2,500',
+          'One simple follow-up sequence or reminder workflow configured in a tool you already use, with agreed triggers, messages, and a clear next step.',
+        price: '500',
         startsAt: true,
-        window: '1–3 weeks',
-        category: 'One connected workflow',
-        tagline: 'Connect one repeatable process.',
+        window: 'One time setup',
+        category: 'Follow-ups in your existing tools',
+        tagline: 'Keep the next step from slipping.',
         bestFor:
-          'Businesses losing hours to one repeatable process, or losing customers to follow-up that never happens.',
+          'Small teams that need a simple way to follow up with customers, supporters, or enquiries using their existing tools.',
         scope: [
-          'Everything in the automation audit',
-          'One focused workflow, built end to end',
-          'Systems, follow-up, and handoffs connected',
-          'Tested against real business cases',
+          'Focused scoping without a separate audit fee',
+          'One sequence or reminder workflow in one existing tool',
+          'Agreed trigger, timing, and stop conditions',
+          'Setup of your supplied messages',
+          'Testing and a walkthrough for your team',
         ],
-        ctaLabel: 'Start a workflow build',
-        note: 'Multi-system, business-critical, and custom-coded workflows are scoped separately.',
+        ctaLabel: 'Discuss follow-up setup',
+        note: 'Budget $500 to $1,000 for a small setup, subject to scope and the capabilities of your tools. Larger connected workflow builds start at $2,500. Custom code, AI, data cleanup, and migration are quoted separately. Software and usage costs are additional; ongoing support is optional.',
       },
       {
         index: '03',
@@ -378,7 +381,12 @@ export const pricingFaq = {
     {
       question: 'What does a starting price cover?',
       answer:
-        'It covers the scope listed for that engagement. A focused system build covers one primary workflow, while a broader CRM or a more involved integration needs a separate scope. We agree requirements and the final price in writing before building. The definition sprint and automation audit are fixed-fee engagements.',
+        'It covers the scope listed for that engagement. A follow-up setup configures one sequence or reminder workflow in an existing tool. A focused system build creates one custom workflow with limited views, roles, and connections. Broader systems receive a separate quote. We agree scope, timing, support, and the final price in writing before work begins.',
+    },
+    {
+      question: 'Do I need a paid audit or definition sprint first?',
+      answer:
+        'Not for every project. The first conversation is free, and clearly defined small setups and builds include focused scoping. If requirements need investigation, we agree a paid automation audit or system definition sprint first. These are fixed-fee engagements with their own deliverables and the credit terms listed above.',
     },
     {
       question: 'Do the website timelines apply to custom systems?',

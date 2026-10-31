@@ -149,4 +149,4 @@ Possibly. Use the acceptance test to determine whether the owner can also diagno
 
 ## Get a plan for the work you want to connect
 
-Wallace Shift's [workflow automation services](/services#automation) begin with a paid audit to examine repeated work and identify useful improvements. See the [automation engagement options](/pricing#automation) for the audit, build, and managed-support scope before deciding what to commission.
+Wallace Shift's [workflow automation services](/services#automation) can start with a clearly defined follow-up setup in an existing tool. When repeated work needs investigation, a paid audit identifies useful improvements. See the [automation engagement options](/pricing#automation) for setup, audit, larger workflow, and managed-support scope before deciding what to commission.

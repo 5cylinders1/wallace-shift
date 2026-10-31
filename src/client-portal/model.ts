@@ -1,5 +1,12 @@
 export type Cadence = 'once' | 'monthly' | 'quarterly' | 'yearly'
 export type OfflineMethod = 'cash' | 'check' | 'zelle'
+export type InvoiceEmail = {
+  id: string; state: 'pending' | 'sent' | 'failed' | 'review'; startedAt: string
+  sentAt?: string; providerId?: string
+  access?: { hash: string; expiresAt: string; usedAt?: string }
+  /** Server-only immutable payload: retries must send exactly the same message. */
+  payload?: { from: string; to: string[]; reply_to: string; subject: string; html: string; text: string; attachments: { filename: string; content: string }[] }
+}
 export type Invoice = {
   id: string; due: string; amount: number; fee: number
   kind?: 'initial' | 'recurring'
@@ -16,9 +23,10 @@ export type Engagement = {
   /** Optional setup payment. amount/firstDue remain the recurring terms for existing records. */
   initialPayment?: { amount: number; due: string }
   agreement: string; agreementHash: string; issuedAt?: string
+  issueEmail?: InvoiceEmail
   signature?: { name: string; email: string; at: string; hash: string; consent: string }
   invoices: Invoice[]; nextDue?: string; stripeCustomer?: string
-  setup?: { id: string; expiresAt: number }; paymentMethod?: string
+  setup?: { id: string; expiresAt: number; completed?: boolean }; paymentMethod?: string
   autopay?: { enabled: boolean; consent: string; at: string; feeBps: number; agreementHash?: string }
   audit: { at: string; actor: string; action: string }[]
 }
