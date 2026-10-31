@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, readFile } from 'node:fs/promises'
 import { playwright } from '../videos/contractor-previews/runtime.mjs'
 
 const base = process.env.PORTAL_TEST_URL ?? 'http://127.0.0.1:5182'
@@ -34,6 +34,8 @@ await page.route('**/api/client-portal', async route => {
     if (body.action === 'report-payment') { record.invoices[0].method = body.method; record.invoices[0].reference = body.reference; record.invoices[0].reportedAt = new Date().toISOString() }
     if (body.action === 'record-payment') { assert.equal(body.confirmed, true); record.invoices[0].status = 'paid'; record.invoices[0].paidAt = new Date().toISOString() }
     if (body.action === 'create') { assert.equal(body.cadence, 'monthly'); assert.equal(body.amount, 45000); assert.deepEqual(body.initialPayment, { amount: 120000, due: today }); assert.equal(body.firstDue, '2099-01-31'); assert.equal(body.endDate, '2099-04-30'); record = { ...record, ...body, state: 'draft', signature: undefined, invoices: [] }; result.id = record.id }
+    if (body.action === 'issue') { record.state = 'issued'; record.issueEmail = { id: 'sample-mail', state: 'failed', startedAt: new Date().toISOString() }; result.emailStatus = 'failed' }
+    if (body.action === 'retry-issue-email') { record.issueEmail.state = 'sent'; record.issueEmail.sentAt = new Date().toISOString(); result.emailStatus = 'sent' }
     if (body.action === 'logout') loggedIn = false
   }
   await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(result) })
@@ -46,17 +48,18 @@ try {
   await page.getByRole('button', { name: 'Email me a sign in code' }).click()
   await page.getByLabel('Sign in code').fill('123456')
   await page.getByRole('button', { name: 'Sign in', exact: true }).click()
-  await page.getByRole('button', { name: 'Review agreement', exact: true }).click()
+  await page.getByRole('heading', { name: 'Review and sign your agreement', exact: true }).waitFor()
   await page.getByLabel('Full legal name').fill('Sample Signer')
   assert.equal(await page.getByRole('checkbox').count(), 1)
   await page.getByRole('checkbox').check()
-  await page.getByRole('button', { name: 'Sign agreement', exact: true }).click()
+  await page.getByRole('button', { name: 'Sign agreement and continue to Stripe', exact: true }).click()
+  await page.getByRole('button', { name: 'Agreement & signature' }).click()
   await page.getByText('Signed by Sample Signer', { exact: true }).waitFor()
   const downloadEvent = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download signed copy' }).click()
   assert.match((await downloadEvent).suggestedFilename(), /agreement\.txt$/)
   await page.getByRole('button', { name: 'Invoices & payments' }).click()
-  await page.getByRole('button', { name: 'Review payment total' }).click()
+  // The exact payment quote opens automatically after signing.
   await page.getByText('Credit card fee (3%)', { exact: true }).waitFor()
   assert.equal(await page.getByRole('button', { name: 'Pay $2,472.00', exact: true }).isDisabled(), true)
   await page.screenshot({ path: `${output}/client-desktop.png`, fullPage: true })
@@ -95,7 +98,13 @@ try {
   await page.setViewportSize({ width: 1440, height: 1100 })
   await page.screenshot({ path: `${output}/owner-create-desktop.png`, fullPage: true })
   await page.getByRole('button', { name: 'Create draft & review agreement' }).click()
-  await page.getByRole('button', { name: 'Issue agreement & invoices' }).waitFor()
+  await page.getByRole('button', { name: 'Issue agreement & invoices' }).click()
+  await page.getByRole('button', { name: 'Retry invoice email' }).waitFor()
+  await page.reload()
+  await page.getByRole('button', { name: 'Retry invoice email' }).click()
+  await page.getByText('Invoice email sent', { exact: true }).waitFor()
+  assert.equal(await page.getByRole('button', { name: 'Issue agreement & invoices' }).count(), 0)
+  await page.screenshot({ path: `${output}/owner-email-status.png`, fullPage: true })
   admin = false
   record = { ...record, state: 'issued', signature: { name: 'Sample Signer', email: sample.email, at: new Date().toISOString(), hash: 'test-hash' }, nextDue: '2099-01-31', invoices: [{ id: 'SAMPLE-002', due: today, amount: record.amount, fee: 1350, status: 'paid' }] }
   await page.reload()
@@ -104,13 +113,12 @@ try {
     { id: 'SAMPLE-RECURRING', kind: 'recurring', due: '2099-01-31', amount: 45000, fee: 0, status: 'open' },
   ]
   await page.reload()
-  await page.getByRole('button', { name: 'Review payment total', exact: true }).waitFor()
-  assert.equal(await page.getByRole('button', { name: 'Review payment total', exact: true }).count(), 1)
-  await page.getByRole('button', { name: 'Review payment total', exact: true }).click()
+  assert.equal(await page.getByRole('button', { name: 'Review payment total', exact: true }).count(), 0)
   await page.getByRole('button', { name: 'Authorize payment schedule' }).waitFor()
-  assert.match(await page.locator('.cp-check').innerText(), /1,236.00/)
-  assert.match(await page.locator('.cp-check').innerText(), /463.50/)
-  assert.match(await page.locator('.cp-check').innerText(), /2099-04-30/)
+  await page.getByText('Payment authorization terms', { exact: true }).click()
+  assert.match(await page.locator('.cp-payment-terms').innerText(), /1,236.00/)
+  assert.match(await page.locator('.cp-payment-terms').innerText(), /463.50/)
+  assert.match(await page.locator('.cp-payment-terms').innerText(), /2099-04-30/)
   assert.equal(await page.getByRole('button', { name: 'Authorize payment schedule' }).isDisabled(), true)
   await page.screenshot({ path: `${output}/split-schedule-desktop.png`, fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 })
@@ -126,8 +134,19 @@ try {
   await page.getByRole('button', { name: 'Authorize future payments', exact: true }).click()
   assert.equal(record.autopay.enabled, true)
   assert.equal(sent.some(action => action.action === 'pay'), false, 'This test must not submit a payment')
+  if (process.env.PORTAL_EMAIL_PREVIEW_DIR) {
+    const html = await readFile(`${process.env.PORTAL_EMAIL_PREVIEW_DIR}/invoice-email.html`, 'utf8')
+    for (const [name, width] of [['desktop', 900], ['mobile', 390]]) {
+      const emailPage = await browser.newPage({ viewport: { width, height: 1100 } })
+      await emailPage.setContent(html)
+      assert.equal(await emailPage.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'Invoice email must fit its viewport')
+      assert.equal(await emailPage.getByRole('heading', { level: 1 }).count(), 1)
+      await emailPage.screenshot({ path: `${output}/invoice-email-${name}.png`, fullPage: true })
+      await emailPage.close()
+    }
+  }
   assert.deepEqual(errors, [])
-  console.log(JSON.stringify({ passed: true, scope: 'Mocked sample records; no payments or emails sent', screenshots: output, checked: ['sign in', 'signature and download', 'fee disclosure and consent gate', 'offline pending state', 'owner receipt confirmation', 'separate initial and recurring terms', 'optional initial payment', 'recurring end date', 'per invoice quote and consent', 'future automatic payment authorization', '390px overflow', 'browser runtime errors'] }, null, 2))
+  console.log(JSON.stringify({ passed: true, scope: 'Mocked sample records; no payments or emails sent', screenshots: output, checked: ['sign in', 'signature and download', 'fee disclosure and consent gate', 'offline pending state', 'owner receipt confirmation', 'issue invoice email failure and retry', 'separate initial and recurring terms', 'optional initial payment', 'recurring end date', 'per invoice quote and consent', 'future automatic payment authorization', '390px overflow', 'browser runtime errors'] }, null, 2))
 } catch (error) {
   await page.screenshot({ path: `${output}/failure.png`, fullPage: true })
   console.error(JSON.stringify({ errors, failedRequests, body: (await page.locator('body').innerText()).slice(0, 2500), html: (await page.content()).slice(0, 2500) }))

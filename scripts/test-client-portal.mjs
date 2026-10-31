@@ -31,7 +31,7 @@ const { hash, ownerEmail } = await load('api/_lib/portal-auth.ts')
 const { nextDueDate, createInvoice } = await load('src/client-portal/model.ts')
 const { surchargeBps, verifyWebhook, charge, reconcileIntent, resetFailedPayment } = await load('api/_lib/portal-stripe.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch
-let store, stripeCalls, stripeResult, deliveredEmails, failStripe
+let store, stripeCalls, stripeResult, deliveredEmails, failStripe, emailMode, emailRequests, acceptedEmails
 const owner = { email: 'owner@example.test', admin: true }
 const client = { email: 'client@example.test', admin: false }
 const adminToken = 'a'.repeat(64), clientToken = 'b'.repeat(64), strangerToken = 'c'.repeat(64)
@@ -53,7 +53,7 @@ const save = entries => store.values.set('portal:engagements', JSON.stringify(en
 const ledger = () => JSON.parse(store.values.get('portal:engagements') ?? '[]')
 beforeEach(() => {
   Object.assign(process.env, { DEMO_AUDIT_REDIS_URL: 'https://redis.example.test', DEMO_AUDIT_REDIS_TOKEN: 'fake', PORTAL_ADMIN_EMAIL: owner.email, STRIPE_SECRET_KEY: 'sk_test_fake', STRIPE_PUBLISHABLE_KEY: 'pk_test_fake', STRIPE_WEBHOOK_SECRET: 'whsec_fake', RESEND_API_KEY: 'fake', CONTACT_FROM_EMAIL: 'billing@example.test', PORTAL_ZELLE_INSTRUCTIONS: 'Use the verified test instructions.', PORTAL_SURCHARGE_APPROVED: 'true', PORTAL_CARD_COST_BPS: '300', PORTAL_SURCHARGE_CAP_BPS: '300', PORTAL_SURCHARGE_STATES: 'KS' })
-  store = createAgreementTestStore(); stripeCalls = []; stripeResult = undefined; deliveredEmails = []; failStripe = false
+  store = createAgreementTestStore(); stripeCalls = []; stripeResult = undefined; deliveredEmails = []; failStripe = false; emailMode = 'ok'; emailRequests = []; acceptedEmails = new Map()
   for (const [token, email] of [[adminToken, owner.email], [clientToken, client.email], [strangerToken, 'stranger@example.test']]) store.values.set(`portal:session:${hash(token)}`, JSON.stringify({ email }))
   globalThis.fetch = async (url, init) => {
     if (String(url).startsWith('https://redis.example.test')) {
@@ -69,9 +69,25 @@ beforeEach(() => {
       }
       throw new Error(`Unexpected Redis operation: ${verb}`)
     }
-    if (url === 'https://api.resend.com/emails') { deliveredEmails.push(JSON.parse(init.body)); return Response.json({ id: 'test-email' }) }
+    if (url === 'https://api.resend.com/emails') {
+      const key = init.headers['idempotency-key']; emailRequests.push({ key, body: init.body })
+      if (emailMode === 'reject') return Response.json({ message: 'Temporary failure' }, { status: 503 })
+      if (acceptedEmails.has(key)) {
+        if (acceptedEmails.get(key) !== init.body) return Response.json({ message: 'Payload changed' }, { status: 409 })
+      } else { acceptedEmails.set(key, init.body); deliveredEmails.push(JSON.parse(init.body)) }
+      if (emailMode === 'lost-response') throw new Error('Response lost after provider acceptance')
+      return Response.json({ id: 'test-email' })
+    }
     if (String(url).startsWith('https://api.stripe.com/v1/')) {
       stripeCalls.push({ url, init }); const path = String(url).split('/v1/')[1]
+      if (path === 'checkout/sessions') {
+        const params = new URLSearchParams(init.body)
+        assert.equal(params.has('setup_intent_data[usage]'), false)
+        assert.equal(params.get('currency'), 'usd')
+        return Response.json({ id: 'cs_test_setup', url: 'https://checkout.stripe.com/test', expires_at: Date.now() / 1000 + 3600 })
+      }
+      if (path === 'checkout/sessions/cs_test_setup') return Response.json({ status: 'complete', customer: 'cus_test', setup_intent: 'seti_test' })
+      if (path === 'setup_intents/seti_test') return Response.json({ status: 'succeeded', customer: 'cus_test', payment_method: 'pm_test' })
       if (path === 'payment_methods/pm_test') return Response.json(card)
       if (failStripe) throw new Error('Simulated lost network response')
       if (path === 'payment_intents') {
@@ -401,4 +417,151 @@ test('inclusive recurring end date stops generation and overdue automatic attemp
   await assert.rejects(charge(e, e.invoices[0], 'http://localhost:5176', true), /payment_not_ready/)
   assert.equal((await call({ action: 'pay', id: e.id, invoiceId: e.invoices[0].id, total: 10300, consent: true })).statusCode, 200)
   assert.equal(ledger()[0].invoices[0].attempt.automatic, false)
+})
+
+function unissued(overrides = {}) {
+  return draft({ ...engagement('once', false), ...overrides }, owner.email)
+}
+test('issue emails the client invoice and agreement, with an authenticated portal link', async () => {
+  const e = unissued(); save([e])
+  const result = await call({ action: 'issue', id: e.id }, adminToken)
+  assert.equal(result.statusCode, 200); assert.equal(result.body.emailStatus, 'sent')
+  const saved = ledger()[0]; assert.equal(saved.state, 'issued'); assert.equal(saved.invoices.length, 1)
+  assert.equal(saved.signature, undefined); assert.equal(saved.invoices[0].status, 'open')
+  assert.equal(deliveredEmails.length, 1)
+  const email = deliveredEmails[0]
+  assert.deepEqual(email.to, [client.email]); assert.equal(email.reply_to, owner.email)
+  assert.match(email.text, /\$100.00/); assert.ok(email.text.includes(today)); assert.ok(email.text.includes(saved.invoices[0].id))
+  assert.ok(email.html.includes(`http://localhost:5176/client-portal?engagement=${e.id}`))
+  assert.match(email.html, /private link signs you in/); assert.match(email.html, /before making the first payment/)
+  assert.match(email.subject, /Local test/); assert.match(email.text, /only on the computer/)
+  assert.equal(email.attachments.length, 2)
+  assert.match(Buffer.from(email.attachments[0].content, 'base64').toString(), /Service amount \(USD\): \$100.00/)
+  assert.ok(Buffer.from(email.attachments[1].content, 'base64').toString().includes(e.agreement))
+  assert.equal(saved.issueEmail.providerId, 'test-email')
+  assert.equal((await call(undefined, adminToken)).body.engagements[0].issueEmail.payload, undefined)
+  assert.equal((await call()).body.engagements[0].issueEmail, undefined)
+  assert.equal(stripeCalls.length, 0)
+})
+test('recurring issue email includes distinct invoices, start/end dates and fee disclosure', async () => {
+  const e = unissued({ cadence: 'monthly', amount: 45000, firstDue: '2099-01-31', endDate: '2099-04-30', initialPayment: { amount: 120000, due: today } }); save([e])
+  await call({ action: 'issue', id: e.id }, adminToken)
+  const email = deliveredEmails[0]
+  assert.equal(ledger()[0].invoices.length, 2); assert.equal(email.attachments.length, 3)
+  if (process.env.PORTAL_EMAIL_PREVIEW_DIR) { await mkdir(process.env.PORTAL_EMAIL_PREVIEW_DIR, { recursive: true }); await writeFile(join(process.env.PORTAL_EMAIL_PREVIEW_DIR, 'invoice-email.html'), email.html) }
+  for (const text of ['$1,200.00', '$450.00', '2099-01-31', '2099-04-30', 'separate from recurring charges', 'Signing alone does not authorize', 'surcharge']) assert.ok(email.text.includes(text), text)
+})
+test('duplicate and concurrent issue clicks create one set of invoices and one provider email', async () => {
+  const e = unissued(); save([e])
+  const results = await Promise.all([call({ action: 'issue', id: e.id }, adminToken), call({ action: 'issue', id: e.id }, adminToken)])
+  assert.ok(results.every(r => r.statusCode === 200))
+  assert.equal(ledger()[0].invoices.length, 1); assert.equal(deliveredEmails.length, 1)
+  assert.equal(new Set(emailRequests.map(v => v.key)).size, 1)
+  const count = emailRequests.length
+  await call({ action: 'issue', id: e.id }, adminToken)
+  assert.equal(emailRequests.length, count)
+})
+test('missing mail settings leave draft untouched and clients cannot issue or email agreements', async () => {
+  const e = unissued(); save([e]); delete process.env.RESEND_API_KEY
+  assert.equal((await call({ action: 'issue', id: e.id }, adminToken)).body.error, 'invoice_email_not_configured')
+  assert.equal(ledger()[0].state, 'draft'); assert.equal(ledger()[0].invoices.length, 0)
+  for (const action of ['issue', 'retry-issue-email']) assert.equal((await call({ action, id: e.id })).statusCode, 403)
+  assert.equal(emailRequests.length, 0)
+})
+test('email failure preserves issued records and retry reuses the frozen payload and key', async () => {
+  const e = unissued(); save([e]); emailMode = 'reject'
+  const result = await call({ action: 'issue', id: e.id }, adminToken)
+  assert.equal(result.statusCode, 200); assert.equal(result.body.emailStatus, 'failed')
+  assert.equal(ledger()[0].state, 'issued'); assert.equal(ledger()[0].invoices.length, 1)
+  emailMode = 'ok'; process.env.CONTACT_FROM_EMAIL = 'changed@example.test'
+  const retry = await call({ action: 'retry-issue-email', id: e.id }, adminToken)
+  assert.equal(retry.body.emailStatus, 'sent')
+  assert.equal(emailRequests[0].key, emailRequests[1].key); assert.equal(emailRequests[0].body, emailRequests[1].body)
+  assert.equal(deliveredEmails.length, 1); assert.equal(ledger()[0].invoices.length, 1)
+})
+test('lost provider response is deduplicated on retry; stale unknown sends require review', async () => {
+  const e = unissued(); save([e]); emailMode = 'lost-response'
+  assert.equal((await call({ action: 'issue', id: e.id }, adminToken)).body.emailStatus, 'failed')
+  assert.equal(deliveredEmails.length, 1)
+  emailMode = 'ok'
+  assert.equal((await call({ action: 'retry-issue-email', id: e.id }, adminToken)).body.emailStatus, 'sent')
+  assert.equal(deliveredEmails.length, 1)
+  const unknown = ledger()[0]; unknown.issueEmail.state = 'pending'; unknown.issueEmail.startedAt = '2020-01-01T00:00:00Z'; save([unknown])
+  const count = emailRequests.length
+  assert.equal((await call({ action: 'retry-issue-email', id: e.id }, adminToken)).body.emailStatus, 'review')
+  assert.equal(emailRequests.length, count)
+})
+test('invoice email escapes client content and cannot be redirected by request fields', async () => {
+  const e = unissued({ client: '<script>alert(1)</script>', title: 'Project\r\nBcc: attacker@example.test' }); save([e])
+  const result = await call({ action: 'issue', id: e.id, email: 'attacker@example.test', origin: 'https://attacker.example' }, adminToken)
+  assert.equal(result.statusCode, 200)
+  const email = deliveredEmails[0]
+  assert.deepEqual(email.to, [client.email]); assert.ok(!email.html.includes('<script>'))
+  assert.ok(email.html.includes('&lt;script&gt;')); assert.ok(!/[\r\n]/.test(email.subject))
+  assert.ok(!email.html.includes('https://attacker.example'))
+})
+test('previously issued unsigned agreements can send invoices once without reissuing', async () => {
+  const e = engagement('once', false); save([e]); const invoiceId = e.invoices[0].id
+  assert.equal((await call({ action: 'retry-issue-email', id: e.id }, adminToken)).body.emailStatus, 'sent')
+  assert.equal(ledger()[0].invoices[0].id, invoiceId); assert.equal(ledger()[0].invoices.length, 1)
+  assert.equal(deliveredEmails.length, 1)
+})
+
+function invitationToken(email) { return email.html.match(/#access=([a-f0-9]{64})/)[1] }
+function sessionCookie(response) { return response.headers['set-cookie'].find(c => c.startsWith('wallace_client_session=')).split(';')[0].split('=')[1] }
+test('private invoice link creates a client session scoped to one agreement and requires signature', async () => {
+  const e = engagement('monthly', false), other = engagement('once', false)
+  save([e, other])
+  await call({ action: 'retry-issue-email', id: e.id }, adminToken)
+  const token = invitationToken(deliveredEmails[0])
+  const opened = await call({ action: 'open-invitation', id: e.id, token }, '')
+  assert.equal(opened.statusCode, 200)
+  const session = sessionCookie(opened)
+  const view = await call(undefined, session)
+  assert.equal(view.body.admin, false)
+  assert.deepEqual(view.body.engagements.map(e => e.id), [e.id])
+  assert.equal(view.body.engagements[0].signature, undefined)
+  assert.equal((await call({ action: 'setup-card', id: e.id }, session)).body.error, 'signature_required')
+  assert.equal((await call({ action: 'refresh', id: other.id }, session)).statusCode, 404)
+  assert.equal((await call({ action: 'create' }, session)).statusCode, 404)
+  assert.equal((await call({ action: 'open-invitation', id: e.id, token }, '')).statusCode, 401)
+  assert.equal((await call({ action: 'open-invitation', id: e.id, token }, session)).statusCode, 200)
+  const signed = await call({ action: 'sign', id: e.id, name: 'Test client', consent: true, agreementHash: e.agreementHash }, session)
+  assert.equal(signed.statusCode, 200)
+  assert.equal(ledger()[0].autopay, undefined)
+  assert.equal(stripeCalls.length, 0)
+  assert.equal(JSON.stringify(view.body).includes(token), false)
+  assert.equal(JSON.stringify((await call(undefined, adminToken)).body).includes(hash(token)), false)
+})
+test('expired, altered, wrong-record and cross-origin links cannot establish a session', async () => {
+  const e = engagement('once', false); save([e])
+  await call({ action: 'retry-issue-email', id: e.id }, adminToken)
+  const token = invitationToken(deliveredEmails[0])
+  for (const body of [{ id: 'wrong', token }, { id: e.id, token: 'f'.repeat(64) }]) {
+    const result = await call({ action: 'open-invitation', ...body }, '')
+    assert.equal(result.statusCode, 401); assert.equal(result.headers['set-cookie'], undefined)
+  }
+  const cross = await call({ action: 'open-invitation', id: e.id, token }, '', { headers: { host: 'localhost:5176', origin: 'https://evil.example', 'content-type': 'application/json' } })
+  assert.equal(cross.statusCode, 403)
+  const expired = ledger(); expired[0].issueEmail.access.expiresAt = new Date(Date.now() - 1).toISOString(); save(expired)
+  assert.equal((await call({ action: 'open-invitation', id: e.id, token }, '')).body.error, 'invitation_expired')
+})
+test('an invoice link to the owner email never grants admin access', async () => {
+  const e = engagement('once', false); e.email = owner.email; save([e])
+  await call({ action: 'retry-issue-email', id: e.id }, adminToken)
+  const opened = await call({ action: 'open-invitation', id: e.id, token: invitationToken(deliveredEmails[0]) }, adminToken)
+  const session = sessionCookie(opened)
+  assert.equal((await call(undefined, session)).body.admin, false)
+  assert.equal((await call({ action: 'issue', id: e.id }, session)).statusCode, 403)
+})
+test('Stripe setup uses valid Checkout parameters and return processing is idempotent', async () => {
+  const e = engagement(); delete e.paymentMethod; save([e])
+  const setup = await call({ action: 'setup-card', id: e.id })
+  assert.equal(setup.statusCode, 200); assert.match(setup.body.url, /^https:\/\/checkout.stripe.com/)
+  assert.equal((await call({ action: 'finish-setup', id: e.id, sessionId: 'wrong' })).statusCode, 400)
+  assert.equal((await call({ action: 'finish-setup', id: e.id, sessionId: 'cs_test_setup' })).statusCode, 200)
+  const before = ledger(); before[0].autopay = { enabled: true, feeBps: 0 }; save(before)
+  assert.equal((await call({ action: 'finish-setup', id: e.id, sessionId: 'cs_test_setup' })).statusCode, 200)
+  assert.equal(ledger()[0].autopay.enabled, true)
+  assert.equal(stripeCalls.some(c => c.url.endsWith('/payment_intents')), false)
 })

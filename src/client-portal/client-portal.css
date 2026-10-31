@@ -159,3 +159,38 @@
   .client-portal, .cp-document { background: white; color: black; }
   .cp-document { border: 0; padding: 0; }
 }
+
+.cp-email-status { margin: 0 0 24px; font-size: 13px; color: #52616b; }
+.cp-email-status button { margin-top: 12px; }
+
+.cp-client-flow { display: block; }
+.cp-client-flow .cp-main { max-width: 920px; margin: 0 auto; padding-top: 32px; }
+.cp-progress { display: flex; list-style: none; padding: 0 0 24px; margin: 0 0 30px; border-bottom: 1px solid #c7d1d7; gap: 24px; }
+.cp-progress li { display: flex; align-items: center; gap: 10px; flex: 1; color: #52616b; font-size: 13px; }
+.cp-progress li > span { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border: 1px solid #a7b9c5; border-radius: 50%; font-variant-numeric: tabular-nums; }
+.cp-progress li[aria-current] { color: #175c99; font-weight: 700; }
+.cp-progress li[aria-current] > span, .cp-progress li.is-complete > span { background: #175c99; border-color: #175c99; color: #fff; }
+.cp-next-step { margin-bottom: 30px; }
+.cp-next-step p { max-width: 65ch; margin-top: 14px; color: #445965; font-size: 16px; }
+.cp-client-flow .cp-project-heading h1 { font-size: 20px; }
+.cp-client-flow .cp-project-heading { margin-bottom: 24px; }
+.cp-client-flow .cp-project-heading > .cp-status { display: none; }
+.cp-client-flow .cp-document { font-size: 15px; max-width: none; }
+.cp-client-flow .cp-sign-form { max-width: none; }
+.cp-client-flow .cp-check { font-size: 14px; }
+.cp-sign-next { margin: 18px 0 !important; color: #445965; }
+.cp-other-invoices { margin: 28px 0; border-top: 1px solid #c7d1d7; padding-top: 20px; }
+.cp-other-invoices summary { cursor: pointer; font-weight: 600; color: #175c99; }
+.cp-invoice-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid #c7d1d7; }
+.cp-invoice-row p { font-size: 13px; color: #52616b; margin-top: 6px; }
+@media (max-width: 650px) {
+  .cp-progress { gap: 12px; }
+  .cp-progress li { flex-direction: column; align-items: flex-start; font-size: 12px; gap: 8px; }
+  .cp-next-step h1 { font-size: 30px; }
+  .cp-invoice-row { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .cp-client-flow .cp-sign-form > .cp-primary { width: 100%; }
+}
+.cp-next-step h1:focus { outline: none; }
+.cp-payment-terms { margin: 20px 0; font-size: 13px; }
+.cp-payment-terms summary { cursor: pointer; color: #175c99; text-decoration: underline; text-underline-offset: 3px; }
+.cp-payment-terms p { margin-top: 14px; color: #445965; }

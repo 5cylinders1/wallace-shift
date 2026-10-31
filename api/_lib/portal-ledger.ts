@@ -36,7 +36,7 @@ export function draft(body: Record<string, unknown>, actor: string): Engagement 
   return e
 }
 export function accessible(entries: Engagement[], id: unknown, who: Identity): Engagement {
-  const e = entries.find(v => v.id === id && (who.admin || (v.email === who.email && v.state !== 'draft')))
+  const e = entries.find(v => v.id === id && (!who.engagementId || who.engagementId === v.id) && (who.admin || (v.email === who.email && v.state !== 'draft')))
   if (!e) throw new DemoError('not_found', 404)
   return e
 }

@@ -121,13 +121,13 @@ export const serviceRecommendations: Record<ServiceKey, ServiceRecommendation> =
       key: 'custom-web-app',
       title: 'Custom CRM & business system',
       description:
-        'Map your customer records, follow-up, and daily work before deciding what to build or connect. A definition sprint establishes the scope.',
+        'Start with one useful workflow. Small builds include focused scoping; a definition sprint establishes the plan for larger systems or unclear requirements.',
     },
     'automation-integration': {
       key: 'automation-integration',
       title: 'Connected workflows',
       description:
-        'Trace repeated tasks and handoffs, then scope connections and follow-up rules. An automation audit establishes the priorities.',
+        'Start with a clearly defined follow-up setup, or use an automation audit to establish priorities when repeated tasks and handoffs need investigation.',
     },
     'ai-integration': {
       key: 'ai-integration',

@@ -2,13 +2,13 @@ import { createHash, randomBytes, randomInt } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { DemoError, demoAdminEmail, demoCookie, nodeHeader, normalizeDemoEmail, readDemoCookie } from './demo-access.js'
 import { consumeVerificationCode, reserveVerificationCode } from './demo-agreement-store.js'
-import { allEngagements, getValue, redis, setValue } from './portal-store.js'
+import { allEngagements, getValue, mutateLedger, redis, setValue } from './portal-store.js'
 
 export const hash = (text: string) => createHash('sha256').update(text).digest('hex')
 const SESSION = 'wallace_client_session'
 const PENDING = 'wallace_client_pending'
 type Pending = { nonce: string; recipientHash: string; exp: number; email: string }
-export type Identity = { email: string; admin: boolean }
+export type Identity = { email: string; admin: boolean; engagementId?: string }
 export function ownerEmail(): string {
   const email = process.env.PORTAL_ADMIN_EMAIL?.trim()
   try { return email ? normalizeDemoEmail(email) : demoAdminEmail() }
@@ -17,10 +17,32 @@ export function ownerEmail(): string {
 export async function identity(req: IncomingMessage): Promise<Identity | null> {
   const token = readDemoCookie(nodeHeader(req, 'cookie'), SESSION)
   if (!/^[a-f0-9]{64}$/.test(token)) return null
-  const session = await getValue<{ email: string }>(`session:${hash(token)}`)
-  return session ? { email: session.email, admin: session.email === ownerEmail() } : null
+  const session = await getValue<{ email: string; engagementId?: string }>(`session:${hash(token)}`)
+  return session ? { email: session.email, admin: !session.engagementId && session.email === ownerEmail(), ...(session.engagementId ? { engagementId: session.engagementId } : {}) } : null
 }
 export async function login(req: IncomingMessage, res: ServerResponse, origin: string, body: Record<string, unknown>): Promise<void> {
+  if (body.action === 'open-invitation') {
+    if (typeof body.token !== 'string' || !/^[a-f0-9]{64}$/.test(body.token)) throw new DemoError('invitation_expired', 401)
+    const digest = hash(body.token)
+    const current = await identity(req)
+    const grant = await mutateLedger(entries => {
+      const e = entries.find(entry => entry.id === body.id && entry.state !== 'draft' && entry.issueEmail?.access?.hash === digest)
+      const access = e?.issueEmail?.access
+      if (!e || !access || Date.parse(access.expiresAt) <= Date.now()) throw new DemoError('invitation_expired', 401)
+      if (access.usedAt) {
+        if (current?.engagementId === e.id && current.email === e.email) return { email: e.email, engagementId: e.id, existing: true }
+        throw new DemoError('invitation_expired', 401)
+      }
+      access.usedAt = new Date().toISOString()
+      return { email: e.email, engagementId: e.id, existing: false }
+    })
+    if (!grant.existing) {
+      const token = randomBytes(32).toString('hex')
+      await setValue(`session:${hash(token)}`, { email: grant.email, engagementId: grant.engagementId }, 8 * 3600)
+      res.setHeader('set-cookie', [demoCookie(SESSION, token, origin, 8 * 3600), demoCookie(PENDING, '', origin, 0)])
+    }
+    return
+  }
   if (body.action === 'logout') {
     const token = readDemoCookie(nodeHeader(req, 'cookie'), SESSION)
     if (token) await redis(['DEL', `portal:session:${hash(token)}`])
