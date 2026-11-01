@@ -94,3 +94,6 @@ dist-ssr
 /*.[mM][oO][vV]
 /*.[wW][eE][bB][mM]
 /*.[mM]4[vV]
+
+# Python bytecode from the Blender model scripts.
+scripts/water/__pycache__/

@@ -239,7 +239,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|demos\/bucyrus-auto|demos\/lawn|demos\/painting)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -273,7 +273,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -301,6 +301,7 @@ function roofingDemoRoutes(): Plugin {
         '/stillwater': '/demos/pools/index.html',
         '/trawsome': '/demos/lawn/index.html',
         '/complete-painting': '/demos/painting/index.html',
+        '/riffle': '/demos/water/index.html',
         '/mitre': '/demos/cabinetry-2/index.html',
         '/bucyrus-auto': '/demos/bucyrus-auto/index.html',
       }
@@ -318,7 +319,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `/demos/cabinetry/index.html${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|painting|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|painting|water|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -349,6 +350,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         bucyrusAuto: 'demos/bucyrus-auto/index.html',
         lawnTrawsome: 'demos/lawn/index.html',
         paintingComplete: 'demos/painting/index.html',
+        waterRiffle: 'demos/water/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',

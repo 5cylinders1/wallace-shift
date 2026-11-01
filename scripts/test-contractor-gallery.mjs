@@ -22,11 +22,12 @@ const names = {
   northvane: 'Northvane Roofing', 'alder-stone': 'Alder & Stone', contour: 'Contour Roofing',
   halcyon: 'Halcyon Roofworks', velar: 'Velar Roof Atelier', stratum: 'Stratum Roofing Co.',
   datum: 'Datum', tambour: 'Tambour', mitre: 'Mitre & Rift', stillwater: 'Stillwater Pool Co.',
-  'roofing-crm': 'Roofing CRM workspace', trawsome: 'Trawsome Lawn Care', 'complete-painting': 'Complete Painting',
+  'roofing-crm': 'Roofing CRM workspace', trawsome: 'Trawsome Lawn Care', 'complete-painting': 'Complete Painting', riffle: 'Riffle Water Co.',
 }
 const openDemoPaths = {
   trawsome: { local: '/demos/lawn/', production: '/trawsome' },
   'complete-painting': { local: '/demos/painting/', production: '/complete-painting' },
+  riffle: { local: '/demos/water/', production: '/riffle' },
 }
 const report = {
   target: baseUrl, recordedAt: new Date().toISOString(), mode: 'unauthenticated browser lab',
@@ -137,13 +138,13 @@ try {
   check('CRM separately categorized', await page.locator('#category-business article').count() === 1 && await page.locator('#category-business').getByRole('heading', { name: names['roofing-crm'], exact: true }).count() === 1)
   check('No initial video requests', mp4Requests.length === 0, mp4Requests)
   check('No initial mounted video elements', await page.locator('video').count() === 0)
-  check('Seven category jump links', await page.getByRole('navigation', { name: 'Browse demos by trade' }).getByRole('link').count() === 7)
+  check('Eight category jump links', await page.getByRole('navigation', { name: 'Browse demos by trade' }).getByRole('link').count() === 8)
   for (const id of contractorOpenDemoIds) {
     const card = page.getByRole('article').filter({ has: page.getByRole('heading', { name: names[id], exact: true }) })
     const expectedPath = new URL(baseUrl).hostname === 'contractors.wallaceshift.com' ? openDemoPaths[id].production : openDemoPaths[id].local
     check(`${id}: open tile has no film or access request`, await card.getByRole('button', { name: 'Watch demo' }).count() === 0 && await card.getByRole('link', { name: 'Request interactive access' }).count() === 0)
     check(`${id}: open tile links to the public demo`, await card.getByRole('link', { name: 'Open the demo' }).getAttribute('href') === expectedPath && await card.getByRole('link', { name: `Open the ${names[id]} demo` }).getAttribute('href') === expectedPath)
-    check(`${id}: open tile discloses a real-business concept`, /real local business/.test(await card.locator('.ct-demo-note').innerText()))
+    check(`${id}: open tile discloses what it is`, /real local business|Fictional demo brand/.test(await card.locator('.ct-demo-note').innerText()))
     const poster = card.locator('img')
     await poster.scrollIntoViewIfNeeded()
     check(`${id}: open tile poster loads without access`, await poster.evaluate(image => image.complete && image.naturalWidth > 0 || new Promise(done => {
@@ -153,7 +154,7 @@ try {
     })))
   }
   check('Every poster has descriptive alt text', await page.locator('article img').evaluateAll(images => images.every(image => image.alt.trim().length > 12)))
-  for (const category of ['pools', 'lawn', 'painting', 'foundation', 'business']) check(`${category}: single-item navigation absent`, await page.locator(`#category-${category} .ct-slider-controls`).count() === 0)
+  for (const category of ['pools', 'lawn', 'painting', 'water', 'foundation', 'business']) check(`${category}: single-item navigation absent`, await page.locator(`#category-${category} .ct-slider-controls`).count() === 0)
   const roofRow = page.locator('#slider-roofing')
   await roofRow.scrollIntoViewIfNeeded()
   check('Roofing row visibly overflows', await roofRow.evaluate(row => row.scrollWidth > row.clientWidth + 100))

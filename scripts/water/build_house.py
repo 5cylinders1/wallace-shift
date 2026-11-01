@@ -1,6 +1,6 @@
 """Models the Riffle cutaway house for baking.
 
-Run inside background Blender (see scripts/water/README.md). Geometry is written
+Run inside background Blender (see docs/demos/water.md). Geometry is written
 in the live engine's axes (three.js: +x right, +y up, +z toward the viewer) and
 converted once on the way into Blender. Everything is procedural and CC0 by
 construction: no downloaded meshes or textures.
@@ -1051,12 +1051,12 @@ def build_kitchen():
     cyl_y(zone, 'steel_dark', fr['x'] - 0.05, BACK + 0.75, 0.012, Y_G + 0.9, Y_G + 1.5, 8)
     cyl_y(zone, 'steel_dark', fr['x'] + 0.05, BACK + 0.75, 0.012, Y_G + 0.9, Y_G + 1.5, 8)
     # Slim dining table well forward, so nothing hides the sink wall.
-    tx0, tx1, tz0, tz1 = -3.75, -1.15, 0.75, 1.65
+    tx0, tx1, tz0, tz1 = -1.5, 0.75, 0.55, 1.45
     ty = Y_G + 0.74
     soft(zone, 'walnut', tx0, tx1, ty, ty + 0.04, tz0, tz1, 0.012, 1)
     for sx, sz in ((tx0 + 0.08, tz0 + 0.08), (tx1 - 0.08, tz0 + 0.08), (tx0 + 0.08, tz1 - 0.08), (tx1 - 0.08, tz1 - 0.08)):
         cyl_y(zone, 'black', sx, sz, 0.016, Y_G, ty, 8)
-    for x in (-3.2, -2.45, -1.7):
+    for x in (-0.95, -0.38, 0.2):
         pendant(zone, x, C_G - 0.72, (tz0 + tz1) / 2, C_G, r=0.075)
         # Chairs on the far side only: the near side stays clear for the camera.
         cz = tz0 - 0.22
@@ -1066,9 +1066,9 @@ def build_kitchen():
             cyl_y(zone, 'black', x + sx, cz + sz, 0.011, Y_G, Y_G + 0.43, 6)
         for sx in (-0.17, 0.17):
             cyl_y(zone, 'black', x + sx, cz - 0.21, 0.008, Y_G + 0.47, Y_G + 0.7, 6)
-    lathe(zone, 'porcelain', [(0.0001, ty + 0.04), (0.09, ty + 0.04), (0.16, ty + 0.11), (0.145, ty + 0.11), (0.0001, ty + 0.06)], -2.45, (tz0 + tz1) / 2, 22)
+    lathe(zone, 'porcelain', [(0.0001, ty + 0.04), (0.09, ty + 0.04), (0.16, ty + 0.11), (0.145, ty + 0.11), (0.0001, ty + 0.06)], -0.38, (tz0 + tz1) / 2, 22)
     for dx, dz in ((-0.05, 0.02), (0.05, 0.04), (0.0, -0.05)):
-        ball(zone, 'terracotta', -2.45 + dx, ty + 0.115, (tz0 + tz1) / 2 + dz, 0.042, segs=10, rows=7)
+        ball(zone, 'terracotta', -0.38 + dx, ty + 0.115, (tz0 + tz1) / 2 + dz, 0.042, segs=10, rows=7)
     # Lived in: a jar and a plant by the window, a soap dispenser.
     lathe(zone, 'terracotta', [(0.0001, top + 0.035), (0.06, top + 0.035), (0.075, top + 0.16), (0.066, top + 0.16), (0.0001, top + 0.05)], sink_x - 0.72, BACK + 0.2, 16)
     box(zone, 'stone', -5.72, -5.68, Y_G + toe, top, BACK, BACK + d, drop=('back',))
@@ -1252,9 +1252,9 @@ def build_all():
 
 LIGHTS = [
     # name, kind, position (three axes), power W, colour, size
-    ('kitchen_pend1', 'POINT', (-3.2, 2.42, 1.2), 15, (1.0, 0.70, 0.42), 0.08),
-    ('kitchen_pend2', 'POINT', (-2.45, 2.42, 1.2), 15, (1.0, 0.70, 0.42), 0.08),
-    ('kitchen_pend3', 'POINT', (-1.7, 2.42, 1.2), 15, (1.0, 0.70, 0.42), 0.08),
+    ('kitchen_pend1', 'POINT', (-0.95, 2.42, 1.0), 13, (1.0, 0.70, 0.42), 0.08),
+    ('kitchen_pend2', 'POINT', (-0.38, 2.42, 1.0), 13, (1.0, 0.70, 0.42), 0.08),
+    ('kitchen_pend3', 'POINT', (0.2, 2.42, 1.0), 13, (1.0, 0.70, 0.42), 0.08),
     ('kitchen_wall', 'POINT', (-3.2, 2.7, -1.2), 26, (1.0, 0.78, 0.56), 0.5),
     ('kitchen_wall2', 'POINT', (-1.0, 2.7, -1.2), 20, (1.0, 0.78, 0.56), 0.5),
     ('kitchen_fill', 'AREA', (-2.4, 3.1, 0.2), 48, (1.0, 0.80, 0.60), 4.0),
@@ -1263,7 +1263,7 @@ LIGHTS = [
     ('living_table', 'POINT', (1.41, 1.6, 0.32), 14, (1.0, 0.66, 0.38), 0.1),
     ('bath_key', 'AREA', (-3.4, 6.0, -0.9), 62, (1.0, 0.86, 0.72), 2.2),
     ('bath_mirror', 'POINT', (-2.5, 5.0, -2.45), 10, (1.0, 0.78, 0.56), 0.15),
-    ('bath_shower', 'POINT', (-5.2, 5.4, -1.9), 14, (1.0, 0.88, 0.76), 0.2),
+    ('bath_shower', 'POINT', (-5.0, 5.3, -1.1), 6, (1.0, 0.88, 0.76), 0.3),
     ('bed_lamp1', 'POINT', (2.75, 4.55, -1.65), 18, (1.0, 0.64, 0.36), 0.1),
     ('bed_lamp2', 'POINT', (5.35, 4.55, -1.65), 18, (1.0, 0.64, 0.36), 0.1),
     ('bed_fill', 'AREA', (2.5, 6.6, 0.3), 60, (1.0, 0.78, 0.58), 4.0),
