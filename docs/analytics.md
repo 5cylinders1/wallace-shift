@@ -4,15 +4,15 @@ The public site uses Google Analytics 4 (GA4), covering visits, traffic sources,
 
 Account: **Wallace Shift**, owned through **matthew.wallaceshift@gmail.com**. Property ID: `561794453`. Web stream: **Wallace Shift Website** (`16246036913`). Measurement ID: `G-05SCBNQLY0`. Open the [Analytics dashboard](https://analytics.google.com/analytics/web/#/a414285894p561794453/reports/intelligenthome) using that Google account.
 
-The account and stream were created on 31 October 2026 with Chicago reporting time, USD currency, optional account data sharing disabled, and Enhanced Measurement disabled. Collection starts only after this code is deployed and a visitor allows analytics.
+The account and stream were created on 31 October 2026 with Chicago reporting time, USD currency, and optional account data sharing disabled. Automatic interaction measurement and browser-history pageviews are disabled individually in the stream settings; these settings were confirmed after a full reload. The mandatory Page loads option remains checked in Google's interface, while the site's `send_page_view: false` setting suppresses the default load pageview. `generate_lead` is configured as a key event, with event-scoped custom dimensions for `lead_type`, `form_surface`, and `demo_id`. Collection starts only after this code is deployed and a visitor allows analytics.
 
 ## Setup
 
 1. In the Wallace Shift Google account, create or select the property's web data stream for `https://wallaceshift.com`. Use the America/Chicago reporting time zone and USD currency.
-2. Disable **all Enhanced measurement** for that stream. The site sends sanitized page views and interaction events itself. Google's automatic history, form, outbound link, and download measurement can duplicate events or collect unfiltered URLs. `send_page_view: false` alone does not disable automatic history measurement.
+2. In the stream's **Enhanced measurement** settings, disable **Scrolls**, **Outbound clicks**, **Site search**, **Video engagement**, **File downloads**, and **Form interactions**. Under **Page views → Show advanced settings**, disable **Page changes based on browser history events**. **Page loads** remains checked in Google's interface; the site's `send_page_view: false` configuration suppresses the default load pageview on each public document. The site sends sanitized page views and interaction events itself. Do not re-enable automatic interactions or history measurement without reviewing URL filtering and duplicate events. `send_page_view: false` alone does not disable automatic history measurement.
 3. Put the stream's public `G-…` measurement ID in `public/site-analytics.js`. An empty or invalid ID intentionally loads neither analytics nor the consent prompt.
 4. Keep Google signals, advertising personalization, and user-provided data collection off. No user IDs, contact details, or payment information are sent by this implementation.
-5. Mark `generate_lead` as a **key event** in Admin → Data display → Events. Both successful enquiries and successful demo requests use that event, distinguished by `lead_type`. Do not mark clicks or failures as leads.
+5. Keep `generate_lead` configured as a **key event** in Admin → Data display → Events. Both successful enquiries and successful demo requests use that event, distinguished by `lead_type`. The event-scoped custom dimensions `lead_type`, `form_surface`, and `demo_id` are already configured. Do not mark clicks or failures as leads.
 6. Deploy the change and verify with Realtime. An account setting or a local code change alone does not start collection on the live site.
 
 Setup references: [GA4 setup](https://support.google.com/analytics/answer/14183469), [manual page views](https://developers.google.com/analytics/devguides/collection/ga4/views), [basic consent mode](https://developers.google.com/tag-platform/security/guides/consent?consentmode=basic).
@@ -43,7 +43,7 @@ Static blog documents include the same bootstrap separately from the React app. 
 | `email_clicked` / `phone_clicked` | A visitor clicked an email or phone link. This does not prove a message or call occurred. |
 | `resource_download_clicked` | A visitor clicked an approved PDF or spreadsheet resource link. This does not prove a download completed. |
 
-Event labels and demo IDs come from fixed allowlists. Freeform answers, names, email addresses, error messages, and form contents do not enter event parameters. For reporting by form or demo, create event-scoped custom dimensions for the fixed parameters in the implementation; do not create user-scoped identifiers.
+Event labels and demo IDs come from fixed allowlists. Freeform answers, names, email addresses, error messages, and form contents do not enter event parameters. The configured event-scoped custom dimensions `lead_type`, `form_surface`, and `demo_id` support reporting by enquiry type, form, and demo. Do not create user-scoped identifiers. Google may also send its standard session and engagement events after consent; the manual controls above apply to page views and the listed interactions.
 
 ## Using the reports
 
