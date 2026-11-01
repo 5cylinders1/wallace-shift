@@ -1,0 +1,30 @@
+.service-landing__breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: clamp(32px, 4vw, 56px);
+  font-size: .875rem;
+  color: var(--color-muted-on-bone);
+}
+
+.service-landing__breadcrumbs a { color: var(--color-accent-deep); }
+.service-landing__split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 80px); }
+.service-landing__section > .container { border-top: 1px solid rgb(8 13 18 / 16%); padding-top: clamp(28px, 4vw, 48px); }
+.service-landing__area { margin: 24px 0 0; max-width: 38ch; color: var(--color-muted-on-bone); }
+.service-landing__cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 56px); margin: 36px 0 0; }
+.service-landing__cards h3, .service-landing__questions h3 { margin: 0; font-size: clamp(1.125rem, 1.8vw, 1.375rem); line-height: 1.3; letter-spacing: -.02em; }
+.service-landing__cards p, .service-landing__questions p { color: var(--color-muted-on-bone); line-height: 1.7; margin: 16px 0 0; }
+.service-landing__steps { list-style: none; padding: 0; margin-bottom: 28px; }
+.service-landing__number { display: block; margin-bottom: 16px; color: var(--color-accent-deep); font-size: .8125rem; letter-spacing: .12em; font-weight: 700; }
+.service-landing__link { display: inline-flex; align-items: baseline; gap: .65em; width: fit-content; color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: .25em; line-height: 1.6; }
+.service-landing__questions details { border-bottom: 1px solid rgb(8 13 18 / 16%); padding: 20px 0; }
+.service-landing__questions details:first-child { padding-top: 0; }
+.service-landing__questions summary { cursor: pointer; }
+.service-landing__questions summary h3 { display: inline; }
+.service-landing__links { display: grid; gap: 18px; list-style: none; padding: 0; margin: 0; }
+.service-landing__related { display: flex; flex-wrap: wrap; gap: 16px 28px; margin-top: 32px; }
+.service-landing__related a { color: var(--color-silver); text-underline-offset: .25em; }
+
+@media (max-width: 767px) {
+  .service-landing__split, .service-landing__cards { grid-template-columns: 1fr; }
+}

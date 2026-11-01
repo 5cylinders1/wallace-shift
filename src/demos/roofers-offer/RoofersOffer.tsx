@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { submitContactRequest } from '../../lib/contactAdapter'
+import { trackSiteEvent } from '../../lib/analytics'
+import { useCollectionHostname } from '../../hooks/useCollectionHostname'
 import { automationGroups, featuredAutomations } from './automationMenu'
 import {
   roofingContactEmail,
@@ -21,15 +23,15 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function Wordmark() {
-  return <a className="ro-wordmark" href="https://www.wallaceshift.com/" aria-label="Wallace Shift home">
+  return <a className="ro-wordmark" href="https://wallaceshift.com/" aria-label="Wallace Shift home">
     <img src="/brand/wallace-shift-logo-white.svg" alt="" width="28" height="17" />
     <span>WALLACE SHIFT</span>
   </a>
 }
 
-function DesignCard({ design, onChoose }: { design: RoofingDesign; onChoose: (id: string) => void }) {
+function DesignCard({ design, hostname, onChoose }: { design: RoofingDesign; hostname: string; onChoose: (id: string) => void }) {
   const available = design.status === 'available'
-  const demoHref = roofingDemoHref(design, window.location.hostname)
+  const demoHref = roofingDemoHref(design, hostname)
   return <article className="ro-design">
     <a className="ro-design-image" href={demoHref} aria-label={`Request access to the ${design.name} demo`}>
       <img src={design.thumbnail} alt={design.thumbnailAlt} width="1440" height="900" loading="lazy" />
@@ -52,6 +54,7 @@ function DesignCard({ design, onChoose }: { design: RoofingDesign; onChoose: (id
 type FormStatus = 'idle' | 'submitting' | 'sent' | 'invalid' | 'not_configured' | 'error'
 
 export function RoofersOffer() {
+  const hostname = useCollectionHostname('roofers.wallaceshift.com')
   const readyDesigns = roofingDesigns.filter(design => design.status !== 'coming-soon')
   const upcomingDesigns = roofingDesigns.filter(design => design.status === 'coming-soon')
   const availableDesigns = roofingDesigns.filter(design => design.status === 'available')
@@ -119,11 +122,13 @@ export function RoofersOffer() {
       ].join('\n'),
     })
     if (result.ok) {
+      trackSiteEvent({ name: 'enquiry_submitted', value: 'roofing_offer' })
       setStatus('sent')
       formRef.current?.reset()
       setHoneypot('')
       return
     }
+    if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: 'roofing_offer' })
     setStatus(result.reason === 'network_error' ? 'error' : result.reason)
   }
 
@@ -140,10 +145,10 @@ export function RoofersOffer() {
         <div className="ro-wrap">
         <div className="ro-hero-top"><p className="ro-eyebrow">CRM & workflow automation for roofers</p><span className="ro-edition">THE COLLECTION / 01—{String(readyDesigns.length).padStart(2, '0')}</span></div>
         <div className="ro-hero-layout">
-          <div className="ro-hero-heading"><h1 id="hero-heading">Keep the next<br />step <em>in sight.</em></h1><p>Connect inquiries, customer records and follow-up in a roofing CRM shaped around your team. Give every opportunity a next step and owners a clearer view of the work.</p><div className="ro-hero-actions"><a className="ro-button ro-button-light" href="#enquire">Discuss your workflows <Arrow /></a><a className="ro-hero-link" href="#dashboard">Explore the CRM demo <span aria-hidden="true">↓</span></a></div></div>
+          <div className="ro-hero-heading"><h1 id="hero-heading">Roofing CRM{' '}<br />for your <em>team.</em></h1><p>Connect inquiries, customer records and follow-up in a roofing CRM shaped around your team. Give every opportunity a next step and owners a clearer view of the work.</p><div className="ro-hero-actions"><a className="ro-button ro-button-light" href="#enquire">Discuss your workflows <Arrow /></a><a className="ro-hero-link" href="#dashboard">Explore the CRM demo <span aria-hidden="true">↓</span></a></div></div>
           <div className="ro-offer-card">
             <p className="ro-eyebrow">A limited collection. Five client places.</p>
-            <h2><span>Free Motion</span><em>website.</em></h2>
+            <h2><span>Free Motion</span>{' '}<em>website.</em></h2>
             <p className="ro-offer-condition">With purchase of a CRM integrated with AI.</p>
             <p className="ro-offer-note">Your plan covers CRM setup and managed automation for {roofingCommitmentMonths} months. The website build is free within the agreed scope.</p>
             <p className="ro-offer-price"><span>CRM + managed automation starts at</span><strong>{monthlyMinimum}<small>/month</small></strong></p>
@@ -156,8 +161,8 @@ export function RoofersOffer() {
 
       <section className="ro-collection" id="collection" aria-labelledby="collection-heading">
         <div className="ro-wrap">
-          <div className="ro-section-intro"><div><p className="ro-eyebrow">01 / The customer-facing part</p><h2 id="collection-heading">A clearer inquiry.<br /><em>A useful first step.</em></h2></div><p>Your website helps homeowners explain what they need. Explore a design direction, then plan how those inquiries should reach your CRM and the people responsible for following up.</p></div>
-          <div className="ro-design-grid">{readyDesigns.map(design => <DesignCard key={design.id} design={design} onChoose={chooseDesign} />)}</div>
+          <div className="ro-section-intro"><div><p className="ro-eyebrow">01 / The customer-facing part</p><h2 id="collection-heading">A clearer inquiry.{' '}<br /><em>A useful first step.</em></h2></div><p>Your website helps homeowners explain what they need. Explore a design direction, then plan how those inquiries should reach your CRM and the people responsible for following up.</p></div>
+          <div className="ro-design-grid">{readyDesigns.map(design => <DesignCard key={design.id} design={design} hostname={hostname} onChoose={chooseDesign} />)}</div>
           {upcomingDesigns.length > 0 && <div className="ro-upcoming-grid">{upcomingDesigns.map(design => <article className="ro-upcoming" key={design.id}><span className="ro-upcoming-number" aria-hidden="true">{design.number}</span><div><p className="ro-eyebrow">Design {design.number} / Coming soon</p><h3>{design.name}</h3><p>The next addition to the collection.</p></div><span className="ro-upcoming-mark" aria-hidden="true">/</span></article>)}</div>}
           <p className="ro-demo-note">Every roofing brand in the collection is an illustrative contractor concept. Content, imagery and tools shown in the demos are examples; your final website, CRM setup and automation scope will be agreed together.</p>
         </div>
@@ -188,7 +193,7 @@ export function RoofersOffer() {
       </section>
 
       <section className="ro-automation ro-wrap" id="automation" aria-labelledby="automation-heading">
-        <div className="ro-section-intro"><div><p className="ro-eyebrow">03 / Workflows to consider</p><h2 id="automation-heading">Less chasing.<br /><em>More work moving forward.</em></h2></div><p>Start with missed calls, open estimates or information being entered twice. We map the handoffs, agree which workflows to build, then monitor and maintain them.</p></div>
+        <div className="ro-section-intro"><div><p className="ro-eyebrow">03 / Workflows to consider</p><h2 id="automation-heading">Less chasing.{' '}<br /><em>More work moving forward.</em></h2></div><p>Start with missed calls, open estimates or information being entered twice. We map the handoffs, agree which workflows to build, then monitor and maintain them.</p></div>
         <div className="ro-workflows">
           {featuredAutomations.map((automation, index) => <article key={automation.id}>
             <span className="ro-workflow-number">{String(index + 1).padStart(2, '0')}</span>
@@ -211,12 +216,12 @@ export function RoofersOffer() {
       </section>
 
       <section className="ro-plan ro-wrap" id="offer" aria-labelledby="offer-heading">
-        <div className="ro-terms"><div><p className="ro-eyebrow">04 / How the offer works</p><h2 id="offer-heading">Purchase a CRM integrated with AI.<br /><em>Get the website free.</em></h2><p className="ro-plan-price">CRM and managed automation from <strong>{monthlyMinimum}/month</strong> for {roofingCommitmentMonths} months.</p><p className="ro-plan-note">{commitmentMinimum} minimum service commitment at the starting price. The website build is free with your CRM plan. Your final monthly fee depends on workflow complexity, integrations and support. Ad spend, platform subscriptions and third party usage are separate.</p></div><ol><li><span>01</span><div><strong>Map the work</strong><p>Show us how inquiries become estimates and jobs, which tools you use and where follow up gets held up.</p></div></li><li><span>02</span><div><strong>Agree on the complete scope</strong><p>We confirm your paid CRM plan, the free website build, initial automations, ongoing support and final monthly price in writing.</p></div></li><li><span>03</span><div><strong>Launch, then keep it working</strong><p>We configure your CRM and agreed workflows, adapt the site to your business, then monitor and maintain the system. New workflows and substantial changes are scoped separately.</p></div></li></ol></div>
+        <div className="ro-terms"><div><p className="ro-eyebrow">04 / How the offer works</p><h2 id="offer-heading">Purchase a CRM integrated with AI.{' '}<br /><em>Get the website free.</em></h2><p className="ro-plan-price">CRM and managed automation from <strong>{monthlyMinimum}/month</strong> for {roofingCommitmentMonths} months.</p><p className="ro-plan-note">{commitmentMinimum} minimum service commitment at the starting price. The website build is free with your CRM plan. Your final monthly fee depends on workflow complexity, integrations and support. Ad spend, platform subscriptions and third party usage are separate.</p></div><ol><li><span>01</span><div><strong>Map the work</strong><p>Show us how inquiries become estimates and jobs, which tools you use and where follow up gets held up.</p></div></li><li><span>02</span><div><strong>Agree on the complete scope</strong><p>We confirm your paid CRM plan, the free website build, initial automations, ongoing support and final monthly price in writing.</p></div></li><li><span>03</span><div><strong>Launch, then keep it working</strong><p>We configure your CRM and agreed workflows, adapt the site to your business, then monitor and maintain the system. New workflows and substantial changes are scoped separately.</p></div></li></ol></div>
       </section>
 
       <section className="ro-enquire" id="enquire" aria-labelledby="enquire-heading">
         <div className="ro-wrap ro-enquire-layout">
-          <div className="ro-enquire-copy"><p className="ro-eyebrow">05 / Start with the work</p><h2 id="enquire-heading">Where does<br /><em>follow-up stall?</em></h2><p>Tell us about your current tools, missed handoffs and the work you want to improve. We’ll discuss the fit and scope; you do not need to choose a website first.</p><div className="ro-enquire-note"><span aria-hidden="true">↗</span><p>Five client places in this offer. An inquiry starts the conversation; it doesn’t reserve a design or commit you to a contract.</p></div><a className="ro-email" href={`mailto:${roofingContactEmail}`}>{roofingContactEmail} <Arrow diagonal /></a></div>
+          <div className="ro-enquire-copy"><p className="ro-eyebrow">05 / Start with the work</p><h2 id="enquire-heading">Where does{' '}<br /><em>follow-up stall?</em></h2><p>Tell us about your current tools, missed handoffs and the work you want to improve. We’ll discuss the fit and scope; you do not need to choose a website first.</p><div className="ro-enquire-note"><span aria-hidden="true">↗</span><p>Five client places in this offer. An inquiry starts the conversation; it doesn’t reserve a design or commit you to a contract.</p></div><a className="ro-email" href={`mailto:${roofingContactEmail}`}>{roofingContactEmail} <Arrow diagonal /></a></div>
           <div className="ro-form-panel">
             {status === 'sent' ? <div className="ro-success" role="status"><span aria-hidden="true">↗</span><p className="ro-eyebrow">Inquiry received</p><h3 ref={successHeading} tabIndex={-1}>Let’s build from here.</h3><p>Thanks for telling us about your business. We’ll follow up personally to confirm design availability and discuss scope and pricing. Your design is not reserved yet.</p><button type="button" className="ro-text-button" onClick={() => { setStatus('idle'); setSelectedDesign('') }}>Send another inquiry <Arrow /></button></div> : <form ref={formRef} onSubmit={handleSubmit} aria-describedby="ro-form-terms">
               <div className="ro-form-row"><label htmlFor="ro-name">Your name<input ref={nameInput} id="ro-name" name="name" autoComplete="name" required maxLength={120} placeholder="First and last name" disabled={status === 'submitting'} /></label><label htmlFor="ro-email">Work email<input id="ro-email" name="email" type="email" autoComplete="email" required maxLength={200} placeholder="you@company.com" disabled={status === 'submitting'} /></label></div>
@@ -233,6 +238,6 @@ export function RoofersOffer() {
         </div>
       </section>
     </main>
-    <footer className="ro-footer ro-wrap"><Wordmark /><p>Connected records. Clearer next steps.</p><div><a href="https://www.wallaceshift.com/">Explore Wallace Shift <Arrow diagonal /></a><a className="ro-admin-link" href="/demo-admin/">Admin sign in</a><span>© {new Date().getFullYear()} Wallace Shift</span></div></footer>
+    <footer className="ro-footer ro-wrap"><Wordmark /><p>Connected records. Clearer next steps.</p><div><a href="https://wallaceshift.com/">Explore Wallace Shift <Arrow diagonal /></a><a className="ro-admin-link" href="/demo-admin/">Admin sign in</a><span>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Wallace Shift</span></div></footer>
   </div>
 }

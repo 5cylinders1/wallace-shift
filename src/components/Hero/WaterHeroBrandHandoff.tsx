@@ -76,7 +76,7 @@ export function WaterHeroBrandHandoff({ still, progress, sceneState }: {
       </div>
       <div className="shift-wipe__plane" aria-hidden="true">
         <div className="shift-wipe__content shift-wipe__content--duplicate">
-          <BrandStatementContent />
+          <BrandStatementContent decorative />
         </div>
         <div className="shift-wipe__edge" />
       </div>

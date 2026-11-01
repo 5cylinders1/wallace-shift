@@ -1,4 +1,5 @@
 import { submitContactRequest } from '../../lib/contactAdapter'
+import { trackSiteEvent } from '../../lib/analytics'
 
 type Status = 'idle' | 'submitting' | 'sent' | 'not_configured' | 'error'
 type ContactState = { name: string; email: string; status: Status }
@@ -32,11 +33,16 @@ export function createHeroContactState(submitRequest = submitContactRequest) {
         .then(result => {
           if (result.ok) {
             update({ status: 'sent', name: '', email: '' })
+            trackSiteEvent({ name: 'enquiry_submitted', value: 'home_hero' })
           } else {
             update({ status: result.reason === 'not_configured' ? 'not_configured' : 'error' })
+            if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: 'home_hero' })
           }
         })
-        .catch(() => { update({ status: 'error' }) })
+        .catch(() => {
+          update({ status: 'error' })
+          trackSiteEvent({ name: 'enquiry_failed', value: 'home_hero' })
+        })
         .finally(() => { pending = null })
       update({ status: 'submitting' })
       return pending

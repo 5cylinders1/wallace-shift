@@ -91,6 +91,22 @@
   font-size: 1rem;
 }
 
+.site-footer__links {
+  flex: 1 1 420px;
+  max-width: 720px;
+  display: grid;
+  gap: 24px;
+}
+
+.site-footer__nav-label {
+  margin-bottom: 10px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-soft-white);
+}
+
 .site-footer__nav ul {
   display: flex;
   flex-wrap: wrap;
@@ -138,6 +154,11 @@
   .site-footer__top {
     flex-direction: column;
     gap: clamp(24px, 6vw, 36px);
+  }
+
+  .site-footer__links {
+    flex-basis: auto;
+    width: 100%;
   }
 
   .site-footer__legal {

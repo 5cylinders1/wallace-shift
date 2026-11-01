@@ -65,7 +65,7 @@ export function PageHero({
         <h1 className="page-hero__headline">
           {headlineLines.map((line) => (
             <span className="page-hero__line" key={line}>
-              <span className="page-hero__line-inner">{line}</span>
+              <span className="page-hero__line-inner">{line}{' '}</span>
             </span>
           ))}
           {headlineAccent && (

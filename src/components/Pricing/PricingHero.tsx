@@ -56,7 +56,7 @@ export function PricingHero() {
           <h1 className="pricing-hero__headline">
             {pricingHero.headlineLines.map((line) => (
               <span className="pricing-hero__line" key={line}>
-                <span className="pricing-hero__line-inner">{line}</span>
+                <span className="pricing-hero__line-inner">{line}{' '}</span>
               </span>
             ))}
             <span className="pricing-hero__line">

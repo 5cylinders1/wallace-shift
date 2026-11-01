@@ -118,7 +118,7 @@ try {
   cdp.on('Network.loadingFinished', event => { transferredBytes += event.encodedDataLength })
   await attachMetrics(page)
   const response = await page.goto(baseUrl, { waitUntil: 'networkidle' })
-  await page.getByRole('heading', { name: 'Connect the first inquiry to the work ahead.' }).waitFor()
+  await page.getByRole('heading', { name: 'Contractor CRMs and website demos.' }).waitFor()
   await page.waitForTimeout(1000)
   report.navigation = await page.evaluate(() => ({
     lcpMs: window.__galleryMetrics.lcp,

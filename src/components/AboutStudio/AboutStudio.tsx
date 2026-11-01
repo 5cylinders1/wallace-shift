@@ -140,7 +140,7 @@ export function AboutStudio() {
           <div className="about-journey__chapter about-journey__chapter--opening" aria-hidden={cinematic && visibleChapter !== 0} inert={cinematic && visibleChapter !== 0}>
             <p className="eyebrow about-journey__eyebrow">{aboutMeta.eyebrow}</p>
             <h1>
-              {aboutMeta.headlineLines.map(line => <span key={line}>{line}</span>)}
+              {aboutMeta.headlineLines.map(line => <span key={line}>{line}{' '}</span>)}
               <span className="accent-serif">{aboutMeta.headlineAccent}</span>
             </h1>
             <p className="about-journey__lead">{aboutMeta.supporting}</p>

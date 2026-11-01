@@ -8,8 +8,8 @@
  * Reach for a real router if the site ever grows dynamic segments
  * (`/work/:slug`), nested layouts, or per-route data fetching.
  */
-import { useEffect, useState } from 'react'
-import { knownPaths } from '../content/routeMeta'
+import { createContext, useCallback, useContext, useSyncExternalStore } from 'react'
+import { findRoute, knownPaths } from '../content/routeMeta'
 
 const ROUTE_CHANGE_EVENT = 'ws:routechange'
 
@@ -39,13 +39,30 @@ export interface Location {
   search: string
 }
 
+/** The build and hydration share a route snapshot, without mocking window.
+ * Search parameters are applied after hydration so a personalised contact
+ * handoff never disagrees with the public HTML saved at build time. */
+export const StaticLocationContext = createContext<Location>({ path: '/', search: '' })
+
+let browserLocation: Location | undefined
+
 function readLocation(): Location {
-  return {
-    path: resolvePath(window.location.pathname),
-    search: window.location.search,
+  const path = resolvePath(window.location.pathname)
+  const search = window.location.search
+  if (!browserLocation || browserLocation.path !== path || browserLocation.search !== search) {
+    browserLocation = { path, search }
   }
+  return browserLocation
 }
 
+function subscribeLocation(onChange: () => void) {
+  window.addEventListener('popstate', onChange)
+  window.addEventListener(ROUTE_CHANGE_EVENT, onChange)
+  return () => {
+    window.removeEventListener('popstate', onChange)
+    window.removeEventListener(ROUTE_CHANGE_EVENT, onChange)
+  }
+}
 /**
  * Subscribes to the current location.
  *
@@ -56,30 +73,9 @@ function readLocation(): Location {
  * previous recommendation.
  */
 export function useLocation(): Location {
-  const [location, setLocation] = useState(readLocation)
-
-  useEffect(() => {
-    const sync = () =>
-      setLocation((current) => {
-        const next = readLocation()
-        // Preserve referential equality when nothing actually moved, so
-        // this never triggers a needless render.
-        return current.path === next.path && current.search === next.search
-          ? current
-          : next
-      })
-
-    // `popstate` covers browser back/forward; the custom event covers our
-    // own pushState calls, which deliberately do not fire popstate.
-    window.addEventListener('popstate', sync)
-    window.addEventListener(ROUTE_CHANGE_EVENT, sync)
-    return () => {
-      window.removeEventListener('popstate', sync)
-      window.removeEventListener(ROUTE_CHANGE_EVENT, sync)
-    }
-  }, [])
-
-  return location
+  const initial = useContext(StaticLocationContext)
+  const getServerSnapshot = useCallback(() => initial, [initial])
+  return useSyncExternalStore(subscribeLocation, readLocation, getServerSnapshot)
 }
 
 export function useRoutePath(): string {
@@ -110,6 +106,14 @@ export function scrollToRouteTarget(behavior?: ScrollBehavior) {
 
 export function navigate(href: string) {
   const url = new URL(href, window.location.origin)
+  // A tracker already loaded in the public document must not survive entry
+  // into the portal or an experiment. Leaving those documents also needs a
+  // fresh load because their HTML deliberately omits the public bootstrap.
+  if (findRoute(normalizePath(url.pathname))?.noindex ||
+      findRoute(normalizePath(window.location.pathname))?.noindex) {
+    window.location.assign(url.href)
+    return
+  }
   const changedPage =
     normalizePath(url.pathname) !== normalizePath(window.location.pathname)
 

@@ -69,6 +69,10 @@
 .page-hero__line {
   display: block;
   overflow: hidden;
+  /* Keep descenders in service names inside the reveal mask. The negative
+     margin preserves the existing line spacing. */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
 }
 
 .page-hero__line-inner {

@@ -119,7 +119,7 @@ export function BrandStatement() {
         window.removeEventListener('resize', handleResize)
       }
     },
-    { scope: sectionRef, dependencies: [reducedMotion] },
+    { scope: sectionRef, dependencies: [reducedMotion], revertOnUpdate: true },
   )
 
   if (reducedMotion) {
@@ -144,7 +144,7 @@ export function BrandStatement() {
 
         <div className="shift-wipe__plane" ref={planeRef} aria-hidden="true">
           <div className="shift-wipe__content shift-wipe__content--duplicate">
-            <BrandStatementContent />
+            <BrandStatementContent decorative />
           </div>
           <div className="shift-wipe__edge" ref={edgeRef} />
         </div>

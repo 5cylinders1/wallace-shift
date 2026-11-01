@@ -1,4 +1,4 @@
-import { business, footer, siteMeta } from '../../content/siteConfig'
+import { business, footer, serviceDirectory, siteMeta } from '../../content/siteConfig'
 import { navRoutes } from '../../content/routeMeta'
 import { PageLink } from '../PageLink/PageLink'
 import './SiteFooter.css'
@@ -46,7 +46,18 @@ export function SiteFooter() {
           </div>
 
           <div className="site-footer__links">
+            <nav aria-label="Services" className="site-footer__nav site-footer__services">
+              <p className="site-footer__nav-label">Our services</p>
+              <ul>
+                {serviceDirectory.map((service) => (
+                  <li key={service.href}>
+                    <PageLink href={service.href}>{service.label}</PageLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
             <nav aria-label="Footer" className="site-footer__nav">
+              <p className="site-footer__nav-label">Explore Wallace Shift</p>
               <ul>
                 {navRoutes.map((route) => (
                   <li key={route.path}>
@@ -64,7 +75,7 @@ export function SiteFooter() {
 
         <div className="site-footer__legal">
           <p className="site-footer__copyright">
-            &copy; {year} {siteMeta.name}
+            &copy; <span suppressHydrationWarning>{year}</span> {siteMeta.name}
           </p>
           <a
             className="site-footer__preferred-source"

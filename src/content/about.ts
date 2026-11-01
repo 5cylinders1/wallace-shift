@@ -21,10 +21,10 @@ export interface Person {
 
 export const aboutMeta = {
   eyebrow: 'The company / About Wallace Shift',
-  headlineLines: ['Your systems.', 'Our shared'],
-  headlineAccent: 'focus.',
+  headlineLines: ['About', 'Wallace'],
+  headlineAccent: 'Shift.',
   supporting:
-    'A two-person software company building custom CRMs, AI integrations, and connected workflows. Bella handles the first conversation. Matthew scopes and builds the system.',
+    'A two-person software company serving small businesses in Greater Kansas City and remotely. We build custom CRMs, AI integrations, and connected workflows. Bella handles the first conversation. Matthew scopes and builds the system.',
 }
 
 export const aboutPeople: Person[] = [

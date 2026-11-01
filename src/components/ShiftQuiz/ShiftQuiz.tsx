@@ -10,6 +10,7 @@ import {
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { shiftHandoffHref } from '../../lib/quizHandoff'
+import { trackSiteEvent } from '../../lib/analytics'
 import { SpotlightMedia, type SpotlightMediaHandle } from './SpotlightMedia'
 import { QuizQuestion } from './QuizQuestion'
 import { QuizResult } from './QuizResult'
@@ -31,6 +32,7 @@ export function ShiftQuiz({ showSpotlight = true, onProgress }: {
 
   const mediaRef = useRef<SpotlightMediaHandle>(null)
   const isFirstStepRender = useRef(true)
+  const analyticsAttempt = useRef({ started: false, completed: false })
 
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<(QuizAnswer | null)[]>([
@@ -51,6 +53,13 @@ export function ShiftQuiz({ showSpotlight = true, onProgress }: {
   // alone rather than a static lamp doing nothing.
   const isMobile = useMediaQuery('(max-width: 767px)')
   const isResult = step >= TOTAL_STEPS
+
+  useEffect(() => {
+    if (isResult && !analyticsAttempt.current.completed) {
+      analyticsAttempt.current.completed = true
+      trackSiteEvent({ name: 'quiz_completed' })
+    }
+  }, [isResult])
 
   // The rect the spotlight's Y position is normalized against — the
   // answer buttons themselves, not the whole section (which is mostly
@@ -181,6 +190,10 @@ export function ShiftQuiz({ showSpotlight = true, onProgress }: {
   )
 
   const handleSelect = (answer: QuizAnswer) => {
+    if (!analyticsAttempt.current.started) {
+      analyticsAttempt.current.started = true
+      trackSiteEvent({ name: 'quiz_started' })
+    }
     // No explicit aim call needed here — whatever pointed at or focused
     // this button already aimed the light at it (live pointer tracking or
     // the focus controller above), and selecting it doesn't move either.
@@ -201,6 +214,7 @@ export function ShiftQuiz({ showSpotlight = true, onProgress }: {
 
   const handleStartOver = () => {
     transitionToStep(0, () => {
+      analyticsAttempt.current = { started: false, completed: false }
       setAnswers([null, null, null])
     })
     mediaRef.current?.resetToNeutral()

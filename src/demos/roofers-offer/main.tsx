@@ -1,8 +1,9 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import { RoofersOffer } from './RoofersOffer'
 import './roofers-offer.css'
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode><RoofersOffer /></StrictMode>,
-)
+const root = document.getElementById('root')!
+const app = <StrictMode><RoofersOffer /></StrictMode>
+if (root.hasChildNodes()) hydrateRoot(root, app)
+else createRoot(root).render(app)

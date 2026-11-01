@@ -2,11 +2,11 @@
  * Privacy-policy content.
  *
  * This describes what the site actually does today, verified against the
- * code: contact and demo forms, verified private demo access, no analytics
- * or advertising pixels, and web fonts served by Google.
+ * code: contact and demo forms, verified private demo access, public-page
+ * visitor analytics, and web fonts served by Google.
  *
- * If analytics, a booking embed, a chat widget, or any third-party script
- * is ever added, this file must be updated in the same change — a privacy
+ * If analytics settings, a booking embed, a chat widget, or another third-party
+ * script changes, this file must be updated in the same change — a privacy
  * policy that describes a site you no longer run is worse than none.
  */
 
@@ -14,7 +14,7 @@ export const privacyMeta = {
   eyebrow: 'Privacy',
   heading: 'What this site collects.',
   supporting:
-    'How we handle enquiries, private access, client agreements, and payment records.',
+    'How we handle site visits, enquiries, private access, client agreements, and payment records.',
 }
 
 export interface PrivacySection {
@@ -34,9 +34,19 @@ export const privacySections: PrivacySection[] = [
     ],
   },
   {
+    heading: 'Site visitor analytics',
+    paragraphs: [
+      'With your permission, we use Google Analytics on our public studio pages, blog, contractor gallery, roofing offer, and demo request page to understand which pages people visit and where traffic comes from. Reports include page views, visits, referring websites and campaign labels, approximate location, and browser and device information.',
+      'Google Analytics uses cookies to distinguish browsers and understand visits over time. We load its tracking script only after you allow analytics. We keep your analytics choice in your browser so you do not have to answer on each visit. We do not enable advertising personalization or Google signals.',
+      'We also measure actions such as an accepted enquiry or demo request, a submission failure, quiz completion, preview playback, and clicks on email, phone, and resource links. These events use fixed labels rather than the details you enter. An accepted enquiry means our service acknowledged the request, not that a sale occurred.',
+      'Our analytics code excludes the client portal, admin pages, agreement pages, private demos, and development previews. It removes URL fragments and query parameters other than filtered campaign labels. We do not send form entries, email addresses, messages, access codes, or payment details to analytics.',
+      'You can allow or reject analytics, or change your choice using Analytics preferences on public pages. Our analytics code does not load when your browser sends Do Not Track or Global Privacy Control, even if you previously allowed it. Rejecting analytics or blocking it with browser privacy tools does not affect forms or private access.',
+    ],
+  },
+  {
     heading: 'What we do not collect',
     paragraphs: [
-      'We do not run advertising pixels, marketing analytics, session recording, or a chat widget. When you use electronic payments, Stripe processes payment and fraud prevention information through its hosted checkout and, when needed, its payment verification script. Card numbers and security codes are handled by Stripe rather than stored in our portal.',
+      'We do not run advertising pixels, session recording, or a chat widget. When you use electronic payments, Stripe processes payment and fraud prevention information through its hosted checkout and, when needed, its payment verification script. Card numbers and security codes are handled by Stripe rather than stored in our portal.',
       'Private demos use essential cookies for your pending invitation, email verification, and approved access. These are not advertising cookies. Verification lasts up to ten minutes, and visitor invitation and access cookies last no longer than the invitation’s 72-hour window. The site owner can separately sign in with an emailed code; the admin access cookie lasts up to 30 days or until the owner signs out of that browser. We use temporary counters and hashed identifiers to limit repeated requests and verification attempts.',
     ],
   },
@@ -46,7 +56,8 @@ export const privacySections: PrivacySection[] = [
       'We use service providers to host the site, display fonts, deliver requested emails, and securely store demo verification and agreement records. Providers receive the information needed to perform those functions:',
     ],
     bullets: [
-      'Our hosting provider, which serves the pages you are reading.',
+      'Vercel, which hosts the site.',
+      'Google Analytics, which processes visitor and interaction statistics when you allow analytics. You can read more at policies.google.com/privacy.',
       'Google Fonts, which serves the two typefaces the site uses.',
       'Resend, which processes contact and demo request emails and delivers email verification codes.',
       'Our configured Redis storage provider, which stores temporary verification data, request counters, and demo agreement acceptance records.',
@@ -81,4 +92,4 @@ export const privacySections: PrivacySection[] = [
  * string rather than a build timestamp so it reflects a real review of
  * the policy rather than the date of an unrelated deploy.
  */
-export const privacyLastUpdated = '30 October 2026'
+export const privacyLastUpdated = '31 October 2026'

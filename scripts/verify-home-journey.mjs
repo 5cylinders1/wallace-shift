@@ -538,7 +538,7 @@ async function sourceModule(path) {
     let target = external[specifier]
     if (!target && specifier.startsWith('.')) {
       const base = new URL(specifier, new URL(path, root)).pathname.slice(root.pathname.length)
-      for (const extension of ['.ts', '.tsx']) {
+      for (const extension of /\.tsx?$/.test(base) ? [''] : ['.ts', '.tsx']) {
         try { await read(base + extension); target = await sourceModule(base + extension); break }
         catch (error) { if (error.code !== 'ENOENT') throw error }
       }
@@ -575,6 +575,20 @@ await test('static/mobile journey restores the three service media panels while 
     'the first service row immediately follows the heading with no empty entrance block')
   assert.equal((pinMarkup.match(/data-ambient-video="true"/g) ?? []).length, 3,
     'the heading pin lasts through all three service rows')
+  const serviceArticles = [...pinMarkup.matchAll(/<article class="service-row[^\"]*">([\s\S]*?)<\/article>/g)]
+  assert.equal(serviceArticles.length, 3, 'each service is a separate article in the heading outline')
+  const headingIds = []
+  for (const [, article] of serviceArticles) {
+    const heading = article.match(/<h3 class="service-row__title" id="([^\"]+)">([^<]+)<\/h3>/)
+    const description = article.match(/<p class="service-row__description" id="([^\"]+)">/)
+    const button = article.match(/<button\b[^>]*class="service-row__control"[^>]*><\/button>/)
+    assert.ok(heading && description && button, 'the content has a real heading and a separate empty interaction button')
+    assert.ok(button[0].includes(`aria-labelledby="${heading[1]}"`), 'the button is named by the visible service heading')
+    assert.ok(button[0].includes(`aria-describedby="${description[1]}"`), 'the button retains the service description')
+    assert.match(button[0], /aria-pressed="(?:true|false)"/, 'the service control exposes its active state')
+    headingIds.push(heading[1])
+  }
+  assert.equal(new Set(headingIds).size, 3, 'service headings have unique identifiers')
   assert.ok(html.indexOf('class="container journey-services__links"') > pinEnd,
     'detail and pricing links sit outside the pin so the header can release above them')
   const panels = ['intro', 'find', 'make', 'launch'].map(name =>
@@ -590,7 +604,7 @@ await test('static/mobile journey restores the three service media panels while 
     assert.ok(html.includes(`poster="${homeServiceMedia[word].poster}"`), `${word} receives its cool poster`)
     assert.ok(html.includes(`src="${homeServiceMedia[word].video}"`), `${word} receives its cool loop`)
   }
-  for (const text of ['Custom CRMs built around your work', 'AI and workflows with a clear job', 'Websites connected to your business',
+  for (const text of ['Custom CRMs built around your work', 'AI integration for small businesses', 'Websites connected to your business',
     'Find the friction', 'Build around the work', 'Support the next step']) assert.ok(html.includes(text), text)
   for (const id of ['home-contact-name', 'home-contact-email', 'home-contact-message']) {
     assert.ok(html.includes(`for="${id}"`))

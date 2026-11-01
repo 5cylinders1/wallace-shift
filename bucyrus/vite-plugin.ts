@@ -150,7 +150,7 @@ export function bucyrusPlugin(): Plugin {
           mode: config.mode,
           appType: 'custom',
           logLevel: 'error',
-          server: { middlewareMode: true, watch: null },
+          server: { middlewareMode: true, watch: null, hmr: false, ws: false },
         })
         try {
           const { renderBucyrus } = await renderer.ssrLoadModule(renderEntry) as { renderBucyrus: RenderBucyrus }

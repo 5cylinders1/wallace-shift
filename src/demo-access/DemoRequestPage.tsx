@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { business } from '../content/siteConfig'
 import { submitDemoRequest } from './request'
+import { trackSiteEvent } from '../lib/analytics'
 import './demo-access.css'
 
 const demos = {
@@ -65,6 +66,12 @@ export function DemoRequestPage() {
       company: text('company'),
       demo: demoKey,
     })
+    if (result.ok || result.reason !== 'invalid') {
+      trackSiteEvent({
+        name: result.ok ? 'demo_request_submitted' : 'demo_request_failed',
+        ...(demoKey ? { value: demoKey } : {}),
+      })
+    }
     setStatus(result.ok ? 'sent' : result.reason)
     // Focus a persistent status region after React has rendered its message.
     requestAnimationFrame(() => statusRef.current?.focus())

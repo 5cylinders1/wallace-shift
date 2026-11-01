@@ -22,9 +22,9 @@ export function ContactPage() {
     <>
       <PageHero
         eyebrow="Start a project"
-        headlineLines={['Tell us what', 'is not']}
-        headlineAccent="working."
-        supporting="Tell us how your team handles enquiries, customers, and daily work. Describe the gap you want to fix; we will discuss the right first step and how to scope it."
+        headlineLines={['Discuss your', 'AI or CRM']}
+        headlineAccent="project."
+        supporting="Talk with Wallace Shift about AI integration, a custom CRM, workflow automation, or a connected website. Tell us where work gets stuck and we will discuss a practical first step."
       />
 
       <section className="interior contact-page">
@@ -56,7 +56,7 @@ export function ContactPage() {
           <aside className="contact-page__aside">
             <Reveal>
               <div className="contact-page__block">
-                <p className="service-block__label">What happens next</p>
+                <h2 className="service-block__label">What happens next</h2>
                 <ol className="contact-page__steps">
                   <li>
                     We read it properly and reply {business.responseTime}.
@@ -67,7 +67,8 @@ export function ContactPage() {
                   </li>
                   <li>
                     An agreed first step, with scope and cost in writing.
-                    Systems and automation begin with paid definition or audit work.
+                    Focused builds include scoping; larger systems or unclear requirements
+                    may start with paid definition or audit work.
                   </li>
                 </ol>
               </div>
@@ -79,7 +80,7 @@ export function ContactPage() {
             {business.salesEmail && (
               <Reveal delay={0.08}>
                 <div className="contact-page__block">
-                  <p className="service-block__label">Prefer email?</p>
+                  <h2 className="service-block__label">Prefer email?</h2>
                   <p className="contact-page__hint">Bella Wallace · Sales and first contact</p>
                   <a
                     className="contact-page__email"
@@ -94,7 +95,7 @@ export function ContactPage() {
             {business.serviceArea && (
               <Reveal delay={0.12}>
                 <div className="contact-page__block">
-                  <p className="service-block__label">Where we work</p>
+                  <h2 className="service-block__label">Where we work</h2>
                   <p className="contact-page__area">
                     {business.serviceArea}, and remotely anywhere.
                   </p>
@@ -104,7 +105,7 @@ export function ContactPage() {
 
             <Reveal delay={0.16}>
               <div className="contact-page__block">
-                <p className="service-block__label">Before you write</p>
+                <h2 className="service-block__label">Before you write</h2>
                 <p className="contact-page__hint">
                   A useful starting point is one real example: where an enquiry
                   arrives, who follows up, which tools hold the details, and

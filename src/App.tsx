@@ -4,6 +4,8 @@ import { SiteHeader } from './components/SiteHeader/SiteHeader'
 import { SiteFooter } from './components/SiteFooter/SiteFooter'
 import { HomePage } from './pages/HomePage'
 import { ServicesPage } from './pages/ServicesPage'
+import { ServiceLandingPage } from './pages/ServiceLandingPage'
+import { serviceLandingPages } from './content/serviceLandingPages'
 import { PricingPage } from './pages/PricingPage'
 import { ApproachPage } from './pages/ApproachPage'
 import { AboutPage } from './pages/AboutPage'
@@ -14,6 +16,7 @@ import { scrollToRouteTarget, useRoutePath } from './lib/router'
 import { PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH } from './content/routeMeta'
 
 const pages: Record<string, () => ReactElement> = {
+  ...Object.fromEntries(serviceLandingPages.map(service => [service.path, () => <ServiceLandingPage service={service} />])),
   '/': HomePage,
   '/services': ServicesPage,
   '/pricing': PricingPage,
