@@ -3,6 +3,7 @@ import { business } from '../../content/siteConfig'
 import { enquiryBudgets, enquiryCopy, enquiryPackages, enquiryServices,
   type EnquiryOption } from '../../content/enquiry'
 import { submitContactRequest } from '../../lib/contactAdapter'
+import { trackSiteEvent } from '../../lib/analytics'
 import type { ServiceRecommendation } from '../../content/shiftQuiz'
 import './ContactForm.css'
 
@@ -99,6 +100,7 @@ export function ContactForm({
     })
 
     if (result.ok) {
+      trackSiteEvent({ name: 'enquiry_submitted', value: 'contact_form' })
       setStatus('sent')
       setName('')
       setEmail('')
@@ -111,6 +113,7 @@ export function ContactForm({
       return
     }
 
+    if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: 'contact_form' })
     setStatus(result.reason === 'network_error' ? 'error' : result.reason)
   }
 

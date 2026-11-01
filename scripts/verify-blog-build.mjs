@@ -29,7 +29,10 @@ try {
     assert.ok(html.includes(post.html), `${post.slug}: full Markdown body must be present in HTML`)
     assert.ok(sitemap.includes(`https://wallaceshift.com/blog/${post.slug}</loc>`))
     assert.ok(rss.includes(`https://wallaceshift.com/blog/${post.slug}</link>`))
-    assert.doesNotMatch(html, /<script(?! type="application\/ld\+json")/)
+    const analyticsScript = '<script defer src="/site-analytics.js"></script>'
+    assert.equal(html.split(analyticsScript).length - 1, 1, 'includes exactly one approved analytics bootstrap')
+    assert.doesNotMatch(html.replace(analyticsScript, ''), /<script(?! type="application\/ld\+json")/,
+      'the article remains static HTML with no other executable scripts')
   }
   console.log(`Blog build verified: hub, ${posts.length} published articles, CSS, RSS, canonical URLs, and sitemap.`)
 } finally { await cleanup() }

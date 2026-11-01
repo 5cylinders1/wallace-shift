@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { accessHref, previewDuration, type FilmDemo } from './catalog'
+import { trackSiteEvent } from '../../lib/analytics'
 
 /** Mounted only after a watch action, so gallery browsing requests no videos. */
 export default function DemoPreview({ demo, onClose }: { demo: FilmDemo; onClose: () => void }) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const playTracked = useRef(false)
   const [failed, setFailed] = useState(false)
   const [playBlocked, setPlayBlocked] = useState(false)
 
@@ -57,6 +59,12 @@ export default function DemoPreview({ demo, onClose }: { demo: FilmDemo; onClose
           setPlayBlocked(false)
           const active = event.currentTarget
           document.querySelectorAll<HTMLMediaElement>('video, audio').forEach(media => { if (media !== active) media.pause() })
+        }}
+        onPlaying={() => {
+          if (!playTracked.current) {
+            playTracked.current = true
+            trackSiteEvent({ name: 'demo_preview_played', value: demo.id })
+          }
         }}>
         <track kind="captions" src={demo.captions} srcLang="en" label="English" />
         Your browser cannot play this video. <a href={demo.video}>Open the preview file</a>.

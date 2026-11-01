@@ -39,6 +39,16 @@ function prerenderRoutes(): Plugin {
 
       for (const route of routeMeta) {
         const canonical = `${SITE_ORIGIN}${route.path}`
+        // Private and experimental documents must never inherit a tracker
+        // from the public homepage template, even before its runtime guard.
+        let routeTemplate = route.noindex
+          ? template
+            .replace(/<script\b[^>]*\bsrc=["']\/site-analytics\.js["'][^>]*>[\s\S]*?<\/script>\s*/gi, '')
+            .replace(/<link\b[^>]*\bhref=["']\/analytics-consent\.css["'][^>]*>\s*/gi, '')
+          : template
+        if (route.path === '/client-portal') {
+          routeTemplate = routeTemplate.replace(/<meta\b[^>]*\bname=["']referrer["'][^>]*>\s*/gi, '')
+        }
         const head = [
           `<title>${escapeHtml(route.title)}</title>`,
           `<meta name="description" content="${escapeHtml(route.description)}" />`,
@@ -53,6 +63,9 @@ function prerenderRoutes(): Plugin {
           `<meta name="twitter:title" content="${escapeHtml(route.title)}" />`,
           `<meta name="twitter:description" content="${escapeHtml(route.description)}" />`,
           `<meta name="twitter:image" content="${SITE_ORIGIN}/media/wallace-shift-hero-poster.webp" />`,
+          route.path === '/client-portal'
+            ? '<meta name="referrer" content="no-referrer" />'
+            : '',
           route.noindex
             ? `<meta name="robots" content="${escapeHtml(route.robots ?? 'noindex')}" />`
             : '',
@@ -62,7 +75,7 @@ function prerenderRoutes(): Plugin {
 
         // The template's own title/description are the homepage's. Strip
         // them so each route carries exactly one of each.
-        const html = template
+        const html = routeTemplate
           .replace(/<title>[\s\S]*?<\/title>\s*/, '')
           .replace(/<meta\s+name="description"[\s\S]*?\/>\s*/, '')
           .replace('</head>', `  ${head}\n  </head>`)

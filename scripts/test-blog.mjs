@@ -67,7 +67,10 @@ test('published article contains complete crawlable text and unique canonical me
   assert.equal((html.match(/<title>/g) ?? []).length, 1)
   assert.equal((html.match(/name="description"/g) ?? []).length, 1)
   assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1)
-  assert.doesNotMatch(html, /<script(?! type="application\/ld\+json")/)
+  const analyticsScript = '<script defer src="/site-analytics.js"></script>'
+  assert.equal(html.split(analyticsScript).length - 1, 1, 'includes exactly one approved analytics bootstrap')
+  assert.doesNotMatch(html.replace(analyticsScript, ''), /<script(?! type="application\/ld\+json")/,
+    'the article remains static HTML with no other executable scripts')
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])
   const post = schema['@graph'].find(item => item['@type'] === 'BlogPosting')
   assert.equal(post.author['@type'], 'Person')

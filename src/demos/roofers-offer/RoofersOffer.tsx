@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { submitContactRequest } from '../../lib/contactAdapter'
+import { trackSiteEvent } from '../../lib/analytics'
 import { automationGroups, featuredAutomations } from './automationMenu'
 import {
   roofingContactEmail,
@@ -119,11 +120,13 @@ export function RoofersOffer() {
       ].join('\n'),
     })
     if (result.ok) {
+      trackSiteEvent({ name: 'enquiry_submitted', value: 'roofing_offer' })
       setStatus('sent')
       formRef.current?.reset()
       setHoneypot('')
       return
     }
+    if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: 'roofing_offer' })
     setStatus(result.reason === 'network_error' ? 'error' : result.reason)
   }
 

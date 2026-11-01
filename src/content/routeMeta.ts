@@ -50,9 +50,9 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/services',
-    title: 'CRM, AI & Automation Services | Wallace Shift',
+    title: 'AI Integration for Small Businesses | Wallace Shift',
     description:
-      'Custom CRMs, AI integrations, and connected workflows for customer records, follow-up, and operations. Websites support the customer-facing journey.',
+      'AI integration, custom CRMs, and workflow automation for small businesses. Connect AI to everyday tasks with clear scope, testing, and team support.',
     navLabel: 'Services',
     priority: 0.9,
   },

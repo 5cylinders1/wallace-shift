@@ -48,11 +48,11 @@ export const business = {
 }
 
 export const hero = {
-  eyebrow: 'Custom CRMs · AI integrations',
+  eyebrow: 'AI integration · Custom CRMs',
   headlineLines: ['Software for', 'the way', 'you'],
   headlineAccent: 'work.',
   supporting:
-    'Capture enquiries, keep follow-up moving, and connect daily operations with custom software and practical automation.',
+    'We help small businesses put AI to work, connect their tools, and manage customers with custom CRMs and workflow automation.',
   primaryCta: { label: 'Discuss your system', href: '/contact' },
   secondaryCta: { label: 'Explore our services', href: '/services' },
 }
@@ -89,9 +89,9 @@ export const services = {
       index: '02',
       label: 'AI & automation',
       enquiryValue: 'operations',
-      title: 'AI and workflows with a clear job',
+      title: 'AI integration for small businesses',
       description:
-        'Connect tools to reduce re-entry and missed handoffs. Add AI to a defined task, with a clear way for people to review its output.',
+        'Put AI to work on enquiries, replies, job notes, or business information. We scope the task, connect the tools, and give your team a clear way to review results.',
       outcomeWord: 'TIME',
     },
     {

@@ -9,7 +9,7 @@
  * (`/work/:slug`), nested layouts, or per-route data fetching.
  */
 import { useEffect, useState } from 'react'
-import { knownPaths } from '../content/routeMeta'
+import { findRoute, knownPaths } from '../content/routeMeta'
 
 const ROUTE_CHANGE_EVENT = 'ws:routechange'
 
@@ -110,6 +110,14 @@ export function scrollToRouteTarget(behavior?: ScrollBehavior) {
 
 export function navigate(href: string) {
   const url = new URL(href, window.location.origin)
+  // A tracker already loaded in the public document must not survive entry
+  // into the portal or an experiment. Leaving those documents also needs a
+  // fresh load because their HTML deliberately omits the public bootstrap.
+  if (findRoute(normalizePath(url.pathname))?.noindex ||
+      findRoute(normalizePath(window.location.pathname))?.noindex) {
+    window.location.assign(url.href)
+    return
+  }
   const changedPage =
     normalizePath(url.pathname) !== normalizePath(window.location.pathname)
 

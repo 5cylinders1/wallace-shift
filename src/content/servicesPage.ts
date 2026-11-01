@@ -33,10 +33,10 @@ export interface ServiceDetail {
 
 export const servicesPageMeta = {
   eyebrow: 'Services',
-  headlineLines: ['Systems built', 'around your'],
+  headlineLines: ['AI and systems', 'for your'],
   headlineAccent: 'business.',
   supporting:
-    'Custom CRMs, practical AI integrations, and connected workflows. We start with the work your team needs to do, then agree what to build, connect, or improve.',
+    'We help small businesses put AI to work in everyday operations. AI integration, custom CRMs, and workflow automation are our core services.',
 }
 
 export const serviceDetails: ServiceDetail[] = [
@@ -71,28 +71,28 @@ export const serviceDetails: ServiceDetail[] = [
     id: 'automation',
     index: '02',
     label: 'AI & automation',
-    title: 'AI integrations and connected workflows',
+    title: 'AI integration for small businesses',
     summary:
-      'Connect predictable steps with automation. Give AI a defined task, useful inputs, and a clear point for someone to review the result.',
+      'Bring AI into the tools and processes your team already uses, with automation to connect the steps. Start with one useful task, then build from there.',
     problem:
-      'An enquiry should not need copying into three tools before anyone can act on it. Rules can route a record or trigger a follow-up. AI can serve a different purpose: our roofing demo, for example, uses it to create a roof-finish preview from a supplied photo. That is an illustrative concept, not a completed customer project or a promise about the finished roof.',
+      'Your team spends time reading enquiries, searching for answers, and turning notes into updates. We help you choose where AI fits and connect it to the work: drafting replies, summarising job notes, or finding information in your business documents.',
     outcomes: [
-      'A map of repeated tasks, handoffs, and the tools involved',
-      'A prioritised automation plan based on the work and time at stake',
-      'For AI work, an agreed task, sample inputs, review criteria, and data-handling requirements',
-      'Scoped connections and checks for missing information or failed steps',
-      'An agreed support plan; monitoring and minor adjustments through managed automation, with new workflows scoped separately',
+      'A clear first use case chosen around your team, tools, and budget',
+      'An AI workflow connected to your existing tools where access allows',
+      'Testing with representative examples and agreed checks for accuracy',
+      'Clear rules for data access, human review, and what happens when AI cannot help',
+      'A walkthrough for your team, documentation, and an agreed support plan',
     ],
     rightFor: [
-      'The same information is being entered in multiple places',
-      'Follow-up or handoffs get missed when the team is busy',
-      'You have a specific task to assess for AI, and someone who can judge the output',
+      'You want to use AI but need help choosing a useful first step',
+      'Your team repeatedly reads, drafts, or searches through the same kinds of information',
+      'You want AI working inside your existing process, with people reviewing the result',
     ],
     notFor:
-      'A clearly defined follow-up setup can begin without a paid audit. When the problem needs investigation, an audit establishes the priorities. Larger workflows, AI work, and provider costs are scoped separately. We agree what happens when a result needs review or a connection fails.',
+      'You can start with one focused integration. We check what your tools support, agree how business data is handled, and quote the build and ongoing usage before work begins. A separate audit is useful when the first step needs investigation.',
     pricingAnchor: '/pricing#automation',
-    pricingLabel: 'Automation pricing and AI scope',
-    example: { href: '/demos/roofers-offer/#collection', label: 'Explore the AI roofing concepts' },
+    pricingLabel: 'AI integration scope and pricing',
+    example: { href: '/demos/roofers-offer/#collection', label: 'Explore the sample AI roofing concepts' },
   },
   {
     id: 'websites',
@@ -125,7 +125,7 @@ export const serviceDetails: ServiceDetail[] = [
 export const servicesPageCta = {
   headline: 'Start with the work that needs to change.',
   supporting:
-    'Tell us how things work today, where they get stuck, and what you need to see or do more easily. We will discuss the right first step.',
+    'Tell us where your team spends time on repeated tasks, what tools you use, and what you would like AI to help with. We will identify a practical first step.',
   primaryLabel: 'Discuss your system',
   primaryHref: '/contact',
   secondaryLabel: 'See what it costs',

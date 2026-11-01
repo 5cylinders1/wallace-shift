@@ -28,6 +28,9 @@ function documentHtml({ title, description, path, cssPath, body, noindex = false
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="strict-origin" />
+  <link rel="stylesheet" href="/analytics-consent.css" />
+  <script defer src="/site-analytics.js"></script>
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <meta name="theme-color" content="#080d12" />
