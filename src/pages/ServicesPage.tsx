@@ -9,6 +9,7 @@ import {
 } from '../content/servicesPage'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
 import { useMediaQuery } from '../hooks/useMediaQuery'
+import { serviceDirectory } from '../content/siteConfig'
 import './InteriorPage.css'
 import './ServicesPage.css'
 
@@ -71,6 +72,12 @@ export function ServicesPage() {
                   </span>
                   <h2 className="service-detail__title">{service.title}</h2>
                   <p className="service-detail__summary">{service.summary}</p>
+                  {serviceDirectory.filter((detail) => detail.panelId === service.id).map((detail) => (
+                    <PageLink key={detail.href} href={detail.href} className="service-detail__pricing">
+                      {detail.label} services
+                      <span aria-hidden="true">&#8599;</span>
+                    </PageLink>
+                  ))}
                   <PageLink
                     href={service.pricingAnchor}
                     className="service-detail__pricing"
@@ -93,7 +100,7 @@ export function ServicesPage() {
 
                   <Reveal delay={0.08}>
                     <div>
-                      <p className="service-block__label">What you end up with</p>
+                      <h3 className="service-block__label">What you end up with</h3>
                       <ul className="service-list">
                         {service.outcomes.map((outcome) => (
                           <li key={outcome}>{outcome}</li>
@@ -104,7 +111,7 @@ export function ServicesPage() {
 
                   <Reveal delay={0.12} className="service-detail__columns">
                     <div>
-                      <p className="service-block__label">Right for you if</p>
+                      <h3 className="service-block__label">Right for you if</h3>
                       <ul className="service-list">
                         {service.rightFor.map((signal) => (
                           <li key={signal}>{signal}</li>
@@ -112,7 +119,7 @@ export function ServicesPage() {
                       </ul>
                     </div>
                     <div>
-                      <p className="service-block__label">Worth knowing</p>
+                      <h3 className="service-block__label">Worth knowing</h3>
                       <p className="service-detail__note">{service.notFor}</p>
                     </div>
                   </Reveal>

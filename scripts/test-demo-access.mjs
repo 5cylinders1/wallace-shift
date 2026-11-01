@@ -102,6 +102,22 @@ after(async () => {
   await rm(temporary, { recursive: true, force: true })
 })
 
+test('collection hosts advertise only their own public canonical page to crawlers', async () => {
+  for (const host of ['roofers.wallaceshift.com', 'contractors.wallaceshift.com']) {
+    const sitemap = await middleware(new Request(`https://${host}/sitemap.xml`))
+    assert.equal(sitemap.status, 200)
+    assert.match(sitemap.headers.get('content-type'), /application\/xml/)
+    const xml = await sitemap.text()
+    assert.deepEqual([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]), [`https://${host}/`])
+    const robots = await middleware(new Request(`https://${host}/robots.txt`))
+    assert.match(await robots.text(), new RegExp(`Sitemap: https://${host.replaceAll('.', '\\.')}/sitemap\\.xml`))
+  }
+  const main = await middleware(new Request('https://wallaceshift.com/sitemap.xml'))
+  assert.equal(main.headers.get('x-middleware-next'), '1', 'the main host serves its generated sitemap')
+  const denied = await middleware(new Request('https://roofers.wallaceshift.com/northvane'))
+  assert.equal(denied.status, 303, 'crawler files do not grant access to private demos')
+})
+
 test('signed grants reject tampering, expired/future grants, wrong kind and different origins', () => {
   const now = Math.floor(Date.now() / 1000)
   const token = access.createDemoInvite('roofers-4', email, now)

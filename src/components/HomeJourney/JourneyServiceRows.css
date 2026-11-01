@@ -41,7 +41,7 @@
   font-size: min(30cqw, 72cqh, 19rem);
   line-height: 1;
 }
-.journey-services__rows .service-row:focus-visible {
+.journey-services__rows .service-row__control:focus-visible {
   outline: 2px solid var(--color-accent-deep);
   outline-offset: -3px;
 }

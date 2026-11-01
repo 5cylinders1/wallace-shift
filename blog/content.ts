@@ -4,8 +4,8 @@ import matter from 'gray-matter'
 import { Marked } from 'marked'
 
 export const BLOG_ORIGIN = 'https://wallaceshift.com'
-export const BLOG_TITLE = 'Business systems, explained | Wallace Shift Blog'
-export const BLOG_DESCRIPTION = 'Practical answers to business owners’ questions about custom CRMs, AI, workflow automation, and websites that connect to their business.'
+export const BLOG_TITLE = 'AI, CRM & Automation Guides | Wallace Shift Blog'
+export const BLOG_DESCRIPTION = 'Practical guides to AI integration, custom CRMs, workflow automation, and business websites. Compare options and plan the next step for your small business.'
 
 export interface BlogPost {
   slug: string
@@ -64,6 +64,7 @@ function plainHeading(html: string): string {
 export function renderMarkdown(markdown: string, file: string): { html: string; toc: BlogPost['toc']; readingMinutes: number } {
   const toc: BlogPost['toc'] = []
   const ids = new Set<string>()
+  let previousHeadingDepth = 1
   const parser = new Marked({
     gfm: true,
     async: false,
@@ -75,6 +76,10 @@ export function renderMarkdown(markdown: string, file: string): { html: string; 
     },
     renderer: {
       heading({ tokens, depth }) {
+        if (depth > previousHeadingDepth + 1) {
+          throw new Error(`${file}: heading levels must not skip from H${previousHeadingDepth} to H${depth}`)
+        }
+        previousHeadingDepth = depth
         const text = this.parser.parseInline(tokens)
         const plain = plainHeading(text)
         const base = `section-${plain.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'heading'}`

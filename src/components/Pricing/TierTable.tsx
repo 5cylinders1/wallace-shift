@@ -47,7 +47,7 @@ export function TierTable() {
         tween.kill()
       }
     },
-    { scope: sectionRef, dependencies: [reducedMotion] },
+    { scope: sectionRef, dependencies: [reducedMotion], revertOnUpdate: true },
   )
 
   return (

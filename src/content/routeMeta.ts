@@ -13,6 +13,8 @@
  * page component itself, which `App` maps by path.
  */
 
+import { serviceLandingPages } from './serviceLandingPages.ts'
+
 /** Production origin. Used for canonical URLs, OG tags, and the sitemap. */
 export const SITE_ORIGIN = 'https://wallaceshift.com'
 
@@ -20,6 +22,11 @@ export interface RouteMeta {
   path: string
   title: string
   description: string
+  /** Public page type and breadcrumb label used by the shared JSON-LD graph. */
+  schemaType?: 'WebPage' | 'CollectionPage' | 'AboutPage' | 'ContactPage'
+  breadcrumbLabel?: string
+  /** Present only on a dedicated page describing an offered service. */
+  serviceType?: string
   /** Shown in the header/footer nav. Omitted routes are reachable but unlisted. */
   navLabel?: string
   /** Relative priority in sitemap.xml. */
@@ -43,30 +50,38 @@ export const routeMeta: RouteMeta[] = [
   { path: '/client-portal', title: 'Client Portal | Wallace Shift', description: 'Review agreements, invoices, and payments with Wallace Shift.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
   {
     path: '/',
-    title: 'Wallace Shift | Custom CRMs, AI & Automation',
+    title: 'AI Integration & Custom CRM Development | Wallace Shift',
     description:
-      'Custom CRM systems, practical AI integrations, and workflow automation built around your business. Connect enquiries, follow-up, and daily operations.',
+      'AI integration, custom CRM development, and workflow automation for small businesses in Greater Kansas City and remotely. Build around the way your team works.',
     priority: 1.0,
   },
   {
     path: '/services',
-    title: 'AI Integration for Small Businesses | Wallace Shift',
+    title: 'AI, CRM & Workflow Automation Services | Wallace Shift',
     description:
       'AI integration, custom CRMs, and workflow automation for small businesses. Connect AI to everyday tasks with clear scope, testing, and team support.',
     navLabel: 'Services',
     priority: 0.9,
   },
+  ...serviceLandingPages.map(service => ({
+    path: service.path,
+    title: service.title,
+    description: service.description,
+    breadcrumbLabel: service.name,
+    serviceType: service.serviceType,
+    priority: 0.9,
+  })),
   {
     path: '/pricing',
-    title: 'Pricing | Wallace Shift',
+    title: 'AI Integration, CRM & Website Pricing | Wallace Shift',
     description:
-      'Explore system definition, software builds, ongoing development, and automation engagements. See the scope, support terms, and supporting website packages.',
+      'Explore custom CRM development, AI integration, automation, and website pricing. See starting scopes, definition options, and ongoing support with Wallace Shift.',
     navLabel: 'Pricing',
     priority: 0.9,
   },
   {
     path: '/approach',
-    title: 'Approach | Wallace Shift',
+    title: 'Our AI & CRM Implementation Process | Wallace Shift',
     description:
       'How we map your workflow, define the right system, build and test it with you, and plan support and further improvements.',
     navLabel: 'Approach',
@@ -74,15 +89,15 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/about',
-    title: 'About | Wallace Shift',
+    title: 'About Wallace Shift | AI & CRM Development in Kansas City',
     description:
-      'Meet the two people behind Wallace Shift, a software company building custom CRMs, AI integrations, and connected business workflows.',
+      'Meet Matthew and Bella Wallace. We help small businesses in Greater Kansas City and remotely with AI integration, custom CRMs, and connected workflows.',
     navLabel: 'About',
     priority: 0.7,
   },
   {
     path: '/contact',
-    title: 'Discuss Your Business System | Wallace Shift',
+    title: 'Contact Wallace Shift | AI, CRM & Automation Projects',
     description:
       'Tell us about your current tools, missed follow-up, or repeated admin. Discuss a custom CRM, AI integration, workflow, or connected website with Wallace Shift.',
     navLabel: 'Contact',
@@ -90,7 +105,7 @@ export const routeMeta: RouteMeta[] = [
   },
   {
     path: '/privacy',
-    title: 'Privacy | Wallace Shift',
+    title: 'Privacy Policy | Wallace Shift',
     description:
       'What Wallace Shift collects through this website, why, and how to have it removed.',
     priority: 0.2,

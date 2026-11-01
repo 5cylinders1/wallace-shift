@@ -1,9 +1,9 @@
 export const siteMeta = {
   name: 'Wallace Shift',
   tagline: 'Software. Workflows. Progress.',
-  title: 'Wallace Shift | Custom CRMs, AI & Automation',
+  title: 'AI Integration & Custom CRM Development | Wallace Shift',
   description:
-    'Custom CRM systems, practical AI integrations, and workflow automation built around your business. Connect enquiries, follow-up, and daily operations.',
+    'AI integration, custom CRM development, and workflow automation for small businesses in Greater Kansas City and remotely. Build around the way your team works.',
 }
 
 /**
@@ -49,10 +49,10 @@ export const business = {
 
 export const hero = {
   eyebrow: 'AI integration · Custom CRMs',
-  headlineLines: ['Software for', 'the way', 'you'],
-  headlineAccent: 'work.',
+  headlineLines: ['AI integration', '& custom'],
+  headlineAccent: 'CRMs.',
   supporting:
-    'We help small businesses put AI to work, connect their tools, and manage customers with custom CRMs and workflow automation.',
+    'AI integration, custom CRM development, and workflow automation for small businesses in Greater Kansas City and remotely. Built around your team and the tools you use.',
   primaryCta: { label: 'Discuss your system', href: '/contact' },
   secondaryCta: { label: 'Explore our services', href: '/services' },
 }
@@ -61,8 +61,16 @@ export const brandStatement = {
   body: 'When customer details, follow-up, and job updates live in different places, work gets missed. We build systems that bring the next action and the current picture together.',
 }
 
+/** Commercial service pages, shared by the overview and sitewide navigation. */
+export const serviceDirectory = [
+  { label: 'AI integration', href: '/services/ai-integration', panelId: 'automation' },
+  { label: 'Custom CRM development', href: '/services/custom-crm-development', panelId: 'web-apps' },
+  { label: 'Workflow automation', href: '/services/workflow-automation', panelId: 'automation' },
+  { label: 'Small business web design', href: '/services/web-design', panelId: 'websites' },
+] as const
+
 export const services = {
-  headingLines: ['Connect the work.', 'See what’s next.'],
+  headingLines: ['AI, CRM and', 'automation services.'],
   /* The two questions a reader has after "what can I hire you to build?" —
      each gets its own exit rather than a pair of trailing text links. */
   detailLink: {
@@ -111,8 +119,8 @@ export type ServiceItem = (typeof services.items)[number]
 /** Opening block for the /approach page, above the process section. */
 export const approachPageHero = {
   eyebrow: 'Approach',
-  headlineLines: ['How the work', 'actually'],
-  headlineAccent: 'runs.',
+  headlineLines: ['Our AI and CRM', 'build'],
+  headlineAccent: 'process.',
   supporting:
     'We start with how work happens today, agree what the system needs to do, then build and test it with you. Support and further improvements have a clear scope from the start.',
 }

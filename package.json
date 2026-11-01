@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "check:deployment": "node scripts/test-vercel-typescript.mjs && node scripts/test-lawn-api.mjs",
-    "build": "npm run check:deployment && tsc -b && vite build && vite build --mode demos && node scripts/verify-demo-build.mjs && node scripts/verify-blog-build.mjs",
+    "build": "npm run check:deployment && tsc -b && vite build && vite build --mode demos && node scripts/verify-demo-build.mjs && node scripts/verify-blog-build.mjs && node scripts/verify-seo-build.mjs && node scripts/verify-marketing-entries.mjs",
+    "test:seo": "node scripts/test-seo-runtime.mjs && node scripts/verify-seo-build.mjs",
     "test:blog": "node scripts/test-blog.mjs && node scripts/test-blog-preview.mjs",
     "test:portal": "node scripts/test-client-portal.mjs",
     "test:analytics": "node scripts/test-analytics.mjs",

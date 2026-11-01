@@ -33,10 +33,10 @@ export interface ServiceDetail {
 
 export const servicesPageMeta = {
   eyebrow: 'Services',
-  headlineLines: ['AI and systems', 'for your'],
-  headlineAccent: 'business.',
+  headlineLines: ['AI, CRM &', 'automation'],
+  headlineAccent: 'services.',
   supporting:
-    'We help small businesses put AI to work in everyday operations. AI integration, custom CRMs, and workflow automation are our core services.',
+    'AI integration, custom CRM development, and workflow automation for small businesses. Explore the right service for your daily work, with websites that connect customers to your team.',
 }
 
 export const serviceDetails: ServiceDetail[] = [

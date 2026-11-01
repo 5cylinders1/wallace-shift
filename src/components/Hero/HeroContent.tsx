@@ -15,7 +15,7 @@ export function HeroContent() {
           <h1 className="hero__headline">
             {hero.headlineLines.slice(0, -1).map((line) => (
               <span className="hero__line" key={line}>
-                <span className="hero__line-inner">{line}</span>
+                <span className="hero__line-inner">{line}{' '}</span>
               </span>
             ))}
             <span className="hero__line">

@@ -71,7 +71,7 @@ export function Reveal({ children, delay = 0, y = 22, xPercent, className }: Rev
       observer.observe(watched)
       return () => observer.disconnect()
     },
-    { scope: ref, dependencies: [reducedMotion, delay, y, xPercent] },
+    { scope: ref, dependencies: [reducedMotion, delay, y, xPercent], revertOnUpdate: true },
   )
 
   return (

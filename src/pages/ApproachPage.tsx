@@ -149,7 +149,7 @@ export function ApproachPage() {
           <div className="approach-intro__grid">
             <div className="approach-intro__copy">
               <p className="eyebrow">The approach / 3 clear steps</p>
-              <h1 id="approach-heading">Map the work.<br />Build the <span className="accent-serif">system.</span></h1>
+              <h1 id="approach-heading">Our AI and CRM{' '}<br />build <span className="accent-serif">process.</span></h1>
               <p className="approach-intro__lead">We start with the gaps: where enquiries arrive, who follows up, and where work stalls. Together we map the tools, handoffs, and information involved before deciding what to adapt, connect, or build.</p>
               <a className="approach-intro__scroll" href="/contact">Discuss your workflow <span aria-hidden="true">↗</span></a>
             </div>

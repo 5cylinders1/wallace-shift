@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { SITE_ORIGIN, findRoute } from '../content/routeMeta'
+import { serializeJsonLd, structuredDataForRoute } from '../content/structuredData'
 
 function setMeta(selector: string, create: () => HTMLElement, value: string) {
   let el = document.head.querySelector<HTMLElement>(selector)
@@ -70,6 +71,25 @@ export function useDocumentMeta(
 
     if (path) {
       const canonical = `${SITE_ORIGIN}${path === '/' ? '/' : path}`
+      const route = findRoute(path)
+
+      setMeta('meta[name="robots"]', () => {
+        const el = document.createElement('meta')
+        el.name = 'robots'
+        return el
+      }, route?.noindex ? (route.robots ?? 'noindex') : 'index, follow, max-image-preview:large')
+
+      // Replace the build-time graph when the visitor navigates within the
+      // SPA. One stable script avoids stale service/breadcrumb entities.
+      const graph = structuredDataForRoute(path)
+      const previous = document.getElementById('page-structured-data')
+      if (graph) {
+        const script = previous ?? document.createElement('script')
+        script.id = 'page-structured-data'
+        script.setAttribute('type', 'application/ld+json')
+        script.textContent = serializeJsonLd(graph)
+        if (!previous) document.head.appendChild(script)
+      } else previous?.remove()
 
       setMeta(
         'link[rel="canonical"]',

@@ -1,8 +1,9 @@
-import { defineConfig, loadEnv, type Plugin, type UserConfig } from 'vite'
+import { createServer, defineConfig, loadEnv, type Plugin, type UserConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { SITE_ORIGIN, routeMeta } from './src/content/routeMeta.ts'
+import { serializeJsonLd, structuredDataForRoute } from './src/content/structuredData.ts'
 import { gateDemoRequest, isProtectedDemoPath } from './api/_lib/demo-access.ts'
 import demoRequestHandler from './api/demo-request.ts'
 import demoAccessHandler from './api/demo-access.ts'
@@ -15,13 +16,10 @@ import { bucyrusPlugin } from './bucyrus/vite-plugin.ts'
 /**
  * Emits one real HTML file per route, plus `sitemap.xml` and `robots.txt`.
  *
- * The app is still a client-rendered SPA — this does not prerender page
- * content. What it does is give every URL its own document with the
- * correct title, description, canonical, and Open Graph tags baked into
- * the markup, which is what link-preview scrapers (iMessage, WhatsApp,
- * Slack, Facebook) read. Those scrapers do not execute JavaScript, so
- * without this every shared link previews as the homepage — or as
- * nothing.
+ * Public pages contain the actual React content as initial HTML, with
+ * matching metadata and JSON-LD. The browser hydrates that same tree before
+ * starting its animations. Search crawlers and visitors without JavaScript
+ * can therefore read the same headings, text, and links.
  *
  * It also means `/services` is a file the host can serve directly, so the
  * catch-all rewrite that used to return the homepage with HTTP 200 for
@@ -33,67 +31,97 @@ function prerenderRoutes(): Plugin {
     apply: 'build',
     enforce: 'post',
 
-    async closeBundle() {
-      const outDir = 'dist'
-      const template = await readFile(join(outDir, 'index.html'), 'utf8')
+    closeBundle: {
+      // The blog appends its entries in a post hook after this sitemap exists.
+      order: 'pre',
+      sequential: true,
+      async handler() {
+        const outDir = 'dist'
+        const template = await readFile(join(outDir, 'index.html'), 'utf8')
+        const renderer = await createServer({
+          configFile: false,
+          plugins: [react()],
+          appType: 'custom',
+          logLevel: 'error',
+          server: { middlewareMode: true, watch: null, hmr: false, ws: false },
+        })
 
-      for (const route of routeMeta) {
-        const canonical = `${SITE_ORIGIN}${route.path}`
-        // Private and experimental documents must never inherit a tracker
-        // from the public homepage template, even before its runtime guard.
-        let routeTemplate = route.noindex
-          ? template
-            .replace(/<script\b[^>]*\bsrc=["']\/site-analytics\.js["'][^>]*>[\s\S]*?<\/script>\s*/gi, '')
-            .replace(/<link\b[^>]*\bhref=["']\/analytics-consent\.css["'][^>]*>\s*/gi, '')
-          : template
-        if (route.path === '/client-portal') {
-          routeTemplate = routeTemplate.replace(/<meta\b[^>]*\bname=["']referrer["'][^>]*>\s*/gi, '')
-        }
-        const head = [
-          `<title>${escapeHtml(route.title)}</title>`,
-          `<meta name="description" content="${escapeHtml(route.description)}" />`,
-          `<link rel="canonical" href="${canonical}" />`,
-          `<meta property="og:type" content="website" />`,
-          `<meta property="og:site_name" content="Wallace Shift" />`,
-          `<meta property="og:title" content="${escapeHtml(route.title)}" />`,
-          `<meta property="og:description" content="${escapeHtml(route.description)}" />`,
-          `<meta property="og:url" content="${canonical}" />`,
-          `<meta property="og:image" content="${SITE_ORIGIN}/media/wallace-shift-hero-poster.webp" />`,
-          `<meta name="twitter:card" content="summary_large_image" />`,
-          `<meta name="twitter:title" content="${escapeHtml(route.title)}" />`,
-          `<meta name="twitter:description" content="${escapeHtml(route.description)}" />`,
-          `<meta name="twitter:image" content="${SITE_ORIGIN}/media/wallace-shift-hero-poster.webp" />`,
-          route.path === '/client-portal'
-            ? '<meta name="referrer" content="no-referrer" />'
-            : '',
-          route.noindex
-            ? `<meta name="robots" content="${escapeHtml(route.robots ?? 'noindex')}" />`
-            : '',
-        ]
-          .filter(Boolean)
-          .join('\n    ')
+        try {
+          const { renderPage } = await renderer.ssrLoadModule('/src/render.tsx') as { renderPage: (path: string) => string }
+          for (const route of routeMeta) {
+            const canonical = `${SITE_ORIGIN}${route.path}`
+            // Private and experimental documents must never inherit a tracker
+            // from the public homepage template, even before its runtime guard.
+            let routeTemplate = route.noindex
+              ? template
+                .replace(/<script\b[^>]*\bsrc=["']\/site-analytics\.js["'][^>]*>[\s\S]*?<\/script>\s*/gi, '')
+                .replace(/<link\b[^>]*\bhref=["']\/analytics-consent\.css["'][^>]*>\s*/gi, '')
+              : template
+            if (route.path === '/client-portal') {
+              routeTemplate = routeTemplate.replace(/<meta\b[^>]*\bname=["']referrer["'][^>]*>\s*/gi, '')
+            }
+            const head = [
+              `<title>${escapeHtml(route.title)}</title>`,
+              `<meta name="description" content="${escapeHtml(route.description)}" />`,
+              `<link rel="canonical" href="${canonical}" />`,
+              `<meta property="og:type" content="website" />`,
+              `<meta property="og:site_name" content="Wallace Shift" />`,
+              '<meta property="og:locale" content="en_US" />',
+              `<meta property="og:title" content="${escapeHtml(route.title)}" />`,
+              `<meta property="og:description" content="${escapeHtml(route.description)}" />`,
+              `<meta property="og:url" content="${canonical}" />`,
+              `<meta property="og:image" content="${SITE_ORIGIN}/media/wallace-shift-hero-poster.webp" />`,
+              '<meta property="og:image:alt" content="Wallace Shift business systems and AI integration" />',
+              `<meta name="twitter:card" content="summary_large_image" />`,
+              `<meta name="twitter:title" content="${escapeHtml(route.title)}" />`,
+              `<meta name="twitter:description" content="${escapeHtml(route.description)}" />`,
+              `<meta name="twitter:image" content="${SITE_ORIGIN}/media/wallace-shift-hero-poster.webp" />`,
+              route.path === '/client-portal'
+                ? '<meta name="referrer" content="no-referrer" />'
+                : '',
+              route.noindex
+                ? `<meta name="robots" content="${escapeHtml(route.robots ?? 'noindex')}" />`
+                : '<meta name="robots" content="index, follow, max-image-preview:large" />',
+              `<script id="page-structured-data" type="application/ld+json">${serializeJsonLd(structuredDataForRoute(route.path))}</script>`,
+            ]
+              .filter(Boolean)
+              .join('\n    ')
 
-        // The template's own title/description are the homepage's. Strip
-        // them so each route carries exactly one of each.
-        const html = routeTemplate
-          .replace(/<title>[\s\S]*?<\/title>\s*/, '')
-          .replace(/<meta\s+name="description"[\s\S]*?\/>\s*/, '')
-          .replace('</head>', `  ${head}\n  </head>`)
+            // The template's own title/description are the homepage's. Strip
+            // them so each route carries exactly one of each.
+            const html = routeTemplate
+              .replace(/<title>[\s\S]*?<\/title>\s*/, '')
+              .replace(/<meta\s+name="description"[\s\S]*?\/>\s*/, '')
+              .replace('</head>', `  ${head}\n  </head>`)
+              .replace('<div id="root"></div>', () => route.noindex && route.path !== '/404'
+                ? '<div id="root"></div>'
+                : `<div id="root" data-route-path="${escapeHtml(route.path)}">${renderPage(route.path)}</div>`)
 
-        // `/404` is emitted as `404.html` at the root, which is the file
-        // Vercel serves (with a real 404 status) for unmatched paths.
-        const target =
-          route.path === '/404'
-            ? join(outDir, '404.html')
-            : join(outDir, route.path.replace(/^\//, ''), 'index.html')
+            // `/404` is emitted as `404.html` at the root, which is the file
+            // Vercel serves (with a real 404 status) for unmatched paths.
+            const target =
+              route.path === '/404'
+                ? join(outDir, '404.html')
+                : join(outDir, route.path.replace(/^\//, ''), 'index.html')
 
-        await mkdir(dirname(target), { recursive: true })
-        await writeFile(target, html, 'utf8')
-      }
+            await mkdir(dirname(target), { recursive: true })
+            await writeFile(target, html, 'utf8')
+          }
+          const { renderCollection } = await renderer.ssrLoadModule('/src/render-collections.tsx') as {
+            renderCollection: (collection: 'contractors' | 'roofers-offer') => string
+          }
+          for (const collection of ['contractors', 'roofers-offer'] as const) {
+            const target = join(outDir, 'demos', collection, 'index.html')
+            const document = await readFile(target, 'utf8')
+            if (!document.includes('<div id="root"></div>')) throw new Error(`Missing empty root for ${collection}`)
+            await writeFile(target, document.replace('<div id="root"></div>',
+              () => `<div id="root" data-collection="${collection}">${renderCollection(collection)}</div>`), 'utf8')
+          }
+        } finally { await renderer.close() }
 
-      const indexed = routeMeta.filter((route) => !route.noindex)
+        const indexed = routeMeta.filter((route) => !route.noindex)
 
-      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+        const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${indexed
   .map(
@@ -103,18 +131,20 @@ ${indexed
   .join('\n')}
 </urlset>
 `
-      await writeFile(join(outDir, 'sitemap.xml'), sitemap, 'utf8')
+        await writeFile(join(outDir, 'sitemap.xml'), sitemap, 'utf8')
 
-      const robots = `User-agent: *
+        const robots = `User-agent: *
 Allow: /
+Disallow: /api/
 
 Sitemap: ${SITE_ORIGIN}/sitemap.xml
 `
-      await writeFile(join(outDir, 'robots.txt'), robots, 'utf8')
+        await writeFile(join(outDir, 'robots.txt'), robots, 'utf8')
 
-      this.info?.(
-        `prerendered ${routeMeta.length} routes, sitemap.xml, robots.txt`,
-      )
+        this.info?.(
+          `rendered public HTML and metadata for ${routeMeta.length} routes, sitemap.xml, robots.txt`,
+        )
+      },
     },
   }
 }

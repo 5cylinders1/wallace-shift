@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { accessHref, categories, demoHref, nextTrades, previewDuration, trades, type FilmDemo, type TradeDemo } from './catalog'
 import DemoPreview from './DemoPreview'
+import { useCollectionHostname } from '../../hooks/useCollectionHostname'
 
-const STUDIO = 'https://www.wallaceshift.com'
+const STUDIO = 'https://wallaceshift.com'
 
 function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return <span aria-hidden="true">{diagonal ? '↗' : '→'}</span>
@@ -15,9 +16,9 @@ function Wordmark() {
   </a>
 }
 
-function DemoCard({ demo, onWatch }: { demo: TradeDemo; onWatch: (demo: FilmDemo) => void }) {
+function DemoCard({ demo, hostname, onWatch }: { demo: TradeDemo; hostname: string; onWatch: (demo: FilmDemo) => void }) {
   // Open demos have no film: the tile goes straight to the public demo.
-  const href = demo.kind === 'open' ? demoHref(demo, window.location.hostname) : undefined
+  const href = demo.kind === 'open' ? demoHref(demo, hostname) : undefined
   const image = <img src={demo.thumbnail} alt={demo.thumbnailAlt} width="1600" height="900" loading="lazy" />
   return <article className="ct-demo">
     {demo.kind === 'film'
@@ -46,7 +47,7 @@ function DemoCard({ demo, onWatch }: { demo: TradeDemo; onWatch: (demo: FilmDemo
   </article>
 }
 
-function CategoryRow({ category, demos, onWatch }: { category: typeof categories[number]; demos: TradeDemo[]; onWatch: (demo: FilmDemo) => void }) {
+function CategoryRow({ category, demos, hostname, onWatch }: { category: typeof categories[number]; demos: TradeDemo[]; hostname: string; onWatch: (demo: FilmDemo) => void }) {
   const sliderRef = useRef<HTMLUListElement>(null)
   const [position, setPosition] = useState({ first: 0, atEnd: false })
   const multiple = demos.length > 1
@@ -84,7 +85,7 @@ function CategoryRow({ category, demos, onWatch }: { category: typeof categories
   }
   return <section id={`category-${category.id}`} className="ct-category" aria-labelledby={`category-${category.id}-title`}>
     <div className="ct-category-head">
-      <div><p className="ct-category-count">{String(demos.length).padStart(2, '0')} {demos.length === 1 ? 'demo' : 'demos'}</p><h3 id={`category-${category.id}-title`}>{category.name}</h3><p>{category.description}</p></div>
+      <div><p className="ct-category-count">{String(demos.length).padStart(2, '0')} {demos.length === 1 ? 'demo' : 'demos'}</p><h2 id={`category-${category.id}-title`}>{category.name}</h2><p>{category.description}</p></div>
       {multiple && <div className="ct-slider-controls">
         <span className="ct-slider-position" aria-live="polite" aria-atomic="true">{position.first + 1} / {demos.length}</span>
         <button type="button" aria-label={`Previous ${category.name.toLowerCase()} demo`} aria-controls={`slider-${category.id}`} disabled={position.first === 0} onClick={() => move(-1)}><span aria-hidden="true">←</span></button>
@@ -93,12 +94,13 @@ function CategoryRow({ category, demos, onWatch }: { category: typeof categories
     </div>
     {multiple && <p id={`slider-${category.id}-help`} className="ct-slider-help">Swipe or use the arrows to explore. Keyboard: Tab through cards, or use arrow keys on the row.</p>}
     <ul ref={sliderRef} id={`slider-${category.id}`} className={`ct-slider${multiple ? '' : ' ct-slider-single'}`} aria-label={`${category.name} demos`} aria-describedby={multiple ? `slider-${category.id}-help` : undefined} tabIndex={multiple ? 0 : undefined} onScroll={updatePosition} onKeyDown={onKeyDown}>
-      {demos.map(demo => <li key={demo.id}><DemoCard demo={demo} onWatch={onWatch} /></li>)}
+      {demos.map(demo => <li key={demo.id}><DemoCard demo={demo} hostname={hostname} onWatch={onWatch} /></li>)}
     </ul>
   </section>
 }
 
 export default function ContractorsLander() {
+  const hostname = useCollectionHostname('contractors.wallaceshift.com')
   const [activeDemo, setActiveDemo] = useState<FilmDemo | null>(null)
   const watchDemo = useCallback((demo: FilmDemo) => setActiveDemo(demo), [])
   const closePreview = useCallback(() => setActiveDemo(null), [])
@@ -117,11 +119,13 @@ export default function ContractorsLander() {
         </nav>
         <a className="ct-header-cta" href="/request-demo/">Request access <Arrow diagonal /></a>
       </header>
-      <main id="main">
+    </div>
+    <main id="main">
+      <div className="ct-dark">
         <section className="ct-wrap ct-hero" aria-labelledby="ct-title">
           <div className="ct-hero-copy">
             <p className="ct-eyebrow">Business systems for contractors / Demos</p>
-            <h1 id="ct-title">Connect the first inquiry <em>to the work ahead.</em></h1>
+            <h1 id="ct-title">Contractor CRMs and <em>website demos.</em></h1>
             <p className="ct-lede">Wallace Shift builds custom CRMs, practical AI integrations and workflow automation. Explore short, public previews of website and CRM concepts: helping customers explain what they need and helping your team see the next step.</p>
             <div className="ct-actions">
               <a className="ct-button" href="#demos">Watch the demos <Arrow /></a>
@@ -134,8 +138,7 @@ export default function ContractorsLander() {
             <span className="ct-hero-feature-label"><span>{previewDuration(featured.durationSeconds)} · No access request needed</span><strong>Watch {featured.name} <Arrow /></strong></span>
           </button>
         </section>
-      </main>
-    </div>
+      </div>
 
     <section id="offer" className="ct-offer" aria-labelledby="offer-title">
       <div className="ct-wrap ct-offer-inner">
@@ -159,7 +162,7 @@ export default function ContractorsLander() {
         </div>
         <p className="ct-collection-intro">{trades.length} individual demos across {categories.length} categories. Watch any preview now; request access when you want to explore the interactive version.</p>
         <nav className="ct-category-nav" aria-label="Browse demos by trade">{categories.map(category => <a key={category.id} href={`#category-${category.id}`}>{category.name}<span>{trades.filter(demo => demo.category === category.id).length}</span></a>)}</nav>
-        <div className="ct-category-rows">{categories.map(category => <CategoryRow key={category.id} category={category} demos={trades.filter(demo => demo.category === category.id)} onWatch={watchDemo} />)}</div>
+        <div className="ct-category-rows">{categories.map(category => <CategoryRow key={category.id} category={category} demos={trades.filter(demo => demo.category === category.id)} hostname={hostname} onWatch={watchDemo} />)}</div>
         <div className="ct-next">
           <p className="ct-eyebrow">Planned for the collection</p>
           <ul>{nextTrades.map(trade => <li key={trade}>{trade}</li>)}</ul>
@@ -196,6 +199,7 @@ export default function ContractorsLander() {
         <a className="ct-button" href="/request-demo/">Request access <Arrow diagonal /></a>
       </div>
     </section>
+    </main>
 
     {activeDemo && <DemoPreview key={activeDemo.id} demo={activeDemo} onClose={closePreview} />}
 
@@ -208,7 +212,7 @@ export default function ContractorsLander() {
           <a href={`${STUDIO}/services`}>Services</a>
           <a href={`${STUDIO}/contact`}>Contact</a>
         </nav>
-        <p className="ct-copyright">© {new Date().getFullYear()} Wallace Shift. Demo brands are fictional unless a card says otherwise.</p>
+        <p className="ct-copyright">© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Wallace Shift. Demo brands are fictional unless a card says otherwise.</p>
       </div>
     </footer>
   </div>

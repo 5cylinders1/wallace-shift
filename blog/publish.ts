@@ -3,11 +3,12 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { BLOG_DESCRIPTION, BLOG_ORIGIN, BLOG_TITLE, escapeHtml, loadPosts, type BlogPost } from './content.ts'
 import { renderIndex, renderNotFound, renderPost } from './render.ts'
+import { organizationNode, websiteNode, serializeJsonLd } from '../src/content/structuredData.ts'
 
 const absolute = (path: string) => new URL(path, BLOG_ORIGIN).href
 const postUrl = (post: BlogPost) => `${BLOG_ORIGIN}/blog/${post.slug}`
-const json = (value: unknown) => JSON.stringify(value).replaceAll('<', '\\u003c').replaceAll('>', '\\u003e').replaceAll('&', '\\u0026')
-const organization = { '@type': 'Organization', name: 'Wallace Shift', url: BLOG_ORIGIN, logo: `${BLOG_ORIGIN}/brand/wallace-shift-logo-black.svg` }
+const publisher = { '@id': `${BLOG_ORIGIN}/#organization` }
+const website = { '@id': `${BLOG_ORIGIN}/#website` }
 
 interface DocumentOptions {
   title: string
@@ -55,7 +56,7 @@ function documentHtml({ title, description, path, cssPath, body, noindex = false
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${escapeHtml(image)}" />
   ${post ? `<meta property="article:published_time" content="${post.publishedAt}" />\n  ${post.updatedAt ? `<meta property="article:modified_time" content="${post.updatedAt}" />` : ''}` : ''}
-  ${schema.length ? `<script type="application/ld+json">${json({ '@context': 'https://schema.org', '@graph': schema })}</script>` : ''}
+  ${schema.length ? `<script type="application/ld+json">${serializeJsonLd({ '@context': 'https://schema.org', '@graph': [organizationNode, websiteNode, ...schema] })}</script>` : ''}
 </head>
 <body>${body}</body>
 </html>
@@ -64,8 +65,13 @@ function documentHtml({ title, description, path, cssPath, body, noindex = false
 
 export function indexDocument(posts: BlogPost[], cssPath: string): string {
   return documentHtml({ title: BLOG_TITLE, description: BLOG_DESCRIPTION, path: '/blog', cssPath, body: renderIndex(posts), noindex: posts.length === 0,
-    schema: [{ '@type': 'Blog', '@id': `${BLOG_ORIGIN}/blog#blog`, url: `${BLOG_ORIGIN}/blog`, name: 'Wallace Shift Blog', description: BLOG_DESCRIPTION, publisher: organization,
-      blogPost: posts.map(post => ({ '@type': 'BlogPosting', '@id': `${postUrl(post)}#article`, url: postUrl(post), headline: post.title })) }],
+    schema: [
+      { '@type': 'CollectionPage', '@id': `${BLOG_ORIGIN}/blog#webpage`, url: `${BLOG_ORIGIN}/blog`, name: BLOG_TITLE, description: BLOG_DESCRIPTION,
+        isPartOf: website, inLanguage: 'en-US', mainEntity: { '@id': `${BLOG_ORIGIN}/blog#blog` } },
+      { '@type': 'Blog', '@id': `${BLOG_ORIGIN}/blog#blog`, url: `${BLOG_ORIGIN}/blog`, name: 'Wallace Shift Blog', description: BLOG_DESCRIPTION, publisher,
+        isPartOf: website, inLanguage: 'en-US', mainEntityOfPage: { '@id': `${BLOG_ORIGIN}/blog#webpage` },
+        blogPost: posts.map(post => ({ '@type': 'BlogPosting', '@id': `${postUrl(post)}#article`, url: postUrl(post), headline: post.title })) },
+    ],
   })
 }
 
@@ -73,12 +79,15 @@ export function postDocument(post: BlogPost, posts: BlogPost[], cssPath: string)
   const url = postUrl(post)
   return documentHtml({ title: `${post.title} | Wallace Shift`, description: post.description, path: `/blog/${post.slug}`, cssPath, body: renderPost(post, posts), post,
     schema: [
-      { '@type': 'BlogPosting', '@id': `${url}#article`, url, mainEntityOfPage: { '@type': 'WebPage', '@id': url }, headline: post.title, description: post.description,
+      { '@type': 'WebPage', '@id': `${url}#webpage`, url, name: post.title, description: post.description,
+        isPartOf: website, inLanguage: 'en-US', mainEntity: { '@id': `${url}#article` }, breadcrumb: { '@id': `${url}#breadcrumb` },
+        ...(post.image ? { primaryImageOfPage: { '@type': 'ImageObject', url: absolute(post.image.src), caption: post.image.alt } } : {}) },
+      { '@type': 'BlogPosting', '@id': `${url}#article`, url, mainEntityOfPage: { '@id': `${url}#webpage` }, headline: post.title, description: post.description,
         abstract: post.answer, articleSection: post.category, inLanguage: 'en', datePublished: post.publishedAt, ...(post.updatedAt ? { dateModified: post.updatedAt } : {}),
-        ...(post.image ? { image: [absolute(post.image.src)] } : {}), author: { '@type': post.author.type ?? 'Person', name: post.author.name, url: absolute(post.author.url) }, publisher: organization,
+        ...(post.image ? { image: [absolute(post.image.src)] } : {}), author: { '@type': post.author.type ?? 'Person', name: post.author.name, url: absolute(post.author.url) }, publisher,
         isPartOf: { '@type': 'Blog', '@id': `${BLOG_ORIGIN}/blog#blog` } },
-      { '@type': 'BreadcrumbList', itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: BLOG_ORIGIN },
+      { '@type': 'BreadcrumbList', '@id': `${url}#breadcrumb`, itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${BLOG_ORIGIN}/` },
         { '@type': 'ListItem', position: 2, name: 'Blog', item: `${BLOG_ORIGIN}/blog` },
         { '@type': 'ListItem', position: 3, name: post.title, item: url },
       ] },
@@ -89,6 +98,7 @@ export function postDocument(post: BlogPost, posts: BlogPost[], cssPath: string)
 export function notFoundDocument(cssPath: string): string {
   return documentHtml({ title: 'Article not found | Wallace Shift', description: 'This article is not available. Explore the Wallace Shift blog.', path: '/404', cssPath, noindex: true,
     body: renderNotFound(),
+    schema: [{ '@type': 'WebPage', '@id': `${BLOG_ORIGIN}/404#webpage`, url: `${BLOG_ORIGIN}/404`, name: 'Article not found', isPartOf: website }],
   })
 }
 

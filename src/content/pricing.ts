@@ -13,10 +13,10 @@
 
 export const pricingHero = {
   eyebrow: 'Pricing',
-  headlineLines: ['What a shift'],
-  headlineAccent: 'costs.',
+  headlineLines: ['AI, CRM &', 'website'],
+  headlineAccent: 'pricing.',
   supporting:
-    'Custom CRMs, connected workflows and ongoing development start with a clear scope. Use these prices to judge fit, then tell us where work gets held up.',
+    'Compare custom CRM development, automation, and website pricing. AI integrations receive their own scope and quote. Use these starting points to plan the right project for your business.',
   note: 'All figures in USD. Nothing here is a quote until we have seen the work.',
 }
 

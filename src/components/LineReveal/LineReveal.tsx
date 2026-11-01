@@ -47,7 +47,7 @@ export function LineReveal({ lines, className, delay = 0 }: LineRevealProps) {
         },
       )
     },
-    { scope: headingRef, dependencies: [reducedMotion] },
+    { scope: headingRef, dependencies: [reducedMotion], revertOnUpdate: true },
   )
 
   return (

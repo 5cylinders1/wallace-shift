@@ -79,6 +79,43 @@ test('published article contains complete crawlable text and unique canonical me
   assert.equal(post.datePublished, '2026-10-23T09:00:00-05:00')
   assert.equal(post.dateModified, undefined)
   assert.ok(schema['@graph'].some(item => item['@type'] === 'BreadcrumbList'))
+  const organization = schema['@graph'].find(item => item['@id'] === 'https://wallaceshift.com/#organization')
+  const website = schema['@graph'].find(item => item['@id'] === 'https://wallaceshift.com/#website')
+  const page = schema['@graph'].find(item => item['@type'] === 'WebPage')
+  assert.ok(organization && website, 'the publisher and website are defined entities, not dangling references')
+  assert.equal(post.publisher['@id'], organization['@id'])
+  assert.equal(page.isPartOf['@id'], website['@id'])
+  assert.equal(post.mainEntityOfPage['@id'], page['@id'])
+  assert.equal(page.mainEntity['@id'], post['@id'])
+  assert.equal(page.breadcrumb['@id'], schema['@graph'].find(item => item['@type'] === 'BreadcrumbList')['@id'])
+  assert.match(html, /href="\/services\/custom-crm-development"/)
+})
+
+test('the hub groups every article under crawlable topic anchors with a complete heading hierarchy', async () => {
+  const { postsDir } = await fixture({
+    'crm.md': article(),
+    'ai.md': article({ slug: 'choose-ai', category: 'Workflow automation' }),
+    'web.md': article({ slug: 'choose-website', category: 'Business websites' }),
+    'other.md': article({ slug: 'other-topic', category: 'New topic' }),
+  })
+  const posts = await loadPosts(postsDir, now)
+  const html = indexDocument(posts, '/style.css')
+  assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1)
+  let level = 0
+  for (const heading of html.matchAll(/<h([1-6])(?:\s|>)/g)) {
+    const current = Number(heading[1])
+    assert.ok(current <= level + 1, `headings cannot skip from H${level} to H${current}`)
+    level = current
+  }
+  const topicNav = html.match(/<nav class="blog-topics"[^>]*>([\s\S]*?)<\/nav>/)[1]
+  for (const link of topicNav.matchAll(/href="#([^"]+)"/g)) assert.ok(html.includes(`id="${link[1]}"`))
+  for (const post of posts) assert.equal(html.split(`href="/blog/${post.slug}"`).length - 1, 1, 'each article is discoverable exactly once in its topic')
+  assert.match(html, /href="#more-guides"/, 'new categories remain discoverable')
+  const graph = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph']
+  const page = graph.find(item => item['@type'] === 'CollectionPage')
+  const blog = graph.find(item => item['@type'] === 'Blog')
+  assert.equal(page.mainEntity['@id'], blog['@id'])
+  assert.equal(blog.blogPost.length, posts.length)
 })
 
 test('organizational authors retain their identity in the byline and article schema', async () => {
@@ -131,6 +168,9 @@ test('headings have stable unique anchors and code samples remain usable', () =>
   assert.deepEqual(result.toc.map(item => item.id), ['section-next-steps', 'section-next-steps-2'])
   assert.match(result.html, /&lt;script&gt;/)
   assert.throws(() => renderMarkdown('# Second title', 'fixture.md'), /start body headings/)
+  assert.throws(() => renderMarkdown('### Missing parent', 'fixture.md'), /must not skip from H1 to H3/)
+  assert.throws(() => renderMarkdown('## Parent\n\n#### Missing level', 'fixture.md'), /must not skip from H2 to H4/)
+  assert.doesNotThrow(() => renderMarkdown('## Parent\n\n### Child\n\n#### Detail\n\n## Next parent', 'fixture.md'))
   const collisions = renderMarkdown('## Item\n\n## Item\n\n## Item 2\n\n## Item', 'fixture.md')
   assert.equal(new Set(collisions.toc.map(item => item.id)).size, 4)
 })

@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useId } from 'react'
 import type { ServiceItem } from '../../content/siteConfig'
 import { serviceMedia, type AmbientMediaAsset } from '../../content/mediaAssets'
 import { OutcomeField } from './OutcomeField'
@@ -32,24 +32,30 @@ export const ServiceRow = forwardRef<HTMLButtonElement, ServiceRowProps>(
     },
     ref,
   ) {
+    const titleId = useId()
+    const descriptionId = useId()
+
     return (
-      <button
-        type="button"
-        ref={ref}
-        className={`service-row${isActive ? ' service-row--active' : ''}`}
-        aria-pressed={isActive}
-        onPointerEnter={onPointerEnter}
-        onPointerLeave={onPointerLeave}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onClick={onClick}
-      >
+      <article className={`service-row${isActive ? ' service-row--active' : ''}`}>
+        <button
+          type="button"
+          ref={ref}
+          className="service-row__control"
+          aria-labelledby={titleId}
+          aria-describedby={descriptionId}
+          aria-pressed={isActive}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onClick={onClick}
+        />
         <span className="service-row__index">{item.index}</span>
-        <span className="service-row__body">
+        <div className="service-row__body">
           <span className="service-row__label">{item.label}</span>
-          <span className="service-row__title">{item.title}</span>
-          <span className="service-row__description">{item.description}</span>
-        </span>
+          <h3 className="service-row__title" id={titleId}>{item.title}</h3>
+          <p className="service-row__description" id={descriptionId}>{item.description}</p>
+        </div>
 
         <OutcomeField
           word={item.outcomeWord}
@@ -58,7 +64,7 @@ export const ServiceRow = forwardRef<HTMLButtonElement, ServiceRowProps>(
           isMobile={isMobile}
           media={media ?? serviceMedia[item.outcomeWord]}
         />
-      </button>
+      </article>
     )
   },
 )

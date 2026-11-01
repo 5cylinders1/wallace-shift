@@ -78,7 +78,9 @@ const { WaterHeroBrandHandoff } = await import(brandHandoffUrl)
 const captureStage = data('export function WaterHeroStage(props) { globalThis.__waterStage = props; return null }')
 const boundary = await moduleUrl(`${water}WaterHeroErrorBoundary.tsx`)
 const { WaterHeroExperiment } = await import(await moduleUrl(`${water}WaterHeroExperiment.tsx`, {
-  '../../../hooks/useReducedMotion': await moduleUrl('hooks/useReducedMotion.ts'),
+  '../../../hooks/useReducedMotion': await moduleUrl('hooks/useReducedMotion.ts', {
+    './useMediaQuery': await moduleUrl('hooks/useMediaQuery.ts'),
+  }),
   './WaterHeroErrorBoundary': boundary,
   './WaterHeroStage': captureStage,
   './WaterHeroHandoff': handoffUrl,
@@ -183,7 +185,10 @@ await test('landing reuses the original headline, buttons and enquiry form; defa
   assert.doesNotMatch(opening, /Back to wallaceshift|water-hero__masthead|Return to the Wallace Shift/)
   assert.ok(opening.includes(hero.eyebrow))
   assert.ok(opening.includes(hero.supporting))
-  for (const line of [...hero.headlineLines, hero.headlineAccent]) assert.ok(opening.includes(line))
+  for (const line of [...hero.headlineLines, hero.headlineAccent]) {
+    const encoded = line.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+    assert.ok(opening.includes(encoded))
+  }
   assert.match(opening, /<form[^>]*class="hero-contact-card__form"/)
   const nameInput = opening.match(/<input[^>]*name="name"[^>]*>/)?.[0]
   const emailInput = opening.match(/<input[^>]*name="email"[^>]*>/)?.[0]
@@ -219,6 +224,8 @@ await test('the landing reveal has one semantic brand statement; the light plane
   assert.match(ending, /data-brand-aperture/)
   assert.match(ending, /aria-labelledby="water-hero-brand-title"/)
   assert.match(ending, /class="shift-wipe__plane" aria-hidden="true"/)
+  assert.equal((ending.match(/<h2\b/g) ?? []).length, 1, 'the decorative layer adds no duplicate heading')
+  assert.match(ending, /<div class="shift-wipe__headline">/)
   assert.equal((ending.match(/id="water-hero-brand-title"/g) ?? []).length, 1)
   assert.doesNotMatch(ending, /A Different|Perspective|Return to the Wallace Shift|water-hero__landing-links/)
   // Effects initially hide the handoff until its contour opens. Model only
@@ -228,8 +235,10 @@ await test('the landing reveal has one semantic brand statement; the light plane
   const semantic = semanticMarkup(active)
   assert.equal((semantic.match(/<h2\b/g) ?? []).length, 1)
   assert.equal((semantic.match(/<p\b/g) ?? []).length, 1)
-  assert.match(semantic, /From <span class="shift-wipe__word">overlooked<\/span> to/)
-  assert.match(semantic, /unforgettable\./)
+  assert.match(semantic, /From <span class="shift-wipe__word">scattered<\/span> to/)
+  assert.match(semantic, /connected\./)
+  assert.match(semantic.replace(/<[^>]*>/g, ''), /From scattered to connected\./,
+    'line styling does not join words in the readable heading')
   assert.ok(semantic.includes(brandStatement.body))
   assert.equal((ending.match(/shift-wipe__headline"/g) ?? []).length, 2,
     'base and color-plane treatments render the same shared content')
@@ -243,6 +252,7 @@ await test('the landing reveal has one semantic brand statement; the light plane
       }))
       const fallbackSemantic = semanticMarkup(fallback)
       assert.equal((fallbackSemantic.match(/<h2\b/g) ?? []).length, 1)
+      assert.equal((fallback.match(/<h2\b/g) ?? []).length, 1, 'the fallback contains only one heading including hidden layers')
       assert.equal((fallbackSemantic.match(/<p\b/g) ?? []).length, 1)
       assert.ok(fallbackSemantic.includes(brandStatement.body))
       assert.doesNotMatch(fallback, /A Different|Perspective|water-hero-brand__aperture/)

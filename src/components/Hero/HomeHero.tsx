@@ -4,7 +4,6 @@ import { Hero } from './Hero'
 import { HeroContactProvider } from './HeroContactProvider'
 import { BrandStatement } from '../BrandStatement/BrandStatement'
 import { WaterHeroErrorBoundary } from '../experiments/water-hero/WaterHeroErrorBoundary'
-import { LoadingFallback } from '../experiments/water-hero/LoadingFallback'
 import { getInteractiveHomeHeroSnapshot, getStaticHomeHeroSnapshot, subscribeInteractiveHomeHero } from './homeHeroDisplay'
 
 // Both mobile and desktop load the scene on demand. Reduced-motion visitors
@@ -15,12 +14,6 @@ const InteractiveHero = lazy(() => import('../experiments/water-hero/WaterHeroEx
 // Keep the complete composition available when animation is unavailable.
 function StaticHeroSequence() {
   return <><Hero posterOnly appearance="studio" /><BrandStatement /></>
-}
-
-function LoadingHeroSequence() {
-  return <><section className="hero-loading-shell" aria-label="Loading the homepage">
-    <LoadingFallback visible />
-  </section><BrandStatement /></>
 }
 
 export function HomeHero() {
@@ -52,7 +45,9 @@ export function HomeHero() {
 
   return <HeroContactProvider><div ref={container}>
     {interactive ? <WaterHeroErrorBoundary fallback={() => <StaticHeroSequence />}>
-      <Suspense fallback={<LoadingHeroSequence />}>
+      {/* Keep the prerendered heading, copy, and links readable while the
+          interactive scene downloads. */}
+      <Suspense fallback={<StaticHeroSequence />}>
         <InteractiveHero mode="landing" fallback={<StaticHeroSequence />} />
       </Suspense>
     </WaterHeroErrorBoundary> : <StaticHeroSequence />}

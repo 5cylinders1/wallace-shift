@@ -5,16 +5,18 @@ type BrandStatementContentProps = {
   headlineRef?: Ref<HTMLDivElement>
   bodyRef?: Ref<HTMLParagraphElement>
   headingId?: string
+  decorative?: boolean
 }
 
-export function BrandStatementContent({ headlineRef, bodyRef, headingId }: BrandStatementContentProps) {
+export function BrandStatementContent({ headlineRef, bodyRef, headingId, decorative = false }: BrandStatementContentProps) {
+  const Heading = decorative ? 'div' : 'h2'
   const headline = (
-    <h2 className="shift-wipe__headline" id={headingId}>
+    <Heading className="shift-wipe__headline" id={headingId}>
       <span className="shift-wipe__line">
         From <span className="shift-wipe__word">scattered</span> to
-      </span>
+      </span>{' '}
       <span className="shift-wipe__line">connected.</span>
-    </h2>
+    </Heading>
   )
 
   return (

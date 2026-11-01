@@ -195,13 +195,13 @@ await test('loading, reduced-motion and unavailable-scene branches preserve one 
     globalThis.__homeBranchInteractive = true
     globalThis.__homeBranchPhase = 'loading'
     const loading = renderToStaticMarkup(createElement(HomeHero))
-    assert.equal((loading.match(/class="water-hero__loading"/g) ?? []).length, 1)
-    assert.match(loading, /data-visible="true" aria-hidden="false"/)
-    assert.match(loading, /src="\/brand\/wallace-shift-logo-white\.svg"/)
-    assert.match(loading, /role="status" aria-live="polite"/)
+    assert.equal((loading.match(/data-original-hero=/g) ?? []).length, 1,
+      'the readable hero remains while the scene downloads')
+    assert.match(loading, /data-original-hero="poster"/)
+    assert.match(loading, /data-appearance="studio"/)
     assert.equal((loading.match(/data-original-statement=/g) ?? []).length, 1)
-    assert.ok(loading.indexOf('class="water-hero__loading"') < loading.indexOf('data-original-statement'))
-    assert.doesNotMatch(loading, /data-original-hero|<video|<source/)
+    assert.ok(loading.indexOf('data-original-hero') < loading.indexOf('data-original-statement'))
+    assert.doesNotMatch(loading, /hero-loading-shell|<video|<source/)
     globalThis.__homeBranchInteractive = true
     globalThis.__homeBranchPhase = 'ready'
     const ready = renderToStaticMarkup(createElement(HomeHero))
