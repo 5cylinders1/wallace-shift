@@ -15,7 +15,11 @@
   const paths = new Set([
     '/', '/services', '/pricing', '/about', '/approach', '/contact', '/privacy',
     '/request-demo', '/demos/contractors', '/demos/roofers-offer', '/blog',
+    '/offers/ai-business-integration',
   ])
+  const offerPath = '/offers/ai-business-integration'
+  const offerSteps = new Set(['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'readiness', 'contact'])
+  const offerRecommendations = new Set(['package', 'consultation', 'resource'])
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
   const surfaces = new Set(['home_hero', 'contact_form', 'roofing_offer'])
   const demos = new Set([
@@ -278,6 +282,17 @@
       send(name, { demo_id: value })
     } else if ((name === 'quiz_started' || name === 'quiz_completed') && value === undefined) {
       send(name)
+    } else if (publicUrl(window.location.href)?.pathname === offerPath) {
+      // Only a fixed offer ID and screen names are collected. Ignore extra
+      // detail properties, including answers, contact data, and lead IDs.
+      if ((name === 'offer_application_start' || name === 'offer_application_submit') && value === undefined) {
+        send(name, { offer_id: 'ai_business_integration' })
+      } else if (name === 'offer_application_step' && offerSteps.has(value)) {
+        send(name, { offer_id: 'ai_business_integration', form_step: value })
+      } else if (name === 'offer_recommendation_view' && offerRecommendations.has(value)) {
+        // A local result is not a saved application, appointment, or sale.
+        send(name, { offer_id: 'ai_business_integration', recommendation_type: value })
+      }
     }
   })
 

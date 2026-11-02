@@ -68,12 +68,17 @@ for (const route of routeMeta) {
 
     if (route.noindex) {
       assert.match(html, /name="robots" content="noindex/)
-      assert.ok(!urls.includes(canonical), 'private and experimental documents stay out of the sitemap')
-      assert.doesNotMatch(html, /src="\/site-analytics\.js"/, 'private pages do not load public analytics')
-      return
+      assert.ok(!urls.includes(canonical), 'private, experimental, and draft documents stay out of the sitemap')
+      if (!route.publicDraft) {
+        assert.doesNotMatch(html, /src="\/site-analytics\.js"/, 'private pages do not load public analytics')
+        return
+      }
+      assert.equal(route.navLabel, undefined, 'a review draft is not promoted in public navigation')
+      assert.match(html, /src="\/site-analytics\.js"/, 'a public draft retains the consent-based bootstrap')
+    } else {
+      assert.ok(urls.includes(canonical), 'every indexed public route is in the sitemap')
+      assert.match(html, /name="robots" content="index, follow, max-image-preview:large"/)
     }
-    assert.ok(urls.includes(canonical), 'every public route is in the sitemap')
-    assert.match(html, /name="robots" content="index, follow, max-image-preview:large"/)
     assert.ok(!titles.has(route.title), 'public page titles are unique')
     assert.ok(!descriptions.has(route.description), 'public page descriptions are unique')
     titles.add(route.title)
@@ -88,9 +93,12 @@ for (const route of routeMeta) {
         `heading levels do not skip from H${headings[i - 1][1]} to H${headings[i][1]}`)
     }
     assert.ok(html.includes('data-route-path='), 'the client hydrates the same route snapshot')
-    assert.ok((html.match(/<a\b[^>]*href=/g) ?? []).length > 5, 'crawlable navigation is available without JavaScript')
+    if (route.publicDraft) {
+      // The qualification funnel deliberately omits the full marketing menu.
+      for (const href of ['/', '/contact', '/privacy']) assert.ok(html.includes(`href="${href}"`), 'draft funnel retains essential navigation')
+    } else assert.ok((html.match(/<a\b[^>]*href=/g) ?? []).length > 5, 'crawlable navigation is available without JavaScript')
     for (const img of html.matchAll(/<img\b[^>]*>/g)) assert.match(img[0], /\balt=/, 'images have a meaningful or intentionally empty alt attribute')
-    if (route.path !== '/') {
+    if (route.path !== '/' && !route.noindex) {
       const breadcrumb = graph['@graph'].find(node => node['@type'] === 'BreadcrumbList')
       assert.ok(breadcrumb, 'inner pages have a breadcrumb graph')
       assert.equal(breadcrumb.itemListElement.at(-1).item, canonical)

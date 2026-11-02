@@ -77,7 +77,7 @@ test('an unconfigured identifier loads neither analytics nor a consent interface
 
 test('loads only on production hosts and explicitly public routes after consent', () => {
   for (const host of ['wallaceshift.com', 'www.wallaceshift.com', 'contractors.wallaceshift.com', 'roofers.wallaceshift.com']) {
-    for (const path of ['/', '/services', '/pricing/', '/about', '/approach', '/contact', '/privacy', '/request-demo/', '/demos/contractors/', '/demos/roofers-offer', '/blog', '/blog/a-useful-crm-guide']) {
+    for (const path of ['/', '/services', '/pricing/', '/about', '/approach', '/contact', '/privacy', '/request-demo/', '/demos/contractors/', '/demos/roofers-offer', '/blog', '/blog/a-useful-crm-guide', '/offers/ai-business-integration']) {
       const app = browser({ href: `https://${host}${path}`, savedConsent: 'granted' })
       assert.equal(app.scripts.length, 1, `${host}${path}`)
       assert.equal(app.scripts[0].src, `https://www.googletagmanager.com/gtag/js?id=${testId}`)
@@ -289,6 +289,65 @@ test('conversion bridge accepts only known values and emits each success as one 
   for (const detail of [null, 'private@example.com', { name: 'unknown_event' }, { name: 'enquiry_submitted', value: 'private@example.com' }, { name: 'enquiry_submitted' }, { name: 'demo_request_failed', value: 'arbitrary-id' }, { name: 'demo_preview_played', value: 'arbitrary-id' }, { name: 'quiz_completed', value: 'private@example.com' }]) app.dispatch(detail)
   assert.equal(app.events().length, 8)
   assert.doesNotMatch(JSON.stringify(app.events()), /private@example|arbitrary-id/)
+})
+
+test('AI offer funnel emits fixed labels only on its own route, without answers or click IDs', () => {
+  const app = browser({
+    href: 'https://wallaceshift.com/offers/ai-business-integration?gclid=private-click-id&email=private%40example.com&utm_campaign=ai_workflow#private',
+    savedConsent: 'granted',
+  })
+  app.dispatch({ name: 'offer_application_start', email: 'private@example.com' })
+  const steps = ['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'readiness', 'contact']
+  for (const value of steps) {
+    app.dispatch({ name: 'offer_application_step', value, task: 'Private client task', budget: '$10,000' })
+  }
+  app.dispatch({ name: 'offer_application_submit', leadId: 'private-lead-id', email: 'private@example.com' })
+  assert.equal(app.events('offer_application_start').length, 1)
+  assert.deepEqual(app.events('offer_application_step').map(item => item[2].form_step), steps)
+  assert.equal(app.events('offer_application_submit').length, 1)
+  assert.equal(app.events('generate_lead').length, 0, 'the dedicated submission event is not duplicated as a second conversion')
+  for (const value of ['package', 'consultation', 'resource']) {
+    app.dispatch({ name: 'offer_recommendation_view', value, revenue: 'private-revenue', role: 'private-role', aiBarriers: ['private-barrier'] })
+  }
+  assert.deepEqual(app.events('offer_recommendation_view').map(item => item[2].recommendation_type), ['package', 'consultation', 'resource'])
+  assert.equal(app.events('offer_application_submit').length, 1, 'viewing a local recommendation is not a saved request')
+  for (const event of app.events().filter(item => item[1].startsWith('offer_application_'))) {
+    assert.equal(event[2].offer_id, 'ai_business_integration')
+    assert.equal(event[2].page_location, 'https://wallaceshift.com/offers/ai-business-integration?utm_campaign=ai_workflow')
+  }
+  for (const detail of [
+    { name: 'offer_application_start', value: 'private@example.com' },
+    { name: 'offer_application_step', value: 'private@example.com' },
+    { name: 'offer_application_step', value: 1 },
+    { name: 'offer_application_submit', value: 'private-lead-id' },
+    { name: 'offer_recommendation_view', value: 'private-revenue' },
+  ]) app.dispatch(detail)
+  assert.equal(app.events().length, 14)
+  assert.doesNotMatch(JSON.stringify(app.events()), /private|10,000|client task|gclid/)
+  app.navigate('/contact')
+  app.dispatch({ name: 'offer_application_submit' })
+  app.dispatch({ name: 'offer_application_step', value: 'bottleneck' })
+  app.dispatch({ name: 'offer_recommendation_view', value: 'package' })
+  assert.equal(app.events('offer_application_submit').length, 1, 'other public routes cannot emit offer conversions')
+  assert.equal(app.events('offer_recommendation_view').length, 3)
+})
+
+test('AI offer events honor consent, privacy signals, and private-route transitions', () => {
+  const href = 'https://wallaceshift.com/offers/ai-business-integration'
+  for (const settings of [{}, { savedConsent: 'denied' }, { savedConsent: 'granted', navigator: { doNotTrack: '1' } }, { savedConsent: 'granted', navigator: { globalPrivacyControl: true } }]) {
+    const app = browser({ href, ...settings })
+    app.dispatch({ name: 'offer_application_start' })
+    app.dispatch({ name: 'offer_application_step', value: 'authority' })
+    app.dispatch({ name: 'offer_recommendation_view', value: 'package' })
+    app.dispatch({ name: 'offer_application_submit' })
+    assert.equal(app.events().length, 0)
+    assert.equal(app.scripts.length, 0)
+  }
+  const app = browser({ href, savedConsent: 'granted' })
+  app.navigate('/client-portal?engagement=private')
+  app.dispatch({ name: 'offer_application_submit' })
+  assert.equal(app.window[`ga-disable-${testId}`], true)
+  assert.equal(app.events('offer_application_submit').length, 0)
 })
 
 test('click events exclude addresses, link text, query strings, and unknown downloads', () => {

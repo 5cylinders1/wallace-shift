@@ -30,6 +30,8 @@ def opt(name, default=None):
 SAMPLES = int(opt('samples', 256))
 SIZE = int(opt('size', 2048))
 ZONES = opt('zones')
+# The rooms the camera gets close to get more texels.
+CLOSE_UPS = {'kitchen', 'bath', 'basement'}
 OUT = Path(opt('out', str(model.ROOT / 'public/demos/water')))
 RAW = model.ROOT / 'output/water/baked'
 EXPORT = '--no-export' not in argv
@@ -91,7 +93,8 @@ for name, obj in objects.items():
         continue
     started = time.time()
     activate(obj)
-    image = bpy.data.images.new(f'bake_{name}', SIZE, SIZE, float_buffer=True, alpha=False)
+    size = int(SIZE * 1.5) if name in CLOSE_UPS else SIZE
+    image = bpy.data.images.new(f'bake_{name}', size, size, float_buffer=True, alpha=False)
     image.colorspace_settings.name = 'Linear Rec.709'
     target(obj, image)
     bpy.ops.object.bake(type='COMBINED', pass_filter={'EMIT', 'DIRECT', 'INDIRECT', 'DIFFUSE'}, use_clear=True)
@@ -99,7 +102,7 @@ for name, obj in objects.items():
     save(image, raw, 'PNG')
     # Full size for desktop; half size for phones, where memory is the real budget.
     subprocess.run(['cwebp', '-quiet', '-q', '86', '-m', '6', '-sharp_yuv', str(raw), '-o', str(OUT / 'baked' / f'{name}.webp')], check=True)
-    subprocess.run(['cwebp', '-quiet', '-q', '80', '-m', '6', '-sharp_yuv', '-resize', str(SIZE // 2), str(SIZE // 2), str(raw), '-o', str(OUT / 'baked' / f'{name}-small.webp')], check=True)
+    subprocess.run(['cwebp', '-quiet', '-q', '80', '-m', '6', '-sharp_yuv', '-resize', '1024', '1024', str(raw), '-o', str(OUT / 'baked' / f'{name}-small.webp')], check=True)
     print(f'baked {name} in {time.time() - started:.0f}s', flush=True)
 
 if EXPORT:

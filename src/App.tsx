@@ -11,9 +11,10 @@ import { ApproachPage } from './pages/ApproachPage'
 import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { PrivacyPage } from './pages/PrivacyPage'
+import { AiOfferPage } from './pages/AiOfferPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { scrollToRouteTarget, useRoutePath } from './lib/router'
-import { PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH } from './content/routeMeta'
+import { AI_OFFER_PATH, PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH } from './content/routeMeta'
 
 const pages: Record<string, () => ReactElement> = {
   ...Object.fromEntries(serviceLandingPages.map(service => [service.path, () => <ServiceLandingPage service={service} />])),
@@ -24,6 +25,7 @@ const pages: Record<string, () => ReactElement> = {
   '/about': AboutPage,
   '/contact': ContactPage,
   '/privacy': PrivacyPage,
+  [AI_OFFER_PATH]: AiOfferPage,
   '/404': NotFoundPage,
 }
 
@@ -75,6 +77,7 @@ function App() {
   }, [path])
 
   const Experiment = experiments[path]
+  if (path === AI_OFFER_PATH) return <AiOfferPage />
   if (path === '/client-portal') return <Suspense fallback={<p role="status">Loading client portal…</p>}><ClientPortal /></Suspense>
   if (Experiment) {
     return (

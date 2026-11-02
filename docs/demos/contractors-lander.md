@@ -34,6 +34,7 @@ to it and shows its disclosure on the card). Trawsome Lawn Care and Complete
 Painting, concepts for real businesses, are the open tiles; the gallery test
 lists them in `contractorOpenDemoIds` in `scripts/contractor-preview-contract.mjs`.
 Complete Painting added a seventh category, House painting (`docs/demos/painting.md`).
+Riffle Water Co. added an eighth, Water treatment (`docs/demos/water.md`).
 
 ## Access
 

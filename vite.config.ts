@@ -52,7 +52,8 @@ function prerenderRoutes(): Plugin {
             const canonical = `${SITE_ORIGIN}${route.path}`
             // Private and experimental documents must never inherit a tracker
             // from the public homepage template, even before its runtime guard.
-            let routeTemplate = route.noindex
+            // An explicitly public draft is unindexed, not a private document.
+            let routeTemplate = route.noindex && !route.publicDraft
               ? template
                 .replace(/<script\b[^>]*\bsrc=["']\/site-analytics\.js["'][^>]*>[\s\S]*?<\/script>\s*/gi, '')
                 .replace(/<link\b[^>]*\bhref=["']\/analytics-consent\.css["'][^>]*>\s*/gi, '')
@@ -93,7 +94,7 @@ function prerenderRoutes(): Plugin {
               .replace(/<title>[\s\S]*?<\/title>\s*/, '')
               .replace(/<meta\s+name="description"[\s\S]*?\/>\s*/, '')
               .replace('</head>', `  ${head}\n  </head>`)
-              .replace('<div id="root"></div>', () => route.noindex && route.path !== '/404'
+              .replace('<div id="root"></div>', () => route.noindex && !route.publicDraft && route.path !== '/404'
                 ? '<div id="root"></div>'
                 : `<div id="root" data-route-path="${escapeHtml(route.path)}">${renderPage(route.path)}</div>`)
 
@@ -166,6 +167,7 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
  * their existing behaviour.
  */
 const DEV_API_ROUTES: Record<string, string> = {
+  '/api/ai-opportunity': '/api/_lib/ai-opportunity-handler.ts',
   '/api/roof-suggest': '/api/roof-suggest.ts',
   '/api/roof-lookup': '/api/roof-lookup.ts',
   '/api/roof-measure': '/api/roof-measure.ts',
@@ -186,7 +188,7 @@ function devApiRoutes(): Plugin {
       const env = loadEnv(server.config.mode, server.config.root, '')
       // Server-side settings only: never anything a VITE_ prefix would expose.
       for (const [key, value] of Object.entries(env)) {
-        if (/^(OPENAI_API_KEY$|ROOF_|LAWN_|PAINT_|RESEND_API_KEY$|CONTACT_FROM_EMAIL$|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
+        if (/^(OPENAI_API_KEY$|ROOF_|LAWN_|PAINT_|RESEND_API_KEY$|CONTACT_(FROM|TO)_EMAIL$|AI_OPPORTUNITY_(TO_EMAIL|ENABLED)$|DEMO_AUDIT_REDIS_(URL|TOKEN)$|(?:PORTAL|DEMO)_ADMIN_EMAIL$|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
       }
       server.middlewares.use(async (req, res, next) => {
         const path = (req.url ?? '').split('?')[0]
@@ -239,7 +241,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|demos\/bucyrus-auto|demos\/lawn|demos\/painting)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -273,7 +275,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -301,6 +303,7 @@ function roofingDemoRoutes(): Plugin {
         '/stillwater': '/demos/pools/index.html',
         '/trawsome': '/demos/lawn/index.html',
         '/complete-painting': '/demos/painting/index.html',
+        '/riffle': '/demos/water/index.html',
         '/mitre': '/demos/cabinetry-2/index.html',
         '/bucyrus-auto': '/demos/bucyrus-auto/index.html',
       }
@@ -318,7 +321,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `/demos/cabinetry/index.html${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|painting|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|painting|water|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -349,6 +352,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         bucyrusAuto: 'demos/bucyrus-auto/index.html',
         lawnTrawsome: 'demos/lawn/index.html',
         paintingComplete: 'demos/painting/index.html',
+        waterRiffle: 'demos/water/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',

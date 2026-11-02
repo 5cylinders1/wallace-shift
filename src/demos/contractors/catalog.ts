@@ -1,7 +1,7 @@
 /** Individual demos in the contractor collection. Preview media is public;
  * interactive routes continue through the existing demo-access agreement,
  * except open demos, which are public and have no preview film. */
-export type TradeCategoryId = 'roofing' | 'cabinetry' | 'pools' | 'lawn' | 'painting' | 'foundation' | 'business'
+export type TradeCategoryId = 'roofing' | 'cabinetry' | 'pools' | 'lawn' | 'painting' | 'water' | 'foundation' | 'business'
 
 interface DemoBase {
   id: string
@@ -40,6 +40,7 @@ export const categories: { id: TradeCategoryId; name: string; description: strin
   { id: 'pools', name: 'Pools & outdoor living', description: 'From an empty backyard to a pool plan worth discussing.' },
   { id: 'lawn', name: 'Lawn & yard care', description: 'From an overgrown yard to an instant price for the next mow.' },
   { id: 'painting', name: 'House painting', description: 'From faded and peeling to a new color, with a preview on the visitor’s own house.' },
+  { id: 'water', name: 'Water treatment', description: 'Follow the water through a house, then take the filter apart to see what it stops and what it doesn’t.' },
   { id: 'foundation', name: 'Foundation repair', description: 'Make an unseen problem easier to understand before the inspection.' },
   { id: 'business', name: 'Business systems', description: 'The team’s side of the work: sample customer records, follow-ups and inspections.' },
 ]
@@ -144,6 +145,14 @@ export const trades: TradeDemo[] = [
     thumbnail: '/demos/painting/preview.jpg', thumbnailAlt: 'Complete Painting: a two-story house half faded yellow and half freshly painted deep blue-green',
     productionPath: '/complete-painting', localPath: '/demos/painting/',
     disclosure: 'Concept prepared for a real local business, not its official website. Generated house imagery; AI color previews.',
+  },
+  {
+    kind: 'open', id: 'riffle', category: 'water', trade: 'Water treatment', name: 'Riffle Water Co.',
+    summary: 'Clean water races through a live 3D cutaway house at the flip of a switch. Visitors lift the shells off a three-stage filter, follow each contaminant through it, and watch fifteen years of scale close a pipe.',
+    features: ['Live 3D house and filter cutaway', 'Contaminant tracer, scale time-lapse and an instant price from home size and household'],
+    thumbnail: '/demos/water/preview.jpg', thumbnailAlt: 'Riffle Water Co.: a cutaway house at dusk with its water lines glowing from the street main to every fixture',
+    productionPath: '/riffle', localPath: '/demos/water/',
+    disclosure: 'Fictional demo brand. The house and system are 3D illustrations; sizing, prices and service intervals are samples. Sourced facts are real.',
   },
   {
     id: 'datum', category: 'foundation', trade: 'Foundation repair', name: 'Datum',

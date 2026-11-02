@@ -182,6 +182,13 @@ test('Stillwater aliases use the pool access request and keep implementation pri
   assert.equal(await access.gateDemoRequest(new Request(origin + '/stillwater', authorized)), null)
 })
 
+test('Riffle is a public demo: page, media and source need no access, without opening its neighbours', async () => {
+  for (const path of ['/riffle', '/riffle/', '/demos/water', '/demos/water/', '/demos/water/index.html', '/%72iffle', '/src/demos/water/main.tsx', '/demos/water/house.glb', '/demos/water/baked/kitchen.webp', '/public/demos/water/preview.jpg']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  for (const path of ['/demos/water-2/', '/demos/waterx/index.html', '/src/demos/waterx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('Trawsome is a public demo: page, media, source and rate-limited estimator need no access', async () => {
   for (const path of ['/trawsome', '/trawsome/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%74rawsome', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-finished.webp', '/public/demos/lawn/edge.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request', '/api/lawn?action=suggest', '/api/lawn?action=lookup', '/api/lawn?action=request']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)

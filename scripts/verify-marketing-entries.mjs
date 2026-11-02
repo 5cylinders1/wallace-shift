@@ -157,4 +157,18 @@ for (const utility of utilities) {
   if (!sourceOnly) assert.ok(!sitemap.includes(`<loc>${canonical}</loc>`), `${file}: noindex utilities stay out of sitemap`)
 }
 
+if (!sourceOnly) {
+  const path = '/offers/ai-business-integration'
+  const file = `${path.slice(1)}/index.html`
+  const html = await readFile(join(base, file), 'utf8')
+  const canonical = `https://wallaceshift.com${path}`
+  assert.equal(canonicalOf(html, file), canonical)
+  assert.match(html, /name="robots" content="noindex, nofollow"/)
+  assert.ok(!sitemap.includes(`<loc>${canonical}</loc>`), 'offer draft stays out of the sitemap')
+  assert.ok(html.includes(`data-route-path="${path}"`), 'offer draft is rendered before hydration')
+  assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1, 'offer has one readable initial H1')
+  assert.match(html, /<main id="main">/, 'offer content belongs to the main landmark')
+  assert.equal((html.match(/src="\/site-analytics\.js"/g) ?? []).length, 1, 'public offer uses one consent-controlled bootstrap')
+}
+
 console.log(`Marketing entry ${sourceOnly ? 'source' : 'build'} SEO verified: ${collections.length} public subdomain pages and ${utilities.length} noindex utility documents.`)
