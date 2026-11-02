@@ -54,7 +54,7 @@ await test('navigation replaces page metadata and schema without carrying privat
   document.head.querySelector = selector => document.querySelector(selector)
   Object.assign(globalThis, { document, HTMLMetaElement: Meta, HTMLLinkElement: Link })
   try {
-    for (const path of ['/services', '/contact', '/client-portal', '/services', '/about', '/']) {
+    for (const path of ['/services', '/offers/ai-business-integration', '/contact', '/client-portal', '/services', '/about', '/']) {
       useRouteMeta(path)
       const url = `https://wallaceshift.com${path}`
       assert.equal(document.querySelector('link[rel="canonical"]').href, url)
@@ -62,13 +62,14 @@ await test('navigation replaces page metadata and schema without carrying privat
       assert.equal(document.querySelector('meta[property="og:title"]').content, document.title)
       assert.equal(document.querySelector('meta[name="twitter:title"]').content, document.title)
       const robots = document.querySelector('meta[name="robots"]').content
-      assert.equal(robots, path === '/client-portal' ? 'noindex, nofollow' : 'index, follow, max-image-preview:large')
+      const noindex = ['/client-portal', '/offers/ai-business-integration'].includes(path)
+      assert.equal(robots, noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large')
       const scripts = nodes.filter(node => node.id === 'page-structured-data')
       assert.equal(scripts.length, 1, 'navigating replaces the graph instead of appending another')
       const graph = JSON.parse(scripts[0].textContent)['@graph']
       assert.ok(graph.some(node => node['@id'] === `${url}#webpage`), 'current page entity replaces the previous route')
       const breadcrumbs = graph.filter(node => node['@type'] === 'BreadcrumbList')
-      assert.equal(breadcrumbs.length, path === '/' || path === '/client-portal' ? 0 : 1)
+      assert.equal(breadcrumbs.length, path === '/' || noindex ? 0 : 1)
       if (breadcrumbs.length) assert.equal(breadcrumbs[0].itemListElement.at(-1).item, url)
     }
     assert.equal(nodes.filter(node => node.tagName === 'link' && node.rel === 'canonical').length, 1)

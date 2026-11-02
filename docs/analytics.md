@@ -21,7 +21,7 @@ Setup references: [GA4 setup](https://support.google.com/analytics/answer/141834
 
 - Google tracking loads only after the visitor allows analytics. Reject and accept options have equal prominence. Analytics preferences can reopen the choice. Do Not Track and Global Privacy Control override a saved allowance.
 - The consent preference is stored locally under `ws:analytics-consent:v1`. This preference is separate from private demo and portal authentication.
-- Public studio pages, blog, contractor gallery, roofing offer, and demo request page are included.
+- Public studio pages, blog, contractor gallery, roofing offer, and demo request page are included. The unlisted `/offers/ai-business-integration` review page is an explicit public draft: it remains `noindex` and absent from navigation and sitemaps while retaining consent-based analytics. This code change does not publish the draft.
 - Only `wallaceshift.com`, `www.wallaceshift.com`, `contractors.wallaceshift.com`, and `roofers.wallaceshift.com` collect data. Localhost and Vercel preview hosts do not load Google tracking.
 - Client portal, admin, agreement, experimental, and private demo pages are excluded. Navigation between the public SPA and private routes uses a new document so the loaded Google tag cannot follow into the client portal.
 - URL fragments and arbitrary query parameters are removed. Only filtered campaign labels remain. Referrers are reduced to their origin. Never put names, email addresses, invitation codes, or other personal information in campaign labels.
@@ -40,10 +40,16 @@ Static blog documents include the same bootstrap separately from the React app. 
 | `demo_request_failed` | A demo request encountered a submission/service failure. |
 | `quiz_started` / `quiz_completed` | A visitor started or completed a Shift Finder attempt. |
 | `demo_preview_played` | A selected preview actually began playing, once per modal opening. |
+| `offer_application_start` | The visitor first interacts with the AI opportunity application. |
+| `offer_application_step` | A validated quiz screen is completed or the optional contact screen opens; `form_step` is only `bottleneck`, `authority`, `business`, `impact`, `experience`, `tools`, `readiness`, or `contact`. |
+| `offer_recommendation_view` | The browser shows a local result; `recommendation_type` is only `package`, `consultation`, or `resource`. This is not a saved lead, confirmed fit, booking, or purchase. |
+| `offer_application_submit` | The AI opportunity API confirms durable receipt. This is not human qualification, a booking, or a sale, and is not also emitted as `generate_lead`. |
 | `email_clicked` / `phone_clicked` | A visitor clicked an email or phone link. This does not prove a message or call occurred. |
 | `resource_download_clicked` | A visitor clicked an approved PDF or spreadsheet resource link. This does not prove a download completed. |
 
 Event labels and demo IDs come from fixed allowlists. Freeform answers, names, email addresses, error messages, and form contents do not enter event parameters. The configured event-scoped custom dimensions `lead_type`, `form_surface`, and `demo_id` support reporting by enquiry type, form, and demo. Do not create user-scoped identifiers. Google may also send its standard session and engagement events after consent; the manual controls above apply to page views and the listed interactions.
+
+AI opportunity events are accepted only on the exact offer route. They carry the fixed `offer_id` value `ai_business_integration` and, for step events, one allowed screen name. They never carry business answers, budgets, email addresses, lead IDs, or advertising click IDs. No new Google account settings, key events, custom dimensions, advertising tags, or offline conversions are configured by this local implementation.
 
 ## Using the reports
 

@@ -65,6 +65,7 @@ dist-ssr
 # Local review artifacts and temporary files.
 /output/
 /review-assets/
+/.impeccable/review/
 /tmp/
 /example-contractor-website.mov
 /live-watch.MOV

@@ -33,6 +33,9 @@ export interface RouteMeta {
   priority: number
   /** Excluded from sitemap.xml and marked noindex. */
   noindex?: boolean
+  /** Public review page: render its HTML and consent-based analytics even
+   * while noindex keeps the draft out of search. Never set for private pages. */
+  publicDraft?: boolean
   /**
    * Overrides the robots directive emitted for a `noindex` route.
    * Defaults to `noindex` alone, which is what `/404` has always used.
@@ -45,6 +48,9 @@ export const WATER_HERO_EXPERIMENT_PATH = '/experiments/water-hero'
 
 /** The preserved scroll-driven pit-stop scene, outside the production lander. */
 export const PIT_STOP_EXPERIMENT_PATH = '/experiments/pit-stop'
+
+/** Unlisted offer draft. Commercial terms still require review before launch. */
+export const AI_OFFER_PATH = '/offers/ai-business-integration'
 
 export const routeMeta: RouteMeta[] = [
   { path: '/client-portal', title: 'Client Portal | Wallace Shift', description: 'Review agreements, invoices, and payments with Wallace Shift.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
@@ -109,6 +115,16 @@ export const routeMeta: RouteMeta[] = [
     description:
       'What Wallace Shift collects through this website, why, and how to have it removed.',
     priority: 0.2,
+  },
+  {
+    path: AI_OFFER_PATH,
+    title: 'Find Your First AI Project | Wallace Shift',
+    description:
+      'Answer a few questions about your business, bottleneck, and readiness for AI. See a practical recommendation before sharing contact details.',
+    priority: 0,
+    noindex: true,
+    publicDraft: true,
+    robots: 'noindex, nofollow',
   },
   {
     path: WATER_HERO_EXPERIMENT_PATH,
