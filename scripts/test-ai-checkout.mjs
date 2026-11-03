@@ -33,6 +33,7 @@ const answers = { businessType: '', workflows: ['inquiries'], workflowDetails: '
 const body = (overrides = {}) => ({ action: 'send-code', submissionId: randomUUID(), offerVersion: aiOffer.version, packageId: 'inquiry', name: 'Buyer Name', businessName: 'Buyer Company', email: 'buyer@example.test', answers, authorityConfirmed: true, company: '', ...overrides })
 const ledger = () => JSON.parse(store.values.get('portal:engagements') ?? '[]')
 beforeEach(() => {
+  process.env.VERCEL_ENV = 'development'
   Object.assign(process.env, { DEMO_AUDIT_REDIS_URL: 'https://redis.example.test', DEMO_AUDIT_REDIS_TOKEN: 'fake', PORTAL_ADMIN_EMAIL: 'owner@example.test', STRIPE_SECRET_KEY: 'sk_test_fake', STRIPE_PUBLISHABLE_KEY: 'pk_test_fake', STRIPE_WEBHOOK_SECRET: 'whsec_fake', RESEND_API_KEY: 'fake', CONTACT_FROM_EMAIL: 'billing@example.test' })
   store = createAgreementTestStore(); emails = []; failEmail = false; failLedgerOnce = false; failSessionOnce = false; stripeCalls = []; allowPaymentMocks = false
   globalThis.fetch = async (url, init) => {
@@ -121,6 +122,25 @@ test('public checkout rewrite reaches same handler without adding a serverless f
   assert.equal(config.rewrites.find(item => item.source === '/api/ai-checkout').destination, '/api/demo-admin?offer=checkout')
   assert.equal((await call(undefined, '', { dispatch: deployed, url: '/api/demo-admin?offer=checkout' })).body.ready, true)
   assert.equal((await call(undefined, '', { dispatch: deployed, url: '/api/ai-checkout' })).body.ready, true)
+})
+test('checkout requires a complete mode-matched Stripe configuration for its deployment', async () => {
+  for (const [environment, secret, publishable, webhook, expected] of [
+    ['production', 'sk_test_example', 'pk_test_example', 'whsec_example', false],
+    ['preview', 'sk_live_example', 'pk_live_example', 'whsec_example', false],
+    ['development', 'rk_test_example', 'pk_live_example', 'whsec_example', false],
+    ['production', 'rk_live_example', 'pk_live_example', 'whsec_example', true],
+    ['preview', 'rk_test_example', 'pk_test_example', 'whsec_example', true],
+    ['production', 'sk_live_example', '', 'whsec_example', false],
+    ['production', '', 'pk_live_example', 'whsec_example', false],
+    ['production', 'rk_live_', 'pk_live_example', 'whsec_example', false],
+    ['production', 'sk_live_example', 'pk_live_example', 'wrong-prefix', false],
+  ]) {
+    Object.assign(process.env, { VERCEL_ENV: environment, STRIPE_SECRET_KEY: secret, STRIPE_PUBLISHABLE_KEY: publishable, STRIPE_WEBHOOK_SECRET: webhook })
+    assert.equal((await call()).body.ready, expected)
+    if (!expected) assert.equal((await call(body())).body.error, 'stripe_not_configured')
+  }
+  assert.equal(emails.length, 0)
+  assert.equal(store.values.size, 0)
 })
 test('rejects cross origin requests and unsupported payloads before sending', async () => {
   assert.equal((await call(body(), '', { headers: { host: 'localhost:5176', origin: 'https://attacker.example', 'content-type': 'application/json' } })).statusCode, 403)
@@ -247,4 +267,29 @@ test('public buyer can verify, sign, save a card and pay with automatic owner ha
   assert.ok(emails[1].text.includes(impactDetails))
   assert.equal((await portalCall(charge)).statusCode, 409)
   assert.equal(stripeCalls.filter(call => call.url.endsWith('/payment_intents')).length, 1)
+})
+test('a sandbox purchase proof cannot create an agreement or a session in production', async t => {
+  const priorMode = process.env.VERCEL_ENV
+  t.after(() => {
+    if (priorMode === undefined) delete process.env.VERCEL_ENV
+    else process.env.VERCEL_ENV = priorMode
+  })
+  process.env.VERCEL_ENV = 'preview'
+  const sandbox = await start()
+  assert.equal((await verify(sandbox)).statusCode, 200)
+  const sandboxLedger = store.values.get('portal:engagements')
+  Object.assign(process.env, { VERCEL_ENV: 'production', STRIPE_SECRET_KEY: 'sk_live_fake', STRIPE_PUBLISHABLE_KEY: 'pk_live_fake' })
+  const replay = await verify(sandbox)
+  assert.equal(replay.body.error, 'code_expired')
+  assert.equal(replay.headers['set-cookie'], undefined)
+  assert.equal(store.values.has('portal:live:engagements'), false)
+
+  const fresh = await start()
+  const purchase = await verify(fresh)
+  assert.equal(purchase.statusCode, 200)
+  const liveLedger = JSON.parse(store.values.get('portal:live:engagements'))
+  assert.equal(liveLedger.length, 1)
+  assert.equal(liveLedger[0].selfService.orderId, fresh.input.submissionId)
+  assert.equal(store.values.get('portal:engagements'), sandboxLedger)
+  assert.equal(stripeCalls.length, 0)
 })

@@ -221,7 +221,10 @@ export function AiOpportunityForm({ onPhaseChange }: {
   }
 
   function showContact(selection: AiNextStepSelection) {
-    if (selection.nextStep === 'package') setCheckoutDraft(checkoutDrafts[selection.packageId])
+    if (selection.nextStep === 'package') {
+      if (phase !== 'walkthrough' || !aiConsultation.walkthrough.src || completedVideoSrc !== aiConsultation.walkthrough.src) return
+      setCheckoutDraft(checkoutDrafts[selection.packageId])
+    }
     setValues(previous => normalizeAiOpportunity({ ...previous, ...selection }))
     // Returning to the same request must retain the key if an earlier response was lost.
     if (selection.nextStep !== values.nextStep || selection.packageId !== values.packageId || selection.contactMethod !== values.contactMethod) setSubmissionId(null)
@@ -344,23 +347,19 @@ export function AiOpportunityForm({ onPhaseChange }: {
 
   if (phase === 'checkout' && values.packageId) return <AiPackageCheckout packageId={values.packageId} values={values} onBack={() => setPhase('walkthrough')} draft={checkoutDraft} onDraftChange={saveCheckoutDraft} />
 
-  if (phase === 'walkthrough' && aiConsultation.walkthrough.src && isAiBookingQualified(values)) return <AiConsultationWalkthrough
-    values={values}
-    completedVideoSrc={completedVideoSrc}
-    onVideoComplete={setCompletedVideoSrc}
-    onBackToBooking={() => showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'email' })}
-    onChoosePackage={packageId => {
-      if (aiConsultation.walkthrough.src && completedVideoSrc === aiConsultation.walkthrough.src) showContact({ nextStep: 'package', packageId, contactMethod: 'email' })
-    }}
-  />
-
-  if (phase === 'booking') return <AiConsultationBooking
-    summaryStatus={quizSummary.status}
-    onRetrySummary={quizSummary.retry}
-    onWalkthrough={() => setPhase('walkthrough')}
-    onBack={() => moveTo(qualificationSteps.length - 1, 1)}
-    onRequestPhone={() => showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'call' })}
-  />
+  if (phase === 'walkthrough') return <AiConsultationWalkthrough
+      values={values}
+      completedVideoSrc={completedVideoSrc}
+      onVideoComplete={setCompletedVideoSrc}
+      onChoosePackage={packageId => showContact({ nextStep: 'package', packageId, contactMethod: 'email' })}
+    />
+  if (phase === 'booking' && isAiBookingQualified(values)) return <AiConsultationBooking
+      summaryStatus={quizSummary.status}
+      onRetrySummary={quizSummary.retry}
+      onScheduled={() => setPhase('walkthrough')}
+      onBack={() => moveTo(qualificationSteps.length - 1, 1)}
+      onRequestPhone={() => showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'call' })}
+    />
 
   if (success) return <div className="ao-form ao-form__success" ref={resultRef} tabIndex={-1} role="status">
     <h1>Your consultation request is saved.</h1>

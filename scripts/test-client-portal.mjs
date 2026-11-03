@@ -26,10 +26,10 @@ const load = async file => import(pathToFileURL(await compile(file)).href)
 const { default: handler } = await load('api/_lib/client-portal-handler.ts')
 const { default: deployedHandler, config: deployedConfig } = await load('api/demo-admin.ts')
 const { draft, changeLedger, generateDueInvoices } = await load('api/_lib/portal-ledger.ts')
-const { mutateLedger } = await load('api/_lib/portal-store.ts')
+const { allEngagements, getValue, mutateLedger } = await load('api/_lib/portal-store.ts')
 const { hash, ownerEmail } = await load('api/_lib/portal-auth.ts')
 const { nextDueDate, createInvoice } = await load('src/client-portal/model.ts')
-const { surchargeBps, verifyWebhook, charge, reconcileIntent, resetFailedPayment } = await load('api/_lib/portal-stripe.ts')
+const { surchargeBps, verifyWebhook, stripe, charge, reconcileIntent, resetFailedPayment } = await load('api/_lib/portal-stripe.ts')
 const { notifyAiPurchase, retryAiPurchaseNotifications } = await load('api/_lib/ai-purchase-notification.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch
 let store, stripeCalls, stripeResult, deliveredEmails, failStripe, emailMode, emailRequests, acceptedEmails
@@ -61,6 +61,7 @@ function selfServiceEngagement(signed = true) {
 const save = entries => store.values.set('portal:engagements', JSON.stringify(entries))
 const ledger = () => JSON.parse(store.values.get('portal:engagements') ?? '[]')
 beforeEach(() => {
+  process.env.VERCEL_ENV = 'development'
   Object.assign(process.env, { DEMO_AUDIT_REDIS_URL: 'https://redis.example.test', DEMO_AUDIT_REDIS_TOKEN: 'fake', PORTAL_ADMIN_EMAIL: owner.email, STRIPE_SECRET_KEY: 'sk_test_fake', STRIPE_PUBLISHABLE_KEY: 'pk_test_fake', STRIPE_WEBHOOK_SECRET: 'whsec_fake', RESEND_API_KEY: 'fake', CONTACT_FROM_EMAIL: 'billing@example.test', PORTAL_ZELLE_INSTRUCTIONS: 'Use the verified test instructions.', PORTAL_SURCHARGE_APPROVED: 'true', PORTAL_CARD_COST_BPS: '300', PORTAL_SURCHARGE_CAP_BPS: '300', PORTAL_SURCHARGE_STATES: 'KS' })
   store = createAgreementTestStore(); stripeCalls = []; stripeResult = undefined; deliveredEmails = []; failStripe = false; emailMode = 'ok'; emailRequests = []; acceptedEmails = new Map()
   for (const [token, email] of [[adminToken, owner.email], [clientToken, client.email], [strangerToken, 'stranger@example.test']]) store.values.set(`portal:session:${hash(token)}`, JSON.stringify({ email }))
@@ -159,7 +160,7 @@ test('parsed JSON requests retain validation and body limits', async () => {
   assert.equal(deliveredEmails.length, 0)
 })
 test('Stripe uses restored raw stream when Vercel exposes a parsed body', async () => {
-  const raw = '{ "type": "account.updated", "data": { "object": { "id": "acct_test" } } }\n'
+  const raw = '{ "id": "evt_test", "object": "event", "type": "account.updated", "livemode": false, "data": { "object": { "id": "acct_test" } } }\n'
   const timestamp = Math.floor(Date.now() / 1000)
   const signature = createHmac('sha256', process.env.STRIPE_WEBHOOK_SECRET).update(`${timestamp}.${raw}`).digest('hex')
   for (const [wire, status] of [[raw, 200], [JSON.stringify(JSON.parse(raw)), 400]]) {
@@ -172,6 +173,42 @@ test('Stripe uses restored raw stream when Vercel exposes a parsed body', async 
     assert.equal(response.statusCode, status)
   }
   assert.equal((await call({}, '', { url: '/api/client-portal?action=webhook', body: JSON.parse(raw) })).body.error, 'raw_body_required')
+})
+test('mixed Stripe modes suppress portal card readiness and block Stripe requests and billing before mutations', async () => {
+  process.env.STRIPE_PUBLISHABLE_KEY = 'pk_live_example'
+  process.env.CRON_SECRET = 'test-cron-key'
+  const before = [...store.values.entries()]
+  const session = await call(undefined, clientToken)
+  assert.equal(session.body.stripeReady, false)
+  assert.equal(session.body.publishableKey, '')
+  await assert.rejects(stripe('payment_methods/pm_test'), /stripe_not_configured/)
+  const cron = await call(undefined, '', { url: '/api/client-portal?action=cron', headers: { host: 'wallaceshift.com', authorization: 'Bearer test-cron-key' } })
+  assert.equal(cron.statusCode, 503); assert.equal(cron.body.error, 'stripe_not_configured')
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.error, 'stripe_not_configured')
+  assert.equal(stripeCalls.length, 0)
+  assert.deepEqual([...store.values.entries()], before)
+})
+test('signed webhooks require an explicit boolean livemode matching the deployment before contacting Stripe', async () => {
+  async function webhook(livemode) {
+    const raw = JSON.stringify({ id: 'evt_test', object: 'event', type: 'payment_intent.succeeded', livemode, data: { object: { id: 'pi_test123' } } })
+    const timestamp = Math.floor(Date.now() / 1000)
+    const signature = createHmac('sha256', process.env.STRIPE_WEBHOOK_SECRET).update(`${timestamp}.${raw}`).digest('hex')
+    return call({}, '', { url: '/api/client-portal?action=webhook', body: raw, headers: { 'stripe-signature': `t=${timestamp},v1=${signature}` } })
+  }
+  for (const [environment, mode] of [['preview', 'test'], ['production', 'live']]) {
+    Object.assign(process.env, { VERCEL_ENV: environment, STRIPE_SECRET_KEY: `rk_${mode}_example`, STRIPE_PUBLISHABLE_KEY: `pk_${mode}_example` })
+    const before = stripeCalls.length
+    for (const wrong of [mode !== 'live', undefined, String(mode === 'live')]) {
+      const failed = await webhook(wrong)
+      assert.equal(failed.statusCode, 400)
+      assert.equal(failed.body.error, 'stripe_event_mode_mismatch')
+    }
+    assert.equal(stripeCalls.length, before)
+    stripeResult = { id: 'pi_test123', metadata: { engagement: 'unknown' } }
+    assert.equal((await webhook(mode === 'live')).statusCode, 200)
+    assert.equal(stripeCalls.length, before + 1)
+    assert.equal(stripeCalls.at(-1).init.headers.authorization, `Bearer rk_${mode}_example`)
+  }
 })
 test('missing email configuration fails before consuming verification budgets', async () => {
   delete process.env.RESEND_API_KEY
@@ -648,4 +685,38 @@ test('purchase notification transport data is excluded from client and owner API
     assert.equal(notice.attemptToken, undefined)
     assert.equal(notice.leaseUntil, undefined)
   }
+})
+test('production billing ignores sandbox autopay, sessions, and invitations on the same Redis database', async t => {
+  const previous = { VERCEL_ENV: process.env.VERCEL_ENV, CRON_SECRET: process.env.CRON_SECRET }
+  t.after(() => {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key]
+      else process.env[key] = value
+    }
+  })
+  const sandbox = engagement('monthly')
+  sandbox.autopay = { enabled: true, agreementHash: sandbox.agreementHash }
+  const invite = 'd'.repeat(64)
+  sandbox.issueEmail = { access: { hash: hash(invite), expiresAt: new Date(Date.now() + 60000).toISOString() } }
+  save([sandbox])
+  store.values.set('portal:booking:calendar', JSON.stringify({ id: 'existing-connection' }))
+  const originalSandbox = store.values.get('portal:engagements')
+
+  Object.assign(process.env, { VERCEL_ENV: 'production', CRON_SECRET: 'fake-cron-key', STRIPE_SECRET_KEY: 'sk_live_fake', STRIPE_PUBLISHABLE_KEY: 'pk_live_fake' })
+  assert.deepEqual(await allEngagements(), [])
+  assert.equal((await call(undefined, adminToken)).body.authenticated, false)
+  const invitation = await call({ action: 'open-invitation', id: sandbox.id, token: invite }, '')
+  assert.equal(invitation.body.error, 'invitation_expired')
+  const cron = await call(undefined, '', { url: '/api/client-portal?action=cron', headers: { host: 'wallaceshift.com', authorization: 'Bearer fake-cron-key' } })
+  assert.equal(cron.statusCode, 200)
+  assert.equal(cron.body.attempted, 0)
+  assert.equal(stripeCalls.length, 0)
+
+  const live = engagement()
+  await mutateLedger(entries => { entries.push(live) })
+  assert.deepEqual((await allEngagements()).map(entry => entry.id), [live.id])
+  assert.equal(store.values.get('portal:engagements'), originalSandbox)
+  assert.equal((await getValue('booking:calendar')).id, 'existing-connection')
+  process.env.VERCEL_ENV = 'preview'
+  assert.deepEqual((await allEngagements()).map(entry => entry.id), [sandbox.id])
 })

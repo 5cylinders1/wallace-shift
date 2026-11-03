@@ -66,7 +66,7 @@ export function GoogleCalendarConnection() {
 
   return <section className="cp-calendar" aria-labelledby="cp-calendar-heading" aria-busy={busy !== null}>
     <div className="cp-calendar-heading"><h2 id="cp-calendar-heading">Google Calendar</h2><span className="cp-status" role="status">{!connection ? busy === 'status' ? 'Checking connection' : 'Status unavailable' : connection.connected ? 'Connection saved' : connection.configured ? 'Ready to connect' : 'Setup needed'}</span></div>
-    <p>Google Calendar sends new appointment confirmations and Meet links. Qualified quiz answers arrive separately at matthew@wallaceshift.com. The optional connection below was used to match bookings from the earlier funnel.</p>
+    <p>Bookings from the Calendly scheduler appear on the Google calendar connected in Calendly. Qualified quiz answers arrive separately at matthew@wallaceshift.com. The optional connection below was used to match bookings from the earlier funnel.</p>
     {connection?.connected && <p className="cp-calendar-detail">Calendar: <strong>{connection.calendarId ?? 'primary'}</strong>{connection.bookingTitle && <> · Consultation: <strong>{connection.bookingTitle}</strong></>}</p>}
     {error && <p className="cp-calendar-error" role="alert">{error}</p>}
     <div className="cp-calendar-actions">
@@ -101,10 +101,10 @@ function ConfirmedConsultations() {
     finally { setBusy(false) }
   }
   return <div className="cp-calendar-booking-list" aria-busy={busy}>
-    <p>Quiz answers saved when the funnel confirmed each booking. Check Google Calendar for later changes or cancellations.</p>
+    <p>These answers were saved with bookings from the earlier funnel. Check Google Calendar for later changes or cancellations.</p>
     {error && <p className="cp-calendar-error" role="alert">{error}</p>}
     {busy && !bookings && <p role="status">Loading consultations…</p>}
-    {bookings?.length === 0 && <p>No consultations have been confirmed through the funnel yet.</p>}
+    {bookings?.length === 0 && <p>No consultations were saved by the earlier funnel.</p>}
     {bookings?.map(booking => <details key={booking.id} className="cp-calendar-booking">
       <summary><time dateTime={booking.start}>{new Date(booking.start).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</time><span>{booking.email}</span></summary>
       <dl className="cp-intake-facts">{aiQualificationFacts(booking.answers).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>

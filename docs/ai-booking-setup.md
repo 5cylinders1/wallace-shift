@@ -1,28 +1,35 @@
 # Consultation booking and owner email
 
-A qualified quiz submission emails the answers to `matthew@wallaceshift.com`. The visitor can immediately choose a time on the public 45 minute Google appointment schedule. Google collects the visitor’s email in its own form and sends the booking confirmation and Meet link after the appointment is booked. The quiz summary contains the answers and completion time. It cannot identify a Google event or provide a meeting link.
+Qualified visitors book a free 45 minute Google Meet consultation inside the funnel. Calendly supplies the scheduling form and confirms the appointment. Its confirmation opens the film automatically. Finishing the film reveals the packages.
 
-## Set up the quiz summary
+## Connect the consultation event
 
-Set `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` and a writable Redis endpoint and token for the deployment. The sender must be verified in Resend. The preferred Redis pair is `DEMO_AUDIT_REDIS_URL` and `DEMO_AUDIT_REDIS_TOKEN`. The fallback pairs are listed below. The recipient for qualified quiz summaries is fixed at `matthew@wallaceshift.com`. This send does not depend on Calendar OAuth or on a visitor entering a verification code. A failure to send the summary leaves booking available and offers a retry.
+1. In Calendly, go to **Settings → Scheduling → Calendars** and connect Google Calendar. Sign in as the calendar owner, `matthew.wallaceshift@gmail.com`. Choose the calendars to check for conflicts and select the consultation calendar under **Calendar to add events to**. [Connect Google Calendar](https://calendly.com/help/how-to-connect-your-google-calendar)
+2. Go to **Scheduling → + Create → One-on-one**. Name the event **Wallace Shift Project Consultation**, set the duration to **45 minutes**, choose **Google Meet** as its location, set your available hours, and save. [Create an event type](https://calendly.com/help/how-to-set-up-an-event-type) · [Connect Google Meet](https://calendly.com/help/calendly-google-meet)
+3. On this event’s card, choose **Copy link**. Use the reusable event link so visitors land directly on this consultation. [Share an event link](https://calendly.com/help/how-to-share-your-scheduling-link)
+4. The funnel defaults to the owner's [Wallace Shift consultation](https://calendly.com/matthew-wallaceshift/consultation). No environment variable is needed for this link. To switch events, override `VITE_CALENDLY_EVENT_URL` with the new public URL, restart Vite locally, and redeploy for the Vercel environment you change. An explicitly empty or invalid override uses the existing Google schedule instead. Google can book the appointment and send its usual confirmation, but that fallback cannot advance to the film.
 
-## Forward actual booking confirmations to the Wallace Shift inbox
+## Check one booking before running ads
 
-1. On a computer, open Gmail as the calendar owner, `matthew.wallaceshift@gmail.com`. Under **Settings → See all settings → Forwarding and POP/IMAP** (or **Forwarding**), add `matthew@wallaceshift.com` as a forwarding address. Open Gmail’s verification message in that destination inbox and verify the address. For this filter, keep global forwarding disabled. [Gmail forwarding instructions](https://support.google.com/mail/answer/10957?hl=en)
-2. In the owner’s Gmail, use an actual confirmation from the **Wallace Shift - Project Consultation** schedule. Open **Filter messages like these**. Use the sender and stable confirmation wording from that message, including the schedule name where it appears. Preview the search matches before creating the filter. Avoid matching general Calendar mail or a particular guest or appointment date. [Create a Gmail filter](https://support.google.com/mail/answer/6579?hl=en)
-3. Select **Create filter → Forward it to → matthew@wallaceshift.com → Create filter**. Check the next new booking in the Wallace Shift inbox for the correct appointment and Google Meet details. Gmail applies forwarding filters to new matching messages. Google controls the original booking message and the organizer’s availability, conferencing and cancellation settings. [Google appointment schedule settings](https://support.google.com/calendar/answer/10729749?hl=en)
+Complete a qualified quiz in the intended environment. Selecting a date or time should leave the scheduler visible. Finish an appointment using the embedded form. On success the funnel should bring the film into view automatically. Confirm the event appears on the chosen Google calendar with a Meet link and that the booking notice reaches the intended inbox. After the 15 second film ends, the packages should appear. Cancel the test appointment through its confirmation. [Calendly embed events](https://developer.calendly.com/api-docs/overview/embedding/notifying-the-parent-window)
 
-The filtered Google message and the quiz summary are separate emails. Neither one is matched to the other by the site.
+## Quiz summary and booking notices
+
+Submitting a qualified quiz sends the answers and completion time to `matthew@wallaceshift.com`. The booking notice arrives separately and includes the appointment and Meet details when Google Meet is configured. Quiz answers are never sent to Calendly or matched to an appointment. The visitor enters contact details once in Calendly.
+
+For quiz delivery, set `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and a writable Redis endpoint and token. Verify the sender in Resend. The preferred Redis pair is `DEMO_AUDIT_REDIS_URL` and `DEMO_AUDIT_REDIS_TOKEN`. The fallback pairs are listed below. A failed quiz email can be retried while booking continues.
+
+If the host booking notice arrives in `matthew.wallaceshift@gmail.com` and should also reach `matthew@wallaceshift.com`, preview or update the existing Gmail filter using an actual new Calendly booking notice. Its sender and subject may differ from the old Google appointment schedule. Keep global forwarding disabled and forward only matching messages to the verified address. Check a *subsequent* new booking in the destination inbox for the correct Meet link. [Gmail forwarding](https://support.google.com/mail/answer/10957?hl=en) · [Create a Gmail filter](https://support.google.com/mail/answer/6579?hl=en)
 
 ## Walkthrough and purchases
 
-Once the approved video is published, a qualified visitor can choose **Watch the walkthrough** below the calendar after booking, in the same tab. This action opens the video without marking the appointment confirmed. Set the video URL and English WebVTT captions in `src/content/aiConsultation.ts`. Both values currently remain `null`, so the public booking page shows no walkthrough button or package offers. A configured video must finish before the packages appear. Visitors can buy through the existing agreement and payment flow. Google’s confirmation email provides the link to cancel an appointment they no longer need.
+Only the active Calendly embed’s completed booking event reveals the player. The site then scrolls to **Put AI to work**, the supplied film with English captions in `public/media/ai-consultation/`. Update future media URLs in `src/content/aiConsultation.ts`. When playback ends, visitors can review a package, sign the agreement and pay. An unavailable film leaves the offers locked. Visitors who purchase can cancel the appointment through their booking confirmation.
 
-The phone option remains a callback request. A visitor can provide a phone number without an email address, and Wallace Shift arranges a time separately.
+The phone option collects a phone number without requiring an email address. Wallace Shift arranges the time separately. A callback request does not unlock the video.
 
 ## Optional legacy Calendar connection
 
-The owner panel and previous versions of the booking client support read only Calendar OAuth, visitor email verification and verified appointment records. This setup is for those legacy clients and records. The current quiz summary, public calendar, walkthrough and Gmail forwarding work independently of this connection.
+The owner panel and previous versions of the booking client support read only Calendar OAuth, visitor email verification and verified appointment records. This setup is for those legacy clients and records. Calendly confirms new funnel bookings directly in the visitor’s browser. The portal connection is independent of Calendly’s Google Calendar integration.
 
 ### Check what already exists
 
@@ -84,7 +91,7 @@ The portal's **Ready to connect** state means the required Calendar environment 
 
 ### Legacy verification and recovery
 
-For a legacy client, an eight hour quiz attempt and a verified attendee email identify a new appointment on the configured calendar. A matching event must be confirmed, future, organized on the connected calendar, use the expected title, and last 45 minutes. Ambiguous results do not confirm a booking. Previously verified records can be read in the owner portal under **Confirmed consultations and quiz answers**. These snapshots do not track subsequent reschedules or cancellations.
+For a legacy client, an eight hour quiz attempt and a verified attendee email identify a new appointment on the configured calendar. A matching event must be confirmed, future, organized on the connected calendar, use the expected title, and last 45 minutes. Ambiguous results do not confirm a booking. Previously verified records can be read in the owner portal under **Previously matched consultations and quiz answers**. These snapshots do not track subsequent reschedules or cancellations.
 
 The connection requests offline access with `calendar.events.readonly`. That Google permission can read events on calendars available to the account; this implementation queries only the configured calendar. It never creates, modifies, or cancels Google events. The refresh token is encrypted with AES 256 GCM and stored durably. Tokens remain on the server.
 
