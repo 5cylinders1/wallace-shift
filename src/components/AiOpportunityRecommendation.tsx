@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
-  aiOffer, aiPackages, recommendAiOpportunity, workflowOptions, roleOptions, revenueOptions, weeklyHoursOptions,
+  aiPackages, recommendAiOpportunity, workflowOptions, roleOptions, revenueOptions, weeklyHoursOptions,
   aiExperienceOptions, aiBarrierOptions, approverOptions, impactOptions, budgetOptions, timingOptions,
   type AiPackageId,
 } from '../content/aiOffer'
@@ -20,7 +20,12 @@ export function AiOpportunityRecommendation({ values, onRequestContact }: {
 }) {
   const recommendation = recommendAiOpportunity(values)
   const [packageId, setPackageId] = useState<AiPackageId>(values.packageId || recommendation.packageId || 'inquiry')
-  const [contactMethod, setContactMethod] = useState<'email' | 'call'>(values.contactMethod)
+  const [path, setPath] = useState<'packages' | null>(values.packageId ? 'packages' : null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  useLayoutEffect(() => {
+    headingRef.current?.focus({ preventScroll: true })
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [path])
   const offer = aiPackages[packageId]
   const consultationRecommended = recommendation.kind !== 'package'
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle')
@@ -47,54 +52,51 @@ export function AiOpportunityRecommendation({ values, onRequestContact }: {
 
   return <div className="qf-recommendation">
     <header className="qf-result-intro">
-      <h1>Let’s put AI to work.</h1>
-      <p>Choose a focused package or plan a free consultation. We can use your answers to plan a practical first project.</p>
-      <nav className="qf-path-shortcuts" aria-label="Choose your next step"><a href="#qf-package-path">Choose a package</a><a href="#qf-consultation-path">Free consultation</a></nav>
+      {path && <button className="qf-text-link qf-path-back" type="button" onClick={() => setPath(null)}>Back to both options</button>}
+      <h1 ref={headingRef} tabIndex={-1}>{path ? 'Choose your package.' : 'Two ways to get started.'}</h1>
+      {path && <p>Choose a defined project, sign the agreement, and pay online. No consultation is required.</p>}
     </header>
 
-    <div className="qf-conversion-paths">
-      <section className="qf-package-path" id="qf-package-path" tabIndex={-1} aria-labelledby="qf-package-title">
-        <h2 id="qf-package-title">Start with a package</h2>
-        <p>A defined scope and a clear starting price for one part of your business.</p>
-        <fieldset className="qf-package-options">
-          <legend className="visually-hidden">Choose your package</legend>
-          {Object.values(aiPackages).map(item => <label className={`qf-package-option${packageId === item.id ? ' is-selected' : ''}`} key={item.id}>
-            <input type="radio" name="resultPackage" value={item.id} checked={packageId === item.id} onChange={() => setPackageId(item.id)} />
-            <span><strong>{item.name}</strong><small>{item.id === 'inquiry' ? 'Turn inquiries into replies ready for review.' : 'Turn staff notes into useful system updates.'}</small>{recommendation.packageId === item.id && <em>Suggested by your answers</em>}</span>
-            <b>${item.price.toLocaleString('en-US')}</b>
-          </label>)}
-        </fieldset>
-        <details className="qf-package-details" key={packageId}>
-          <summary>What is included in {offer.name}?</summary>
-          <ul>{offer.scope.map(item => <li key={item}>{item}</li>)}<li>Testing, a team walkthrough, and documentation</li></ul>
-          <p>{offer.boundary} Software subscriptions, AI usage, and ongoing support are separate.</p>
-        </details>
-        <button className={`ao-button${consultationRecommended ? ' ao-button--secondary' : ''}`} type="button" onClick={() => onRequestContact({ nextStep: 'package', packageId, contactMethod: 'email' })}>Continue with this package</button>
-        <p className="qf-path-note">Request your selected package. We confirm compatibility and the agreement before payment. Online checkout is not open yet.</p>
+    {!path ? <div className="qf-path-choices">
+      <section aria-labelledby="qf-self-service-title">
+        <h2 id="qf-self-service-title">Buy a package now</h2>
+        <p>Pick a package, sign the agreement, and pay online.</p>
+        <p className="qf-choice-detail">From $2,500.<br />Free business website included.</p>
+        <button className="ao-button" type="button" onClick={() => setPath('packages')}>View packages and buy</button>
       </section>
-
-      <section className="qf-consultation-path" id="qf-consultation-path" tabIndex={-1} aria-labelledby="qf-consultation-title">
-        <h2 id="qf-consultation-title">Plan a free consultation</h2>
-        <p>Need a custom solution or help choosing? Spend {aiConsultation.durationMinutes} minutes with us to map out your next step.</p>
-        <ul className="qf-consultation-agenda"><li>Review what is holding your business back</li><li>Compare the potential time savings and costs</li><li>Agree on a practical scope and next step</li></ul>
-        <fieldset className="qf-meeting-options">
-          <legend>How would you like to talk?</legend>
-          <label className={contactMethod === 'email' ? 'is-selected' : ''}><input type="radio" name="resultMeeting" checked={contactMethod === 'email'} onChange={() => setContactMethod('email')} /><span><strong>Google Meet</strong><small>Use your email for the invitation</small></span></label>
-          <label className={contactMethod === 'call' ? 'is-selected' : ''}><input type="radio" name="resultMeeting" checked={contactMethod === 'call'} onChange={() => setContactMethod('call')} /><span><strong>Phone call</strong><small>No email needed</small></span></label>
-        </fieldset>
-        <button className={`ao-button${!consultationRecommended ? ' ao-button--secondary' : ''}`} type="button" onClick={() => onRequestContact({ nextStep: 'consultation', packageId: '', contactMethod })}>{contactMethod === 'email' ? 'Choose a consultation time' : 'Plan my free phone call'}</button>
-        <p className="qf-path-note">{contactMethod === 'email' ? 'Book on our Google calendar without leaving this page. Google sends your confirmation and meeting link.' : 'Share your phone number next. We will call to arrange a time. No email required.'}</p>
+      <div className="qf-path-or">OR</div>
+      <section aria-labelledby="qf-appointment-title">
+        <h2 id="qf-appointment-title">Book a consultation</h2>
+        <p><strong>For a more complex project.</strong><br />Get a custom plan and price.</p>
+        <p className="qf-choice-detail">Free {aiConsultation.durationMinutes} minute consultation.<br />Meet with us on Google Meet.</p>
+        <button className="ao-button ao-button--secondary" type="button" onClick={() => onRequestContact({ nextStep: 'consultation', packageId: '', contactMethod: 'email' })}>Book a free consultation</button>
       </section>
-    </div>
-
-    <section className="qf-result-bonus" aria-labelledby="qf-bonus-title">
-      <div><h2 id="qf-bonus-title">Your project. A free business website, too.</h2><p>A qualifying project of ${aiOffer.minimumProjectFee.toLocaleString('en-US')} or more includes a one page business website.</p></div>
-      <details><summary>See what is included</summary><p>Your supplied branding and content, a responsive page, one inquiry form, and one revision round. Eligibility and scope are confirmed in the agreement. The minimum excludes the bonus website, taxes, and third party costs. Domain, hosting, and ongoing care are agreed separately.</p></details>
-    </section>
+    </div> : <section className="qf-package-path" aria-label="Self service packages">
+      <fieldset className="qf-package-options">
+        <legend className="visually-hidden">Choose your package</legend>
+        {Object.values(aiPackages).map(item => <label className={`qf-package-option${packageId === item.id ? ' is-selected' : ''}`} key={item.id}>
+          <input type="radio" name="resultPackage" value={item.id} checked={packageId === item.id} onChange={() => setPackageId(item.id)} />
+          <span><strong>{item.name}</strong><small>{item.description}</small>{recommendation.packageId === item.id && <em>Suggested by your answers</em>}</span>
+          <b>${item.price.toLocaleString('en-US')}<small>One time</small></b>
+        </label>)}
+      </fieldset>
+      <div className="qf-package-scope" key={packageId}>
+        <h2>Included in {offer.name}</h2>
+        <ul>{offer.scope.map(item => <li key={item}>{item}</li>)}<li>Testing, a team walkthrough, and documentation</li><li>A free one page business website with one inquiry form and one revision round</li></ul>
+        <p>{offer.boundary} Ongoing support and software subscriptions are separate.</p>
+        <details><summary>Delivery and what we need from you</summary><p>{offer.delivery}</p></details>
+      </div>
+      <div className="qf-package-purchase">
+        <div><span>One time project price</span><strong>${offer.price.toLocaleString('en-US')}</strong></div>
+        <button className="ao-button" type="button" onClick={() => onRequestContact({ nextStep: 'package', packageId, contactMethod: 'email' })}>Continue to checkout</button>
+      </div>
+      <p className="qf-path-note">Next, enter your details and verify your email. Then review and sign your agreement before paying securely through Stripe.</p>
+    </section>}
 
     <section className="qf-result-context" aria-label="Your answers and next step">
-      {consultationRecommended && <p><strong>We recommend starting with a conversation.</strong> {(values.role === 'joint' || values.role === 'researching') ? 'Bring the person who approves the investment so we can plan the project together.' : values.budget === 'unavailable' ? 'The packages start at $2,500. We can discuss what is practical for your budget before you commit.' : 'We can use your answers to confirm the fit, scope, and value before you choose a package.'}</p>}
-      <details><summary>Review your answers</summary><dl className="qf-summary">{facts.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{value}</dd></div>)}</dl>
+      <details><summary>Review your answers</summary>
+        {!path && consultationRecommended && <p><strong>We recommend starting with a conversation.</strong> {(values.role === 'joint' || values.role === 'researching') ? 'Bring the person who approves the investment so we can plan the project together.' : values.budget === 'unavailable' ? 'The packages start at $2,500. We can discuss what is practical for your budget before you commit.' : 'We can use your answers to confirm the fit, scope, and value before you choose a package.'}</p>}
+        <dl className="qf-summary">{facts.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{value}</dd></div>)}</dl>
         <button className="qf-text-link" type="button" onClick={copySummary}>Copy my answers</button>
         <p role="status">{copyState === 'copied' ? 'Your answers were copied.' : copyState === 'failed' ? 'Copying is unavailable. You can select and copy your answers above.' : ''}</p>
       </details>

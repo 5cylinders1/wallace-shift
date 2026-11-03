@@ -8,6 +8,7 @@ import { charge, finishSetup, handleStripeEvent, quote, refreshPayments, resetFa
 import { automaticInvoice, firstUnsettledInvoice, scheduleConsent } from '../../src/client-portal/model.js'
 import type { Engagement } from '../../src/client-portal/model.js'
 import { issueAndEmail } from './portal-email.js'
+import { retryAiPurchaseNotifications } from './ai-purchase-notification.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
 async function rawBody(req: IncomingMessage, requireRaw = false): Promise<string> {
@@ -46,6 +47,11 @@ async function rawBody(req: IncomingMessage, requireRaw = false): Promise<string
 function clientView(e: Engagement, who: Identity): unknown {
   const view = structuredClone(e)
   if (view.issueEmail) { delete view.issueEmail.payload; delete view.issueEmail.access }
+  if (view.selfService?.ownerNotification) {
+    delete view.selfService.ownerNotification.payload
+    delete view.selfService.ownerNotification.attemptToken
+    delete view.selfService.ownerNotification.leaseUntil
+  }
   if (who.admin) return view
   delete view.issueEmail
   delete view.stripeCustomer; delete view.paymentMethod; delete view.setup
@@ -75,6 +81,8 @@ async function runBilling(origin: string): Promise<{ generated: number; attempte
     }
     await setValue('billing-cursor', e.id, 7 * 86400)
   }
+  // Failed email does not affect billing. The paid project itself is already durable.
+  try { await retryAiPurchaseNotifications(Math.min(16000, Math.max(0, 48000 - (Date.now() - started)))) } catch { /* Retry on the next protected cron run. */ }
   return { generated, attempted, failed }
 }
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {

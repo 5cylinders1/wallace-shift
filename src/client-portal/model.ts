@@ -1,3 +1,5 @@
+import type { AiQualificationAnswers } from '../content/aiOffer.js'
+
 export type Cadence = 'once' | 'monthly' | 'quarterly' | 'yearly'
 export type OfflineMethod = 'cash' | 'check' | 'zelle'
 export type InvoiceEmail = {
@@ -24,6 +26,15 @@ export type Engagement = {
   initialPayment?: { amount: number; due: string }
   agreement: string; agreementHash: string; issuedAt?: string
   issueEmail?: InvoiceEmail
+  selfService?: {
+    orderId: string; fingerprint: string; packageId: 'inquiry' | 'notes'; offerVersion: string; buyerName: string
+    answers: AiQualificationAnswers
+    ownerNotification?: {
+      id: string; state: 'pending' | 'sent' | 'failed' | 'review'; startedAt: string
+      sentAt?: string; providerId?: string; attemptToken?: string; leaseUntil?: number
+      payload?: { from: string; to: string[]; subject: string; text: string }
+    }
+  }
   signature?: { name: string; email: string; at: string; hash: string; consent: string }
   invoices: Invoice[]; nextDue?: string; stripeCustomer?: string
   setup?: { id: string; expiresAt: number; completed?: boolean }; paymentMethod?: string

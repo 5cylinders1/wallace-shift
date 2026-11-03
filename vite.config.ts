@@ -167,6 +167,8 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
  * their existing behaviour.
  */
 const DEV_API_ROUTES: Record<string, string> = {
+  '/api/ai-booking': '/api/_lib/ai-booking-handler.ts',
+  '/api/ai-checkout': '/api/_lib/ai-checkout-handler.ts',
   '/api/ai-opportunity': '/api/_lib/ai-opportunity-handler.ts',
   '/api/roof-suggest': '/api/roof-suggest.ts',
   '/api/roof-lookup': '/api/roof-lookup.ts',
@@ -188,7 +190,7 @@ function devApiRoutes(): Plugin {
       const env = loadEnv(server.config.mode, server.config.root, '')
       // Server-side settings only: never anything a VITE_ prefix would expose.
       for (const [key, value] of Object.entries(env)) {
-        if (/^(OPENAI_API_KEY$|ROOF_|LAWN_|PAINT_|RESEND_API_KEY$|CONTACT_(FROM|TO)_EMAIL$|AI_OPPORTUNITY_(TO_EMAIL|ENABLED)$|DEMO_AUDIT_REDIS_(URL|TOKEN)$|(?:PORTAL|DEMO)_ADMIN_EMAIL$|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
+        if (/^(OPENAI_API_KEY$|ROOF_|LAWN_|PAINT_|RESEND_API_KEY$|CONTACT_(FROM|TO)_EMAIL$|AI_OPPORTUNITY_(TO_EMAIL|ENABLED)$|DEMO_AUDIT_REDIS_(URL|TOKEN)$|(?:PORTAL|DEMO)_ADMIN_EMAIL$|GEOAPIFY_|MAPBOX_|INSTANT_ROOFER_|GOOGLE_CALENDAR_|GOOGLE_SOLAR_|GOOGLE_MAPS_|OVERPASS_|RATE_LIMIT_|KV_REST_API_(URL|TOKEN)$|UPSTASH_REDIS_REST_(URL|TOKEN)$)/.test(key) && !process.env[key]) process.env[key] = value
       }
       server.middlewares.use(async (req, res, next) => {
         const path = (req.url ?? '').split('?')[0]

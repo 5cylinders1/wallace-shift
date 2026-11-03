@@ -62,6 +62,8 @@
   ],
   "rewrites": [
     { "source": "/api/ai-opportunity", "destination": "/api/demo-admin?offer=ai" },
+    { "source": "/api/ai-booking", "destination": "/api/demo-admin?offer=booking" },
+    { "source": "/api/ai-checkout", "destination": "/api/demo-admin?offer=checkout" },
     { "source": "/api/client-portal", "destination": "/api/demo-admin?portal=client" },
     {
       "source": "/api/lawn-suggest",

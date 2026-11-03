@@ -6,7 +6,7 @@ import ts from 'typescript'
 const compile = source => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2023, module: ts.ModuleKind.ESNext } }).outputText
 const url = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
 const schemaUrl = url(compile(await readFile(new URL('../src/content/aiOffer.ts', import.meta.url), 'utf8')))
-const { aiOffer, aiPackages, recommendAiOpportunity, routeAiOpportunity, qualificationSteps, workflowOptions } = await import(schemaUrl)
+const { aiOffer, aiPackages, recommendAiOpportunity, routeAiOpportunity, isAiBookingQualified, qualificationSteps, workflowOptions, budgetOptions, timingOptions } = await import(schemaUrl)
 const adapter = compile(await readFile(new URL('../src/lib/aiOpportunityAdapter.ts', import.meta.url), 'utf8'))
 const { submitAiOpportunity, validateAiOpportunity, normalizeAiOpportunity, createAiOpportunityPayload, initialAiOpportunityValues } = await import(url(adapter.replaceAll("'../content/aiOffer'", `'${schemaUrl}'`)))
 
@@ -26,6 +26,37 @@ async function withFetch(fake, callback) {
   globalThis.fetch = fake
   try { await callback() } finally { globalThis.fetch = original }
 }
+
+test('final timing choices preserve existing values and present the four requested labels in order', () => {
+  assert.deepEqual(timingOptions, [
+    { value: 'now', label: 'Now' },
+    { value: 'soon', label: 'Within the next month' },
+    { value: 'quarter', label: 'Within 3 months' },
+    { value: 'exploring', label: 'Just researching' },
+  ])
+  for (const { value: timing } of timingOptions) {
+    assert.deepEqual(validateAiOpportunity({ ...valid, timing }, 'readiness'), {})
+  }
+})
+
+test('direct booking requires investment approval and either now or next month across every answer combination', () => {
+  for (const { value: budget } of budgetOptions) {
+    for (const { value: timing } of timingOptions) {
+      assert.equal(isAiBookingQualified({ budget, timing }), budget === 'ready' && ['now', 'soon'].includes(timing), `${budget}/${timing}`)
+    }
+  }
+})
+
+test('direct booking does not inherit recommendation gates or treat missing and unknown answers as qualified', () => {
+  for (const timing of ['now', 'soon']) {
+    const answers = { ...valid, timing, role: 'researching', approverAvailability: 'no', revenue: 'not_trading', workflows: ['demand'] }
+    assert.equal(recommendAiOpportunity(answers).kind, 'preparation')
+    assert.equal(isAiBookingQualified(answers), true)
+  }
+  for (const input of [null, undefined, {}, { budget: 'ready' }, { timing: 'now' }, { budget: '', timing: 'now' }, { budget: 'ready', timing: '' }, { budget: 'yes', timing: 'now' }, { budget: 'ready', timing: 'immediately' }, { budget: true, timing: 'now' }, { budget: 'ready', timing: ['now'] }]) {
+    assert.equal(isAiBookingQualified(input), false)
+  }
+})
 
 test('quiz validation permits a local recommendation before contact details or consent', () => {
   const quiz = { ...valid, businessType: '', name: '', email: '', contactConsent: false, offerAcknowledged: false }
@@ -145,7 +176,7 @@ test('payload construction removes obsolete branch answers without mutating the 
   assert.deepEqual(validateAiOpportunity(resource), {})
 })
 
-test('commercial gates cannot be offset by revenue and never offer an immediate purchase', () => {
+test('commercial gates cannot be offset by revenue when recommending a next step', () => {
   const excluded = [
     { budget: 'unavailable' }, { revenue: 'not_trading' }, { workflows: ['demand'] }, { timing: 'exploring' },
     { role: 'joint', approverAvailability: 'no' }, { role: 'joint', approverAvailability: 'not_sure' },
@@ -156,7 +187,6 @@ test('commercial gates cannot be offset by revenue and never offer an immediate 
     assert.equal(result.route, 'resource')
     assert.equal(result.kind, 'preparation')
     assert.equal(result.packageId, null)
-    assert.equal(result.checkoutReady, false)
   }
   for (const role of ['joint', 'researching']) assert.equal(recommendAiOpportunity({ ...valid, role, approverAvailability: 'yes' }).kind, 'consultation')
   assert.equal(routeAiOpportunity({ ...valid, budget: 'approval' }), 'manual_review')
@@ -168,7 +198,6 @@ test('revenue is a prioritization signal, not a cutoff for an otherwise suitable
     const result = recommendAiOpportunity({ ...valid, revenue })
     assert.equal(result.kind, 'package')
     assert.equal(result.priority, 'standard')
-    assert.equal(result.checkoutReady, false)
   }
   for (const revenue of ['250k_1m', '1m_5m', 'over_5m']) assert.equal(recommendAiOpportunity({ ...valid, revenue }).priority, 'established')
 })
