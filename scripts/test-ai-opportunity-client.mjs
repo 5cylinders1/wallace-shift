@@ -6,13 +6,13 @@ import ts from 'typescript'
 const compile = source => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2023, module: ts.ModuleKind.ESNext } }).outputText
 const url = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
 const schemaUrl = url(compile(await readFile(new URL('../src/content/aiOffer.ts', import.meta.url), 'utf8')))
-const { aiOffer, aiPackages, recommendAiOpportunity, routeAiOpportunity, isAiBookingQualified, qualificationSteps, workflowOptions, budgetOptions, timingOptions } = await import(schemaUrl)
+const { aiOffer, aiPackages, recommendAiOpportunity, routeAiOpportunity, isAiBookingQualified, qualificationSteps, workflowOptions, roleOptions, revenueOptions, weeklyHoursOptions, impactOptions, budgetOptions, timingOptions } = await import(schemaUrl)
 const adapter = compile(await readFile(new URL('../src/lib/aiOpportunityAdapter.ts', import.meta.url), 'utf8'))
 const { submitAiOpportunity, validateAiOpportunity, normalizeAiOpportunity, createAiOpportunityPayload, initialAiOpportunityValues } = await import(url(adapter.replaceAll("'../content/aiOffer'", `'${schemaUrl}'`)))
 
 const valid = {
   businessType: 'Example business', workflows: ['admin'], workflowDetails: 'We turn job notes into customer updates by hand.', currentTools: 'Email and spreadsheets',
-  weeklyHours: '6_10', impacts: ['delay'], timing: 'soon', role: 'owner', approverAvailability: '', revenue: '250k_1m',
+  weeklyHours: '6_10', impacts: ['delay'], impactDetails: '', timing: 'soon', role: 'owner', approverAvailability: '', revenue: '250k_1m',
   aiExperience: 'considered', aiBarriers: ['technical'], budget: 'ready',
   name: 'Example person', businessName: 'Example business', email: 'example@example.com', website: '',
   contactMethod: 'email', phone: '', offerAcknowledged: true, contactConsent: true, company: '',
@@ -39,23 +39,34 @@ test('final timing choices preserve existing values and present the four request
   }
 })
 
-test('direct booking requires investment approval and either now or next month across every answer combination', () => {
-  for (const { value: budget } of budgetOptions) {
-    for (const { value: timing } of timingOptions) {
-      assert.equal(isAiBookingQualified({ budget, timing }), budget === 'ready' && ['now', 'soon'].includes(timing), `${budget}/${timing}`)
+test('direct booking requires independent purchase authority, investment approval and near term timing across every combination', () => {
+  for (const { value: role } of roleOptions) {
+    for (const { value: budget } of budgetOptions) {
+      for (const { value: timing } of timingOptions) {
+        assert.equal(isAiBookingQualified({ role, budget, timing }), ['owner', 'decision_maker'].includes(role) && budget === 'ready' && ['now', 'soon'].includes(timing), `${role}/${budget}/${timing}`)
+      }
     }
   }
 })
 
 test('direct booking does not inherit recommendation gates or treat missing and unknown answers as qualified', () => {
   for (const timing of ['now', 'soon']) {
-    const answers = { ...valid, timing, role: 'researching', approverAvailability: 'no', revenue: 'not_trading', workflows: ['demand'] }
+    const answers = { ...valid, timing, role: 'decision_maker', revenue: 'not_trading', workflows: ['demand'] }
     assert.equal(recommendAiOpportunity(answers).kind, 'preparation')
     assert.equal(isAiBookingQualified(answers), true)
   }
-  for (const input of [null, undefined, {}, { budget: 'ready' }, { timing: 'now' }, { budget: '', timing: 'now' }, { budget: 'ready', timing: '' }, { budget: 'yes', timing: 'now' }, { budget: 'ready', timing: 'immediately' }, { budget: true, timing: 'now' }, { budget: 'ready', timing: ['now'] }]) {
+  for (const input of [null, undefined, {}, { role: 'owner' }, { role: 'owner', budget: 'ready' }, { role: 'owner', timing: 'now' }, { budget: 'ready', timing: 'now' }, { role: 'unknown', budget: 'ready', timing: 'now' }, { role: 'owner', budget: '', timing: 'now' }, { role: 'owner', budget: 'ready', timing: '' }, { role: 'owner', budget: 'yes', timing: 'now' }, { role: 'owner', budget: 'ready', timing: 'immediately' }, { role: 'owner', budget: true, timing: 'now' }, { role: 'owner', budget: 'ready', timing: ['now'] }]) {
     assert.equal(isAiBookingQualified(input), false)
   }
+})
+
+test('question order places purchase authority immediately before investment and uses the requested uncertainty labels', () => {
+  assert.deepEqual(qualificationSteps.map(step => step.id), ['bottleneck', 'business', 'impact', 'experience', 'context', 'authority', 'readiness'])
+  assert.equal(qualificationSteps.find(step => step.id === 'authority').heading, 'Are you authorized to approve a purchase for this business?')
+  assert.equal(revenueOptions.find(option => option.value === 'prefer_not').label, "I don't know")
+  assert.equal(weeklyHoursOptions.find(option => option.value === 'not_sure').label, "I don't know")
+  assert.equal(impactOptions.find(option => option.value === 'not_sure').label, "I don't know")
+  assert.equal(impactOptions.find(option => option.value === 'other').label, 'other')
 })
 
 test('quiz validation permits a local recommendation before contact details or consent', () => {
@@ -118,12 +129,27 @@ test('unknown selection values, missing acknowledgments, and excessive input are
   assert.deepEqual(Object.keys(errors).sort(), ['budget', 'businessType', 'contactConsent', 'offerAcknowledged'])
 })
 
-test('decision-maker participation is required only on the applicable authority branch', () => {
+test('authority does not require the removed approver follow up and its answer cannot qualify another role', () => {
   assert.deepEqual(validateAiOpportunity(valid, 'authority'), {})
   for (const role of ['joint', 'researching']) {
-    assert.ok(validateAiOpportunity({ ...valid, role }, 'authority').approverAvailability)
+    assert.deepEqual(validateAiOpportunity({ ...valid, role }, 'authority'), {})
     assert.deepEqual(validateAiOpportunity({ ...valid, role, approverAvailability: 'yes' }, 'authority'), {})
+    assert.equal(isAiBookingQualified({ ...valid, role, approverAvailability: 'yes' }), false)
   }
+})
+
+test('other consequence requires bounded explanation and hiding the branch clears stale details', () => {
+  for (const impactDetails of ['', '   ', 'x'.repeat(1501)]) assert.ok(validateAiOpportunity({ ...valid, impacts: ['other'], impactDetails }, 'impact').impactDetails)
+  assert.deepEqual(validateAiOpportunity({ ...valid, impacts: ['other', 'cost'], impactDetails: '  Customers have to repeat their requests.  ' }, 'impact'), {})
+  const values = { ...valid, impacts: ['other'], impactDetails: '  Customers repeat requests.\nWe reenter the same details.  ' }
+  assert.equal(normalizeAiOpportunity(values).impactDetails, values.impactDetails, 'normalization preserves whitespace while the visitor is typing')
+  const built = createAiOpportunityPayload(values, payload.submissionId)
+  assert.equal(built.impactDetails, 'Customers repeat requests.\nWe reenter the same details.')
+  assert.equal(values.impactDetails, '  Customers repeat requests.\nWe reenter the same details.  ')
+  assert.equal(normalizeAiOpportunity({ ...values, impacts: ['delay'] }).impactDetails, '')
+  const old = { ...valid }; delete old.impactDetails
+  assert.deepEqual(validateAiOpportunity(old, 'impact'), {})
+  assert.equal(normalizeAiOpportunity(old).impactDetails, '')
 })
 
 test('multi-select responses enforce bounds, known choices, uniqueness, and uncertainty exclusivity', () => {
@@ -203,7 +229,7 @@ test('revenue is a prioritization signal, not a cutoff for an otherwise suitable
 })
 
 test('unresolved scope goes to consultation and AI history changes guidance without penalizing familiarity', () => {
-  for (const overrides of [{ currentTools: '' }, { weeklyHours: 'under_2' }, { weeklyHours: 'not_sure' }, { impacts: ['not_sure'] }, { workflows: ['other'] }]) {
+  for (const overrides of [{ weeklyHours: 'under_2' }, { weeklyHours: 'not_sure' }, { impacts: ['not_sure'] }, { workflows: ['other'] }]) {
     assert.equal(recommendAiOpportunity({ ...valid, ...overrides }).kind, 'consultation')
   }
   for (const aiExperience of ['new', 'considered', 'individual_tools', 'disappointed', 'established']) {
@@ -215,6 +241,7 @@ test('unresolved scope goes to consultation and AI history changes guidance with
   assert.match(result.barrierGuidance[1], /information/)
   assert.equal(recommendAiOpportunity({ ...valid, workflows: ['inquiries'] }).packageId, 'inquiry')
   assert.equal(recommendAiOpportunity(valid).packageId, 'notes')
+  assert.deepEqual(recommendAiOpportunity({ ...valid, currentTools: '' }), recommendAiOpportunity(valid))
   assert.equal(recommendAiOpportunity(initialAiOpportunityValues).kind, 'consultation')
 })
 

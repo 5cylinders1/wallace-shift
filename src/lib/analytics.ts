@@ -6,7 +6,7 @@ type SiteAnalyticsEvent =
   | { name: 'quiz_started' | 'quiz_completed' }
   | { name: 'demo_preview_played'; value: string }
   | { name: 'offer_application_start' | 'offer_application_submit' }
-  | { name: 'offer_application_step'; value: 'bottleneck' | 'authority' | 'business' | 'impact' | 'experience' | 'tools' | 'readiness' | 'contact' }
+  | { name: 'offer_application_step'; value: 'bottleneck' | 'authority' | 'business' | 'impact' | 'experience' | 'tools' | 'context' | 'readiness' | 'contact' }
   | { name: 'offer_recommendation_view'; value: 'package' | 'consultation' | 'resource' }
 
 /** Only fixed event labels and catalog IDs belong here, never form values.

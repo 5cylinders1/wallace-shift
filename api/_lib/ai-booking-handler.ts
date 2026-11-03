@@ -3,9 +3,11 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { DemoError, demoCookie, demoJson, nodeDemoOrigin, nodeHeader, readDemoCookie } from './demo-access.js'
 import { demoAgreementStore, reserveVerificationCode } from './demo-agreement-store.js'
 import { readOpportunityBody, validateOpportunity } from './ai-opportunity-validation.js'
+import { reserveOpportunity } from './ai-opportunity-store.js'
 import { hash, identity } from './portal-auth.js'
 import { getValue, redis, setValue } from './portal-store.js'
 import { CALENDAR_SCOPE, calendarConfiguration, calendarConnection, connectCalendar, findBooking, type CalendarConnection } from './ai-booking-calendar.js'
+import { notifyQualifiedQuiz } from './ai-quiz-notification.js'
 import { aiOffer, isAiBookingQualified, routeAiOpportunity, type AiQualificationAnswers } from '../../src/content/aiOffer.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
@@ -14,8 +16,9 @@ const SESSION = 'wallace_booking_session'
 const OAUTH = 'wallace_calendar_state'
 const TTL = 600
 const SESSION_TTL = 8 * 3600
-const answerFields = ['businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'timing'] as const
+const answerFields = ['businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'impactDetails', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'timing'] as const
 type Intent = { attemptId: string; email: string; name: string; answers: AiQualificationAnswers; startedAt: number }
+type BookingAttempt = { startedAt: number; fingerprint: string }
 type Challenge = { nonce: string; recipientHash: string; exp: number; intent: Intent }
 type BookingSession = { intent: Intent; expiresAt: number }
 type OAuthState = { owner: string; sessionHash: string; expiresAt: number }
@@ -51,15 +54,36 @@ function validateIntent(body: Record<string, unknown>): Intent {
   if (!isAiBookingQualified(application)) throw new DemoError('not_qualified', 400)
   return { attemptId: body.attemptId, email: application.email, name: body.name ? application.name : '', answers: Object.fromEntries(answerFields.map(key => [key, application[key]])) as AiQualificationAnswers, startedAt: Date.now() }
 }
+function validateAttempt(body: Record<string, unknown>): Intent {
+  if (Object.keys(body).some(key => !['action', 'attemptId', 'answers', 'company'].includes(key))) throw new DemoError('invalid', 400)
+  // The placeholder only reuses quiz validation; it is never saved or contacted.
+  return validateIntent({ ...body, email: 'booking-visitor@example.test' })
+}
+async function registerAttempt(intent: Pick<Intent, 'attemptId' | 'answers' | 'startedAt'>): Promise<number> {
+  const key = `portal:booking:attempt:${hash(intent.attemptId)}`
+  const fingerprint = hash(JSON.stringify(intent.answers))
+  // The timestamp comes from the server, before a visitor enters Google's calendar.
+  // NX also keeps retries from shifting the matching window or renewing its TTL.
+  await redis(['SET', key, JSON.stringify({ startedAt: intent.startedAt, fingerprint } satisfies BookingAttempt), 'EX', SESSION_TTL, 'NX'])
+  const raw = await redis(['GET', key])
+  const saved = typeof raw === 'string' ? JSON.parse(raw) as BookingAttempt : null
+  if (!saved || saved.fingerprint !== fingerprint) throw new DemoError('attempt_conflict', 409)
+  return saved.startedAt
+}
 const LIMIT = `-- ai-booking:limit
 if tonumber(redis.call('GET', KEYS[1]) or '0') >= 8 then return 0 end
 redis.call('INCR', KEYS[1])
 redis.call('EXPIRE', KEYS[1], 3600, 'NX')
 return 1`
-async function limitSend(req: IncomingMessage): Promise<void> {
+const START_LIMIT = `-- ai-booking:start-limit
+if tonumber(redis.call('GET', KEYS[1]) or '0') >= 30 then return 0 end
+redis.call('INCR', KEYS[1])
+redis.call('EXPIRE', KEYS[1], 3600, 'NX')
+return 1`
+async function limitSend(req: IncomingMessage, startAttempt = false): Promise<void> {
   const ip = process.env.VERCEL === '1' ? nodeHeader(req, 'x-vercel-forwarded-for') : req.socket?.remoteAddress
   if (!ip || !/^[\da-fA-F:.]+$/.test(ip)) throw new DemoError('forbidden', 403)
-  if (await redis(['EVAL', LIMIT, 1, `ai-booking:ip:${hash(ip)}:${Math.floor(Date.now() / 3_600_000)}`]) !== 1) throw new DemoError('rate_limited', 429)
+  if (await redis(['EVAL', startAttempt ? START_LIMIT : LIMIT, 1, `ai-booking:${startAttempt ? 'start-ip' : 'ip'}:${hash(ip)}:${Math.floor(Date.now() / 3_600_000)}`]) !== 1) throw new DemoError('rate_limited', 429)
 }
 const VERIFY = `-- ai-booking:verify
 local pendingRaw = redis.call('GET', KEYS[2])
@@ -104,6 +128,7 @@ async function status(req: IncomingMessage, res: ServerResponse, attemptId: stri
   if (!session || session.expiresAt <= Date.now() || session.intent.attemptId !== attemptId) {
     demoJson(res, 200, { ok: true, status: 'unverified', configured: Boolean(connection) }); return
   }
+  if (!isAiBookingQualified(session.intent.answers)) throw new DemoError('not_qualified', 400)
   if (!connection) { demoJson(res, 200, { ok: true, status: 'waiting', configured: false }); return }
   // A retry of the same verified code may create a new cookie. Share the poll
   // budget across those cookies and tabs rather than allowing duplicate reads.
@@ -182,10 +207,24 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const params = new URLSearchParams({ client_id: config.clientId, redirect_uri: `${origin}/api/ai-booking?action=oauth-callback`, response_type: 'code', scope: CALENDAR_SCOPE, access_type: 'offline', prompt: 'consent', state })
       demoJson(res, 200, { ok: true, url: `https://accounts.google.com/o/oauth2/v2/auth?${params}` }); return
     }
+    if (body.action === 'quiz-summary') {
+      const { attemptId, answers } = validateAttempt(body)
+      const ip = process.env.VERCEL === '1' ? nodeHeader(req, 'x-vercel-forwarded-for') : req.socket?.remoteAddress
+      await reserveOpportunity(ip ?? '')
+      await notifyQualifiedQuiz(attemptId, answers)
+      demoJson(res, 200, { ok: true, notification: 'sent' }); return
+    }
+    if (body.action === 'start-attempt') {
+      const intent = validateAttempt(body)
+      await limitSend(req, true)
+      await registerAttempt(intent)
+      demoJson(res, 200, { ok: true }); return
+    }
     if (!await readyConnection()) throw new DemoError('calendar_not_connected', 503)
     if (body.action === 'send-code') {
       const intent = validateIntent(body)
       await limitSend(req)
+      intent.startedAt = await registerAttempt(intent)
       const intentKey = `portal:booking:intent:${hash(`${intent.attemptId}:${intent.email}`)}`
       const fingerprint = hash(JSON.stringify({ email: intent.email, answers: intent.answers }))
       // Preserve the first intent time across verification resends for the same quiz.
@@ -201,7 +240,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       await setValue(pendingKey(nonce), challenge, TTL)
       res.setHeader('set-cookie', demoCookie(PENDING, nonce, origin, TTL))
       try {
-        const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'content-type': 'application/json', 'idempotency-key': `ai-booking/${nonce}` }, body: JSON.stringify({ from: process.env.CONTACT_FROM_EMAIL!.trim(), to: [intent.email], subject: 'Your Wallace Shift booking verification code', text: `Your verification code is ${code}. It expires in 10 minutes. Do not share it. Enter it to connect your quiz answers to your consultation booking. Use this email address when you book with Google. This code does not book an appointment.` }), signal: AbortSignal.timeout(10000) })
+        const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'content-type': 'application/json', 'idempotency-key': `ai-booking/${nonce}` }, body: JSON.stringify({ from: process.env.CONTACT_FROM_EMAIL!.trim(), to: [intent.email], subject: 'Your Wallace Shift booking verification code', text: `Your verification code is ${code}. It expires in 10 minutes. Do not share it. Enter it to connect your quiz answers to the consultation you booked with Google using this email address. This code does not book an appointment.` }), signal: AbortSignal.timeout(10000) })
         if (!response.ok) throw new Error('Email rejected')
       } catch { throw new DemoError('email_unavailable', 503) }
       demoJson(res, 200, { ok: true }); return
@@ -214,6 +253,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (verified !== 'ok') throw new DemoError(['code_expired', 'code_invalid', 'rate_limited'].includes(String(verified)) ? String(verified) : 'storage_unavailable', verified === 'rate_limited' ? 429 : verified === 'code_expired' || verified === 'code_invalid' ? 400 : 503)
     const pending = await getValue<Challenge>(pendingKey(nonce))
     if (!pending || await redis(['GET', `portal:${proofKey(nonce)}`]) !== digest) throw new DemoError('code_expired', 400)
+    if (!isAiBookingQualified(pending.intent.answers)) throw new DemoError('not_qualified', 400)
     const token = randomBytes(32).toString('hex')
     await setValue(`booking:session:${hash(token)}`, { intent: pending.intent, expiresAt: Date.now() + SESSION_TTL * 1000 } satisfies BookingSession, SESSION_TTL)
     res.setHeader('set-cookie', demoCookie(SESSION, token, origin, SESSION_TTL))

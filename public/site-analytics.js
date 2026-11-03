@@ -18,7 +18,7 @@
     '/offers/ai-business-integration',
   ])
   const offerPath = '/offers/ai-business-integration'
-  const offerSteps = new Set(['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'readiness', 'contact'])
+  const offerSteps = new Set(['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'context', 'readiness', 'contact'])
   const offerRecommendations = new Set(['package', 'consultation', 'resource'])
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
   const surfaces = new Set(['home_hero', 'contact_form', 'roofing_offer'])

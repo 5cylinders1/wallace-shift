@@ -48,9 +48,10 @@ function payload(e: Engagement): Notification['payload'] {
       `Annual revenue: ${label(revenueOptions, a.revenue)}`,
       `Weekly time: ${label(weeklyHoursOptions, a.weeklyHours)}`,
       `Impact: ${a.impacts.map(value => label(impactOptions, value)).join('; ')}`,
+      ...(a.impacts.includes('other') && a.impactDetails?.trim() ? [`Other consequence: ${a.impactDetails}`] : []),
       `AI experience: ${label(aiExperienceOptions, a.aiExperience)}`,
       `Barriers: ${a.aiBarriers.map(value => label(aiBarrierOptions, value)).join('; ') || 'None selected'}`,
-      `Tools: ${a.currentTools || 'Not provided'}`, `Additional context: ${a.workflowDetails || 'Not provided'}`,
+      ...(a.currentTools?.trim() ? [`Tools: ${a.currentTools}`] : []), `Additional context: ${a.workflowDetails || 'Not provided'}`,
       `Budget: ${label(budgetOptions, a.budget)}`, `Timing: ${label(timingOptions, a.timing)}`,
     ].join('\n'),
   }

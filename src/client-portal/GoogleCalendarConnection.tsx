@@ -66,7 +66,7 @@ export function GoogleCalendarConnection() {
 
   return <section className="cp-calendar" aria-labelledby="cp-calendar-heading" aria-busy={busy !== null}>
     <div className="cp-calendar-heading"><h2 id="cp-calendar-heading">Google Calendar</h2><span className="cp-status" role="status">{!connection ? busy === 'status' ? 'Checking connection' : 'Status unavailable' : connection.connected ? 'Connection saved' : connection.configured ? 'Ready to connect' : 'Setup needed'}</span></div>
-    <p>Connect the calendar that receives your consultation bookings so the funnel can confirm appointments automatically. This connection can read events and does not change them.</p>
+    <p>Google Calendar sends new appointment confirmations and Meet links. Qualified quiz answers arrive separately at matthew@wallaceshift.com. The optional connection below was used to match bookings from the earlier funnel.</p>
     {connection?.connected && <p className="cp-calendar-detail">Calendar: <strong>{connection.calendarId ?? 'primary'}</strong>{connection.bookingTitle && <> · Consultation: <strong>{connection.bookingTitle}</strong></>}</p>}
     {error && <p className="cp-calendar-error" role="alert">{error}</p>}
     <div className="cp-calendar-actions">
@@ -79,7 +79,7 @@ export function GoogleCalendarConnection() {
       <p><code>GOOGLE_CALENDAR_ID</code> is optional and defaults to your primary calendar. <code>GOOGLE_CALENDAR_BOOKING_TITLE</code> must match your consultation schedule title if you change the current title.</p>
       <a href="https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred" target="_blank" rel="noopener noreferrer">Google OAuth setup instructions</a>
     </details>}
-    {connection && <details className="cp-calendar-bookings" onToggle={event => setShowBookings(event.currentTarget.open)}><summary>Confirmed consultations and quiz answers</summary>{showBookings && <ConfirmedConsultations />}</details>}
+    {connection && <details className="cp-calendar-bookings" onToggle={event => setShowBookings(event.currentTarget.open)}><summary>Previously matched consultations and quiz answers</summary>{showBookings && <ConfirmedConsultations />}</details>}
   </section>
 }
 

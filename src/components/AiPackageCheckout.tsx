@@ -77,7 +77,7 @@ export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftCha
     setBusy(true); setFailure(''); setNotice('')
     const answers: AiQualificationAnswers = {
       businessType: values.businessType, workflows: values.workflows, workflowDetails: values.workflowDetails,
-      currentTools: values.currentTools, weeklyHours: values.weeklyHours, impacts: values.impacts, role: values.role,
+      currentTools: values.currentTools, weeklyHours: values.weeklyHours, impacts: values.impacts, impactDetails: values.impactDetails, role: values.role,
       approverAvailability: values.approverAvailability, revenue: values.revenue, aiExperience: values.aiExperience,
       aiBarriers: values.aiBarriers, budget: values.budget, timing: values.timing,
     } as AiQualificationAnswers

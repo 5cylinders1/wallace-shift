@@ -1,12 +1,12 @@
 import {
-  aiOffer, aiPackages, workflowOptions, roleOptions, approverOptions, revenueOptions, weeklyHoursOptions, impactOptions,
+  aiOffer, aiPackages, workflowOptions, roleOptions, revenueOptions, weeklyHoursOptions, impactOptions,
   aiExperienceOptions, aiBarrierOptions, budgetOptions, timingOptions, routeAiOpportunity,
   type AiOpportunityPayload, type AiOpportunityRoute, type AiQualificationStep,
 } from '../content/aiOffer'
 
 export type AiOpportunityStep = AiQualificationStep | 'contact'
 type ChoiceField = 'role' | 'revenue' | 'weeklyHours' | 'aiExperience' | 'budget' | 'timing'
-export type AiOpportunityFormValues = Omit<AiOpportunityPayload, 'submissionId' | 'offerVersion' | ChoiceField> & {
+export type AiOpportunityFormValues = Omit<AiOpportunityPayload, 'submissionId' | 'offerVersion' | 'impactDetails' | ChoiceField> & { impactDetails: string } & {
   [K in ChoiceField]: AiOpportunityPayload[K] | ''
 }
 export type AiOpportunityErrors = Partial<Record<keyof AiOpportunityFormValues, string>>
@@ -15,7 +15,7 @@ export type AiOpportunityResult =
   | { ok: false; reason: 'not_configured' | 'invalid' | 'offer_changed' | 'submission_conflict' | 'rate_limited' | 'unavailable' }
 
 export const initialAiOpportunityValues: AiOpportunityFormValues = {
-  businessType: '', workflows: [], workflowDetails: '', currentTools: '', weeklyHours: '', impacts: [],
+  businessType: '', workflows: [], workflowDetails: '', currentTools: '', weeklyHours: '', impacts: [], impactDetails: '',
   role: '', approverAvailability: '', revenue: '', aiExperience: '', aiBarriers: [], budget: '', timing: '',
   name: '', businessName: '', email: '', website: '', contactMethod: 'email', phone: '',
   nextStep: 'consultation', packageId: '',
@@ -30,6 +30,7 @@ export function normalizeAiOpportunity(values: AiOpportunityFormValues): AiOppor
     aiBarriers: values.aiExperience === 'new' ? [] : [...values.aiBarriers],
     workflows: [...values.workflows],
     impacts: [...values.impacts],
+    impactDetails: values.impacts.includes('other') ? (values.impactDetails ?? '') : '',
     packageId: values.nextStep === 'package' ? values.packageId : '',
     contactMethod: values.nextStep === 'package' ? 'email' : values.contactMethod,
     phone: values.nextStep === 'consultation' && values.contactMethod === 'call' ? values.phone : '',
@@ -39,14 +40,15 @@ export function normalizeAiOpportunity(values: AiOpportunityFormValues): AiOppor
 }
 
 export function createAiOpportunityPayload(values: AiOpportunityFormValues, submissionId: string): AiOpportunityPayload {
-  return { ...normalizeAiOpportunity(values), submissionId, offerVersion: aiOffer.version } as AiOpportunityPayload
+  const normalized = normalizeAiOpportunity(values)
+  return { ...normalized, impactDetails: normalized.impactDetails.trim(), submissionId, offerVersion: aiOffer.version } as AiOpportunityPayload
 }
 
 /** Validation mirrors the API. Browser validation is for useful recovery, never security. */
 export function validateAiOpportunity(values: AiOpportunityFormValues, step?: AiOpportunityStep): AiOpportunityErrors {
   const errors: AiOpportunityErrors = {}
   const text = (key: keyof AiOpportunityFormValues, label: string, max: number, required = true) => {
-    const value = String(values[key]).trim()
+    const value = String(values[key] ?? '').trim()
     if (required && !value) errors[key] = `Please enter ${label}.`
     else if (value.length > max) errors[key] = `Please keep ${label} under ${max + 1} characters.`
   }
@@ -58,25 +60,25 @@ export function validateAiOpportunity(values: AiOpportunityFormValues, step?: Ai
     const max = key === 'workflows' ? options.length : 2
     if (!Array.isArray(selected) || selected.length < 1 || selected.length > max || new Set(selected).size !== selected.length
       || selected.some(value => !options.some(option => option.value === value))) errors[key] = key === 'workflows' ? 'Please select at least one issue or “I am not sure yet”.' : `Please choose one or two ${label}.`
-    else if ((key === 'workflows' || key === 'impacts') && selected.includes('not_sure' as never) && selected.length > 1) errors[key] = `Choose “I am not sure yet” on its own, or select the ${label} you know.`
+    else if ((key === 'workflows' || key === 'impacts') && selected.includes('not_sure' as never) && selected.length > 1) errors[key] = `Choose “${key === 'impacts' ? "I don't know" : 'I am not sure yet'}” on its own, or select the ${label} you know.`
   }
   if (!step || step === 'bottleneck') multiple('workflows', workflowOptions, 'issues')
   if (!step || step === 'authority') {
     choice('role', roleOptions, 'your role in the decision')
-    if (values.role === 'joint' || values.role === 'researching') choice('approverAvailability', approverOptions, 'whether the person who approves can take part')
   }
   if (!step || step === 'business') {
-    choice('revenue', revenueOptions, 'a revenue range or “I would prefer to discuss this”')
+    choice('revenue', revenueOptions, 'a revenue range or “I don’t know”')
   }
   if (!step || step === 'impact') {
-    choice('weeklyHours', weeklyHoursOptions, 'a team time estimate or “We have not measured it yet”')
+    choice('weeklyHours', weeklyHoursOptions, 'a team time estimate or “I don’t know”')
     multiple('impacts', impactOptions, 'consequences')
+    if (values.impacts.includes('other')) text('impactDetails', 'the other consequence', 1500)
   }
   if (!step || step === 'experience') {
     choice('aiExperience', aiExperienceOptions, 'your experience with AI')
     if (values.aiExperience && values.aiExperience !== 'new') multiple('aiBarriers', aiBarrierOptions, 'barriers')
   }
-  if (!step || step === 'tools') {
+  if (!step || step === 'context') {
     text('currentTools', 'your current tools', 500, false)
     text('workflowDetails', 'your task description', 1500, false)
   }
