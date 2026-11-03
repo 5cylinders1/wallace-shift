@@ -28,8 +28,9 @@ const { isMatchingBooking, CALENDAR_SCOPE } = await load('api/_lib/ai-booking-ca
 const { hash, identity } = await load('api/_lib/portal-auth.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch; const savedNow = Date.now
 let store, emails, tokenRequests, calendarRequests, events, nextEvents, tokenFailure, eventFailure, missingRefresh, missingScope, failSessionOnce, offset
-const answers = { businessType: '', workflows: ['inquiries'], workflowDetails: '', currentTools: 'Website and Gmail', weeklyHours: '6_10', impacts: ['delay'], role: 'owner', approverAvailability: '', revenue: '250k_1m', aiExperience: 'new', aiBarriers: [], budget: 'ready', timing: 'soon' }
+const answers = { businessType: '', workflows: ['inquiries'], workflowDetails: '', currentTools: 'Website and Gmail', weeklyHours: '6_10', impacts: ['delay'], impactDetails: '', role: 'owner', approverAvailability: '', revenue: '250k_1m', aiExperience: 'new', aiBarriers: [], budget: 'ready', timing: 'soon' }
 const body = (overrides = {}) => ({ action: 'send-code', attemptId: randomUUID(), email: 'visitor@example.test', answers, company: '', ...overrides })
+const attempt = (overrides = {}) => ({ action: 'start-attempt', attemptId: randomUUID(), answers, company: '', ...overrides })
 const event = (overrides = {}) => ({ id: 'event-123', status: 'confirmed', summary: 'Wallace Shift - Project Consultation', created: new Date(Date.now()).toISOString(), organizer: { self: true, email: 'owner@example.test' }, start: { dateTime: new Date(Date.now() + 86400000).toISOString() }, end: { dateTime: new Date(Date.now() + 86400000 + 45 * 60000).toISOString() }, attendees: [{ email: 'visitor@example.test', responseStatus: 'needsAction' }], ...overrides })
 function get(key) {
   if (store.expirations.has(key) && store.expirations.get(key) <= Date.now()) { store.values.delete(key); store.expirations.delete(key) }
@@ -44,8 +45,13 @@ function put(key, value, options = []) {
 function evaluate(command) {
   const [,,count] = command; const keys = command.slice(3, 3 + count); const args = command.slice(3 + count)
   const operation = command[1].split('\n')[0]
-  if (operation === '-- ai-booking:limit') {
-    const n = Number(get(keys[0]) ?? 0); if (n >= 8) return 0
+  if (operation === '-- ai-opportunity:limit') {
+    if (keys.some((key, index) => Number(get(key) ?? 0) >= Number(args[index]))) return 0
+    keys.forEach((key, index) => put(key, Number(get(key) ?? 0) + 1, ['EX', index === 0 ? 3600 : 86400]))
+    return 1
+  }
+  if (operation === '-- ai-booking:limit' || operation === '-- ai-booking:start-limit') {
+    const n = Number(get(keys[0]) ?? 0); if (n >= (operation === '-- ai-booking:start-limit' ? 30 : 8)) return 0
     put(keys[0], n + 1, ['EX', 3600]); return 1
   }
   if (operation === '-- ai-booking:oauth-state') {
@@ -143,12 +149,114 @@ async function visitor(input = body()) {
 }
 const poll = (visitor, attemptId = visitor.input.attemptId) => call(undefined, visitor.cookie, { url: `/api/ai-booking?attemptId=${attemptId}` })
 
+test('qualified final submission emails the owner once without a Calendar grant or visitor email', async () => {
+  delete process.env.GOOGLE_CALENDAR_CLIENT_ID
+  const completed = attempt({ action: 'quiz-summary' })
+  const submit = () => call(completed, '', { dispatch: deployed, url: '/api/demo-admin?offer=booking' })
+  assert.deepEqual((await submit()).body, { ok: true, notification: 'sent' })
+  assert.deepEqual((await submit()).body, { ok: true, notification: 'sent' })
+  assert.equal(emails.length, 1)
+  assert.deepEqual(emails[0].to, ['matthew@wallaceshift.com'])
+  assert.match(emails[0].text, /Annual revenue:/)
+  assert.equal(get('portal:booking:records'), undefined)
+  assert.equal(calendarRequests.length, 0)
+})
+
+test('quiz summary rejects cross-site submissions, unqualified answers and supplied destinations', async () => {
+  const completed = attempt({ action: 'quiz-summary' })
+  assert.equal((await call(completed, '', { headers: { host: 'localhost:5176', origin: 'https://other.example', 'content-type': 'application/json' } })).statusCode, 403)
+  for (const change of [
+    { email: 'visitor@example.test' }, { to: 'elsewhere@example.test' }, { company: 'spam' },
+    { answers: { ...answers, role: 'joint' } }, { answers: { ...answers, budget: 'needs_approval' } },
+    { answers: { ...answers, timing: 'quarter' } },
+  ]) assert.equal((await call({ ...completed, ...change })).statusCode, 400)
+  assert.equal(emails.length, 0)
+})
+
+test('the public summary email endpoint enforces its hourly sending limit', async () => {
+  for (let i = 0; i < 8; i++) assert.equal((await call(attempt({ action: 'quiz-summary' }))).statusCode, 200)
+  const blocked = await call(attempt({ action: 'quiz-summary' }))
+  assert.equal(blocked.statusCode, 429)
+  assert.equal(emails.length, 8)
+})
+
 test('unconfigured or unconnected provider fails closed without sending email', async () => {
   assert.deepEqual((await call()).body, { ok: true, status: 'unverified', configured: false })
   delete process.env.GOOGLE_CALENDAR_TOKEN_KEY
   const result = await call(undefined, owner(), { url: '/api/ai-booking?action=connection' })
   assert.deepEqual(result.body, { ok: true, configured: false, connected: false })
   assert.equal((await call(body())).body.error, 'calendar_not_connected'); assert.equal(emails.length, 0)
+})
+test('calendar entry records a server timestamp without an email, provider connection or visitor disclosure', async () => {
+  const input = attempt()
+  const before = Date.now()
+  const response = await call(input)
+  assert.deepEqual(response.body, { ok: true })
+  assert.equal(response.statusCode, 200)
+  assert.equal(response.headers['set-cookie'], undefined)
+  const key = `portal:booking:attempt:${hash(input.attemptId)}`
+  const saved = JSON.parse(get(key))
+  const expiration = store.expirations.get(key)
+  assert.ok(saved.startedAt >= before && saved.startedAt <= Date.now())
+  assert.deepEqual(Object.keys(saved).sort(), ['fingerprint', 'startedAt'])
+  assert.ok(expiration >= before + 8 * 3600000 && expiration <= Date.now() + 8 * 3600000)
+  offset += 20 * 60000
+  assert.equal((await call(input)).statusCode, 200)
+  assert.deepEqual(JSON.parse(get(key)), saved)
+  assert.equal(store.expirations.get(key), expiration, 'retries must not renew attempt lifetime')
+  assert.equal((await call(undefined, '', { url: `/api/ai-booking?attemptId=${input.attemptId}` })).body.status, 'unverified')
+  assert.equal(emails.length, 0); assert.equal(tokenRequests.length, 0); assert.equal(calendarRequests.length, 0)
+  assert.equal(get('portal:booking:records'), undefined)
+})
+test('calendar entry validates origin, qualification and unchanged answers, never accepting a client timestamp', async () => {
+  const input = attempt()
+  assert.equal((await call(input, '', { headers: { host: 'localhost:5176', origin: 'https://attacker.example', 'content-type': 'application/json' } })).statusCode, 403)
+  for (const invalid of [
+    { attemptId: 'invalid' }, { company: 'bot' }, { email: 'visitor@example.test' }, { startedAt: Date.now() - 86400000 },
+    { answers: {} }, { answers: { ...answers, startedAt: 1 } },
+    { answers: { ...answers, role: 'joint' } }, { answers: { ...answers, role: 'researching' } },
+    { answers: { ...answers, budget: 'value' } }, { answers: { ...answers, timing: 'quarter' } },
+  ]) assert.equal((await call({ ...input, ...invalid })).statusCode, 400, JSON.stringify(invalid))
+  assert.equal([...store.values.keys()].some(key => key.startsWith('portal:booking:attempt:')), false)
+  assert.equal((await call(input)).statusCode, 200)
+  assert.equal((await call({ ...input, answers: { ...answers, timing: 'now' } })).body.error, 'attempt_conflict')
+  await connect()
+  const before = calendarRequests.length
+  assert.equal((await call(body({ attemptId: input.attemptId, answers: { ...answers, workflows: ['admin'] } }))).body.error, 'attempt_conflict')
+  assert.equal(emails.length, 0); assert.equal(calendarRequests.length, before)
+})
+test('calendar entry has its own IP limit without consuming the verification email allowance', async () => {
+  const input = attempt()
+  for (let n = 0; n < 30; n++) assert.equal((await call(input)).statusCode, 200)
+  const blocked = await call(attempt())
+  assert.equal(blocked.statusCode, 429); assert.equal(blocked.body.error, 'rate_limited')
+  assert.equal(blocked.headers['retry-after'], '60')
+  await connect()
+  await start(body({ attemptId: input.attemptId }))
+  assert.equal(emails.length, 1)
+})
+test('verification after booking matches the original calendar entry time and excludes older appointments', async () => {
+  const connected = await connect()
+  const input = body()
+  assert.equal((await call(attempt({ attemptId: input.attemptId }))).statusCode, 200)
+  const key = `portal:booking:attempt:${hash(input.attemptId)}`
+  const enteredAt = JSON.parse(get(key)).startedAt
+  const older = event({ id: 'unrelated-old', created: new Date(enteredAt - 6 * 60000).toISOString() })
+  offset += 2 * 60000
+  const booked = event({ id: 'calendar-first-booking' })
+  offset += 15 * 60000
+  const session = await visitor(input)
+  const savedSession = JSON.parse([...store.values.entries()].find(([name]) => name.startsWith('portal:booking:session:'))[1])
+  assert.equal(savedSession.intent.startedAt, enteredAt)
+  assert.ok(Date.parse(booked.created) < Date.now() - 5 * 60000, 'booking predates code verification by more than the old matching window')
+  events = [older]
+  assert.equal((await poll(session)).body.status, 'waiting')
+  assert.equal(get('portal:booking:records'), undefined)
+  offset += 9000; events = [older, booked]
+  assert.equal((await poll(session)).body.status, 'confirmed')
+  const bookings = await call(undefined, connected.ownerCookie, { url: '/api/ai-booking?action=bookings' })
+  assert.equal(bookings.body.bookings.length, 1)
+  assert.deepEqual(bookings.body.bookings[0].answers, answers)
 })
 test('owner status, connection and stored quizzes reject public and purchase-scoped access', async () => {
   for (const session of ['', owner(true)]) {
@@ -213,19 +321,36 @@ test('rejects cross origin and malformed or unqualified submissions without cont
   for (const input of [body({ attemptId: 'bad' }), body({ company: 'bot' }), body({ amount: 1 }), body({ answers: {} }), body({ answers: { ...answers, unknown: true } }), body({ answers: { ...answers, budget: 'needs_approval' } }), body({ answers: { ...answers, timing: 'quarter' } }), body({ email: 'not-email' })]) assert.equal((await call(input)).statusCode, 400)
   assert.equal(emails.length, 0)
 })
-test('qualification follows investment and timing rather than revenue or role and saves normalized answers before verification', async () => {
+test('qualification requires purchase authority but does not exclude valid decision makers based on revenue or workflow', async () => {
   await connect()
-  const input = body({ email: ' VISITOR@example.test ', answers: { ...answers, role: 'researcher', approverAvailability: 'not_sure', revenue: 'not_yet', timing: 'now' } })
-  // Use an actual valid nonowner role option from the shared schema.
-  const content = await load('src/content/aiOffer.ts')
-  input.answers.role = content.roleOptions.find(item => !['owner', 'decision_maker'].includes(item.value)).value
-  input.answers.approverAvailability = content.approverOptions.at(-1).value
-  input.answers.revenue = content.revenueOptions[0].value
+  for (const role of ['joint', 'researching']) {
+    for (const approverAvailability of ['', 'yes']) {
+      const rejected = await call(body({ answers: { ...answers, role, approverAvailability } }))
+      assert.equal(rejected.statusCode, 400); assert.equal(rejected.body.error, 'not_qualified')
+    }
+  }
+  assert.equal(emails.length, 0)
+  const input = body({ email: ' VISITOR@example.test ', answers: { ...answers, role: 'decision_maker', revenue: 'not_trading', workflows: ['demand'], timing: 'now' } })
   const challenge = await start(input)
   const pending = JSON.parse([...store.values.entries()].find(([key]) => key.startsWith('portal:booking:pending:'))[1])
   assert.equal(pending.intent.email, 'visitor@example.test'); assert.equal(pending.intent.answers.timing, 'now')
   assert.equal(emails.length, 1); assert.deepEqual(emails[0].to, ['visitor@example.test'])
   assert.equal((await poll(challenge)).body.status, 'unverified'); assert.equal(get('portal:booking:records'), undefined)
+})
+
+test('other consequence must be explained and survives verified booking into owner preparation', async () => {
+  const connected = await connect()
+  for (const impactDetails of ['', '   ', 'x'.repeat(1501), 42]) {
+    assert.equal((await call(body({ answers: { ...answers, impacts: ['other'], impactDetails } }))).statusCode, 400)
+  }
+  assert.equal(emails.length, 0)
+  const details = '  Customers repeat their request.\nWe lose the history.  '
+  const session = await visitor(body({ answers: { ...answers, impacts: ['other'], impactDetails: details } }))
+  events = [event()]
+  assert.equal((await poll(session)).body.status, 'confirmed')
+  const result = await call(undefined, connected.ownerCookie, { url: '/api/ai-booking?action=bookings' })
+  assert.equal(result.body.bookings[0].answers.impactDetails, details.trim())
+  assert.equal(Object.hasOwn((await poll(session)).body, 'answers'), false)
 })
 test('codes are mandatory, bounded, single purpose and do not grant portal access', async () => {
   await connect(); const challenge = await start()
@@ -235,6 +360,26 @@ test('codes are mandatory, bounded, single purpose and do not grant portal acces
   assert.equal(await identity({ headers: { cookie: cookie(response) } }), null)
   assert.equal((await call(undefined, cookie(response), { url: '/api/ai-booking?action=bookings' })).statusCode, 403)
   assert.deepEqual((await poll({ ...challenge, cookie: cookie(response) })).body, { ok: true, status: 'waiting', configured: true })
+})
+test('old pending challenges must meet current qualification before issuing a booking session', async () => {
+  await connect(); const challenge = await start()
+  const pendingKey = [...store.values.keys()].find(key => key.startsWith('portal:booking:pending:'))
+  const pending = JSON.parse(get(pendingKey))
+  const before = calendarRequests.length
+  for (const invalid of [
+    { role: 'joint', approverAvailability: 'yes' }, { role: 'researching', approverAvailability: 'yes' },
+    { role: '' }, { budget: 'unavailable' }, { timing: 'quarter' }, { timing: 'researching' },
+  ]) {
+    put(pendingKey, JSON.stringify({ ...pending, intent: { ...pending.intent, answers: { ...answers, ...invalid } } }))
+    const response = await verify(challenge)
+    assert.equal(response.statusCode, 400); assert.equal(response.body.error, 'not_qualified')
+    assert.equal(response.headers['set-cookie'], undefined)
+    assert.equal([...store.values.keys()].some(key => key.startsWith('portal:booking:session:')), false)
+  }
+  assert.equal(calendarRequests.length, before)
+  const { impactDetails, ...legacyAnswers } = answers
+  put(pendingKey, JSON.stringify({ ...pending, intent: { ...pending.intent, answers: { ...legacyAnswers, role: 'decision_maker' } } }))
+  assert.equal((await verify(challenge)).statusCode, 200)
 })
 test('wrong codes reach the attempt cap and expired codes cannot verify', async () => {
   await connect(); const challenge = await start()
@@ -276,6 +421,31 @@ test('only current verified attempt can poll and confirmed result exposes no eve
   assert.equal(bookings.body.bookings[0].email, 'visitor@example.test'); assert.equal(bookings.body.bookings[0].googleEventId, undefined)
   assert.equal(get('portal:engagements'), undefined); assert.equal(emails.length, 1)
   await poll(session); assert.equal(calendarRequests.length, before + 1)
+})
+test('old verified sessions must qualify before returning cached confirmation or checking Calendar', async () => {
+  await connect(); const session = await visitor(); events = [event()]
+  assert.equal((await poll(session)).body.status, 'confirmed')
+  const sessionKey = [...store.values.keys()].find(key => key.startsWith('portal:booking:session:'))
+  const savedSession = JSON.parse(get(sessionKey))
+  const recordKey = [...store.values.keys()].find(key => key.startsWith('portal:booking:record:'))
+  const savedRecord = get(recordKey)
+  const before = calendarRequests.length
+  for (const invalid of [
+    { role: 'joint', approverAvailability: 'yes' }, { role: 'researching', approverAvailability: 'yes' },
+    { role: undefined }, { budget: 'unavailable' }, { timing: 'quarter' }, { timing: 'researching' },
+  ]) {
+    put(sessionKey, JSON.stringify({ ...savedSession, intent: { ...savedSession.intent, answers: { ...answers, ...invalid } } }))
+    const response = await poll(session)
+    assert.equal(response.statusCode, 400); assert.equal(response.body.error, 'not_qualified')
+  }
+  offset += 9000
+  assert.equal((await poll(session)).body.error, 'not_qualified')
+  assert.equal(calendarRequests.length, before)
+  assert.equal(get(recordKey), savedRecord)
+  assert.equal(get('portal:booking:records').size, 1)
+  const { impactDetails, ...legacyAnswers } = answers
+  put(sessionKey, JSON.stringify({ ...savedSession, intent: { ...savedSession.intent, answers: { ...legacyAnswers, role: 'decision_maker' } } }))
+  assert.equal((await poll(session)).body.status, 'confirmed')
 })
 test('requires owner organizer, exact verified attendee, configured title, future 45 minute confirmed appointment and recent creation', () => {
   const now = Date.now()

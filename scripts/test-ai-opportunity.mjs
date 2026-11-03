@@ -40,7 +40,7 @@ function application(overrides = {}) {
   return {
     submissionId: randomUUID(), offerVersion: aiOffer.version,
     businessType: 'Local accounting firm', workflows: ['inquiries'], workflowDetails: 'We manually read every inquiry and prepare an initial reply.',
-    currentTools: 'Shared documents and email', weeklyHours: '11_20', impacts: ['delay'], timing: 'soon', role: 'owner', approverAvailability: '',
+    currentTools: 'Shared documents and email', weeklyHours: '11_20', impacts: ['delay'], impactDetails: '', timing: 'soon', role: 'owner', approverAvailability: '',
     revenue: '250k_1m', aiExperience: 'considered', aiBarriers: ['technical'], budget: 'ready',
     name: 'Example Owner', businessName: 'Example Business', email: 'person@example.test', website: 'example.test', contactMethod: 'email', phone: '',
     nextStep: 'consultation', packageId: '',
@@ -186,6 +186,20 @@ test('phone consultation stores the chosen format without requiring email or inv
   assert.equal((await invoke(application({ contactMethod: 'call', phone: '+1 555 555 0100', email: 'invalid' }))).statusCode, 400)
 })
 
+test('other consequence is retained in a phone request and owner context while hidden details are discarded', async () => {
+  const details = '  Customers repeat requests.\nWe lose the original context.  '
+  const body = application({ contactMethod: 'call', phone: '+1 555 555 0100', email: '', impacts: ['other'], impactDetails: details })
+  assert.equal((await invoke(body)).statusCode, 200)
+  assert.equal(stored(body.submissionId).application.impactDetails, details.trim())
+  assert.ok(emailRequests.at(-1).payload.text.includes(details.trim()))
+  const list = await invoke(null, { method: 'GET', headers: ownerHeaders })
+  assert.equal(list.body.applications[0].application.impactDetails, details.trim())
+  const hidden = application({ impactDetails: 'Obsolete explanation that should not be retained.' })
+  assert.equal((await invoke(hidden)).statusCode, 200)
+  assert.equal(stored(hidden.submissionId).application.impactDetails, '')
+  assert.ok(!emailRequests.at(-1).payload.text.includes(hidden.impactDetails))
+})
+
 test('package requests preserve the selection and include the trusted catalog name and price for owner review', async () => {
   for (const [packageId, offer] of Object.entries(aiPackages)) {
     const body = application({ nextStep: 'package', packageId })
@@ -280,9 +294,11 @@ test('strict fields and consent reject forged or oversized submissions before pe
     { name: 'Owner\nInjected: content' }, { businessType: 'a'.repeat(121) }, { businessType: 42 }, { businessType: null },
     { workflowDetails: 'a'.repeat(1501) }, { frequency: 'daily' }, { timePerTask: '15_to_30' },
     { weeklyHours: 'all_day' }, { revenue: 'rich' }, { aiExperience: 'expert' },
-    { approverAvailability: 'yes' }, { role: 'joint', approverAvailability: '' },
+    { approverAvailability: 'yes' }, { role: 'joint', approverAvailability: 'invented' },
     { impacts: [] }, { impacts: ['delay', 'rework', 'cost'] }, { impacts: ['delay', 'delay'] },
     { impacts: ['not_sure', 'delay'] }, { impacts: ['unknown'] }, { impacts: 'delay' },
+    { impacts: ['other'], impactDetails: '' }, { impacts: ['other'], impactDetails: '   ' },
+    { impacts: ['other'], impactDetails: 'a'.repeat(1501) }, { impacts: ['other'], impactDetails: 42 },
     { aiBarriers: [] }, { aiBarriers: ['technical', 'technical'] }, { aiBarriers: ['technical', 'value', 'time'] },
     { aiBarriers: ['unknown'] }, { aiExperience: 'new', aiBarriers: ['technical'] },
     { qualification: { route: 'fit_call', priority: 'established' } },
@@ -440,7 +456,7 @@ test('older stored applications remain owner-readable and recoverable without ne
   const body = application(); await invoke(body)
   const record = stored(body.submissionId)
   delete record.qualification
-  for (const key of ['weeklyHours', 'impacts', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'nextStep', 'packageId']) delete record.application[key]
+  for (const key of ['weeklyHours', 'impacts', 'impactDetails', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'nextStep', 'packageId']) delete record.application[key]
   delete record.application.workflows
   record.application.workflow = 'inquiries'
   record.application.offerVersion = '2026-11-01-draft-1'

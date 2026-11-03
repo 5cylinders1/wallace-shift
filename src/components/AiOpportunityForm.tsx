@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import {
-  aiOffer, aiBarrierOptions, aiExperienceOptions, approverOptions, budgetOptions,
+  aiOffer, aiBarrierOptions, aiExperienceOptions, budgetOptions,
   impactOptions, isAiBookingQualified, qualificationSteps, recommendAiOpportunity, revenueOptions, roleOptions,
   timingOptions, weeklyHoursOptions, workflowOptions, type AiPackageId,
 } from '../content/aiOffer'
@@ -17,13 +17,14 @@ import { AiPackageCheckout, type AiCheckoutDraft } from './AiPackageCheckout'
 import { AiConsultationWalkthrough } from './AiConsultationWalkthrough'
 import { aiQualificationFacts } from '../lib/aiQualificationSummary'
 import { aiConsultation } from '../content/aiConsultation'
+import { useQuizSummaryDelivery } from './useQuizSummaryDelivery'
 
-type ChoiceField = 'role' | 'approverAvailability' | 'revenue' | 'weeklyHours' | 'aiExperience' | 'budget' | 'timing'
+type ChoiceField = 'role' | 'revenue' | 'weeklyHours' | 'aiExperience' | 'budget' | 'timing'
 type MultipleField = 'workflows' | 'impacts' | 'aiBarriers'
 type FailureReason = Extract<AiOpportunityResult, { ok: false }>['reason']
 type Phase = 'quiz' | 'result' | 'contact' | 'booking' | 'walkthrough' | 'checkout'
 type QuizQuestion = {
-  field: ChoiceField | MultipleField | 'currentTools' | 'workflowDetails'
+  field: ChoiceField | MultipleField | 'workflowDetails'
   heading: string
   description: string
   advanceHint?: string
@@ -33,14 +34,7 @@ function quizQuestions(step: typeof qualificationSteps[number], values: AiOpport
   const first = (field: QuizQuestion['field'], advanceHint?: string): QuizQuestion => ({ field, heading: step.heading, description: step.description, advanceHint })
   switch (step.id) {
     case 'bottleneck': return [first('workflows')]
-    case 'authority': return [
-      first('role', 'Some answers open a follow up question.'),
-      ...(values.role === 'joint' || values.role === 'researching' ? [{
-        field: 'approverAvailability' as const,
-        heading: 'Could the person who approves the purchase join a conversation?',
-        description: 'This helps us involve the right people before discussing a project.',
-      }] : []),
-    ]
+    case 'authority': return [first('role')]
     case 'business': return [first('revenue')]
     case 'impact': return [
       { ...first('weeklyHours', 'Selecting an estimate opens the next question.'), heading: 'About how many hours do these issues take up across your team each week?' },
@@ -54,8 +48,7 @@ function quizQuestions(step: typeof qualificationSteps[number], values: AiOpport
         description: 'Choose up to two. Uncheck an answer to choose another.',
       }] : []),
     ]
-    case 'tools': return [
-      { field: 'currentTools', heading: 'Which tools does your team use?', description: 'This is optional. Your current tools help us understand how your team works.' },
+    case 'context': return [
       { field: 'workflowDetails', heading: 'Anything else we should understand about the work?', description: 'This is optional. A recent example is useful. Please leave out passwords and private customer information.' },
     ]
     case 'readiness': return [
@@ -95,8 +88,7 @@ export function AiOpportunityForm({ onPhaseChange }: {
   const [submitting, setSubmitting] = useState(false)
   const [failure, setFailure] = useState<FailureReason | null>(null)
   const [success, setSuccess] = useState<Extract<AiOpportunityResult, { ok: true }> | null>(null)
-  const [bookingAttemptId, setBookingAttemptId] = useState(() => crypto.randomUUID())
-  const [bookingConfirmed, setBookingConfirmed] = useState(false)
+  const quizSummary = useQuizSummaryDelivery()
   const [completedVideoSrc, setCompletedVideoSrc] = useState<string | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -119,25 +111,12 @@ export function AiOpportunityForm({ onPhaseChange }: {
   const hasNextPart = currentPart < questions.length - 1
   const questionKey = `${phase}-${stepIndex}-${question.field}`
   const { panelRef, leaving, isLocked, transition, onPointerDownCapture, onKeyDownCapture } = useQuizQuestionMotion(questionKey, scrollRef)
-  const isPackage = values.nextStep === 'package'
-  const emailOptional = !isPackage && values.contactMethod === 'call'
-  const isGoogleMeeting = !isPackage && values.contactMethod === 'email'
-  const questionHeading = phase === 'contact' ? isGoogleMeeting ? 'Send your quiz answers.' : 'Plan your free consultation.' : question.heading
-  const questionDescription = phase === 'contact' ? isGoogleMeeting ? 'Use the same email address as your Google booking so we can match your answers to your consultation. Sending these details does not book an appointment.'
-    : `Share your details to arrange a free ${aiConsultation.durationMinutes} minute phone call. Your quiz answers are included, so you do not have to start over.`
-    : question.description
-  const submitLabel = isGoogleMeeting ? 'Send answers' : 'Request consultation'
+  const submittingQualifiedQuiz = phase === 'quiz' && question.field === 'timing' && isAiBookingQualified(values)
+  const questionHeading = phase === 'contact' ? 'Plan your free consultation.' : question.heading
+  const questionDescription = phase === 'contact' ? `Share your details to arrange a free ${aiConsultation.durationMinutes} minute phone call. Your quiz answers are included, so you do not have to start over.` : question.description
+  const submitLabel = 'Request consultation'
   const QuestionHeading = phase === 'contact' ? 'h1' : 'h2'
   const recommendation = recommendAiOpportunity(values)
-  const confirmBooking = useCallback(() => {
-    setBookingConfirmed(true)
-    setSuccess(null)
-    setPhase('walkthrough')
-  }, [])
-  const saveBookingEmail = useCallback((email: string) => {
-    setValues(previous => ({ ...previous, email }))
-  }, [])
-
   useEffect(() => { onPhaseChange(success ? 'success' : phase) }, [phase, success, onPhaseChange])
 
   useLayoutEffect(() => {
@@ -164,7 +143,7 @@ export function AiOpportunityForm({ onPhaseChange }: {
     if (isLocked()) return
     if (phase === 'quiz' || key === 'email' || key === 'businessType') {
       setCheckoutDrafts({}); setCheckoutDraft(undefined)
-      setBookingAttemptId(crypto.randomUUID()); setBookingConfirmed(false); setCompletedVideoSrc(null)
+      setCompletedVideoSrc(null)
     }
     setValues(previous => {
       const next = { ...previous, [key]: value }
@@ -177,6 +156,7 @@ export function AiOpportunityForm({ onPhaseChange }: {
       ...previous,
       [key]: undefined,
       ...(key === 'role' ? { approverAvailability: undefined } : {}),
+      ...(key === 'impacts' ? { impactDetails: undefined } : {}),
       ...(key === 'aiExperience' ? { aiBarriers: undefined } : {}),
       ...(key === 'contactMethod' ? { phone: undefined, email: undefined } : {}),
     }))
@@ -195,6 +175,9 @@ export function AiOpportunityForm({ onPhaseChange }: {
       next = [...base, value]
     }
     update(name, next as AiOpportunityFormValues[typeof name])
+    if (name === 'impacts' && value === 'other' && !previous.includes('other')) {
+      requestAnimationFrame(() => document.getElementById('ao-impactDetails')?.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }))
+    }
   }
 
   function focusFirstError(nextErrors: AiOpportunityErrors) {
@@ -231,13 +214,13 @@ export function AiOpportunityForm({ onPhaseChange }: {
   }
 
   function showQuizErrors(index: number, nextErrors: AiOpportunityErrors) {
-    const invalidPart = quizQuestions(qualificationSteps[index], values).findIndex(item => nextErrors[item.field])
+    const invalidPart = quizQuestions(qualificationSteps[index], values).findIndex(item => nextErrors[item.field] || (item.field === 'impacts' && nextErrors.impactDetails))
     moveTo(index, Math.max(0, invalidPart), true)
     setErrors(nextErrors)
     focusFirstError(nextErrors)
   }
 
-  function showContact(selection: AiNextStepSelection, openCalendar = true) {
+  function showContact(selection: AiNextStepSelection) {
     if (selection.nextStep === 'package') setCheckoutDraft(checkoutDrafts[selection.packageId])
     setValues(previous => normalizeAiOpportunity({ ...previous, ...selection }))
     // Returning to the same request must retain the key if an earlier response was lost.
@@ -245,7 +228,7 @@ export function AiOpportunityForm({ onPhaseChange }: {
     setErrors({})
     setFailure(null)
     setSuccess(null)
-    const shouldBook = openCalendar && selection.nextStep === 'consultation' && selection.contactMethod === 'email'
+    const shouldBook = selection.nextStep === 'consultation' && selection.contactMethod === 'email'
     setPhase(selection.nextStep === 'package' ? 'checkout' : shouldBook ? 'booking' : 'contact')
     if (!shouldBook && selection.nextStep !== 'package') trackSiteEvent({ name: 'offer_application_step', value: 'contact' })
   }
@@ -263,7 +246,10 @@ export function AiOpportunityForm({ onPhaseChange }: {
     const normalized = normalizeAiOpportunity(values)
     const nextErrors = validateAiOpportunity(normalized, phase === 'contact' ? 'contact' : step.id)
     if (phase === 'quiz') {
-      const currentErrors = nextErrors[question.field] ? { [question.field]: nextErrors[question.field] } : {}
+      const currentErrors: AiOpportunityErrors = {
+        ...(nextErrors[question.field] ? { [question.field]: nextErrors[question.field] } : {}),
+        ...(question.field === 'impacts' && nextErrors.impactDetails ? { impactDetails: nextErrors.impactDetails } : {}),
+      }
       setErrors(currentErrors)
       if (Object.keys(currentErrors).length) { focusFirstError(currentErrors); return }
       if (hasNextPart) { moveTo(stepIndex, currentPart + 1); return }
@@ -277,8 +263,10 @@ export function AiOpportunityForm({ onPhaseChange }: {
         return
       }
       setValues(normalized)
-      if (isAiBookingQualified(normalized)) showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'email' })
-      else showResult()
+      if (isAiBookingQualified(normalized)) {
+        quizSummary.submit(normalized)
+        showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'email' })
+      } else showResult()
       const nextRecommendation = recommendAiOpportunity(normalized)
       trackSiteEvent({ name: 'offer_recommendation_view', value: nextRecommendation.kind === 'preparation' ? 'resource' : nextRecommendation.kind })
       return
@@ -356,7 +344,7 @@ export function AiOpportunityForm({ onPhaseChange }: {
 
   if (phase === 'checkout' && values.packageId) return <AiPackageCheckout packageId={values.packageId} values={values} onBack={() => setPhase('walkthrough')} draft={checkoutDraft} onDraftChange={saveCheckoutDraft} />
 
-  if (phase === 'walkthrough' && bookingConfirmed) return <AiConsultationWalkthrough
+  if (phase === 'walkthrough' && aiConsultation.walkthrough.src && isAiBookingQualified(values)) return <AiConsultationWalkthrough
     values={values}
     completedVideoSrc={completedVideoSrc}
     onVideoComplete={setCompletedVideoSrc}
@@ -366,12 +354,10 @@ export function AiOpportunityForm({ onPhaseChange }: {
     }}
   />
 
-  if (phase === 'booking' || (success && isGoogleMeeting)) return <AiConsultationBooking
-    attemptId={bookingAttemptId}
-    values={values}
-    onConfirmed={confirmBooking}
-    bookingConfirmed={bookingConfirmed}
-    onVerifiedEmail={saveBookingEmail}
+  if (phase === 'booking') return <AiConsultationBooking
+    summaryStatus={quizSummary.status}
+    onRetrySummary={quizSummary.retry}
+    onWalkthrough={() => setPhase('walkthrough')}
     onBack={() => moveTo(qualificationSteps.length - 1, 1)}
     onRequestPhone={() => showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'call' })}
   />
@@ -385,8 +371,8 @@ export function AiOpportunityForm({ onPhaseChange }: {
 
   if (phase === 'result') return <div className="qf-result-shell" ref={resultRef} tabIndex={-1}>
     <header className="qf-result-intro">
-      <h1>A plan for when you are ready.</h1>
-      <p>{values.budget !== 'ready' ? 'Our implementation projects start at $2,500. When you can approve that investment and are ready to start within a month, return here to book your consultation.' : 'When you are ready to start now or within the next month, return here to book your consultation.'}</p>
+      <h1>{values.role !== 'owner' && values.role !== 'decision_maker' ? 'Bring in the person who can approve the purchase.' : 'A plan for when you are ready.'}</h1>
+      <p>{values.role !== 'owner' && values.role !== 'decision_maker' ? 'The business owner or someone authorized to approve the purchase needs to complete this quiz before booking. They will also need to confirm the investment and timing.' : values.budget !== 'ready' ? 'Our implementation projects start at $2,500. When you can approve that investment and are ready to start within a month, return here to book your consultation.' : 'When you are ready to start now or within the next month, return here to book your consultation.'}</p>
     </header>
     <PageLink className="ao-button" href="/services/ai-integration">Explore what AI can do for your business</PageLink>
     <section className="qf-result-context"><details><summary>Review your answers</summary><dl className="qf-summary">{aiQualificationFacts(values).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details></section>
@@ -408,25 +394,24 @@ export function AiOpportunityForm({ onPhaseChange }: {
       <div className="qf-fields">
         {phase === 'quiz' && <>
           {question.field === 'workflows' && multiple('workflows', questionHeading, workflowOptions, true)}
-          {question.field === 'role' && choices('role', questionHeading, roleOptions, true, true)}
-          {question.field === 'approverAvailability' && choices('approverAvailability', questionHeading, approverOptions, true)}
+          {question.field === 'role' && choices('role', questionHeading, roleOptions, true)}
           {question.field === 'revenue' && choices('revenue', questionHeading, revenueOptions, true)}
           {question.field === 'weeklyHours' && choices('weeklyHours', questionHeading, weeklyHoursOptions, true, true)}
           {question.field === 'impacts' && multiple('impacts', questionHeading, impactOptions, true)}
+          {question.field === 'impacts' && values.impacts.includes('other') && <Field name="impactDetails" label="What else happens because of these challenges?" error={errors.impactDetails}><textarea {...attrs('impactDetails')} value={values.impactDetails} onChange={event => update('impactDetails', event.target.value)} required maxLength={1500} rows={3} placeholder="Explain the effect on your business. Please leave out private customer information." /></Field>}
           {question.field === 'aiExperience' && choices('aiExperience', questionHeading, aiExperienceOptions, true, true)}
           {question.field === 'aiBarriers' && multiple('aiBarriers', questionHeading, aiBarrierOptions, true)}
-          {question.field === 'currentTools' && <Field name="currentTools" label="Which tools does your team use? (optional)" error={errors.currentTools} hideLabel><input {...attrs('currentTools')} value={values.currentTools} onChange={event => update('currentTools', event.target.value)} maxLength={500} placeholder="Email, CRM, spreadsheets, or other software" autoComplete="off" /></Field>}
           {question.field === 'workflowDetails' && <Field name="workflowDetails" label="Anything else we should understand about the work? (optional)" error={errors.workflowDetails} hideLabel><textarea {...attrs('workflowDetails')} value={values.workflowDetails} onChange={event => update('workflowDetails', event.target.value)} maxLength={1500} rows={3} placeholder="A recent example is useful. Please leave out passwords and private customer information." /></Field>}
           {question.field === 'budget' && choices('budget', questionHeading, budgetOptions, true, true)}
           {question.field === 'timing' && choices('timing', questionHeading, timingOptions, true)}
         </>}
         {phase === 'contact' && <>
-          {!isPackage && <Field name="contactMethod" label="Consultation format" error={errors.contactMethod}><select {...attrs('contactMethod')} value={values.contactMethod} onChange={event => event.target.value === 'email' ? showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'email' }) : update('contactMethod', 'call')}><option value="email">Google Meet</option><option value="call">Phone call, no email needed</option></select></Field>}
+          <Field name="contactMethod" label="Consultation format" error={errors.contactMethod}><select {...attrs('contactMethod')} value={values.contactMethod} onChange={event => event.target.value === 'email' ? showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'email' }) : update('contactMethod', 'call')}><option value="email">Google Meet</option><option value="call">Phone call, no email needed</option></select></Field>
           <Field name="name" label="Your name" error={errors.name}><input {...attrs('name')} value={values.name} onChange={event => update('name', event.target.value)} maxLength={120} autoComplete="name" required /></Field>
           <Field name="businessName" label="Business name" error={errors.businessName}><input {...attrs('businessName')} value={values.businessName} onChange={event => update('businessName', event.target.value)} maxLength={160} autoComplete="organization" required /></Field>
           <Field name="businessType" label="What does your business do? (optional)" error={errors.businessType}><input {...attrs('businessType')} value={values.businessType} onChange={event => update('businessType', event.target.value)} maxLength={120} autoComplete="off" placeholder="For example, accounting or home services" /></Field>
           {values.contactMethod === 'call' && <Field name="phone" label="Phone number" error={errors.phone}><input {...attrs('phone')} value={values.phone} onChange={event => update('phone', event.target.value)} type="tel" inputMode="tel" maxLength={40} autoComplete="tel" required /></Field>}
-          <Field name="email" label={emailOptional ? 'Email address (optional)' : 'Email address'} error={errors.email}><input {...attrs('email')} value={values.email} onChange={event => update('email', event.target.value)} type="email" maxLength={254} autoComplete="email" inputMode="email" required={!emailOptional} /></Field>
+          <Field name="email" label="Email address (optional)" error={errors.email}><input {...attrs('email')} value={values.email} onChange={event => update('email', event.target.value)} type="email" maxLength={254} autoComplete="email" inputMode="email" /></Field>
           <Field name="website" label="Website (optional)" error={errors.website}><input {...attrs('website')} value={values.website} onChange={event => update('website', event.target.value)} type="url" maxLength={300} autoComplete="url" inputMode="url" placeholder="https://example.com" /></Field>
           {recommendation.route !== 'resource' && <div className="ao-field ao-field--wide"><label className="ao-check" htmlFor="ao-offerAcknowledged"><input {...attrs('offerAcknowledged')} type="checkbox" checked={values.offerAcknowledged} onChange={event => update('offerAcknowledged', event.target.checked)} required /><span>I understand the website offer requires a qualifying paid project of ${aiOffer.minimumProjectFee.toLocaleString('en-US')} or more. Scope, final price, compatibility, and separate software or hosting costs must be confirmed before I commit.</span></label>{errors.offerAcknowledged && <p className="ao-field__error" id="ao-offerAcknowledged-error">{errors.offerAcknowledged}</p>}</div>}
           <div className="ao-field ao-field--wide"><label className="ao-check" htmlFor="ao-contactConsent"><input {...attrs('contactConsent')} type="checkbox" checked={values.contactConsent} onChange={event => update('contactConsent', event.target.checked)} required /><span>Please contact me about this request. I understand how my details are used, as explained in the <a href="/privacy" target="_blank" rel="noopener noreferrer">privacy policy (opens in a new tab)</a>.</span></label>{errors.contactConsent && <p className="ao-field__error" id="ao-contactConsent-error">{errors.contactConsent}</p>}</div>
@@ -436,11 +421,11 @@ export function AiOpportunityForm({ onPhaseChange }: {
       {failure && <div className="ao-form__notice" ref={failureRef} tabIndex={-1} role="alert"><p>{failureMessages[failure]}</p><PageLink href="/contact">Contact Wallace Shift</PageLink></div>}
     </fieldset>
     </div>
-    <p className="ao-form__hint qf-local-note">{phase === 'contact' ? `Your details are sent only when you select ${submitLabel}. ${isGoogleMeeting ? 'Complete your booking separately in Google Calendar.' : 'We will confirm the time with you before it is booked.'}` : 'No email is needed to complete this quiz. We will ask for contact details when you take the next step.'}</p>
+    <p className="ao-form__hint qf-local-note">{phase === 'contact' ? `Your contact details are sent when you select ${submitLabel}. We will confirm the time with you before it is booked.` : submittingQualifiedQuiz ? 'Your answers will be emailed to Matthew at Wallace Shift when you continue to the calendar.' : 'No email address is needed to complete this quiz.'}</p>
     </div>
     <div className="ao-form__actions qf-action-dock">
       {phase === 'contact' ? <button className="ao-button ao-button--secondary" type="button" onClick={() => showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'email' })} disabled={submitting} aria-label="Back to calendar">Back</button> : (stepIndex > 0 || currentPart > 0) && <button className="ao-button ao-button--secondary" type="button" onClick={goBack} disabled={submitting} aria-disabled={leaving || undefined} aria-label={currentPart > 0 ? 'Back to previous question' : undefined}>Back</button>}
-      <button className="ao-button" type="submit" disabled={submitting} aria-disabled={leaving || undefined}>{submitting ? 'Saving your request…' : phase === 'contact' ? submitLabel : hasNextPart ? 'Next question' : stepIndex < qualificationSteps.length - 1 ? 'Continue' : 'See my next steps'}</button>
+      <button className="ao-button" type="submit" disabled={submitting} aria-disabled={leaving || undefined}>{submitting ? 'Saving your request…' : phase === 'contact' ? submitLabel : hasNextPart ? 'Next question' : stepIndex < qualificationSteps.length - 1 ? 'Continue' : submittingQualifiedQuiz ? 'Send answers and see times' : 'See my next steps'}</button>
     </div>
   </form>
 }

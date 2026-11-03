@@ -29,7 +29,7 @@ const { aiOffer, aiPackages } = await load('src/content/aiOffer.ts')
 const { hash } = await load('api/_lib/portal-auth.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch
 let store, emails, failEmail, failLedgerOnce, failSessionOnce, stripeCalls, allowPaymentMocks
-const answers = { businessType: '', workflows: ['inquiries'], workflowDetails: '', currentTools: 'Website and Gmail', weeklyHours: '6_10', impacts: ['delay'], role: 'owner', approverAvailability: '', revenue: '250k_1m', aiExperience: 'new', aiBarriers: [], budget: 'ready', timing: 'soon' }
+const answers = { businessType: '', workflows: ['inquiries'], workflowDetails: '', currentTools: 'Website and Gmail', weeklyHours: '6_10', impacts: ['delay'], impactDetails: '', role: 'owner', approverAvailability: '', revenue: '250k_1m', aiExperience: 'new', aiBarriers: [], budget: 'ready', timing: 'soon' }
 const body = (overrides = {}) => ({ action: 'send-code', submissionId: randomUUID(), offerVersion: aiOffer.version, packageId: 'inquiry', name: 'Buyer Name', businessName: 'Buyer Company', email: 'buyer@example.test', answers, authorityConfirmed: true, company: '', ...overrides })
 const ledger = () => JSON.parse(store.values.get('portal:engagements') ?? '[]')
 beforeEach(() => {
@@ -128,6 +128,10 @@ test('rejects cross origin requests and unsupported payloads before sending', as
   assert.equal((await call(body({ offerVersion: 'old' }))).statusCode, 409)
   assert.equal(emails.length, 0)
 })
+test('checkout rejects unexplained other consequences before any email or engagement', async () => {
+  for (const impactDetails of ['', '   ', 'x'.repeat(1501), 42]) assert.equal((await call(body({ answers: { ...answers, impacts: ['other'], impactDetails } }))).statusCode, 400)
+  assert.equal(emails.length, 0); assert.equal(ledger().length, 0)
+})
 test('email verification is mandatory and failed codes cannot create an engagement', async () => {
   const challenge = await start()
   assert.equal(ledger().length, 0)
@@ -212,9 +216,11 @@ test('email cooldown prevents repeated sends and purchase code cannot sign or pa
   assert.equal(e.signature, undefined); assert.equal(stripeCalls.length, 0)
 })
 test('public buyer can verify, sign, save a card and pay with automatic owner handoff and no owner action', async () => {
-  const response = await verify(await start())
+  const impactDetails = 'Customers repeat their requests.\nWe lose the previous conversation.'
+  const response = await verify(await start(body({ answers: { ...answers, impacts: ['other', 'delay'], impactDetails: `  ${impactDetails}  ` } })))
   const buyerCookie = cookie(response)
   const e = ledger()[0]
+  assert.equal(e.selfService.answers.impactDetails, impactDetails)
   const portalCall = input => call(input, buyerCookie, { dispatch: portal, url: '/api/client-portal' })
   const signed = await portalCall({ action: 'sign', id: e.id, name: 'Buyer Name', consent: true, agreementHash: e.agreementHash })
   assert.equal(signed.statusCode, 200)
@@ -238,6 +244,7 @@ test('public buyer can verify, sign, save a card and pay with automatic owner ha
   assert.equal(saved.invoices[0].status, 'paid'); assert.equal(saved.invoices[0].method, 'stripe'); assert.equal(saved.selfService.ownerNotification.state, 'sent')
   assert.equal(emails.length, 2); assert.deepEqual(emails[1].to, [process.env.PORTAL_ADMIN_EMAIL])
   assert.ok(emails[1].text.includes('Website and Gmail')); assert.ok(emails[1].text.includes(e.id)); assert.ok(emails[1].text.includes('agreement is signed'))
+  assert.ok(emails[1].text.includes(impactDetails))
   assert.equal((await portalCall(charge)).statusCode, 409)
   assert.equal(stripeCalls.filter(call => call.url.endsWith('/payment_intents')).length, 1)
 })

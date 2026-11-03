@@ -8,7 +8,7 @@ import {
 import { opportunityId, type OpportunityApplication } from './ai-opportunity-store.js'
 
 const MAX_BODY = 12_000
-const fields = new Set(['submissionId', 'offerVersion', 'businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'timing', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'name', 'businessName', 'email', 'website', 'contactMethod', 'nextStep', 'packageId', 'phone', 'offerAcknowledged', 'contactConsent', 'company'])
+const fields = new Set(['submissionId', 'offerVersion', 'businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'impactDetails', 'timing', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'name', 'businessName', 'email', 'website', 'contactMethod', 'nextStep', 'packageId', 'phone', 'offerAcknowledged', 'contactConsent', 'company'])
 
 export async function readOpportunityBody(req: IncomingMessage): Promise<Record<string, unknown>> {
   if (!/^application\/json(?:\s*;|$)/i.test(nodeHeader(req, 'content-type') ?? '')) throw new DemoError('invalid', 400)
@@ -77,7 +77,9 @@ export function validateOpportunity(body: Record<string, unknown>): { id: string
   const role = choice(body.role, roleOptions)
   const canApprove = role === 'owner' || role === 'decision_maker'
   if (canApprove) text(body.approverAvailability, 0, false)
-  const approverAvailability = canApprove ? '' : choice(body.approverAvailability, approverOptions)
+  const approverAvailability = canApprove || body.approverAvailability === undefined || body.approverAvailability === '' ? '' : choice(body.approverAvailability, approverOptions)
+  const impacts = choices(body.impacts, impactOptions)
+  const impactDetails = text(body.impactDetails, 1500, impacts.includes('other'), true)
   const aiExperience = choice(body.aiExperience, aiExperienceOptions)
   const aiBarriers = choices(body.aiBarriers, aiBarrierOptions, aiExperience === 'new' ? 0 : 1)
   if (aiExperience === 'new' && aiBarriers.length) throw new DemoError('invalid', 400)
@@ -108,7 +110,8 @@ export function validateOpportunity(body: Record<string, unknown>): { id: string
     workflowDetails,
     currentTools: text(body.currentTools, 500, false),
     weeklyHours: choice(body.weeklyHours, weeklyHoursOptions),
-    impacts: choices(body.impacts, impactOptions),
+    impacts,
+    impactDetails: impacts.includes('other') ? impactDetails : '',
     timing: choice(body.timing, timingOptions),
     role, approverAvailability,
     revenue: choice(body.revenue, revenueOptions),

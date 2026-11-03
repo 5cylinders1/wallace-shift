@@ -1,7 +1,7 @@
 /** Versioned public offer. Issued agreements retain their own immutable copy. */
 export const aiOffer = {
   path: '/offers/ai-business-integration',
-  version: '2026-11-02-2',
+  version: '2026-11-02-3',
   minimumProjectFee: 2500,
   websiteScope: 'One page, one inquiry form, and one consolidated revision round',
 } as const
@@ -54,7 +54,7 @@ export const revenueOptions = [
   { value: '250k_1m', label: '$250,000 to $999,999' },
   { value: '1m_5m', label: '$1 million to $5 million' },
   { value: 'over_5m', label: 'Over $5 million' },
-  { value: 'prefer_not', label: 'I would prefer to discuss this' },
+  { value: 'prefer_not', label: "I don't know" },
 ] as const
 export const weeklyHoursOptions = [
   { value: 'under_2', label: 'Under 2 hours' },
@@ -62,7 +62,7 @@ export const weeklyHoursOptions = [
   { value: '6_10', label: '6 to 10 hours' },
   { value: '11_20', label: '11 to 20 hours' },
   { value: 'over_20', label: 'More than 20 hours' },
-  { value: 'not_sure', label: 'We have not measured it yet' },
+  { value: 'not_sure', label: "I don't know" },
 ] as const
 export const impactOptions = [
   { value: 'delay', label: 'Work or responses are delayed' },
@@ -70,8 +70,8 @@ export const impactOptions = [
   { value: 'rework', label: 'Mistakes create extra work' },
   { value: 'cost', label: 'It adds operating costs' },
   { value: 'capacity', label: 'We cannot take on more work' },
-  { value: 'other', label: 'There is another consequence' },
-  { value: 'not_sure', label: 'I am not sure yet' },
+  { value: 'other', label: 'other' },
+  { value: 'not_sure', label: "I don't know" },
 ] as const
 export const aiExperienceOptions = [
   { value: 'new', label: 'We have not explored it' },
@@ -106,11 +106,11 @@ export const timingOptions = [
 
 export const qualificationSteps = [
   { id: 'bottleneck', label: 'The bottlenecks', heading: 'What is holding your business back?', description: 'Select all that apply. You do not need to choose the biggest issue.' },
-  { id: 'authority', label: 'The decision', heading: 'Who can approve the next step?', description: 'This helps us involve the right people from the start.' },
   { id: 'business', label: 'Your business', heading: 'How much revenue did your business generate over the past 12 months?', description: 'An approximate range helps us understand the scale of your business.' },
   { id: 'impact', label: 'The impact', heading: 'What do these challenges cost your team?', description: 'Rough estimates are fine. Count the time across the issues you selected and across your team, without counting the same time twice.' },
   { id: 'experience', label: 'AI so far', heading: 'Where are you with AI today?', description: 'Your experience helps us address what has made progress difficult.' },
-  { id: 'tools', label: 'Your tools', heading: 'What does your team work with?', description: 'Tell us which tools the workflow needs to work alongside.' },
+  { id: 'context', label: 'Your context', heading: 'Anything else we should understand about the work?', description: 'This is optional. A recent example can help us prepare for your consultation.' },
+  { id: 'authority', label: 'The decision', heading: 'Are you authorized to approve a purchase for this business?', description: 'Your role helps us understand whether you can move forward with a project.' },
   { id: 'readiness', label: 'The next step', heading: 'When would you like to put this to work?', description: 'Paid implementation projects start at $2,500. Your answers help us recommend an appropriate next step.' },
 ] as const
 export type AiQualificationStep = typeof qualificationSteps[number]['id']
@@ -124,6 +124,8 @@ export type AiQualificationAnswers = {
   currentTools: string
   weeklyHours: Choice<typeof weeklyHoursOptions>
   impacts: Choice<typeof impactOptions>[]
+  /** Older saved quiz records may not include this answer. */
+  impactDetails?: string
   role: Choice<typeof roleOptions>
   approverAvailability: Choice<typeof approverOptions> | ''
   revenue: Choice<typeof revenueOptions>
@@ -152,9 +154,10 @@ export type AiQualificationInput = {
   [K in keyof AiQualificationAnswers]: AiQualificationAnswers[K] extends string ? AiQualificationAnswers[K] | '' : AiQualificationAnswers[K]
 }
 
-/** Direct booking follows the owner's investment and timing rule, independently of project recommendations. */
-export function isAiBookingQualified(input: Pick<AiQualificationInput, 'budget' | 'timing'>): boolean {
-  return input?.budget === 'ready' && (input.timing === 'now' || input.timing === 'soon')
+/** Direct booking requires purchase authority, investment approval, and near term readiness. */
+export function isAiBookingQualified(input: Pick<AiQualificationInput, 'role' | 'budget' | 'timing'>): boolean {
+  return (input?.role === 'owner' || input?.role === 'decision_maker')
+    && input.budget === 'ready' && (input.timing === 'now' || input.timing === 'soon')
 }
 
 export type AiOpportunityRecommendation = {
@@ -203,7 +206,7 @@ export function recommendAiOpportunity(input: AiQualificationInput): AiOpportuni
     return consultation('Review the project with the people who approve it.', 'A conversation can establish the scope, value, and approval needed before anyone commits to a purchase.')
   }
   if (input.budget === 'value') return consultation('Work through the scope and value first.', 'Use your examples to compare a realistic benefit with implementation and ongoing costs. A business case is a reasonable next step.')
-  if (!input.currentTools.trim() || input.workflows.includes('other') || input.workflows.includes('not_sure')
+  if (input.workflows.includes('other') || input.workflows.includes('not_sure')
       || input.weeklyHours === 'not_sure' || input.weeklyHours === 'under_2' || input.impacts.includes('not_sure')) {
     return consultation('Take a closer look at the workflow.', 'We need a little more detail about the task, its impact, or the tools before recommending a fixed package.')
   }

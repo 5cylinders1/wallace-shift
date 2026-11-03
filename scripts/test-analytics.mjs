@@ -297,7 +297,7 @@ test('AI offer funnel emits fixed labels only on its own route, without answers 
     savedConsent: 'granted',
   })
   app.dispatch({ name: 'offer_application_start', email: 'private@example.com' })
-  const steps = ['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'readiness', 'contact']
+  const steps = ['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'context', 'readiness', 'contact']
   for (const value of steps) {
     app.dispatch({ name: 'offer_application_step', value, task: 'Private client task', budget: '$10,000' })
   }
@@ -322,7 +322,7 @@ test('AI offer funnel emits fixed labels only on its own route, without answers 
     { name: 'offer_application_submit', value: 'private-lead-id' },
     { name: 'offer_recommendation_view', value: 'private-revenue' },
   ]) app.dispatch(detail)
-  assert.equal(app.events().length, 14)
+  assert.equal(app.events().length, 15)
   assert.doesNotMatch(JSON.stringify(app.events()), /private|10,000|client task|gclid/)
   app.navigate('/contact')
   app.dispatch({ name: 'offer_application_submit' })

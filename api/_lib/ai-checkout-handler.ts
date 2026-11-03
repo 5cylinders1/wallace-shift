@@ -11,7 +11,7 @@ import { aiOffer, aiPackages, routeAiOpportunity, type AiPackageId, type AiQuali
 export const config = { maxDuration: 60, api: { bodyParser: false } }
 const PENDING = 'wallace_checkout_pending'
 const TTL = 600
-const answerFields = ['businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'timing'] as const
+const answerFields = ['businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'impactDetails', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'timing'] as const
 type Purchase = { orderId: string; offerVersion: string; packageId: AiPackageId; name: string; businessName: string; email: string; answers: AiQualificationAnswers; fingerprint: string }
 type Challenge = { nonce: string; recipientHash: string; exp: number; purchase: Purchase }
 const pendingKey = (nonce: string) => `checkout:pending:${hash(nonce)}`
