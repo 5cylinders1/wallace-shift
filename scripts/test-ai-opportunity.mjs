@@ -330,6 +330,16 @@ test('all public routing derives from validated answers', async () => {
   assert.equal((await invoke(application({ timing: 'quarter' }))).body.route, 'fit_call')
 })
 
+test('all four timing values are accepted and retained while unknown timing is rejected', async () => {
+  for (const timing of ['now', 'soon', 'quarter', 'exploring']) {
+    const body = application({ timing, offerAcknowledged: timing !== 'exploring' })
+    assert.equal((await invoke(body)).statusCode, 200)
+    assert.equal(stored(body.submissionId).application.timing, timing)
+  }
+  assert.equal((await invoke(application({ timing: 'immediately' }))).statusCode, 400)
+  assert.equal(allStored().length, 4)
+})
+
 test('optional business description does not change qualification and supplied context remains saved', async () => {
   const filled = application({ businessType: '  Local accounting firm  ' })
   const blank = application({ businessType: '  ' })

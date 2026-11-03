@@ -194,3 +194,30 @@
 .cp-payment-terms { margin: 20px 0; font-size: 13px; }
 .cp-payment-terms summary { cursor: pointer; color: #175c99; text-decoration: underline; text-underline-offset: 3px; }
 .cp-payment-terms p { margin-top: 14px; color: #445965; }
+
+.cp-intake-facts { display: grid; gap: 18px; margin: 22px 0; }
+.cp-intake-facts dt { font-size: 13px; font-weight: 600; color: #294b64; margin-bottom: 5px; }
+.cp-intake-facts dd { margin: 0; overflow-wrap: anywhere; line-height: 1.6; }
+
+.cp-calendar { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid #c7d1d7; }
+.cp-calendar-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+.cp-calendar > p, .cp-calendar-setup p { color: #445965; font-size: 13px; }
+.cp-calendar-detail { margin-top: 12px !important; overflow-wrap: anywhere; }
+.cp-calendar-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 22px; margin-top: 18px; }
+.cp-calendar .cp-calendar-error { margin-top: 14px; color: #842a21; }
+.cp-calendar-setup { margin-top: 16px; font-size: 13px; }
+.cp-calendar-setup summary { cursor: pointer; color: #175c99; font-weight: 650; }
+.cp-calendar-setup p { margin-top: 16px; }
+.cp-calendar-setup dl { display: grid; gap: 14px; margin: 20px 0; }
+.cp-calendar-setup dt { font-weight: 650; }
+.cp-calendar-setup dd { margin: 4px 0 0; color: #445965; }
+.cp-calendar-setup code { overflow-wrap: anywhere; }
+.cp-calendar-setup a { display: inline-block; margin-top: 14px; color: #175c99; }
+.cp-calendar-bookings { margin-top: 18px; font-size: 13px; }
+.cp-calendar-bookings > summary { cursor: pointer; color: #175c99; font-weight: 650; }
+.cp-calendar-booking-list > p { margin-top: 16px; color: #445965; }
+.cp-calendar-booking { border-top: 1px solid #c7d1d7; padding: 16px 0; }
+.cp-calendar-booking:first-of-type { margin-top: 18px; }
+.cp-calendar-booking summary { cursor: pointer; }
+.cp-calendar-booking summary span { display: block; margin-top: 4px; color: #445965; overflow-wrap: anywhere; }
+.cp-calendar-booking time { font-weight: 650; font-variant-numeric: tabular-nums; }

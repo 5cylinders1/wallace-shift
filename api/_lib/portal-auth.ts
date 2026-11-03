@@ -9,6 +9,12 @@ const SESSION = 'wallace_client_session'
 const PENDING = 'wallace_client_pending'
 type Pending = { nonce: string; recipientHash: string; exp: number; email: string }
 export type Identity = { email: string; admin: boolean; engagementId?: string }
+/** A verified public buyer receives access to only their purchase, never owner access. */
+export async function createPurchaseSession(email: string, engagementId: string, origin: string): Promise<string> {
+  const token = randomBytes(32).toString('hex')
+  await setValue(`session:${hash(token)}`, { email, engagementId }, 8 * 3600)
+  return demoCookie(SESSION, token, origin, 8 * 3600)
+}
 export function ownerEmail(): string {
   const email = process.env.PORTAL_ADMIN_EMAIL?.trim()
   try { return email ? normalizeDemoEmail(email) : demoAdminEmail() }

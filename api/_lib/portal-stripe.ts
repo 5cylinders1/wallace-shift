@@ -2,6 +2,7 @@ import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 import { DemoError } from './demo-access.js'
 import { allEngagements, audit, mutateLedger } from './portal-store.js'
 import { automaticInvoice, feeFor, firstUnsettledInvoice, paymentConsent, scheduleConsent, type Engagement, type Invoice } from '../../src/client-portal/model.js'
+import { notifyAiPurchase } from './ai-purchase-notification.js'
 
 type Params = Record<string, string | number | boolean>
 type Card = { id: string; customer: string; type: string; card?: { funding: string; last4: string; brand: string; country?: string }; billing_details?: { address?: { country?: string; state?: string } } }
@@ -79,7 +80,7 @@ export async function quote(e: Engagement, invoice?: Invoice) {
   return { bps, fee, total: amount + fee, invoiceId: invoice?.id, recurringTotal: e.amount + feeFor(e.amount, bps), initialTotal: e.initialPayment ? e.initialPayment.amount + feeFor(e.initialPayment.amount, bps) : undefined, card: `${card.card?.brand ?? 'Card'} ending ${card.card?.last4 ?? ''}` }
 }
 export async function reconcileIntent(intent: Intent): Promise<void> {
-  await mutateLedger(entries => {
+  const paidProjectId = await mutateLedger(entries => {
     const e = entries.find(v => v.id === intent.metadata.engagement)
     const invoice = e?.invoices.find(i => i.id === intent.metadata.invoice)
     if (!e || !invoice || !invoice.attempt || intent.metadata.attempt !== invoice.attempt.id || intent.customer !== e.stripeCustomer || intent.amount !== invoice.amount + invoice.attempt.fee || intent.currency !== 'usd') return
@@ -95,7 +96,12 @@ export async function reconcileIntent(intent: Intent): Promise<void> {
       audit(e, 'Stripe', `Payment received for ${invoice.id}`)
     } else if (invoice.status !== 'paid') invoice.status = intent.status === 'canceled' ? 'open' : 'processing'
     if (intent.status === 'canceled') { invoice.attempt = undefined; invoice.paymentIntent = undefined }
+    return intent.status === 'succeeded' && invoice.status === 'paid' && e.selfService ? e.id : undefined
   })
+  if (paidProjectId) {
+    // Email availability cannot undo a verified payment or cause another charge.
+    try { await notifyAiPurchase(paidProjectId) } catch { /* The protected cron retries saved paid projects. */ }
+  }
 }
 export async function charge(e: Engagement, invoice: Invoice, origin: string, automatic: boolean, expectedFee?: number): Promise<Intent> {
   if (!e.signature || !['issued', 'canceled'].includes(e.state) || !e.paymentMethod || (automatic && e.state !== 'issued')) throw new DemoError('payment_not_ready', 409)

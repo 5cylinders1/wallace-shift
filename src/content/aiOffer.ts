@@ -1,24 +1,26 @@
-/** Review-stage offer. Confirm delivery economics and compatibility before enabling purchases. */
+/** Versioned public offer. Issued agreements retain their own immutable copy. */
 export const aiOffer = {
   path: '/offers/ai-business-integration',
-  version: '2026-11-01-draft-4',
+  version: '2026-11-02-2',
   minimumProjectFee: 2500,
   websiteScope: 'One page, one inquiry form, and one consolidated revision round',
 } as const
 
-/** Fixed scope proposals. Checkout remains closed until compatibility and delivery are confirmed. */
+/** Self service uses a form and email workflow so purchase does not depend on a custom integration quote. */
 export const aiPackages = {
   inquiry: {
     id: 'inquiry', name: 'AI Inquiry Assistant', price: 2500,
     description: 'Give incoming inquiries a consistent first step, with a person reviewing the response.',
-    scope: ['One inquiry source and one supported destination', 'Extract agreed details and identify missing information', 'Prepare a draft reply for your team to review'],
-    boundary: 'No autonomous sending, custom CRM, historical migration, or additional workflows.',
+    scope: ['One website inquiry form connected to one team email address', 'Extract contact details, summarize the inquiry, and flag missing information', 'Email your team a draft reply for a person to review and send'],
+    boundary: 'Custom CRM connections, autonomous sending, historical migration, and additional workflows are excluded. Domain, hosting, and AI usage costs are separate and require your approval before activation.',
+    delivery: 'After payment, provide your form fields, team email address, approved reply guidance, account access, and five example inquiries. Delivery includes the working workflow, a demonstration against those examples, one consolidated revision round, and written operating instructions. The included website uses client supplied content. Any applicable service taxes are included in the package price.',
   },
   notes: {
     id: 'notes', name: 'AI Notes and Updates', price: 3500,
     description: 'Turn staff notes into a consistent draft update and a clearer next action.',
-    scope: ['One source format and one supported destination', 'One agreed record template, summary, and next action list', 'A review step before the agreed system is updated'],
-    boundary: 'No audio transcription, historical cleanup, complex permissions, or additional workflows.',
+    scope: ['One internal form for written staff notes, connected to one team email address', 'One consistent summary template with an action list', 'Email your team a draft update for a person to review before using it'],
+    boundary: 'Custom CRM connections, audio transcription, historical cleanup, complex permissions, and additional workflows are excluded. Domain, hosting, and AI usage costs are separate and require your approval before activation.',
+    delivery: 'After payment, provide your note format, team email address, summary requirements, account access, and five example notes. Delivery includes the working workflow, a demonstration against those examples, one consolidated revision round, and written operating instructions. The included website uses client supplied content. Any applicable service taxes are included in the package price.',
   },
 } as const
 export type AiPackageId = keyof typeof aiPackages
@@ -96,9 +98,10 @@ export const budgetOptions = [
   { value: 'unavailable', label: 'That is outside our current budget' },
 ] as const
 export const timingOptions = [
+  { value: 'now', label: 'Now' },
   { value: 'soon', label: 'Within the next month' },
-  { value: 'quarter', label: 'Within three months' },
-  { value: 'exploring', label: 'I am exploring the options for later' },
+  { value: 'quarter', label: 'Within 3 months' },
+  { value: 'exploring', label: 'Just researching' },
 ] as const
 
 export const qualificationSteps = [
@@ -107,7 +110,7 @@ export const qualificationSteps = [
   { id: 'business', label: 'Your business', heading: 'How much revenue did your business generate over the past 12 months?', description: 'An approximate range helps us understand the scale of your business.' },
   { id: 'impact', label: 'The impact', heading: 'What do these challenges cost your team?', description: 'Rough estimates are fine. Count the time across the issues you selected and across your team, without counting the same time twice.' },
   { id: 'experience', label: 'AI so far', heading: 'Where are you with AI today?', description: 'Your experience helps us address what has made progress difficult.' },
-  { id: 'tools', label: 'Your tools', heading: 'What does your team work with?', description: 'We check integration access and compatibility before confirming any project.' },
+  { id: 'tools', label: 'Your tools', heading: 'What does your team work with?', description: 'Tell us which tools the workflow needs to work alongside.' },
   { id: 'readiness', label: 'The next step', heading: 'When would you like to put this to work?', description: 'Paid implementation projects start at $2,500. Your answers help us recommend an appropriate next step.' },
 ] as const
 export type AiQualificationStep = typeof qualificationSteps[number]['id']
@@ -148,6 +151,12 @@ export type AiOpportunityPayload = AiQualificationAnswers & {
 export type AiQualificationInput = {
   [K in keyof AiQualificationAnswers]: AiQualificationAnswers[K] extends string ? AiQualificationAnswers[K] | '' : AiQualificationAnswers[K]
 }
+
+/** Direct booking follows the owner's investment and timing rule, independently of project recommendations. */
+export function isAiBookingQualified(input: Pick<AiQualificationInput, 'budget' | 'timing'>): boolean {
+  return input?.budget === 'ready' && (input.timing === 'now' || input.timing === 'soon')
+}
+
 export type AiOpportunityRecommendation = {
   route: AiOpportunityRoute
   kind: 'package' | 'consultation' | 'preparation'
@@ -156,7 +165,6 @@ export type AiOpportunityRecommendation = {
   rationale: string
   priority: 'standard' | 'established'
   barrierGuidance: string[]
-  checkoutReady: false
 }
 
 const barrierGuidance: Record<Choice<typeof aiBarrierOptions>, string> = {
@@ -177,7 +185,7 @@ export function recommendAiOpportunity(input: AiQualificationInput): AiOpportuni
   const guidance = input.aiExperience === 'new'
     ? ['Start with one useful example from your own work. No previous AI experience is needed.']
     : input.aiBarriers.map(barrier => barrierGuidance[barrier]).filter(Boolean)
-  const base = { priority, barrierGuidance: guidance, checkoutReady: false } as const
+  const base = { priority, barrierGuidance: guidance } as const
   const preparation = (title: string, rationale: string): AiOpportunityRecommendation => ({ ...base, route: 'resource', kind: 'preparation', packageId: null, title, rationale })
   const consultation = (title: string, rationale: string, route: AiOpportunityRoute = 'manual_review'): AiOpportunityRecommendation => ({ ...base, route, kind: 'consultation', packageId: null, title, rationale })
   if ((input.role === 'joint' || input.role === 'researching') && input.approverAvailability !== 'yes') {

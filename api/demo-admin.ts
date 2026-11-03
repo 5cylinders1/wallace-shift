@@ -1,5 +1,7 @@
 import clientPortalHandler from './_lib/client-portal-handler.js'
 import aiOpportunityHandler from './_lib/ai-opportunity-handler.js'
+import aiBookingHandler from './_lib/ai-booking-handler.js'
+import aiCheckoutHandler from './_lib/ai-checkout-handler.js'
 import { randomInt } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import {
@@ -48,6 +50,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   // Preserve the public alias even when Vercel supplies the original path.
   // The offer shares an existing function to stay within the deployment cap.
   if (path === '/api/ai-opportunity' || (path === '/api/demo-admin' && offer === 'ai')) return aiOpportunityHandler(req, res)
+  if (path === '/api/ai-booking' || (path === '/api/demo-admin' && offer === 'booking')) return aiBookingHandler(req, res)
+  if (path === '/api/ai-checkout' || (path === '/api/demo-admin' && offer === 'checkout')) return aiCheckoutHandler(req, res)
   if (new URL(req.url ?? '/', 'http://local.invalid').searchParams.get('portal') === 'client') return clientPortalHandler(req, res)
   try {
     if (req.method !== 'GET' && req.method !== 'POST') {

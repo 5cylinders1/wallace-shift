@@ -65,7 +65,7 @@ redis.call('SET', KEYS[1], ARGV[1], 'EX', ARGV[2])
 return 'ok'`
 
 type VerificationChallenge = Pick<InviteGrant, 'nonce' | 'recipientHash' | 'exp'>
-type VerificationNamespace = 'demo-agreement' | 'demo-admin' | 'client-portal'
+type VerificationNamespace = 'demo-agreement' | 'demo-admin' | 'client-portal' | 'ai-checkout' | 'ai-booking'
 
 export async function reserveVerificationCode(invite: VerificationChallenge, email: string, codeHash: string, now = Math.floor(Date.now() / 1000), namespace: VerificationNamespace = 'demo-agreement'): Promise<void> {
   const ttl = Math.min(DEMO_VERIFICATION_SECONDS, invite.exp - now)

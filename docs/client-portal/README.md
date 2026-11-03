@@ -15,6 +15,12 @@ Implemented at `/client-portal`. New invoice emails include a private link that 
 
 Existing records retain their original amounts, dates, invoice IDs, and stored signed agreements. New records optionally store `initialPayment`; `amount` and `firstDue` continue to represent the recurring terms. Initial invoice IDs include an `initial` segment so same-day payments cannot collide. New two-part schedules require authorization bound to the agreement hash. There is no backfill or automatic alteration of signed terms.
 
+## Public self service packages
+
+The AI funnel's **Self service** path creates a catalog priced engagement automatically after the buyer verifies their email and confirms purchasing authority. `/api/ai-checkout` accepts neither a client supplied price nor arbitrary agreement scope. It creates one immutable issued agreement and invoice per order UUID and normalized purchase fingerprint, then establishes an engagement scoped client session. The owner email does not gain administrative access through checkout. No owner draft, approval, or invoice email step is required for these catalog purchases.
+
+The client reviews and signs the agreement, saves a card with hosted Stripe, and explicitly approves the quoted total. A saved card, signed agreement, or return URL alone is never marked paid. The durable engagement stores the purchased catalog version and quiz answers. After Stripe confirms payment, the owner receives a project notification; the existing protected cron retries failed notifications within the provider deduplication window. Notification failure never reverses a payment or charges again. Configuration and limitations are documented in the [AI funnel guide](../ai-opportunity-funnel.md). `npm run test:ai-checkout` includes a fully mocked public purchase through signature, payment, and owner handoff; no live charge or email is sent by that test.
+
 ## Invoice email delivery
 
 The issue action commits the agreement, invoices, and an immutable email request together before sending through Resend. Duplicate issue requests reuse the stored message and provider idempotency key. The owner sees email status, and a failed or interrupted request can be retried without reissuing invoices. Missing mail configuration leaves a new agreement in draft. Email accepted for sending is not a delivery confirmation; check the provider dashboard for bounces or inbox delivery. Sends with an uncertain outcome older than 23 hours require provider-history review rather than risking a duplicate outside the provider's retention window.

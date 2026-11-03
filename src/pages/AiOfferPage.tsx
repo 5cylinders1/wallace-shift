@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { AiOpportunityForm } from '../components/AiOpportunityForm'
-import { AiOpportunityRecommendation } from '../components/AiOpportunityRecommendation'
 import { PageLink } from '../components/PageLink/PageLink'
 import { aiOffer } from '../content/aiOffer'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
@@ -9,7 +8,7 @@ import './AiOfferPage.css'
 export function AiOfferPage() {
   useRouteMeta(aiOffer.path)
   const pageRef = useRef<HTMLDivElement>(null)
-  const [phase, setPhase] = useState<'quiz' | 'result' | 'contact' | 'booking' | 'success'>('quiz')
+  const [phase, setPhase] = useState<'quiz' | 'result' | 'contact' | 'booking' | 'walkthrough' | 'checkout' | 'success'>('quiz')
   useEffect(() => {
     const viewport = window.visualViewport
     const updateHeight = () => pageRef.current?.style.setProperty('--qf-viewport-height', `${viewport?.height ?? window.innerHeight}px`)
@@ -33,7 +32,7 @@ export function AiOfferPage() {
           <h1>Find your first useful AI project.</h1>
           <p>Start with what is holding your business back. Your answers will help identify a practical next step.</p>
         </div>}
-        <AiOpportunityForm onPhaseChange={setPhase} renderRecommendation={(values, onRequestContact) => <AiOpportunityRecommendation values={values} onRequestContact={onRequestContact} />} />
+        <AiOpportunityForm onPhaseChange={setPhase} />
       </main>
       <footer className="qf-footer">
         <span>Wallace Shift</span>

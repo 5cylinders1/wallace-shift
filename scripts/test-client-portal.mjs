@@ -30,6 +30,7 @@ const { mutateLedger } = await load('api/_lib/portal-store.ts')
 const { hash, ownerEmail } = await load('api/_lib/portal-auth.ts')
 const { nextDueDate, createInvoice } = await load('src/client-portal/model.ts')
 const { surchargeBps, verifyWebhook, charge, reconcileIntent, resetFailedPayment } = await load('api/_lib/portal-stripe.ts')
+const { notifyAiPurchase, retryAiPurchaseNotifications } = await load('api/_lib/ai-purchase-notification.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch
 let store, stripeCalls, stripeResult, deliveredEmails, failStripe, emailMode, emailRequests, acceptedEmails
 const owner = { email: 'owner@example.test', admin: true }
@@ -48,6 +49,14 @@ function phased(initialDue = today, recurringDue = today, endDate = '') {
   changeLedger([e], { action: 'issue', id: e.id }, owner)
   changeLedger([e], { action: 'sign', id: e.id, name: 'Test Signer', consent: true, agreementHash: e.agreementHash }, client)
   e.stripeCustomer = 'cus_test'; e.paymentMethod = 'pm_test'; return e
+}
+function selfServiceEngagement(signed = true) {
+  const e = engagement('once', signed)
+  e.selfService = {
+    orderId: 'test-order', fingerprint: 'test-fingerprint', packageId: 'inquiry', offerVersion: 'test-version', buyerName: 'Test Buyer',
+    answers: { businessType: '', workflows: ['inquiries'], workflowDetails: 'We handle customer inquiries.', currentTools: 'Email', weeklyHours: '6_10', impacts: ['delay'], role: 'owner', approverAvailability: '', revenue: '100k_250k', aiExperience: 'new', aiBarriers: [], budget: 'ready', timing: 'soon' },
+  }
+  return e
 }
 const save = entries => store.values.set('portal:engagements', JSON.stringify(entries))
 const ledger = () => JSON.parse(store.values.get('portal:engagements') ?? '[]')
@@ -564,4 +573,79 @@ test('Stripe setup uses valid Checkout parameters and return processing is idemp
   assert.equal((await call({ action: 'finish-setup', id: e.id, sessionId: 'cs_test_setup' })).statusCode, 200)
   assert.equal(ledger()[0].autopay.enabled, true)
   assert.equal(stripeCalls.some(c => c.url.endsWith('/payment_intents')), false)
+})
+test('self service sends the owner a project only after a signed Stripe payment succeeds', async () => {
+  const e = selfServiceEngagement(false); save([e])
+  await notifyAiPurchase(e.id)
+  assert.equal(deliveredEmails.length, 0)
+  changeLedger([e], { action: 'sign', id: e.id, name: 'Test Buyer', consent: true, agreementHash: e.agreementHash }, client)
+  save([e]); await notifyAiPurchase(e.id)
+  assert.equal(deliveredEmails.length, 0)
+  stripeResult = { status: 'processing' }
+  await charge(e, e.invoices[0], 'https://wallaceshift.example', false)
+  assert.equal(deliveredEmails.length, 0)
+  await reconcileIntent({ ...stripeResult, status: 'succeeded' })
+  assert.equal(deliveredEmails.length, 1)
+  assert.deepEqual(deliveredEmails[0].to, [owner.email])
+  assert.match(deliveredEmails[0].text, /Stripe has confirmed payment/)
+  assert.match(deliveredEmails[0].text, /We struggle to respond to inquiries quickly/)
+  assert.match(deliveredEmails[0].text, new RegExp(`/client-portal\\?engagement=${e.id}`))
+  assert.equal(ledger()[0].selfService.ownerNotification.state, 'sent')
+  await reconcileIntent({ ...stripeResult, status: 'succeeded' })
+  assert.equal(emailRequests.length, 1)
+})
+test('owner notification failure never reverses payment and retry uses its immutable payload and key', async () => {
+  const e = selfServiceEngagement(); save([e]); emailMode = 'lost-response'
+  const intent = await charge(e, e.invoices[0], 'https://wallaceshift.example', false)
+  assert.equal(intent.status, 'succeeded')
+  assert.equal(ledger()[0].invoices[0].status, 'paid')
+  assert.equal(ledger()[0].selfService.ownerNotification.state, 'failed')
+  assert.equal(deliveredEmails.length, 1)
+  process.env.CONTACT_FROM_EMAIL = 'new@example.test'
+  emailMode = 'ok'; await retryAiPurchaseNotifications()
+  assert.equal(emailRequests.length, 2)
+  assert.deepEqual(emailRequests[0], emailRequests[1])
+  assert.equal(deliveredEmails.length, 1)
+  assert.equal(ledger()[0].selfService.ownerNotification.state, 'sent')
+  assert.equal(stripeCalls.filter(c => c.url.endsWith('/payment_intents')).length, 1)
+})
+test('concurrent paid notifications share a durable lease and cannot duplicate email', async () => {
+  const e = selfServiceEngagement(); save([e]); emailMode = 'reject'
+  await charge(e, e.invoices[0], 'https://wallaceshift.example', false)
+  emailMode = 'ok'; const before = emailRequests.length
+  await Promise.all([notifyAiPurchase(e.id), notifyAiPurchase(e.id), notifyAiPurchase(e.id)])
+  assert.equal(emailRequests.length - before, 1)
+  assert.equal(deliveredEmails.length, 1)
+  assert.equal(ledger()[0].selfService.ownerNotification.state, 'sent')
+})
+test('expired uncertain notifications require review instead of sending beyond provider deduplication', async () => {
+  const e = selfServiceEngagement(); save([e]); emailMode = 'lost-response'
+  await charge(e, e.invoices[0], 'https://wallaceshift.example', false)
+  const entries = ledger(); entries[0].selfService.ownerNotification.startedAt = new Date(Date.now() - 24 * 3600000).toISOString(); save(entries)
+  emailMode = 'ok'; await retryAiPurchaseNotifications()
+  assert.equal(emailRequests.length, 1)
+  assert.equal(ledger()[0].selfService.ownerNotification.state, 'review')
+  assert.equal(ledger()[0].invoices[0].status, 'paid')
+})
+test('refunded or disputed purchases do not trigger a delayed project notification', async () => {
+  const e = selfServiceEngagement(); save([e]); emailMode = 'reject'
+  await charge(e, e.invoices[0], 'https://wallaceshift.example', false)
+  const before = emailRequests.length; emailMode = 'ok'
+  await reconcileIntent({ ...stripeResult, latest_charge: { amount_refunded: 10000, disputed: false } })
+  await retryAiPurchaseNotifications()
+  assert.equal(emailRequests.length, before)
+  const entries = ledger(); entries[0].invoices[0].refunded = 0; entries[0].invoices[0].disputed = true; save(entries)
+  await notifyAiPurchase(e.id)
+  assert.equal(emailRequests.length, before)
+})
+test('purchase notification transport data is excluded from client and owner API responses', async () => {
+  const e = selfServiceEngagement(); save([e]); await charge(e, e.invoices[0], 'https://wallaceshift.example', false)
+  for (const token of [adminToken, clientToken]) {
+    const response = await call(undefined, token)
+    assert.equal(response.statusCode, 200)
+    const notice = response.body.engagements[0].selfService.ownerNotification
+    assert.equal(notice.payload, undefined)
+    assert.equal(notice.attemptToken, undefined)
+    assert.equal(notice.leaseUntil, undefined)
+  }
 })
