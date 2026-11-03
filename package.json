@@ -13,6 +13,7 @@
     "test:analytics": "node scripts/test-analytics.mjs",
     "test:ai-offer": "node scripts/test-ai-opportunity.mjs && node scripts/test-ai-opportunity-client.mjs",
     "test:ai-booking": "node scripts/test-ai-booking.mjs && node scripts/test-ai-quiz-notification.mjs",
+    "test:ai-consultation-browser": "node scripts/test-ai-consultation-browser.mjs",
     "test:ai-checkout": "node scripts/test-ai-checkout.mjs",
     "portal:stripe": "node scripts/stripe-local-listen.mjs",
     "lint": "eslint .",

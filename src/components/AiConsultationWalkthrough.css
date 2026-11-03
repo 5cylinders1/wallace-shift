@@ -1,5 +1,7 @@
-.qf-page:has(.qf-walkthrough) main { width: min(100%, 1080px); }
+.qf-page:has(.qf-walkthrough) main { width: min(100%, 960px); }
 .qf-walkthrough :is(h1,h2):focus { outline: none; }
+#qf-walkthrough-title { scroll-margin-top: 20px; }
+.qf-booked-label { display: block; color: var(--color-accent-deep); font-size: .88rem; line-height: 1.4; font-weight: 600; letter-spacing: normal; margin-bottom: 10px; }
 .qf-walkthrough-player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: var(--color-ink); border-radius: 12px; }
 .qf-walkthrough-placeholder { padding: clamp(24px, 4vw, 40px); border: 1px solid #a7b7c3; border-radius: 12px; background: #fff; }
 .qf-walkthrough :is(h2,h3) { font-weight: 600; letter-spacing: -.025em; line-height: 1.3; }
@@ -21,7 +23,6 @@
 .qf-walkthrough-purchase strong { font-weight: 600; font-size: 1.65rem; font-variant-numeric: tabular-nums; }
 .qf-walkthrough-purchase span { color: var(--color-muted-on-bone); font-size: .8rem; }
 .qf-walkthrough-cancellation { margin-top: 28px; border-top: 1px solid #c4cfd5; padding-top: 24px; font-size: .9rem; line-height: 1.7; max-width: 75ch; }
-.qf-walkthrough-back { margin-top: 30px; }
 @media (max-width: 680px) {
   .qf-walkthrough-package { grid-template-columns: 1fr; gap: 20px; }
   .qf-walkthrough-purchase { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }

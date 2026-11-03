@@ -5,7 +5,8 @@ import { demoAgreementStore, reserveVerificationCode } from './demo-agreement-st
 import { readOpportunityBody, validateOpportunity } from './ai-opportunity-validation.js'
 import { createPurchaseSession, hash, ownerEmail } from './portal-auth.js'
 import { changeLedger, draft } from './portal-ledger.js'
-import { getValue, mutateLedger, redis, setValue } from './portal-store.js'
+import { requirePortalStripeConfig } from './portal-stripe-config.js'
+import { billingKey, getValue, mutateLedger, redis, setValue } from './portal-store.js'
 import { aiOffer, aiPackages, routeAiOpportunity, type AiPackageId, type AiQualificationAnswers } from '../../src/content/aiOffer.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
@@ -14,15 +15,15 @@ const TTL = 600
 const answerFields = ['businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'impactDetails', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'timing'] as const
 type Purchase = { orderId: string; offerVersion: string; packageId: AiPackageId; name: string; businessName: string; email: string; answers: AiQualificationAnswers; fingerprint: string }
 type Challenge = { nonce: string; recipientHash: string; exp: number; purchase: Purchase }
-const pendingKey = (nonce: string) => `checkout:pending:${hash(nonce)}`
-const proofKey = (nonce: string) => `checkout:proof:${hash(nonce)}`
+const pendingKey = (nonce: string) => billingKey(`checkout:pending:${hash(nonce)}`)
+const proofKey = (nonce: string) => billingKey(`checkout:proof:${hash(nonce)}`)
 
 /** Readiness describes configuration only, never a provider or payment verification. */
 function requireCheckoutConfiguration(): void {
   demoAgreementStore(); ownerEmail()
   const from = process.env.CONTACT_FROM_EMAIL?.trim()
   if (!process.env.RESEND_API_KEY?.trim() || !from || /[\r\n]/.test(from)) throw new DemoError('email_not_configured', 503)
-  if (!process.env.STRIPE_SECRET_KEY?.trim() || !process.env.STRIPE_PUBLISHABLE_KEY?.trim() || !process.env.STRIPE_WEBHOOK_SECRET?.trim()) throw new DemoError('stripe_not_configured', 503)
+  requirePortalStripeConfig()
 }
 
 function validatePurchase(body: Record<string, unknown>): Purchase {
@@ -53,7 +54,7 @@ return 1`
 async function limitSend(req: IncomingMessage): Promise<void> {
   const ip = process.env.VERCEL === '1' ? nodeHeader(req, 'x-vercel-forwarded-for') : req.socket?.remoteAddress
   if (!ip || !/^[\da-fA-F:.]+$/.test(ip)) throw new DemoError('forbidden', 403)
-  if (await redis(['EVAL', LIMIT, 1, `ai-checkout:ip:${hash(ip)}:${Math.floor(Date.now() / 3_600_000)}`]) !== 1) throw new DemoError('rate_limited', 429)
+  if (await redis(['EVAL', LIMIT, 1, billingKey(`ai-checkout:ip:${hash(ip)}:${Math.floor(Date.now() / 3_600_000)}`)]) !== 1) throw new DemoError('rate_limited', 429)
 }
 
 // Consuming the code and persisting proof is atomic. A retry after a ledger or
@@ -124,7 +125,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const nonce = randomBytes(32).toString('hex')
       const challenge: Challenge = { nonce, recipientHash: hash(purchase.email), exp: Math.floor(Date.now() / 1000) + TTL, purchase }
       const code = randomInt(0, 1_000_000).toString().padStart(6, '0')
-      await reserveVerificationCode(challenge, purchase.email, hash(`${nonce}:${code}`), undefined, 'ai-checkout')
+      await reserveVerificationCode(challenge, purchase.email, hash(`${nonce}:${code}`), undefined, billingKey('ai-checkout'))
       await setValue(pendingKey(nonce), challenge, TTL)
       res.setHeader('set-cookie', demoCookie(PENDING, nonce, origin, TTL))
       try {
@@ -141,7 +142,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const nonce = readDemoCookie(nodeHeader(req, 'cookie'), PENDING)
     if (!/^[a-f0-9]{64}$/.test(nonce)) throw new DemoError('code_expired', 400)
     const digest = hash(`${nonce}:${body.code}`)
-    const result = await redis(['EVAL', VERIFY, 3, `ai-checkout:code:${nonce}`, `portal:${pendingKey(nonce)}`, `portal:${proofKey(nonce)}`, digest, Math.floor(Date.now() / 1000)])
+    const result = await redis(['EVAL', VERIFY, 3, billingKey(`ai-checkout:code:${nonce}`), `portal:${pendingKey(nonce)}`, `portal:${proofKey(nonce)}`, digest, Math.floor(Date.now() / 1000)])
     if (result !== 'ok') throw new DemoError(['code_expired', 'code_invalid', 'rate_limited'].includes(String(result)) ? String(result) : 'storage_unavailable', result === 'rate_limited' ? 429 : result === 'code_expired' || result === 'code_invalid' ? 400 : 503)
     const pending = await getValue<Challenge>(pendingKey(nonce))
     if (!pending || await redis(['GET', `portal:${proofKey(nonce)}`]) !== digest) throw new DemoError('code_expired', 400)

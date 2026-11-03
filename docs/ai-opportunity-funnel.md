@@ -1,6 +1,6 @@
 # AI opportunity funnel: operational handoff
 
-Local implementation, November 2, 2026. Qualified final submissions email Matthew the quiz answers and open the public booking page. Google handles bookings and confirmations. The video has not been supplied. Once configured, it will open on request and reveal the package offers when it finishes. Public purchases use the portal for agreement, signature, and Stripe payment. Provider tests use isolated mocks.
+Qualified visitors book their free 45 minute consultation through Calendly. After the embed confirms their appointment, the funnel scrolls to the 15 second Wallace Shift film **Put AI to work**. Finishing the film reveals the package offers. Public purchases use the portal for agreement, signature, and Stripe payment.
 
 ## Offer and route
 
@@ -10,7 +10,7 @@ The review page is `/offers/ai-business-integration`. Start the development serv
 
 ## Qualification, booking, walkthrough, and purchase
 
-**Paid ad → qualification quiz → quiz summary to Matthew and booking page → visitor books with Google → optional walkthrough in the same tab once available → package purchase after video completion.**
+**Paid ad → qualification quiz → Calendly booking → film → package purchase.** Matthew receives the quiz answers when a qualified visitor submits the final answer.
 
 The seven steps cover:
 
@@ -26,17 +26,17 @@ Direct booking requires all three conditions: authority is **I own the business 
 
 Other visitors see a short planning result with options to edit their answers or learn about AI services. They do not see immediate packages or the booking conversion screen. No email is required to take the quiz or see that result. Unqualified submissions do not email Matthew.
 
-Once a qualified visitor submits the final answer, the site emails the validated quiz answers to `matthew@wallaceshift.com`. The message includes the completion time and identifies the submission as a quiz, with booking status unknown. It contains no appointment details or Meet link. The fixed recipient and delivery are independent of the calendar owner login and Google booking.
+Once a qualified visitor submits the final answer, the site emails the validated quiz answers and completion time to `matthew@wallaceshift.com`. A booking may not exist yet. Its confirmation and Meet details arrive separately through the scheduling provider.
 
-The booking page presents a free **45 minute Google Meet consultation**, a reminder that a **paid project of $2,500 or more** includes a business website, and a phone alternative. The calendar and direct scheduling link are available immediately. Google collects contact details in its own form and sends the appointment confirmation and Meet link after a visitor books. Wallace Shift does not prompt for the same email, send a visitor booking code, or attach the answers to an event. To receive the actual Google confirmation in the Wallace Shift inbox as a separate message, configure a Gmail forwarding filter in the calendar owner's account. [Booking and forwarding setup](ai-booking-setup.md)
+The booking page describes the free **45 minute Google Meet consultation**, the business website included with a **paid project of $2,500 or more**, and the phone alternative. Visitors select a time and enter their contact details in the Calendly embed. The site does not request a second booking email or send the quiz answers to the scheduler. [Booking and notification setup](ai-booking-setup.md)
 
 Phone callbacks use a separate request with a required phone number and optional email. Wallace Shift arranges the time afterward.
 
-The planned 3 to 10 minute walkthrough covers recurring small business bottlenecks, practical AI workflows and examples of time and cost savings. Once the video is configured, the qualified visitor can open it from the booking page after booking, in the same tab. This visit does not verify an appointment. With the current unset video URL in `src/content/aiConsultation.ts`, the walkthrough button and offers stay hidden. The packages appear only after a real native video completion event.
+The film first appears when the active Calendly embed confirms a completed booking. The page scrolls to the player automatically. Its English captions describe an incoming roof inquiry, a drafted reply and a person approving it. Changing dates, picking a time or leaving the scheduler does not reveal it. Packages appear when the film ends. A missing video source shows the coming soon placeholder and keeps offers locked.
 
 After the video, the visitor may buy AI Inquiry Assistant for $2,500 or AI Notes and Updates for $3,500 without a consultation or owner quote. Each package retains its defined scope, price, exclusions, and website bonus. Existing checkout collects buyer details and purchase authority, verifies the buyer email, creates a server priced agreement, and opens the client portal for signature and Stripe payment. A verified successful payment creates the paid project handoff with quiz answers and triggers the existing internal owner notification. Booking confirmation is not purchase, signature, or payment authorization.
 
-Purchasing a package does not cancel the appointment. If the buyer no longer needs the meeting, the page directs them to cancel through Google's confirmation email. Google manages cancellation and rescheduling.
+A purchase leaves the appointment in place. A buyer who no longer needs the consultation can cancel it through their booking confirmation.
 
 Quiz and contact screens use a compact header and an independently scrollable question area. Back and the primary action remain visible. Every quiz step with multiple questions reveals one question at a time and shows the current part. A radio selection advances applicable follow ups; arrow keys remain inside the group until Enter, Space, or Next question confirms. Text and multiple choice questions use the navigation button. Back preserves applicable answers, while changing a branch clears obsolete details. New questions reset the answer area's scroll position, and validation errors receive focus. Step completion measurement fires only when the complete step validates.
 
@@ -44,7 +44,7 @@ Booking, walkthrough, and planning results use normal page scrolling. Editing th
 
 ## Configuration
 
-The [consultation configuration](../src/content/aiConsultation.ts) sets the 45 minute duration, the public Google schedule URL and the embed URL. Google controls available times and booking confirmations. The current public booking page and quiz summary need no owner Calendar OAuth connection.
+The [scheduler configuration](../src/lib/calendlyEventUrl.ts) reads the public Calendly event link. Configure the 45 minute event with Google Meet and connect the intended calendar in Calendly. The owner’s [public consultation event](https://calendly.com/matthew-wallaceshift/consultation) is the default. An empty or invalid environment override falls back to the existing Google schedule. A phone request is available on either path. Bookings through that fallback cannot open the film. The optional owner portal Google OAuth connection is separate.
 
 The server action `POST /api/ai-booking` with `action: quiz-summary` validates the quiz, enforces qualification and rate limits, and sends the summary to Matthew using Redis and Resend. It records an idempotent receipt for each attempt. If email is unavailable, the calendar remains usable. The booking page offers a retry with the same attempt.
 
@@ -52,6 +52,7 @@ The separate phone intake is enabled only when the server variable `AI_OPPORTUNI
 
 | Setting | Purpose |
 | --- | --- |
+| `VITE_CALENDLY_EVENT_URL` | Reusable public Calendly consultation event URL. Restart Vite locally or redeploy on Vercel after changing it. |
 | `AI_OPPORTUNITY_ENABLED` | Public phone intake switch; absent or any other value keeps phone intake disabled |
 | `DEMO_AUDIT_REDIS_URL`, `DEMO_AUDIT_REDIS_TOKEN` | Preferred durable Redis REST connection, shared with existing portal infrastructure |
 | `RATE_LIMIT_REDIS_URL` / `RATE_LIMIT_REDIS_TOKEN`, `KV_REST_API_URL` / `KV_REST_API_TOKEN`, or `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Existing store fallbacks, in that order, when the dedicated pair is absent |
@@ -62,7 +63,7 @@ The separate phone intake is enabled only when the server variable `AI_OPPORTUNI
 | `STRIPE_WEBHOOK_SECRET` | Signing secret for the deployed `/api/client-portal?action=webhook` endpoint, or the separate local listener in development |
 | `CRON_SECRET` | Existing protected billing cron also retries eligible paid project notifications |
 
-Use a writable HTTPS Redis REST endpoint. A partially configured dedicated pair fails closed. The database must provide persistence, backups, and no eviction for application records. Do not point a local trial at the production database or recipient. Vite forwards these settings to server handlers; they are not browser configuration and must not receive a `VITE_` prefix.
+Use a writable HTTPS Redis REST endpoint. A partially configured dedicated pair fails closed. The database must provide persistence, backups, and no eviction for application records. Use separate storage and recipients for local tests. Only the public Calendly link has a `VITE_` prefix. Keep server credentials out of the browser build.
 
 `GET /api/ai-checkout` returns `{ ok: true, ready: boolean }` without disclosing configuration values. Readiness checks configuration presence and structure only; it does not prove Stripe account compatibility, webhook delivery, email delivery, or a real payment. Set production variables on the hosting project and redeploy; local `.env.local` does not configure production. Follow the [portal configuration and Stripe verification guide](client-portal/README.md) for the webhook events, cron, key separation, and provider checks.
 
@@ -92,7 +93,7 @@ On an explicit contact request, the server validates answers and independently c
 - `notification: queued`: the application is safely stored, but notification was not confirmed. There is no background worker in this version; the owner must inspect and recover pending work.
 - `route: fit_call`, `manual_review`, or `resource`: a provisional routing recommendation, not an eligibility decision.
 
-The intake API sends no confirmation or marketing email to the applicant. Google Calendar handles its own booking messages independently. The existing contact endpoint and demo invitation flow are unchanged.
+The intake API sends no confirmation or marketing email to the applicant. Scheduling confirmations and invitations arrive through the booking provider.
 
 ## Owner review and recovery
 
@@ -138,10 +139,10 @@ Deleting a record also removes its submission-idempotency history; a later repla
 1. Confirm the $2,500 threshold, qualifying project scope, bonus limits, exclusions, payments, available capacity, and approved offer wording. Update the offer version when acknowledgment terms change.
 2. Verify the durable store, intended internal recipient, sender, portal owner identity, and owner access to the application list. Verify the retention and notification-review routine.
 3. Run `npm run test:ai-offer`, `npm run test:ai-booking`, `npm run test:ai-checkout`, `npm run test:portal`, `npm run test:analytics`, and `npm run build`. Provider tests isolate Google, Stripe, Redis, and email; they do not read local environment files, send real messages, create appointments, or charge cards. The checkout integration test goes from a new public buyer through verification, signature, card setup, explicit authorization, successful payment, and owner notification without an owner action.
-4. Using isolated test storage and mock providers, verify that only an authorized buyer who approves the investment and selects `now` or `soon` reaches the booking page and triggers the fixed recipient quiz summary. Check retries, the phone alternative, the Google booking form and the calendar fallback link. Validate package checkout separately through signature and explicit test payment authorization.
-5. Check keyboard navigation, mobile layout and error recovery. The calendar must remain available when summary delivery fails. Check that the current unset video hides the walkthrough button, and that a configured video must finish before offers appear. Opening the walkthrough does not record a confirmed booking. Google handles cancellation after purchase.
+4. With isolated storage and mock providers, verify qualification and quiz email delivery, retry, and the phone alternative. On the configured booking page, check that the film is hidden while choosing a slot and is revealed only by a successful booking message from the active Calendly iframe. Without a valid event link, confirm the Google fallback cannot reveal the film.
+5. Check desktop and mobile, keyboard focus, reduced motion and error recovery. Confirm the newly revealed player scrolls into view on confirmation, that the film and captions load, and that packages appear only after playback ends. Check package checkout through signature and explicit test payment authorization.
 6. Confirm consent-based analytics behavior. Funnel events contain fixed step and broad result-type labels only; quiz answers, revenue, authority, barriers, private records, contact details, and identifiers must stay out of analytics. A recommendation view is not a submitted application or acquired customer. This implementation adds no ad pixel, offline conversion upload, or ad consent flow.
-7. Before sending paid traffic, verify quiz email delivery and an actual Google booking separately in the intended environment. If the Wallace Shift inbox should receive both messages, verify the filtered forwarding setup using a new Google confirmation. Supply the approved video and captions before promoting packages through the walkthrough.
+7. Before sending paid traffic, check quiz email delivery, a confirmed appointment through the actual embedded Calendly event, the Google calendar entry and Meet link, the automatic scroll and playback, and the booking notification in the intended inbox. Verify any Gmail filter against a new confirmation from the configured event.
 
 Backend tests cover persistence before notification, idempotency including selection order and chosen package, notification failure/recovery, stale uncertain attempts, storage failures, bounded and conditional validation, rate limits, qualification gates, revenue priority, old-record compatibility, owner access, catalog validation, and phone consultations without email. Client tests cover step validation, normalization after branch and conversion-path changes, deterministic qualification, email requirements, payload construction/response handling, and recovery contracts. See [backend tests](../scripts/test-ai-opportunity.mjs), [client tests](../scripts/test-ai-opportunity-client.mjs), and [analytics guidance](analytics.md).
 

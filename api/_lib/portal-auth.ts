@@ -2,9 +2,11 @@ import { createHash, randomBytes, randomInt } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { DemoError, demoAdminEmail, demoCookie, nodeHeader, normalizeDemoEmail, readDemoCookie } from './demo-access.js'
 import { consumeVerificationCode, reserveVerificationCode } from './demo-agreement-store.js'
-import { allEngagements, getValue, mutateLedger, redis, setValue } from './portal-store.js'
+import { allEngagements, billingKey, getValue, mutateLedger, redis, setValue } from './portal-store.js'
 
 export const hash = (text: string) => createHash('sha256').update(text).digest('hex')
+const sessionKey = (token: string) => billingKey(`session:${hash(token)}`)
+const pendingKey = (nonce: string) => billingKey(`pending:${hash(nonce)}`)
 const SESSION = 'wallace_client_session'
 const PENDING = 'wallace_client_pending'
 type Pending = { nonce: string; recipientHash: string; exp: number; email: string }
@@ -12,7 +14,7 @@ export type Identity = { email: string; admin: boolean; engagementId?: string }
 /** A verified public buyer receives access to only their purchase, never owner access. */
 export async function createPurchaseSession(email: string, engagementId: string, origin: string): Promise<string> {
   const token = randomBytes(32).toString('hex')
-  await setValue(`session:${hash(token)}`, { email, engagementId }, 8 * 3600)
+  await setValue(sessionKey(token), { email, engagementId }, 8 * 3600)
   return demoCookie(SESSION, token, origin, 8 * 3600)
 }
 export function ownerEmail(): string {
@@ -23,7 +25,7 @@ export function ownerEmail(): string {
 export async function identity(req: IncomingMessage): Promise<Identity | null> {
   const token = readDemoCookie(nodeHeader(req, 'cookie'), SESSION)
   if (!/^[a-f0-9]{64}$/.test(token)) return null
-  const session = await getValue<{ email: string; engagementId?: string }>(`session:${hash(token)}`)
+  const session = await getValue<{ email: string; engagementId?: string }>(sessionKey(token))
   return session ? { email: session.email, admin: !session.engagementId && session.email === ownerEmail(), ...(session.engagementId ? { engagementId: session.engagementId } : {}) } : null
 }
 export async function login(req: IncomingMessage, res: ServerResponse, origin: string, body: Record<string, unknown>): Promise<void> {
@@ -44,14 +46,14 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
     })
     if (!grant.existing) {
       const token = randomBytes(32).toString('hex')
-      await setValue(`session:${hash(token)}`, { email: grant.email, engagementId: grant.engagementId }, 8 * 3600)
+      await setValue(sessionKey(token), { email: grant.email, engagementId: grant.engagementId }, 8 * 3600)
       res.setHeader('set-cookie', [demoCookie(SESSION, token, origin, 8 * 3600), demoCookie(PENDING, '', origin, 0)])
     }
     return
   }
   if (body.action === 'logout') {
     const token = readDemoCookie(nodeHeader(req, 'cookie'), SESSION)
-    if (token) await redis(['DEL', `portal:session:${hash(token)}`])
+    if (token) await redis(['DEL', `portal:${sessionKey(token)}`])
     res.setHeader('set-cookie', [demoCookie(SESSION, '', origin, 0), demoCookie(PENDING, '', origin, 0)])
     return
   }
@@ -64,8 +66,8 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
     const nonce = randomBytes(32).toString('hex')
     const pending: Pending = { email, nonce, recipientHash: hash(email), exp: Math.floor(Date.now() / 1000) + 600 }
     const code = randomInt(0, 1_000_000).toString().padStart(6, '0')
-    await reserveVerificationCode(pending, email, hash(`${nonce}:${code}`), undefined, 'client-portal')
-    await setValue(`pending:${hash(nonce)}`, pending, 600)
+    await reserveVerificationCode(pending, email, hash(`${nonce}:${code}`), undefined, billingKey('client-portal'))
+    await setValue(pendingKey(nonce), pending, 600)
     res.setHeader('set-cookie', demoCookie(PENDING, nonce, origin, 600))
     const known = email === owner || (await allEngagements()).some(e => e.email === email && e.state !== 'draft')
     if (known) {
@@ -82,13 +84,13 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
   }
   if (body.action !== 'verify-code' || typeof body.code !== 'string' || !/^\d{6}$/.test(body.code)) throw new DemoError('invalid_code', 400)
   const nonce = readDemoCookie(nodeHeader(req, 'cookie'), PENDING)
-  const pending = await getValue<Pending>(`pending:${hash(nonce)}`)
+  const pending = await getValue<Pending>(pendingKey(nonce))
   if (!pending || pending.exp <= Date.now() / 1000) throw new DemoError('code_expired', 400)
-  const email = await consumeVerificationCode(pending, hash(`${nonce}:${body.code}`), undefined, 'client-portal')
+  const email = await consumeVerificationCode(pending, hash(`${nonce}:${body.code}`), undefined, billingKey('client-portal'))
   const known = email === ownerEmail() || (await allEngagements()).some(e => e.email === email && e.state !== 'draft')
   if (!known) throw new DemoError('access_required', 403)
   const token = randomBytes(32).toString('hex')
-  await setValue(`session:${hash(token)}`, { email }, 8 * 3600)
-  await redis(['DEL', `portal:pending:${hash(nonce)}`])
+  await setValue(sessionKey(token), { email }, 8 * 3600)
+  await redis(['DEL', `portal:${pendingKey(nonce)}`])
   res.setHeader('set-cookie', [demoCookie(SESSION, token, origin, 8 * 3600), demoCookie(PENDING, '', origin, 0)])
 }

@@ -2,13 +2,14 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { timingSafeEqual } from 'node:crypto'
 import { DemoError, demoJson, nodeDemoOrigin, nodeHeader } from './demo-access.js'
 import { identity, login, type Identity } from './portal-auth.js'
-import { allEngagements, audit, getValue, mutateLedger, setValue } from './portal-store.js'
+import { allEngagements, audit, billingKey, getValue, mutateLedger, setValue } from './portal-store.js'
 import { accessible, changeLedger, draft, field, generateDueInvoices } from './portal-ledger.js'
 import { charge, finishSetup, handleStripeEvent, quote, refreshPayments, resetFailedPayment, setupCard } from './portal-stripe.js'
 import { automaticInvoice, firstUnsettledInvoice, scheduleConsent } from '../../src/client-portal/model.js'
 import type { Engagement } from '../../src/client-portal/model.js'
 import { issueAndEmail } from './portal-email.js'
 import { retryAiPurchaseNotifications } from './ai-purchase-notification.js'
+import { portalStripeConfig, requirePortalStripeConfig } from './portal-stripe-config.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
 async function rawBody(req: IncomingMessage, requireRaw = false): Promise<string> {
@@ -59,11 +60,12 @@ function clientView(e: Engagement, who: Identity): unknown {
   return { ...view, hasCard: Boolean(e.paymentMethod) }
 }
 async function runBilling(origin: string): Promise<{ generated: number; attempted: number; failed: string[] }> {
+  requirePortalStripeConfig()
   const generated = await mutateLedger(entries => generateDueInvoices(entries, new Date().toISOString().slice(0, 10)))
   const entries = await allEngagements(); const failed: string[] = []; let attempted = 0
   // Round-robin continuation prevents a slow processor or blocked record starving later clients.
   const started = Date.now()
-  const cursor = await getValue<string>('billing-cursor') ?? ''
+  const cursor = await getValue<string>(billingKey('billing-cursor')) ?? ''
   const today = new Date().toISOString().slice(0, 10)
   const due = entries.filter(v => v.state === 'issued' && v.autopay?.enabled && v.invoices.some(i => automaticInvoice(v, i, today) && i.status === 'open' && !i.attempt && i.due <= today)).sort((a, b) => a.id.localeCompare(b.id))
   const ordered = [...due.filter(e => e.id > cursor), ...due.filter(e => e.id <= cursor)]
@@ -79,7 +81,7 @@ async function runBilling(origin: string): Promise<{ generated: number; attempte
         current = (await allEngagements()).find(v => v.id === e.id)!
       } catch { failed.push(e.id); break }
     }
-    await setValue('billing-cursor', e.id, 7 * 86400)
+    await setValue(billingKey('billing-cursor'), e.id, 7 * 86400)
   }
   // Failed email does not affect billing. The paid project itself is already durable.
   try { await retryAiPurchaseNotifications(Math.min(16000, Math.max(0, 48000 - (Date.now() - started)))) } catch { /* Retry on the next protected cron run. */ }
@@ -112,9 +114,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (req.method === 'GET') {
       if (!who) { demoJson(res, 200, { ok: true, authenticated: false }); return }
       const entries = (await allEngagements()).filter(e => (!who.engagementId || who.engagementId === e.id) && (who.admin || (e.email === who.email && e.state !== 'draft')))
+      const stripeConfig = portalStripeConfig()
       demoJson(res, 200, { ok: true, authenticated: true, ...who, engagements: entries.map(e => clientView(e, who)),
-        stripeReady: Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_WEBHOOK_SECRET),
-        publishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? '',
+        stripeReady: Boolean(stripeConfig),
+        publishableKey: stripeConfig?.publishableKey ?? '',
         instructions: { cash: process.env.PORTAL_CASH_INSTRUCTIONS ?? '', check: process.env.PORTAL_CHECK_INSTRUCTIONS ?? '', zelle: process.env.PORTAL_ZELLE_INSTRUCTIONS ?? '' },
       }); return
     }

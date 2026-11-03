@@ -3,14 +3,15 @@ import { DemoError } from './demo-access.js'
 import { allEngagements, audit, mutateLedger } from './portal-store.js'
 import { automaticInvoice, feeFor, firstUnsettledInvoice, paymentConsent, scheduleConsent, type Engagement, type Invoice } from '../../src/client-portal/model.js'
 import { notifyAiPurchase } from './ai-purchase-notification.js'
+import { requirePortalStripeConfig } from './portal-stripe-config.js'
 
 type Params = Record<string, string | number | boolean>
 type Card = { id: string; customer: string; type: string; card?: { funding: string; last4: string; brand: string; country?: string }; billing_details?: { address?: { country?: string; state?: string } } }
 type Intent = { id: string; status: string; customer: string; amount: number; currency: string; client_secret?: string; metadata: { engagement: string; invoice: string; attempt: string }; latest_charge?: { receipt_url?: string; amount_refunded?: number; disputed?: boolean } }
 export async function stripe<T>(path: string, params?: Params, key?: string, method = params ? 'POST' : 'GET'): Promise<T> {
-  if (!process.env.STRIPE_SECRET_KEY) throw new DemoError('stripe_not_configured', 503)
+  const { secretKey } = requirePortalStripeConfig()
   const response = await fetch(`https://api.stripe.com/v1/${path}`, {
-    method, headers: { authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, 'Stripe-Version': '2025-06-30.basil', ...(params ? { 'content-type': 'application/x-www-form-urlencoded' } : {}), ...(key ? { 'Idempotency-Key': key } : {}) },
+    method, headers: { authorization: `Bearer ${secretKey}`, 'Stripe-Version': '2025-06-30.basil', ...(params ? { 'content-type': 'application/x-www-form-urlencoded' } : {}), ...(key ? { 'Idempotency-Key': key } : {}) },
     body: params ? new URLSearchParams(Object.entries(params).map(([k, v]): [string, string] => [k, String(v)])) : undefined,
     signal: AbortSignal.timeout(20000),
   }).catch(() => { throw new DemoError('stripe_unavailable', 502) })
@@ -159,8 +160,10 @@ export function verifyWebhook(raw: string, header: string, secret: string, now =
   if (!parts.some(([key, value]) => key === 'v1' && /^[a-f0-9]{64}$/.test(value) && timingSafeEqual(expected, Buffer.from(value, 'hex')))) throw new DemoError('invalid_signature', 400)
 }
 export async function handleStripeEvent(raw: string, signature: string): Promise<void> {
-  verifyWebhook(raw, signature, process.env.STRIPE_WEBHOOK_SECRET ?? '')
-  const event = JSON.parse(raw) as { type: string; data: { object: { id: string; payment_intent?: string } } }
+  const config = requirePortalStripeConfig()
+  verifyWebhook(raw, signature, config.webhookSecret)
+  const event = JSON.parse(raw) as { livemode?: unknown; type: string; data: { object: { id: string; payment_intent?: string } } }
+  if (event?.livemode !== config.livemode) throw new DemoError('stripe_event_mode_mismatch', 400)
   if (!event.type.startsWith('payment_intent.') && !event.type.startsWith('charge.')) return
   const id = event.type.startsWith('payment_intent.') ? event.data.object.id : event.data.object.payment_intent
   if (!id || !/^pi_[a-zA-Z0-9]+$/.test(id)) return
