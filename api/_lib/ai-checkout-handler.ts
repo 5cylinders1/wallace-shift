@@ -4,16 +4,19 @@ import { DemoError, demoCookie, demoJson, nodeDemoOrigin, nodeHeader, readDemoCo
 import { demoAgreementStore, reserveVerificationCode } from './demo-agreement-store.js'
 import { readOpportunityBody, validateOpportunity } from './ai-opportunity-validation.js'
 import { createPurchaseSession, hash, ownerEmail } from './portal-auth.js'
-import { changeLedger, draft } from './portal-ledger.js'
+import { draft } from './portal-ledger.js'
 import { requirePortalStripeConfig } from './portal-stripe-config.js'
 import { billingKey, getValue, mutateLedger, redis, setValue } from './portal-store.js'
 import { aiOffer, aiPackages, routeAiOpportunity, type AiPackageId, type AiQualificationAnswers } from '../../src/content/aiOffer.js'
+import { aiSubscriptionPlans, type AiSubscriptionInterval } from '../../src/content/aiSubscriptionOffer.js'
+import { notifyAiSetup } from './ai-purchase-notification.js'
+import { aiSubscriptionAgreement } from '../../src/client-portal/ai-subscription-agreement.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
 const PENDING = 'wallace_checkout_pending'
 const TTL = 600
 const answerFields = ['businessType', 'workflows', 'workflowDetails', 'currentTools', 'weeklyHours', 'impacts', 'impactDetails', 'role', 'approverAvailability', 'revenue', 'aiExperience', 'aiBarriers', 'budget', 'timing'] as const
-type Purchase = { orderId: string; offerVersion: string; packageId: AiPackageId; name: string; businessName: string; email: string; answers: AiQualificationAnswers; fingerprint: string }
+type Purchase = { orderId: string; offerVersion: string; packageId: AiPackageId; interval: AiSubscriptionInterval; name: string; businessName: string; email: string; answers: AiQualificationAnswers; fingerprint: string }
 type Challenge = { nonce: string; recipientHash: string; exp: number; purchase: Purchase }
 const pendingKey = (nonce: string) => billingKey(`checkout:pending:${hash(nonce)}`)
 const proofKey = (nonce: string) => billingKey(`checkout:proof:${hash(nonce)}`)
@@ -27,8 +30,9 @@ function requireCheckoutConfiguration(): void {
 }
 
 function validatePurchase(body: Record<string, unknown>): Purchase {
-  const fields = ['action', 'submissionId', 'offerVersion', 'packageId', 'name', 'businessName', 'email', 'answers', 'authorityConfirmed', 'company']
+  const fields = ['action', 'submissionId', 'offerVersion', 'packageId', 'interval', 'name', 'businessName', 'email', 'answers', 'authorityConfirmed', 'company']
   if (Object.keys(body).some(key => !fields.includes(key)) || body.authorityConfirmed !== true) throw new DemoError('invalid', 400)
+  if (typeof body.interval !== 'string' || !Object.hasOwn(aiSubscriptionPlans, body.interval)) throw new DemoError('invalid_interval', 400)
   if (!body.answers || typeof body.answers !== 'object' || Array.isArray(body.answers) || Object.keys(body.answers).some(key => !(answerFields as readonly string[]).includes(key))) throw new DemoError('invalid', 400)
   if (typeof body.company !== 'string' || body.company !== '') throw new DemoError('invalid', 400)
   const answers = body.answers as AiQualificationAnswers
@@ -42,7 +46,7 @@ function validatePurchase(body: Record<string, unknown>): Purchase {
     offerAcknowledged: offerApplies, contactConsent: true, company: '',
   })
   const cleanAnswers = Object.fromEntries(answerFields.map(key => [key, application[key]])) as AiQualificationAnswers
-  const purchase = { orderId: id, offerVersion: aiOffer.version, packageId: application.packageId as AiPackageId, name: application.name, businessName: application.businessName, email: application.email, answers: cleanAnswers }
+  const purchase = { orderId: id, offerVersion: aiOffer.version, packageId: application.packageId as AiPackageId, interval: body.interval as AiSubscriptionInterval, name: application.name, businessName: application.businessName, email: application.email, answers: cleanAnswers }
   return { ...purchase, fingerprint: hash(JSON.stringify(purchase)) }
 }
 
@@ -84,25 +88,36 @@ redis.call('SET', KEYS[3], ARGV[1], 'EX', pending.exp - tonumber(ARGV[2]))
 redis.call('DEL', KEYS[1])
 return 'ok'`
 
-async function issuePurchase(purchase: Purchase): Promise<string> {
+async function issuePurchase(purchase: Purchase, origin: string): Promise<string> {
   const item = aiPackages[purchase.packageId]
   return mutateLedger(entries => {
     const existing = entries.find(entry => entry.selfService?.orderId === purchase.orderId)
     if (existing) {
       if (existing.email !== purchase.email || existing.selfService?.fingerprint !== purchase.fingerprint) throw new DemoError('submission_conflict', 409)
+      if (existing.archivedAt) throw new DemoError('agreement_archived', 409)
       return existing.id
     }
     if (purchase.offerVersion !== aiOffer.version) throw new DemoError('offer_changed', 409)
+    const plan = aiSubscriptionPlans[purchase.interval]
+    if (!plan || !item) throw new DemoError('offer_changed', 409)
     const e = draft({
       client: purchase.businessName, email: purchase.email, title: item.name,
-      scope: `${item.scope.join('\n')}\n\nIncluded business website: ${aiOffer.websiteScope}.\nThe service amount includes any applicable service taxes.`,
+      scope: `${item.scope.join('\n')}\n\nInstalled on the client's existing website. The service amount includes applicable service taxes.`,
       exclusions: item.boundary,
       delivery: item.delivery,
-      amount: item.price * 100, cadence: 'once', firstDue: new Date().toISOString().slice(0, 10),
+      amount: plan.amount, cadence: 'once', firstDue: new Date().toISOString().slice(0, 10),
     }, 'Self service checkout')
-    e.selfService = { orderId: purchase.orderId, packageId: purchase.packageId, offerVersion: purchase.offerVersion, buyerName: purchase.name, answers: purchase.answers, fingerprint: purchase.fingerprint }
+    // Setup registration is not activation. No invoice or billing clock starts here.
+    e.aiSubscription = { version: 1, plan: purchase.interval, createdAt: new Date().toISOString(), changes: [], usage: [] }
+    e.cadence = purchase.interval
+    e.firstDue = ''
+    e.agreement = aiSubscriptionAgreement(e)
+    e.agreementHash = hash(e.agreement)
+    e.selfService = { setupOrigin: origin, orderId: purchase.orderId, packageId: purchase.packageId, offerVersion: purchase.offerVersion, buyerName: purchase.name, answers: purchase.answers, fingerprint: purchase.fingerprint }
     entries.push(e)
-    changeLedger(entries, { action: 'issue', id: e.id }, { email: 'Self service checkout', admin: true })
+    e.state = 'issued'
+    e.issuedAt = new Date().toISOString()
+    e.audit.push({ at: e.issuedAt, actor: 'Self service checkout', action: 'AI service setup requested; no trial or payment started' })
     return e.id
   })
 }
@@ -146,8 +161,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (result !== 'ok') throw new DemoError(['code_expired', 'code_invalid', 'rate_limited'].includes(String(result)) ? String(result) : 'storage_unavailable', result === 'rate_limited' ? 429 : result === 'code_expired' || result === 'code_invalid' ? 400 : 503)
     const pending = await getValue<Challenge>(pendingKey(nonce))
     if (!pending || await redis(['GET', `portal:${proofKey(nonce)}`]) !== digest) throw new DemoError('code_expired', 400)
-    const id = await issuePurchase(pending.purchase)
+    const id = await issuePurchase(pending.purchase, origin)
     res.setHeader('set-cookie', await createPurchaseSession(pending.purchase.email, id, origin))
+    try { await notifyAiSetup(id) } catch { /* Saved setup request remains visible; protected cron retries the notice. */ }
     // Retain the short-lived challenge cookie for a retry if this response is lost.
     demoJson(res, 200, { ok: true, url: `/client-portal?engagement=${encodeURIComponent(id)}` })
   } catch (error) {

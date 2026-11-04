@@ -253,6 +253,64 @@ test('signatures bind exact terms, identity and timestamp and cannot be overwrit
   assert.throws(() => changeLedger([e], { action: 'sign', id: e.id, consent: true, name: 'Replacement', agreementHash: e.agreementHash }, client))
   assert.match(e.agreement, /Governing law: Kansas/)
 })
+test('only the owner can archive or restore; signed terms and invoices survive both operations', async () => {
+  const e = engagement('monthly'), other = engagement()
+  e.autopay = { enabled: true, feeBps: 300 }; save([e, other])
+  const action = (name, token) => call({ action: name, id: e.id }, token)
+  assert.equal((await action('archive', '')).statusCode, 401)
+  assert.equal((await action('archive', clientToken)).statusCode, 403)
+  assert.equal((await action('archive', adminToken)).statusCode, 200)
+  const archived = ledger()[0]
+  assert.ok(archived.archivedAt); assert.equal(archived.autopay.enabled, false)
+  assert.deepEqual(archived.invoices, e.invoices)
+  const adminView = (await call(undefined, adminToken)).body.engagements.find(item => item.id === e.id)
+  assert.equal(adminView.archivedAt, archived.archivedAt)
+  assert.deepEqual(adminView.signature, e.signature); assert.equal(adminView.agreement, e.agreement)
+  assert.deepEqual((await call()).body.engagements.map(item => item.id), [other.id])
+  assert.equal((await action('archive', adminToken)).statusCode, 200)
+  assert.equal(ledger()[0].audit.length, archived.audit.length)
+  assert.equal((await action('restore', clientToken)).statusCode, 404)
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 0)
+  assert.equal((await action('restore', adminToken)).statusCode, 200)
+  const restored = (await call()).body.engagements.find(item => item.id === e.id)
+  assert.deepEqual(restored.signature, e.signature); assert.equal(restored.agreementHash, e.agreementHash)
+  assert.equal(restored.autopay.enabled, false)
+  assert.equal((await call({ action: 'run-billing' }, adminToken)).body.attempted, 0)
+  assert.deepEqual(ledger()[0].invoices, e.invoices)
+  assert.equal(stripeCalls.length, 0)
+})
+test('archiving closes stale invitation sessions, payment links and card setup returns', async () => {
+  const e = engagement('once', false); save([e])
+  await call({ action: 'retry-issue-email', id: e.id }, adminToken)
+  const invitation = { action: 'open-invitation', id: e.id, token: invitationToken(deliveredEmails[0]) }
+  const session = sessionCookie(await call(invitation, ''))
+  await call({ action: 'sign', id: e.id, name: 'Test Client', consent: true, agreementHash: e.agreementHash }, session)
+  assert.equal((await call({ action: 'setup-card', id: e.id }, session)).statusCode, 200)
+  assert.equal((await call({ action: 'archive', id: e.id }, adminToken)).statusCode, 200)
+  const callsBeforeReturn = stripeCalls.length
+  assert.deepEqual((await call(undefined, session)).body.engagements, [])
+  assert.equal((await call(invitation, session)).statusCode, 401)
+  for (const body of [
+    { action: 'pay', invoiceId: e.invoices[0].id, total: 10300, consent: true },
+    { action: 'finish-setup', sessionId: 'cs_test_setup' },
+  ]) assert.equal((await call({ ...body, id: e.id }, session)).statusCode, 404)
+  assert.equal(stripeCalls.length, callsBeforeReturn)
+})
+test('archive waits for an unresolved payment and keeps a settled payment open to refund reconciliation', async () => {
+  const e = engagement(); save([e]); stripeResult = { status: 'processing' }
+  await charge(e, e.invoices[0], 'http://localhost:5176', false)
+  const archive = () => call({ action: 'archive', id: e.id }, adminToken)
+  const blocked = await archive()
+  assert.equal(blocked.statusCode, 409); assert.equal(blocked.body.error, 'payment_in_progress')
+  assert.equal(ledger()[0].archivedAt, undefined)
+  const settled = { ...stripeResult, status: 'succeeded' }
+  await reconcileIntent(settled)
+  assert.equal((await archive()).statusCode, 200)
+  await reconcileIntent({ ...settled, latest_charge: { amount_refunded: settled.amount } })
+  const archived = ledger()[0]
+  assert.ok(archived.archivedAt); assert.equal(archived.invoices[0].status, 'paid')
+  assert.equal(archived.invoices[0].refunded, settled.amount)
+})
 test('offline report never marks paid; only an owner can confirm full receipt', async () => {
   const e = engagement(); save([e]); const base = { id: e.id, invoiceId: e.invoices[0].id, method: 'zelle', reference: 'Test transaction' }
   assert.equal((await call({ ...base, action: 'report-payment' })).statusCode, 200)

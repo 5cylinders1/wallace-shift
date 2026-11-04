@@ -212,7 +212,7 @@ test('package requests preserve the selection and include the trusted catalog na
     assert.ok(emailRequests.at(-1).payload.text.includes(`Selected package: ${offer.name}`))
     assert.ok(emailRequests.at(-1).payload.text.includes(`Proposed package price: $${offer.price.toLocaleString('en-US')}`))
     assert.equal(Object.hasOwn(response.body, 'checkoutUrl'), false)
-    const changed = await invoke({ ...body, packageId: packageId === 'inquiry' ? 'notes' : 'inquiry' })
+    const changed = await invoke({ ...body, nextStep: 'consultation', packageId: '' })
     assert.equal(changed.statusCode, 409)
     assert.equal(changed.body.error, 'submission_conflict')
   }
@@ -306,10 +306,10 @@ test('strict fields and consent reject forged or oversized submissions before pe
     { email: 'not-an-email' }, { website: 'https://user:password@example.test' }, { website: 'javascript:alert(1)' },
     { contactMethod: 'call', phone: '' }, { contactMethod: 'call', phone: 'not a phone' },
     { contactMethod: 'email', phone: '123' },
-    { nextStep: 'unknown' }, { nextStep: undefined }, { packageId: 'inquiry' },
+    { nextStep: 'unknown' }, { nextStep: undefined }, { packageId: 'assistant' },
     { nextStep: 'package', packageId: '' }, { nextStep: 'package', packageId: 'invented' },
     { nextStep: 'package', packageId: 'constructor' }, { nextStep: 'package', packageId: '__proto__' },
-    { nextStep: 'package', packageId: 'inquiry', email: '' }, { nextStep: 'package', packageId: 'notes', contactMethod: 'call', phone: '+1 555 555 0100' },
+    { nextStep: 'package', packageId: 'assistant', email: '' }, { nextStep: 'package', packageId: 'assistant', contactMethod: 'call', phone: '+1 555 555 0100' },
     { email: '' }, { packagePrice: 1 },
   ]
   for (const change of invalid) assert.equal((await invoke(application(change))).statusCode, 400, JSON.stringify(change))

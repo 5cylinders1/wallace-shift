@@ -65,6 +65,7 @@ function Widget({ eventUrl, onScheduled, onRetry }: SchedulerProps & { onRetry: 
   const widgetRef = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'slow' | 'failed'>('loading')
   const notifyScheduled = useEffectEvent(onScheduled)
+  const unavailable = status === 'slow' || status === 'failed'
 
   useEffect(() => {
     const container = widgetRef.current
@@ -105,10 +106,13 @@ function Widget({ eventUrl, onScheduled, onRetry }: SchedulerProps & { onRetry: 
 
   return <div aria-label="Consultation calendar" role="region">
     {status === 'loading' && <p className="qf-booking-load-status" role="status">Loading appointment times…</p>}
-    {(status === 'slow' || status === 'failed') && <div className="qf-booking-load-status">
-      <p role="status">{status === 'slow' ? 'The calendar is taking longer than usual to load.' : 'The calendar could not be loaded.'} You can try again or request a phone call above.</p>
-      <button className="qf-text-link" type="button" onClick={onRetry}>Reload calendar</button>
-    </div>}
-    <div ref={widgetRef} className="qf-booking-frame" data-auto-load="false" style={status === 'failed' ? { display: 'none' } : undefined} />
+    {unavailable && <p className="qf-booking-load-status" role="status">
+      {status === 'slow' ? 'The calendar is taking longer than usual to load.' : 'The calendar could not be loaded.'} Your browser or network may be blocking the embedded calendar. Open the booking page in a new tab, try again, or request a phone call above.
+    </p>}
+    <div className="qf-booking-calendar-links">
+      <a className="qf-text-link" href={eventUrl} target="_blank" rel="noopener noreferrer">Open calendar in a new tab</a>
+      {unavailable && <button className="qf-text-link" type="button" onClick={onRetry}>Reload calendar</button>}
+    </div>
+    <div ref={widgetRef} className="qf-booking-frame" data-auto-load="false" style={unavailable ? { display: 'none' } : undefined} />
   </div>
 }

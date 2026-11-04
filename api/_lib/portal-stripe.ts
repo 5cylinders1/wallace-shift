@@ -4,6 +4,8 @@ import { allEngagements, audit, mutateLedger } from './portal-store.js'
 import { automaticInvoice, feeFor, firstUnsettledInvoice, paymentConsent, scheduleConsent, type Engagement, type Invoice } from '../../src/client-portal/model.js'
 import { notifyAiPurchase } from './ai-purchase-notification.js'
 import { requirePortalStripeConfig } from './portal-stripe-config.js'
+import { applySubscriptionPayment, assertSubscriptionCharge } from './ai-subscription.js'
+import { subscriptionPlanAmount } from '../../src/client-portal/ai-subscription.js'
 
 type Params = Record<string, string | number | boolean>
 type Card = { id: string; customer: string; type: string; card?: { funding: string; last4: string; brand: string; country?: string }; billing_details?: { address?: { country?: string; state?: string } } }
@@ -32,12 +34,18 @@ export function surchargeBps(card: Card): number {
   const cap = Number(process.env.PORTAL_SURCHARGE_CAP_BPS ?? 300)
   return Number.isInteger(cost) && Number.isInteger(cap) ? Math.max(0, Math.min(300, cost, cap)) : 0
 }
+function activePaymentRecord(entries: Engagement[], id: string): Engagement {
+  const record = entries.find(entry => entry.id === id)
+  if (!record) throw new DemoError('not_found', 404)
+  if (record.archivedAt) throw new DemoError('agreement_archived', 409)
+  return record
+}
 export async function setupCard(e: Engagement, origin: string): Promise<string> {
   if (!e.signature || !['issued', 'canceled'].includes(e.state)) throw new DemoError('signature_required', 409)
   if (e.invoices.some(i => i.status === 'processing' || (i.status === 'open' && i.attempt))) throw new DemoError('payment_in_progress', 409)
   if (!e.stripeCustomer) {
     const customer = await stripe<{ id: string }>('customers', { email: e.email, name: e.client, 'metadata[engagement]': e.id }, `portal-customer-${e.id}`)
-    await mutateLedger(entries => { const current = entries.find(v => v.id === e.id)!; current.stripeCustomer = customer.id })
+    await mutateLedger(entries => { activePaymentRecord(entries, e.id).stripeCustomer = customer.id })
     e.stripeCustomer = customer.id
   }
   if (e.setup && !e.setup.completed && e.setup.expiresAt > Date.now() / 1000) {
@@ -51,7 +59,7 @@ export async function setupCard(e: Engagement, origin: string): Promise<string> 
     'custom_text[submit][message]': 'Save your card securely. Return to Wallace Shift to review the exact total and authorize payment. Saving a card does not authorize a charge.',
     success_url: `${origin}/client-portal?engagement=${e.id}&setup={CHECKOUT_SESSION_ID}`, cancel_url: `${origin}/client-portal?engagement=${e.id}`,
   }, `portal-setup-${e.id}-${randomUUID()}`)
-  await mutateLedger(entries => { const current = entries.find(v => v.id === e.id)!; current.setup = { id: session.id, expiresAt: session.expires_at } })
+  await mutateLedger(entries => { activePaymentRecord(entries, e.id).setup = { id: session.id, expiresAt: session.expires_at } })
   return session.url
 }
 export async function finishSetup(e: Engagement, sessionId: string): Promise<void> {
@@ -62,11 +70,12 @@ export async function finishSetup(e: Engagement, sessionId: string): Promise<voi
   const setup = await stripe<{ status: string; customer: string; payment_method: string }>(`setup_intents/${session.setup_intent}`)
   if (setup.status !== 'succeeded' || setup.customer !== e.stripeCustomer) throw new DemoError('invalid_setup', 400)
   await mutateLedger(entries => {
-    const current = entries.find(v => v.id === e.id)!
+    const current = activePaymentRecord(entries, e.id)
     if (current.setup?.id !== sessionId || current.invoices.some(i => (i.status === 'open' && i.attempt) || i.status === 'processing')) throw new DemoError('conflict_retry', 409)
     if (current.setup.completed) return
     current.paymentMethod = setup.payment_method
     current.autopay = undefined // A changed card always requires fresh authorization.
+    if (current.aiSubscription) current.aiSubscription.renewalAuthorized = false
     current.setup.completed = true
     audit(current, e.email, 'Payment method saved; payment authorization required')
   })
@@ -75,10 +84,11 @@ export async function quote(e: Engagement, invoice?: Invoice) {
   if (!e.paymentMethod) throw new DemoError('card_required', 409)
   const card = await stripe<Card>(`payment_methods/${e.paymentMethod}`)
   if (card.customer !== e.stripeCustomer || card.type !== 'card') throw new DemoError('invalid_card', 409)
-  const bps = surchargeBps(card)
-  const amount = invoice?.amount ?? e.amount
+  const bps = e.aiSubscription ? 0 : surchargeBps(card)
+  const recurringAmount = e.aiSubscription ? subscriptionPlanAmount(e.aiSubscription.pendingPlan?.plan ?? e.aiSubscription.plan) : e.amount
+  const amount = invoice?.amount ?? recurringAmount
   const fee = feeFor(amount, bps)
-  return { bps, fee, total: amount + fee, invoiceId: invoice?.id, recurringTotal: e.amount + feeFor(e.amount, bps), initialTotal: e.initialPayment ? e.initialPayment.amount + feeFor(e.initialPayment.amount, bps) : undefined, card: `${card.card?.brand ?? 'Card'} ending ${card.card?.last4 ?? ''}` }
+  return { bps, fee, total: amount + fee, invoiceId: invoice?.id, recurringTotal: recurringAmount + feeFor(recurringAmount, bps), initialTotal: e.initialPayment ? e.initialPayment.amount + feeFor(e.initialPayment.amount, bps) : undefined, card: `${card.card?.brand ?? 'Card'} ending ${card.card?.last4 ?? ''}` }
 }
 export async function reconcileIntent(intent: Intent): Promise<void> {
   const paidProjectId = await mutateLedger(entries => {
@@ -89,6 +99,7 @@ export async function reconcileIntent(intent: Intent): Promise<void> {
     invoice.paymentIntent = intent.id
     invoice.fee = invoice.attempt.fee
     invoice.method = 'stripe'
+    if (e.aiSubscription && invoice.subscriptionPeriod && invoice.subscriptionPeriod.start === e.aiSubscription.nextDue) e.aiSubscription.paymentStatus = intent.status
     invoice.refunded = intent.latest_charge?.amount_refunded ?? invoice.refunded ?? 0
     invoice.disputed = intent.latest_charge?.disputed ?? invoice.disputed ?? false
     if (intent.status === 'succeeded' && invoice.status !== 'paid') {
@@ -97,6 +108,7 @@ export async function reconcileIntent(intent: Intent): Promise<void> {
       audit(e, 'Stripe', `Payment received for ${invoice.id}`)
     } else if (invoice.status !== 'paid') invoice.status = intent.status === 'canceled' ? 'open' : 'processing'
     if (intent.status === 'canceled') { invoice.attempt = undefined; invoice.paymentIntent = undefined }
+    if (intent.status === 'succeeded') applySubscriptionPayment(e, invoice)
     return intent.status === 'succeeded' && invoice.status === 'paid' && e.selfService ? e.id : undefined
   })
   if (paidProjectId) {
@@ -105,14 +117,16 @@ export async function reconcileIntent(intent: Intent): Promise<void> {
   }
 }
 export async function charge(e: Engagement, invoice: Invoice, origin: string, automatic: boolean, expectedFee?: number): Promise<Intent> {
+  assertSubscriptionCharge(e, invoice, undefined, automatic)
   if (!e.signature || !['issued', 'canceled'].includes(e.state) || !e.paymentMethod || (automatic && e.state !== 'issued')) throw new DemoError('payment_not_ready', 409)
   const currentQuote = await quote(e, invoice)
   if (expectedFee !== undefined && expectedFee !== currentQuote.fee) throw new DemoError('quote_changed', 409)
   const attempt = await mutateLedger(entries => {
-    const current = entries.find(v => v.id === e.id)!
+    const current = activePaymentRecord(entries, e.id)
     const item = current.invoices.find(v => v.id === invoice.id)!
+    assertSubscriptionCharge(current, item, undefined, automatic)
     if (!current.signature || !['issued', 'canceled'].includes(current.state) || (automatic && current.state !== 'issued') || !current.paymentMethod || current.paymentMethod !== e.paymentMethod || (item.status !== 'open' && item.status !== 'processing')) throw new DemoError('payment_not_ready', 409)
-    if (firstUnsettledInvoice(current)?.id !== item.id) throw new DemoError('earlier_invoice_required', 409)
+    if (!item.subscriptionCredit && firstUnsettledInvoice(current, Boolean(current.aiSubscription && item.subscriptionPeriod))?.id !== item.id) throw new DemoError('earlier_invoice_required', 409)
     if (automatic && (!automaticInvoice(current, item) || item.due > new Date().toISOString().slice(0, 10))) throw new DemoError('payment_not_ready', 409)
     if (automatic && (!current.autopay?.enabled || currentQuote.bps > current.autopay.feeBps || (current.initialPayment && current.autopay.agreementHash !== current.agreementHash))) throw new DemoError('authorization_required', 409)
     if (!item.attempt) {
@@ -125,6 +139,16 @@ export async function charge(e: Engagement, invoice: Invoice, origin: string, au
   let intent: Intent
   if (attempt.paymentIntent) intent = await stripe<Intent>(`payment_intents/${attempt.paymentIntent}?expand[]=latest_charge`)
   else {
+    if (e.aiSubscription) {
+      // Cancellation can arrive after the atomic reservation while this worker
+      // is still preparing the request. Recheck before submitting a new intent.
+      // Keep the reservation: another worker may already have submitted the
+      // same idempotency key, and its eventual Stripe result must reconcile.
+      const latest = (await allEngagements()).find(item => item.id === e.id)
+      const latestInvoice = latest?.invoices.find(item => item.id === invoice.id)
+      if (!latest || !latestInvoice || latest.archivedAt) throw new DemoError('payment_not_ready', 409)
+      assertSubscriptionCharge(latest, latestInvoice, undefined, automatic)
+    }
     // Stripe may prune idempotency keys after 24h. Never recreate an uncertain charge after that window.
     if (Date.now() - Date.parse(attempt.startedAt) > 23 * 3600000) throw new DemoError('payment_needs_reconciliation', 409)
     intent = await stripe<Intent>('payment_intents', {
@@ -150,7 +174,11 @@ export async function resetFailedPayment(e: Engagement, invoice: Invoice): Promi
   if (!['requires_payment_method', 'requires_action', 'canceled'].includes(intent.status)) throw new DemoError('payment_in_progress', 409)
   if (intent.status !== 'canceled') await stripe(`payment_intents/${intent.id}/cancel`, {}, `portal-cancel-${intent.id}`)
   await reconcileIntent({ ...intent, status: 'canceled' })
-  await mutateLedger(entries => { const current = entries.find(v => v.id === e.id)!; current.autopay = undefined })
+  await mutateLedger(entries => {
+    const current = entries.find(v => v.id === e.id)!
+    if (!current.archivedAt) current.autopay = undefined
+    if (current.aiSubscription) current.aiSubscription.renewalAuthorized = false
+  })
 }
 export function verifyWebhook(raw: string, header: string, secret: string, now = Date.now()): void {
   const parts = header.split(',').map(part => part.split('='))

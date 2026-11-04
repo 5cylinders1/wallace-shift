@@ -19,9 +19,10 @@ const sample = {
   invoices: [{ id: 'SAMPLE-001', due: today, amount: 240000, fee: 0, status: 'open' }], audit: [{ at: new Date().toISOString(), actor: 'Sample owner', action: 'Sample agreement issued' }], hasCard: true,
 }
 let loggedIn = false, admin = false, record = structuredClone(sample), sent = []
+await page.route('**/api/ai-booking?*', route => route.fulfill({ json: { ok: true, configured: false, connected: false } }))
 await page.route('**/api/client-portal', async route => {
   const request = route.request(); let result = { ok: true }
-  if (request.method() === 'GET') result = { ...result, authenticated: loggedIn, admin, email: admin ? 'owner@example.test' : sample.email, engagements: loggedIn ? [record] : [], stripeReady: true, publishableKey: 'pk_test_fake', instructions: { zelle: 'Sample instructions only. Do not send money.', cash: 'Sample pickup arrangement.', check: 'Sample payee details.' } }
+  if (request.method() === 'GET') result = { ...result, authenticated: loggedIn, admin, email: admin ? 'owner@example.test' : sample.email, engagements: loggedIn && (admin || !record.archivedAt) ? [record] : [], stripeReady: true, publishableKey: 'pk_test_fake', instructions: { zelle: 'Sample instructions only. Do not send money.', cash: 'Sample pickup arrangement.', check: 'Sample payee details.' } }
   else {
     const body = request.postDataJSON(); sent.push(body)
     if (body.action === 'verify-code') loggedIn = true
@@ -33,6 +34,12 @@ await page.route('**/api/client-portal', async route => {
     if (body.action === 'authorize') { assert.equal(body.consent, true); record.autopay = { enabled: true, feeBps: 300 }; result.scheduled = true }
     if (body.action === 'report-payment') { record.invoices[0].method = body.method; record.invoices[0].reference = body.reference; record.invoices[0].reportedAt = new Date().toISOString() }
     if (body.action === 'record-payment') { assert.equal(body.confirmed, true); record.invoices[0].status = 'paid'; record.invoices[0].paidAt = new Date().toISOString() }
+    if (body.action === 'archive' || body.action === 'restore') {
+      assert.equal(admin, true)
+      assert.equal(body.id, record.id)
+      if (body.action === 'archive') record.archivedAt = new Date().toISOString()
+      else delete record.archivedAt
+    }
     if (body.action === 'create') { assert.equal(body.cadence, 'monthly'); assert.equal(body.amount, 45000); assert.deepEqual(body.initialPayment, { amount: 120000, due: today }); assert.equal(body.firstDue, '2099-01-31'); assert.equal(body.endDate, '2099-04-30'); record = { ...record, ...body, state: 'draft', signature: undefined, invoices: [] }; result.id = record.id }
     if (body.action === 'issue') { record.state = 'issued'; record.issueEmail = { id: 'sample-mail', state: 'failed', startedAt: new Date().toISOString() }; result.emailStatus = 'failed' }
     if (body.action === 'retry-issue-email') { record.issueEmail.state = 'sent'; record.issueEmail.sentAt = new Date().toISOString(); result.emailStatus = 'sent' }
@@ -77,6 +84,24 @@ try {
   await page.getByRole('checkbox').check()
   await page.getByRole('button', { name: 'Confirm receipt & mark paid' }).click()
   await page.getByRole('button', { name: 'Download receipt' }).waitFor()
+  const archiveButton = page.getByRole('button', { name: 'Archive agreement', exact: true })
+  await archiveButton.click()
+  await page.getByRole('heading', { name: `Archive “${sample.title}” for ${sample.client}?` }).waitFor()
+  await page.getByRole('button', { name: 'Keep agreement' }).click()
+  assert.equal(sent.some(action => action.action === 'archive'), false)
+  await archiveButton.click()
+  await page.getByRole('button', { name: 'Confirm archive' }).click()
+  await page.getByRole('heading', { name: 'No current agreements.' }).waitFor()
+  await page.reload()
+  await page.getByRole('button', { name: 'Archived', exact: true }).click()
+  await page.getByRole('button', { name: 'Download receipt' }).waitFor()
+  await page.getByRole('button', { name: 'Agreement & signature' }).click()
+  await page.getByText('Signed by Sample Signer', { exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Download signed copy' }).waitFor()
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'Archived agreement must fit mobile')
+  await page.getByRole('button', { name: 'Restore agreement' }).click()
+  await archiveButton.waitFor()
+  assert.equal(await page.getByRole('button', { name: 'Current', exact: true }).getAttribute('aria-pressed'), 'true')
   await page.getByRole('button', { name: 'New agreement', exact: true }).click()
   await page.getByLabel('Client or legal business name').fill('New sample client')
   await page.getByLabel('Client email', { exact: true }).fill('new@example.test')
@@ -146,7 +171,7 @@ try {
     }
   }
   assert.deepEqual(errors, [])
-  console.log(JSON.stringify({ passed: true, scope: 'Mocked sample records; no payments or emails sent', screenshots: output, checked: ['sign in', 'signature and download', 'fee disclosure and consent gate', 'offline pending state', 'owner receipt confirmation', 'issue invoice email failure and retry', 'separate initial and recurring terms', 'optional initial payment', 'recurring end date', 'per invoice quote and consent', 'future automatic payment authorization', '390px overflow', 'browser runtime errors'] }, null, 2))
+  console.log(JSON.stringify({ passed: true, scope: 'Mocked sample records; no payments or emails sent', screenshots: output, checked: ['sign in', 'signature and download', 'fee disclosure and consent gate', 'offline pending state', 'owner receipt confirmation', 'archive and restore a signed agreement', 'issue invoice email failure and retry', 'separate initial and recurring terms', 'optional initial payment', 'recurring end date', 'per invoice quote and consent', 'future automatic payment authorization', '390px overflow', 'browser runtime errors'] }, null, 2))
 } catch (error) {
   await page.screenshot({ path: `${output}/failure.png`, fullPage: true })
   console.error(JSON.stringify({ errors, failedRequests, body: (await page.locator('body').innerText()).slice(0, 2500), html: (await page.content()).slice(0, 2500) }))

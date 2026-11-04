@@ -3,13 +3,17 @@ import { timingSafeEqual } from 'node:crypto'
 import { DemoError, demoJson, nodeDemoOrigin, nodeHeader } from './demo-access.js'
 import { identity, login, type Identity } from './portal-auth.js'
 import { allEngagements, audit, billingKey, getValue, mutateLedger, setValue } from './portal-store.js'
-import { accessible, changeLedger, draft, field, generateDueInvoices } from './portal-ledger.js'
+import { accessible, canAccess, changeLedger, draft, field, generateDueInvoices } from './portal-ledger.js'
 import { charge, finishSetup, handleStripeEvent, quote, refreshPayments, resetFailedPayment, setupCard } from './portal-stripe.js'
 import { automaticInvoice, firstUnsettledInvoice, scheduleConsent } from '../../src/client-portal/model.js'
 import type { Engagement } from '../../src/client-portal/model.js'
 import { issueAndEmail } from './portal-email.js'
 import { retryAiPurchaseNotifications } from './ai-purchase-notification.js'
 import { portalStripeConfig, requirePortalStripeConfig } from './portal-stripe-config.js'
+import { purchasePhoneCredit } from './ai-subscription-topup.js'
+import { processPhoneCreditRefunds } from './ai-subscription-refund.js'
+import { changeAiSubscription, requireServiceGateway, serviceGatewayAction, subscriptionEntitlement } from './ai-subscription.js'
+import { subscriptionPreview, subscriptionView } from '../../src/client-portal/ai-subscription.js'
 
 export const config = { maxDuration: 60, api: { bodyParser: false } }
 async function rawBody(req: IncomingMessage, requireRaw = false): Promise<string> {
@@ -53,11 +57,17 @@ function clientView(e: Engagement, who: Identity): unknown {
     delete view.selfService.ownerNotification.attemptToken
     delete view.selfService.ownerNotification.leaseUntil
   }
-  if (who.admin) return view
+  const subscriptionDetails = e.aiSubscription ? { subscriptionPreview: subscriptionPreview(e.aiSubscription), subscriptionView: subscriptionView(e.aiSubscription) } : {}
+  // Usage deduplication identifiers and gateway references are operational details.
+  if (view.aiSubscription) {
+    view.aiSubscription.usage.forEach(period => { delete period.events })
+    if (!who.admin && view.aiSubscription.readiness) view.aiSubscription.readiness.reference = ''
+  }
+  if (who.admin) return { ...view, ...subscriptionDetails }
   delete view.issueEmail
   delete view.stripeCustomer; delete view.paymentMethod; delete view.setup
   view.invoices.forEach(invoice => { delete invoice.attempt })
-  return { ...view, hasCard: Boolean(e.paymentMethod) }
+  return { ...view, ...subscriptionDetails, hasCard: Boolean(e.paymentMethod) }
 }
 async function runBilling(origin: string): Promise<{ generated: number; attempted: number; failed: string[] }> {
   requirePortalStripeConfig()
@@ -73,7 +83,7 @@ async function runBilling(origin: string): Promise<{ generated: number; attempte
     if (Date.now() - started > 28000) break
     // Settle the initial invoice before recurring service, including when both fall on the same date.
     for (let current = e; Date.now() - started <= 28000;) {
-      const invoice = firstUnsettledInvoice(current)
+      const invoice = firstUnsettledInvoice(current, Boolean(current.aiSubscription))
       if (!invoice || invoice.status !== 'open' || invoice.attempt || invoice.due > today || !automaticInvoice(current, invoice, today)) break
       try {
         const intent = await charge(current, invoice, origin, true); attempted++
@@ -83,6 +93,11 @@ async function runBilling(origin: string): Promise<{ generated: number; attempte
     }
     await setValue(billingKey('billing-cursor'), e.id, 7 * 86400)
   }
+  // One processor request fits within the same 60s function budget. An uncertain
+  // refund remains reserved and is reconciled with its original idempotency key.
+  if (Date.now() - started < 28000) {
+    try { await processPhoneCreditRefunds({ maxAttempts: 1, budgetMs: 28000 - (Date.now() - started) }) } catch { failed.push('phone-credit-refunds') }
+  }
   // Failed email does not affect billing. The paid project itself is already durable.
   try { await retryAiPurchaseNotifications(Math.min(16000, Math.max(0, 48000 - (Date.now() - started)))) } catch { /* Retry on the next protected cron run. */ }
   return { generated, attempted, failed }
@@ -90,6 +105,19 @@ async function runBilling(origin: string): Promise<{ generated: number; attempte
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
   try {
     const url = new URL(req.url ?? '/', 'http://local.invalid')
+    if (url.searchParams.get('action') === 'service-gateway') {
+      requireServiceGateway(nodeHeader(req, 'authorization'))
+      if (req.method === 'GET') {
+        const e = (await allEngagements()).find(item => item.id === url.searchParams.get('id') && item.aiSubscription)
+        if (!e) throw new DemoError('not_found', 404)
+        demoJson(res, 200, { ok: true, ...subscriptionEntitlement(e) }); return
+      }
+      if (req.method !== 'POST') throw new DemoError('method_not_allowed', 405)
+      const body = JSON.parse(await rawBody(req)) as Record<string, unknown>
+      if (!body || typeof body !== 'object' || Array.isArray(body)) throw new DemoError('invalid_fields', 400)
+      const result = await mutateLedger(entries => serviceGatewayAction(entries, body))
+      demoJson(res, 200, { ok: true, ...result }); return
+    }
     if (url.searchParams.get('action') === 'webhook') {
       if (req.method !== 'POST') throw new DemoError('method_not_allowed', 405)
       await handleStripeEvent(await rawBody(req, true), nodeHeader(req, 'stripe-signature') ?? '')
@@ -113,7 +141,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const who = await identity(req)
     if (req.method === 'GET') {
       if (!who) { demoJson(res, 200, { ok: true, authenticated: false }); return }
-      const entries = (await allEngagements()).filter(e => (!who.engagementId || who.engagementId === e.id) && (who.admin || (e.email === who.email && e.state !== 'draft')))
+      const entries = (await allEngagements()).filter(e => canAccess(e, who))
       const stripeConfig = portalStripeConfig()
       demoJson(res, 200, { ok: true, authenticated: true, ...who, engagements: entries.map(e => clientView(e, who)),
         stripeReady: Boolean(stripeConfig),
@@ -133,6 +161,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       demoJson(res, 200, { ok: true, emailStatus }); return
     }
     const e = accessible(await allEngagements(), body.id, who)
+    if (body.action === 'subscription-topup') { demoJson(res, 200, await purchasePhoneCredit(body, who, origin)); return }
+    if (String(body.action).startsWith('subscription-')) {
+      if (!e.aiSubscription) throw new DemoError('not_found', 404)
+      if (['subscription-start', 'subscription-authorize', 'subscription-change-plan'].includes(String(body.action))) await quote(e)
+      await mutateLedger(entries => {
+        const current = accessible(entries, e.id, who)
+        if (current.paymentMethod !== e.paymentMethod) throw new DemoError('subscription_preview_changed', 409)
+        changeAiSubscription(entries, body, who)
+      })
+      demoJson(res, 200, { ok: true }); return
+    }
     if (['setup-card', 'finish-setup', 'quote', 'pay', 'authorize', 'reset-payment'].includes(String(body.action)) && who.admin) throw new DemoError('client_authorization_required', 403)
     if (body.action === 'setup-card') { demoJson(res, 200, { ok: true, url: await setupCard(e, origin) }); return }
     if (body.action === 'finish-setup') { await finishSetup(e, field(body.sessionId)); demoJson(res, 200, { ok: true }); return }
@@ -141,7 +180,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (body.invoiceId !== undefined && !invoice) throw new DemoError('not_found', 404)
       demoJson(res, 200, { ok: true, quote: await quote(e, invoice) }); return
     }
-    if (body.action === 'refresh') { await refreshPayments(e); demoJson(res, 200, { ok: true }); return }
+    if (body.action === 'refresh') { await refreshPayments(e); if (e.aiSubscription) await processPhoneCreditRefunds({ engagementId: e.id, maxAttempts: 1 }); demoJson(res, 200, { ok: true }); return }
     if (body.action === 'reset-payment') {
       const invoice = e.invoices.find(i => i.id === body.invoiceId)
       if (!invoice) throw new DemoError('not_found', 404)
@@ -150,6 +189,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (body.action === 'pay' || body.action === 'authorize') {
       if (body.consent !== true || !e.signature || !['issued', 'canceled'].includes(e.state)) throw new DemoError('authorization_required', 409)
       const invoice = e.invoices.find(i => i.id === body.invoiceId)
+      // The dedicated start/reauthorize actions bind the free-month dates and
+      // subscription terms. Generic authorization must not start one early.
+      if (e.aiSubscription && (body.action === 'authorize' || !invoice || (!invoice.subscriptionPeriod && !invoice.subscriptionCredit))) throw new DemoError('subscription_authorization_required', 409)
       const quoted = await quote(e, invoice)
       if (body.total !== quoted.total) throw new DemoError('quote_changed', 409)
       const today = new Date().toISOString().slice(0, 10)
@@ -157,10 +199,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (automatic && e.initialPayment && (body.recurringTotal !== quoted.recurringTotal || body.initialTotal !== quoted.initialTotal)) throw new DemoError('quote_changed', 409)
       const scheduleOnly = body.action === 'authorize' && automatic && !e.invoices.some(i => i.status === 'open' || i.status === 'processing') && e.nextDue && (!e.endDate || e.nextDue <= e.endDate)
       if (!scheduleOnly && (!invoice || !['open', 'processing'].includes(invoice.status))) throw new DemoError('invoice_not_open', 409)
-      if (!scheduleOnly && firstUnsettledInvoice(e)?.id !== invoice!.id) throw new DemoError('earlier_invoice_required', 409)
+      if (!scheduleOnly && !invoice!.subscriptionCredit && firstUnsettledInvoice(e, Boolean(e.aiSubscription && invoice!.subscriptionPeriod))?.id !== invoice!.id) throw new DemoError('earlier_invoice_required', 409)
       if (automatic) await mutateLedger(entries => {
         const current = accessible(entries, e.id, who)
         if (current.state !== 'issued' || current.paymentMethod !== e.paymentMethod) throw new DemoError('conflict_retry', 409)
+        if (current.aiSubscription && (!current.autopay?.enabled || current.autopay.agreementHash !== current.agreementHash)) throw new DemoError('subscription_authorization_required', 409)
         current.autopay = { enabled: true, at: new Date().toISOString(), feeBps: quoted.bps, agreementHash: current.agreementHash, consent: scheduleConsent(current, quoted.bps) }
         audit(current, who.email, 'Automatic payment authorization recorded')
       })

@@ -23,13 +23,28 @@
 .qf-walkthrough-purchase strong { font-weight: 600; font-size: 1.65rem; font-variant-numeric: tabular-nums; }
 .qf-walkthrough-purchase span { color: var(--color-muted-on-bone); font-size: .8rem; }
 .qf-walkthrough-cancellation { margin-top: 28px; border-top: 1px solid #c4cfd5; padding-top: 24px; font-size: .9rem; line-height: 1.7; max-width: 75ch; }
+.qf-walkthrough-package--subscription { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); }
+.qf-subscription-plans { display: grid; gap: 10px; min-width: 0; border: 0; padding: 0; margin: 0; }
+.qf-subscription-plans legend { margin-bottom: 12px; font-size: .84rem; font-weight: 600; line-height: 1.5; }
+.qf-subscription-plan { display: flex; gap: 12px; align-items: flex-start; border: 1px solid #a7b7c3; border-radius: 6px; padding: 14px; cursor: pointer; }
+.qf-subscription-plan.is-selected { border-color: var(--color-accent-deep); background: #fff; box-shadow: inset 0 0 0 1px var(--color-accent-deep); }
+.qf-subscription-plan:focus-within { outline: 2px solid var(--color-accent-deep); outline-offset: 3px; }
+.qf-subscription-plan input { flex: 0 0 auto; margin-top: 5px; accent-color: var(--color-accent-deep); }
+.qf-subscription-plan > span { display: grid; gap: 4px; }
+.qf-subscription-plan strong { color: var(--color-ink); font-size: .95rem; line-height: 1.4; font-weight: 600; }
+.qf-subscription-plan span span { font-size: .78rem; line-height: 1.5; color: var(--color-muted-on-bone); }
+.qf-subscription-purchase .qf-subscription-trial strong { font-size: 1.35rem; }
+.qf-subscription-purchase .qf-subscription-activation-note { display: block; color: var(--color-muted-on-bone); font-size: .78rem; line-height: 1.6; }
 @media (max-width: 680px) {
   .qf-walkthrough-package { grid-template-columns: 1fr; gap: 20px; }
   .qf-walkthrough-purchase { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
   .qf-walkthrough-purchase .ao-button { max-width: 240px; }
+  .qf-subscription-purchase { flex-direction: column; align-items: stretch; }
+  .qf-subscription-purchase .ao-button { max-width: none; }
 }
 @media (max-width: 420px) {
   .qf-walkthrough-purchase { align-items: stretch; flex-direction: column; }
   .qf-walkthrough-purchase p { display: flex; justify-content: space-between; align-items: baseline; }
   .qf-walkthrough-purchase .ao-button { max-width: none; width: 100%; }
+  .qf-subscription-purchase .qf-subscription-trial { display: grid; }
 }

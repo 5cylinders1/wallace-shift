@@ -35,6 +35,7 @@ export async function issueAndEmail(id: unknown, who: Identity, origin: string, 
   if (!key || !from || /[\r\n]/.test(from)) throw new DemoError('invoice_email_not_configured', 503)
   const email = await mutateLedger(entries => {
     const e = accessible(entries, id, who)
+    if (e.archivedAt) throw new DemoError('agreement_archived', 409)
     if (e.state === 'draft' && !retryOnly) changeLedger(entries, { action: 'issue', id }, who)
     if (e.state !== 'issued') throw new DemoError('already_issued', 409)
     if (!e.issueEmail) {

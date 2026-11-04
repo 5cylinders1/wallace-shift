@@ -5,7 +5,8 @@ import ts from 'typescript'
 
 const compile = source => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2023, module: ts.ModuleKind.ESNext } }).outputText
 const url = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
-const schemaUrl = url(compile(await readFile(new URL('../src/content/aiOffer.ts', import.meta.url), 'utf8')))
+const subscriptionUrl = url(compile(await readFile(new URL('../src/content/aiSubscriptionOffer.ts', import.meta.url), 'utf8')))
+const schemaUrl = url(compile(await readFile(new URL('../src/content/aiOffer.ts', import.meta.url), 'utf8')).replaceAll("'./aiSubscriptionOffer.js'", `'${subscriptionUrl}'`))
 const { aiOffer, aiPackages, recommendAiOpportunity, routeAiOpportunity, isAiBookingQualified, qualificationSteps, workflowOptions, roleOptions, revenueOptions, weeklyHoursOptions, impactOptions, budgetOptions, timingOptions } = await import(schemaUrl)
 const adapter = compile(await readFile(new URL('../src/lib/aiOpportunityAdapter.ts', import.meta.url), 'utf8'))
 const { submitAiOpportunity, validateAiOpportunity, normalizeAiOpportunity, createAiOpportunityPayload, initialAiOpportunityValues } = await import(url(adapter.replaceAll("'../content/aiOffer'", `'${schemaUrl}'`)))
@@ -96,21 +97,21 @@ test('package selection uses the shared catalog and requires an email contact', 
   for (const packageId of Object.keys(aiPackages)) {
     assert.deepEqual(validateAiOpportunity({ ...valid, nextStep: 'package', packageId }, 'contact'), {})
   }
-  for (const packageId of ['', 'invented', 'constructor', '__proto__']) {
+  for (const packageId of ['', 'inquiry', 'notes', 'invented', 'constructor', '__proto__']) {
     assert.ok(validateAiOpportunity({ ...valid, nextStep: 'package', packageId }, 'contact').packageId)
   }
-  assert.ok(validateAiOpportunity({ ...valid, nextStep: 'package', packageId: 'inquiry', email: '' }, 'contact').email)
-  assert.ok(validateAiOpportunity({ ...valid, nextStep: 'package', packageId: 'notes', contactMethod: 'call', phone: '+1 555 555 0100' }, 'contact').contactMethod)
+  assert.ok(validateAiOpportunity({ ...valid, nextStep: 'package', packageId: 'assistant', email: '' }, 'contact').email)
+  assert.ok(validateAiOpportunity({ ...valid, nextStep: 'package', packageId: 'assistant', contactMethod: 'call', phone: '+1 555 555 0100' }, 'contact').contactMethod)
   assert.ok(validateAiOpportunity({ ...valid, nextStep: 'unknown' }, 'contact').nextStep)
-  assert.ok(validateAiOpportunity({ ...valid, packageId: 'inquiry' }, 'contact').packageId)
+  assert.ok(validateAiOpportunity({ ...valid, packageId: 'assistant' }, 'contact').packageId)
 })
 
 test('changing conversion paths clears hidden package or phone details without changing quiz answers', () => {
-  const packageValues = { ...valid, nextStep: 'package', packageId: 'inquiry', contactMethod: 'call', phone: '+1 555 555 0100' }
+  const packageValues = { ...valid, nextStep: 'package', packageId: 'assistant', contactMethod: 'call', phone: '+1 555 555 0100' }
   const selected = normalizeAiOpportunity(packageValues)
   assert.equal(selected.contactMethod, 'email')
   assert.equal(selected.phone, '')
-  assert.equal(selected.packageId, 'inquiry')
+  assert.equal(selected.packageId, 'assistant')
   assert.equal(packageValues.phone, '+1 555 555 0100')
   assert.deepEqual(selected.workflows, valid.workflows)
   const consultation = normalizeAiOpportunity({ ...packageValues, nextStep: 'consultation' })
@@ -119,7 +120,7 @@ test('changing conversion paths clears hidden package or phone details without c
   assert.equal(consultation.phone, '+1 555 555 0100')
   const built = createAiOpportunityPayload(packageValues, payload.submissionId)
   assert.equal(built.nextStep, 'package')
-  assert.equal(built.packageId, 'inquiry')
+  assert.equal(built.packageId, 'assistant')
   assert.equal(built.contactMethod, 'email')
   assert.equal(built.phone, '')
 })
@@ -239,8 +240,8 @@ test('unresolved scope goes to consultation and AI history changes guidance with
   assert.equal(result.barrierGuidance.length, 2)
   assert.match(result.barrierGuidance[0], /review/)
   assert.match(result.barrierGuidance[1], /information/)
-  assert.equal(recommendAiOpportunity({ ...valid, workflows: ['inquiries'] }).packageId, 'inquiry')
-  assert.equal(recommendAiOpportunity(valid).packageId, 'notes')
+  assert.equal(recommendAiOpportunity({ ...valid, workflows: ['inquiries'] }).packageId, 'assistant')
+  assert.equal(recommendAiOpportunity(valid).packageId, 'assistant')
   assert.deepEqual(recommendAiOpportunity({ ...valid, currentTools: '' }), recommendAiOpportunity(valid))
   assert.equal(recommendAiOpportunity(initialAiOpportunityValues).kind, 'consultation')
 })
