@@ -3,7 +3,9 @@ import { DemoError, normalizeDemoEmail } from './demo-access.js'
 import { hash, type Identity } from './portal-auth.js'
 import { audit } from './portal-store.js'
 import { starterAgreement } from '../../src/client-portal/agreement.js'
-import { SIGNATURE_CONSENT, createInvoice, nextDueDate, type Cadence, type Engagement, type OfflineMethod } from '../../src/client-portal/model.js'
+import { SIGNATURE_CONSENT, createInvoice, nextDueDate, visibleToClient, type Cadence, type Engagement, type OfflineMethod } from '../../src/client-portal/model.js'
+import { changeAiSubscription, generateSubscriptionInvoice } from './ai-subscription.js'
+import { subscriptionView } from '../../src/client-portal/ai-subscription.js'
 
 export function field(value: unknown, max = 200): string {
   if (typeof value !== 'string' || !value.trim() || value.length > max || [...value].some(c => c.charCodeAt(0) < 32 && !['\n', '\r', '\t'].includes(c))) throw new DemoError('invalid_fields', 400)
@@ -17,7 +19,7 @@ function dateField(value: unknown): string {
 export function draft(body: Record<string, unknown>, actor: string): Engagement {
   const amount = Number(body.amount)
   const cadence = body.cadence as Cadence
-  if (!Number.isSafeInteger(amount) || amount < 50 || amount > 100_000_000 || !['once', 'monthly', 'quarterly', 'yearly'].includes(cadence)) throw new DemoError('invalid_amount', 400)
+  if (!Number.isSafeInteger(amount) || amount < 50 || amount > 100_000_000 || !['once', 'monthly', 'quarterly', 'six_months', 'yearly'].includes(cadence)) throw new DemoError('invalid_amount', 400)
   const e: Engagement = {
     id: randomUUID(), revision: 1, createdAt: new Date().toISOString(), client: field(body.client), email: normalizeDemoEmail(body.email), title: field(body.title),
     scope: field(body.scope, 10000), exclusions: field(body.exclusions, 5000), delivery: field(body.delivery, 5000), amount, cadence,
@@ -35,18 +37,46 @@ export function draft(body: Record<string, unknown>, actor: string): Engagement 
   audit(e, actor, 'Draft created')
   return e
 }
+export function canAccess(e: Engagement, who: Identity): boolean {
+  return (!who.engagementId || who.engagementId === e.id) && (who.admin || (e.email === who.email && visibleToClient(e)))
+}
 export function accessible(entries: Engagement[], id: unknown, who: Identity): Engagement {
-  const e = entries.find(v => v.id === id && (!who.engagementId || who.engagementId === v.id) && (who.admin || (v.email === who.email && v.state !== 'draft')))
+  const e = entries.find(v => v.id === id && canAccess(v, who))
   if (!e) throw new DemoError('not_found', 404)
   return e
 }
 export function changeLedger(entries: Engagement[], body: Record<string, unknown>, who: Identity): void {
   const e = accessible(entries, body.id, who)
   const action = body.action
-  if (['issue', 'complete', 'record-payment', 'void'].includes(String(action)) && !who.admin) throw new DemoError('forbidden', 403)
+  if (['archive', 'restore', 'issue', 'complete', 'record-payment', 'void'].includes(String(action)) && !who.admin) throw new DemoError('forbidden', 403)
+  if (e.aiSubscription && !e.archivedAt && (action === 'archive' || action === 'complete')) {
+    const expiresAt = subscriptionView(e.aiSubscription).accessExpiresAt
+    if (expiresAt && Date.parse(expiresAt) > Date.now()) throw new DemoError('subscription_service_active', 409)
+  }
+  if (action === 'archive') {
+    if (e.archivedAt) return
+    if (e.invoices.some(i => i.status === 'processing' || (i.status === 'open' && i.attempt))) throw new DemoError('payment_in_progress', 409)
+    e.archivedAt = new Date().toISOString()
+    if (e.autopay) e.autopay.enabled = false
+    if (e.aiSubscription) e.aiSubscription.renewalAuthorized = false
+    audit(e, who.email, 'Agreement archived and automatic billing stopped')
+    return
+  }
+  if (action === 'restore') {
+    if (!e.archivedAt) return
+    delete e.archivedAt
+    if (e.aiSubscription) {
+      e.aiSubscription.renewalAuthorized = false
+      if (e.autopay) e.autopay.enabled = false
+    }
+    audit(e, who.email, 'Agreement restored from archive')
+    return
+  }
+  if (e.archivedAt) throw new DemoError('agreement_archived', 409)
   if (action === 'issue' && who.admin) {
     if (e.state !== 'draft') throw new DemoError('already_issued', 409)
     e.state = 'issued'; e.issuedAt = new Date().toISOString()
+    if (e.aiSubscription) { audit(e, who.email, 'Subscription agreement issued; setup and trial authorization pending'); return }
     if (e.initialPayment) e.invoices.push(createInvoice(e, e.initialPayment.due, 'initial'))
     e.invoices.push(createInvoice(e, e.firstDue, e.cadence === 'once' ? undefined : 'recurring'))
     e.nextDue = nextDueDate(e.firstDue, e.cadence, e.firstDue)
@@ -61,6 +91,7 @@ export function changeLedger(entries: Engagement[], body: Record<string, unknown
     return
   }
   if (action === 'cancel' && e.state !== 'complete' && e.state !== 'canceled') {
+    if (e.aiSubscription) { changeAiSubscription(entries, body, who); return }
     // Revokes future authorization; processing charges must still reconcile.
     e.state = 'canceled'; e.nextDue = undefined
     if (e.autopay) e.autopay.enabled = false
@@ -72,6 +103,7 @@ export function changeLedger(entries: Engagement[], body: Record<string, unknown
     if (!e.signature || e.state !== 'issued' || e.invoices.some(i => i.status !== 'paid' && i.status !== 'void')) throw new DemoError('completion_blocked', 409)
     e.state = 'complete'; e.nextDue = undefined
     if (e.autopay) e.autopay.enabled = false
+    if (e.aiSubscription) e.aiSubscription.renewalAuthorized = false
     audit(e, who.email, 'Engagement completed')
     return
   }
@@ -98,7 +130,8 @@ export function changeLedger(entries: Engagement[], body: Record<string, unknown
 export function generateDueInvoices(entries: Engagement[], today: string): number {
   let count = 0
   for (const e of entries) {
-    if (e.state !== 'issued' || !e.signature || !e.autopay?.enabled || (e.initialPayment && e.autopay.agreementHash !== e.agreementHash) || e.cadence === 'once' || !e.nextDue || e.nextDue > today || (e.endDate && (e.nextDue > e.endDate || today > e.endDate))) continue
+    if (e.aiSubscription) { count += generateSubscriptionInvoice(e, today); continue }
+    if (e.archivedAt || e.state !== 'issued' || !e.signature || !e.autopay?.enabled || (e.initialPayment && e.autopay.agreementHash !== e.agreementHash) || e.cadence === 'once' || !e.nextDue || e.nextDue > today || (e.endDate && (e.nextDue > e.endDate || today > e.endDate))) continue
     // Do not compound failed collections. Resolve the outstanding invoice first.
     if (e.invoices.some(i => i.status === 'open' || i.status === 'processing')) continue
     if (!e.invoices.some(i => i.kind !== 'initial' && i.due === e.nextDue)) { e.invoices.push(createInvoice(e, e.nextDue, 'recurring')); count++ }

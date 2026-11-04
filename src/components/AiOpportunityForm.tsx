@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import {
-  aiOffer, aiBarrierOptions, aiExperienceOptions, budgetOptions,
+  aiBarrierOptions, aiExperienceOptions, budgetOptions,
   impactOptions, isAiBookingQualified, qualificationSteps, recommendAiOpportunity, revenueOptions, roleOptions,
   timingOptions, weeklyHoursOptions, workflowOptions, type AiPackageId,
 } from '../content/aiOffer'
@@ -18,6 +18,7 @@ import { AiConsultationWalkthrough } from './AiConsultationWalkthrough'
 import { aiQualificationFacts } from '../lib/aiQualificationSummary'
 import { aiConsultation } from '../content/aiConsultation'
 import { useQuizSummaryDelivery } from './useQuizSummaryDelivery'
+import type { AiSubscriptionInterval } from '../content/aiSubscriptionOffer'
 
 type ChoiceField = 'role' | 'revenue' | 'weeklyHours' | 'aiExperience' | 'budget' | 'timing'
 type MultipleField = 'workflows' | 'impacts' | 'aiBarriers'
@@ -52,7 +53,7 @@ function quizQuestions(step: typeof qualificationSteps[number], values: AiOpport
       { field: 'workflowDetails', heading: 'Anything else we should understand about the work?', description: 'This is optional. A recent example is useful. Please leave out passwords and private customer information.' },
     ]
     case 'readiness': return [
-      { ...first('budget', 'Selecting an answer opens the next question.'), heading: 'If we identify a suitable solution, could your business invest $2,500 or more to implement it?' },
+      { ...first('budget', 'Selecting an answer opens the next question.'), heading: 'Could your business approve $750 per month after a free month of an AI chatbot and phone agent?' },
       { field: 'timing', heading: 'When would you like to make a change?', description: 'Choose the timing that best fits your plans.' },
     ]
   }
@@ -100,7 +101,9 @@ export function AiOpportunityForm({ onPhaseChange }: {
   const [submissionId, setSubmissionId] = useState<string | null>(null)
   const [checkoutDrafts, setCheckoutDrafts] = useState<Partial<Record<AiPackageId, AiCheckoutDraft>>>({})
   const [checkoutDraft, setCheckoutDraft] = useState<AiCheckoutDraft>()
+  const [checkoutInterval, setCheckoutInterval] = useState<AiSubscriptionInterval>('monthly')
   const saveCheckoutDraft = useCallback((draft: AiCheckoutDraft) => {
+    setCheckoutInterval(draft.interval)
     if (values.packageId) setCheckoutDrafts(previous => ({ ...previous, [values.packageId]: draft }))
   }, [values.packageId])
   const lastFocusedStep = useRef('quiz-0-workflows')
@@ -220,10 +223,12 @@ export function AiOpportunityForm({ onPhaseChange }: {
     focusFirstError(nextErrors)
   }
 
-  function showContact(selection: AiNextStepSelection) {
+  function showContact(selection: AiNextStepSelection, interval: AiSubscriptionInterval = checkoutInterval) {
     if (selection.nextStep === 'package') {
       if (phase !== 'walkthrough' || !aiConsultation.walkthrough.src || completedVideoSrc !== aiConsultation.walkthrough.src) return
-      setCheckoutDraft(checkoutDrafts[selection.packageId])
+      const saved = checkoutDrafts[selection.packageId]
+      setCheckoutInterval(interval)
+      setCheckoutDraft(saved && saved.interval === interval ? saved : saved ? { ...saved, interval, stage: 'details', code: '', attempt: { id: crypto.randomUUID(), fingerprint: '' } } : undefined)
     }
     setValues(previous => normalizeAiOpportunity({ ...previous, ...selection }))
     // Returning to the same request must retain the key if an earlier response was lost.
@@ -345,13 +350,13 @@ export function AiOpportunityForm({ onPhaseChange }: {
     </fieldset>
   }
 
-  if (phase === 'checkout' && values.packageId) return <AiPackageCheckout packageId={values.packageId} values={values} onBack={() => setPhase('walkthrough')} draft={checkoutDraft} onDraftChange={saveCheckoutDraft} />
+  if (phase === 'checkout' && values.packageId) return <AiPackageCheckout packageId={values.packageId} initialInterval={checkoutInterval} values={values} onBack={() => setPhase('walkthrough')} draft={checkoutDraft} onDraftChange={saveCheckoutDraft} />
 
   if (phase === 'walkthrough') return <AiConsultationWalkthrough
       values={values}
       completedVideoSrc={completedVideoSrc}
       onVideoComplete={setCompletedVideoSrc}
-      onChoosePackage={packageId => showContact({ nextStep: 'package', packageId, contactMethod: 'email' })}
+      interval={checkoutInterval} onIntervalChange={setCheckoutInterval} onChoosePackage={(packageId, interval) => showContact({ nextStep: 'package', packageId, contactMethod: 'email' }, interval)}
     />
   if (phase === 'booking' && isAiBookingQualified(values)) return <AiConsultationBooking
       summaryStatus={quizSummary.status}
@@ -371,7 +376,7 @@ export function AiOpportunityForm({ onPhaseChange }: {
   if (phase === 'result') return <div className="qf-result-shell" ref={resultRef} tabIndex={-1}>
     <header className="qf-result-intro">
       <h1>{values.role !== 'owner' && values.role !== 'decision_maker' ? 'Bring in the person who can approve the purchase.' : 'A plan for when you are ready.'}</h1>
-      <p>{values.role !== 'owner' && values.role !== 'decision_maker' ? 'The business owner or someone authorized to approve the purchase needs to complete this quiz before booking. They will also need to confirm the investment and timing.' : values.budget !== 'ready' ? 'Our implementation projects start at $2,500. When you can approve that investment and are ready to start within a month, return here to book your consultation.' : 'When you are ready to start now or within the next month, return here to book your consultation.'}</p>
+      <p>{values.role !== 'owner' && values.role !== 'decision_maker' ? 'The business owner or someone authorized to approve the purchase needs to complete this quiz before booking. They will also need to confirm the investment and timing.' : values.budget !== 'ready' ? 'The chatbot and phone agent cost $750 monthly after a free month, with discounted prepaid options. When you can approve ongoing service and are ready to start within a month, return here to book your consultation.' : 'When you are ready to start now or within the next month, return here to book your consultation.'}</p>
     </header>
     <PageLink className="ao-button" href="/services/ai-integration">Explore what AI can do for your business</PageLink>
     <section className="qf-result-context"><details><summary>Review your answers</summary><dl className="qf-summary">{aiQualificationFacts(values).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details></section>
@@ -412,7 +417,7 @@ export function AiOpportunityForm({ onPhaseChange }: {
           {values.contactMethod === 'call' && <Field name="phone" label="Phone number" error={errors.phone}><input {...attrs('phone')} value={values.phone} onChange={event => update('phone', event.target.value)} type="tel" inputMode="tel" maxLength={40} autoComplete="tel" required /></Field>}
           <Field name="email" label="Email address (optional)" error={errors.email}><input {...attrs('email')} value={values.email} onChange={event => update('email', event.target.value)} type="email" maxLength={254} autoComplete="email" inputMode="email" /></Field>
           <Field name="website" label="Website (optional)" error={errors.website}><input {...attrs('website')} value={values.website} onChange={event => update('website', event.target.value)} type="url" maxLength={300} autoComplete="url" inputMode="url" placeholder="https://example.com" /></Field>
-          {recommendation.route !== 'resource' && <div className="ao-field ao-field--wide"><label className="ao-check" htmlFor="ao-offerAcknowledged"><input {...attrs('offerAcknowledged')} type="checkbox" checked={values.offerAcknowledged} onChange={event => update('offerAcknowledged', event.target.checked)} required /><span>I understand the website offer requires a qualifying paid project of ${aiOffer.minimumProjectFee.toLocaleString('en-US')} or more. Scope, final price, compatibility, and separate software or hosting costs must be confirmed before I commit.</span></label>{errors.offerAcknowledged && <p className="ao-field__error" id="ao-offerAcknowledged-error">{errors.offerAcknowledged}</p>}</div>}
+          {recommendation.route !== 'resource' && <div className="ao-field ao-field--wide"><label className="ao-check" htmlFor="ao-offerAcknowledged"><input {...attrs('offerAcknowledged')} type="checkbox" checked={values.offerAcknowledged} onChange={event => update('offerAcknowledged', event.target.checked)} required /><span>I understand the chatbot and phone agent use my existing website. I will review the service scope, usage limits, trial dates, and recurring payment amount before activating service.</span></label>{errors.offerAcknowledged && <p className="ao-field__error" id="ao-offerAcknowledged-error">{errors.offerAcknowledged}</p>}</div>}
           <div className="ao-field ao-field--wide"><label className="ao-check" htmlFor="ao-contactConsent"><input {...attrs('contactConsent')} type="checkbox" checked={values.contactConsent} onChange={event => update('contactConsent', event.target.checked)} required /><span>Please contact me about this request. I understand how my details are used, as explained in the <a href="/privacy" target="_blank" rel="noopener noreferrer">privacy policy (opens in a new tab)</a>.</span></label>{errors.contactConsent && <p className="ao-field__error" id="ao-contactConsent-error">{errors.contactConsent}</p>}</div>
         </>}
       </div>

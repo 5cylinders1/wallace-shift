@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { DemoError, demoAdminEmail, demoCookie, nodeHeader, normalizeDemoEmail, readDemoCookie } from './demo-access.js'
 import { consumeVerificationCode, reserveVerificationCode } from './demo-agreement-store.js'
 import { allEngagements, billingKey, getValue, mutateLedger, redis, setValue } from './portal-store.js'
+import { visibleToClient } from '../../src/client-portal/model.js'
 
 export const hash = (text: string) => createHash('sha256').update(text).digest('hex')
 const sessionKey = (token: string) => billingKey(`session:${hash(token)}`)
@@ -34,7 +35,7 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
     const digest = hash(body.token)
     const current = await identity(req)
     const grant = await mutateLedger(entries => {
-      const e = entries.find(entry => entry.id === body.id && entry.state !== 'draft' && entry.issueEmail?.access?.hash === digest)
+      const e = entries.find(entry => entry.id === body.id && visibleToClient(entry) && entry.issueEmail?.access?.hash === digest)
       const access = e?.issueEmail?.access
       if (!e || !access || Date.parse(access.expiresAt) <= Date.now()) throw new DemoError('invitation_expired', 401)
       if (access.usedAt) {
@@ -69,7 +70,7 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
     await reserveVerificationCode(pending, email, hash(`${nonce}:${code}`), undefined, billingKey('client-portal'))
     await setValue(pendingKey(nonce), pending, 600)
     res.setHeader('set-cookie', demoCookie(PENDING, nonce, origin, 600))
-    const known = email === owner || (await allEngagements()).some(e => e.email === email && e.state !== 'draft')
+    const known = email === owner || (await allEngagements()).some(e => e.email === email && visibleToClient(e))
     if (known) {
       try {
         const response = await fetch('https://api.resend.com/emails', {
@@ -87,7 +88,7 @@ export async function login(req: IncomingMessage, res: ServerResponse, origin: s
   const pending = await getValue<Pending>(pendingKey(nonce))
   if (!pending || pending.exp <= Date.now() / 1000) throw new DemoError('code_expired', 400)
   const email = await consumeVerificationCode(pending, hash(`${nonce}:${body.code}`), undefined, billingKey('client-portal'))
-  const known = email === ownerEmail() || (await allEngagements()).some(e => e.email === email && e.state !== 'draft')
+  const known = email === ownerEmail() || (await allEngagements()).some(e => e.email === email && visibleToClient(e))
   if (!known) throw new DemoError('access_required', 403)
   const token = randomBytes(32).toString('hex')
   await setValue(sessionKey(token), { email }, 8 * 3600)

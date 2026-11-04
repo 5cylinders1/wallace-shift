@@ -25,12 +25,14 @@ const load = async file => import(pathToFileURL(await compile(file)).href)
 const { default: handler } = await load('api/_lib/ai-checkout-handler.ts')
 const { default: deployed } = await load('api/demo-admin.ts')
 const { default: portal } = await load('api/_lib/client-portal-handler.ts')
-const { aiOffer, aiPackages } = await load('src/content/aiOffer.ts')
-const { hash } = await load('api/_lib/portal-auth.ts')
+const { aiOffer, aiPackages, legacyAiPackages } = await load('src/content/aiOffer.ts')
+const { hash, createPurchaseSession } = await load('api/_lib/portal-auth.ts')
+const { draft, changeLedger } = await load('api/_lib/portal-ledger.ts')
+const { aiSubscriptionPlans } = await load('src/content/aiSubscriptionOffer.ts')
 const savedEnv = { ...process.env }; const savedFetch = globalThis.fetch
 let store, emails, failEmail, failLedgerOnce, failSessionOnce, stripeCalls, allowPaymentMocks
 const answers = { businessType: '', workflows: ['inquiries'], workflowDetails: '', currentTools: 'Website and Gmail', weeklyHours: '6_10', impacts: ['delay'], impactDetails: '', role: 'owner', approverAvailability: '', revenue: '250k_1m', aiExperience: 'new', aiBarriers: [], budget: 'ready', timing: 'soon' }
-const body = (overrides = {}) => ({ action: 'send-code', submissionId: randomUUID(), offerVersion: aiOffer.version, packageId: 'inquiry', name: 'Buyer Name', businessName: 'Buyer Company', email: 'buyer@example.test', answers, authorityConfirmed: true, company: '', ...overrides })
+const body = (overrides = {}) => ({ action: 'send-code', submissionId: randomUUID(), offerVersion: aiOffer.version, packageId: 'assistant', interval: 'monthly', name: 'Buyer Name', businessName: 'Buyer Company', email: 'buyer@example.test', answers, authorityConfirmed: true, company: '', ...overrides })
 const ledger = () => JSON.parse(store.values.get('portal:engagements') ?? '[]')
 beforeEach(() => {
   process.env.VERCEL_ENV = 'development'
@@ -144,7 +146,7 @@ test('checkout requires a complete mode-matched Stripe configuration for its dep
 })
 test('rejects cross origin requests and unsupported payloads before sending', async () => {
   assert.equal((await call(body(), '', { headers: { host: 'localhost:5176', origin: 'https://attacker.example', 'content-type': 'application/json' } })).statusCode, 403)
-  for (const input of [body({ amount: 1 }), body({ packageId: 'unknown' }), body({ authorityConfirmed: false }), body({ answers: {} }), body({ answers: { ...answers, amount: 1 } }), body({ company: 'bot' })]) assert.equal((await call(input)).statusCode, 400)
+  for (const input of [body({ amount: 1 }), body({ packageId: 'unknown' }), body({ packageId: 'inquiry' }), body({ packageId: 'notes' }), body({ interval: undefined }), body({ interval: 'quarterly' }), body({ interval: '__proto__' }), body({ authorityConfirmed: false }), body({ answers: {} }), body({ answers: { ...answers, amount: 1 } }), body({ company: 'bot' })]) assert.equal((await call(input)).statusCode, 400)
   assert.equal((await call(body({ offerVersion: 'old' }))).statusCode, 409)
   assert.equal(emails.length, 0)
 })
@@ -161,19 +163,71 @@ test('email verification is mandatory and failed codes cannot create an engageme
   assert.equal((await verify(challenge)).statusCode, 429)
   assert.equal(ledger().length, 0); assert.equal(stripeCalls.length, 0)
 })
-test('verified purchase creates immutable priced scope, unsigned agreement, invoice and scoped client access', async () => {
-  const challenge = await start()
-  const response = await verify(challenge)
-  assert.equal(response.statusCode, 200)
+test('verified setup requests freeze the selected interval and scope without starting a trial, invoice or payment', async () => {
+  for (const [interval, plan] of Object.entries(aiSubscriptionPlans)) {
+    const challenge = await start(body({ interval, email: `${interval}@example.test` }))
+    const response = await verify(challenge)
+    assert.equal(response.statusCode, 200)
+    const e = ledger().find(item => item.selfService.orderId === challenge.input.submissionId)
+    assert.equal(e.amount, plan.amount)
+    assert.equal(e.cadence, interval)
+    assert.equal(e.state, 'issued')
+    assert.equal(e.signature, undefined)
+    assert.equal(e.invoices.length, 0)
+    assert.equal(e.firstDue, '')
+    assert.equal(e.nextDue, undefined)
+    assert.equal(e.aiSubscription.plan, interval)
+    assert.equal(e.aiSubscription.trialStart, undefined)
+    assert.equal(e.aiSubscription.trialEnd, undefined)
+    assert.equal(e.agreementHash, hash(e.agreement))
+    assert.equal(e.title, aiPackages.assistant.name)
+    assert.match(e.agreement, /AI CHATBOT AND PHONE AGENT SERVICE AGREEMENT/)
+    assert.ok(e.agreement.includes(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(plan.amount / 100)))
+    assert.ok(!e.scope.includes('Included business website'))
+    assert.deepEqual(e.selfService.answers, answers)
+    assert.equal(e.selfService.packageId, 'assistant')
+    assert.equal(e.selfService.orderId, challenge.input.submissionId)
+    assert.equal(e.selfService.ownerNotification.state, 'sent')
+    const notice = emails.find(item => item.subject === `AI service setup requested: ${e.client}` && item.text.includes(`Selected payment interval: ${interval}`))
+    assert.deepEqual(notice.to, ['owner@example.test'])
+    assert.match(notice.text, /No trial or payment has started/)
+    assert.ok(notice.text.includes(`Amount after the free month: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(plan.amount / 100)}`))
+    assert.ok(notice.text.includes(`http://localhost:5176/client-portal?engagement=${e.id}`))
+    assert.equal(response.body.url, `/client-portal?engagement=${e.id}`)
+    const session = await call(undefined, cookie(response), { dispatch: portal, url: '/api/client-portal' })
+    assert.equal(session.body.authenticated, true)
+    assert.equal(session.body.admin, false)
+    assert.deepEqual(session.body.engagements.map(item => item.id), [e.id])
+    assert.equal(stripeCalls.length, 0)
+  }
+})
+test('a verified retry preserves an existing frozen setup agreement instead of rebuilding its terms', async () => {
+  const challenge = await start(body({ interval: 'six_months' }))
+  await verify(challenge)
+  const [existing] = ledger()
+  existing.scope = 'Previously issued immutable scope.'
+  existing.agreement = 'Previously issued immutable agreement.'
+  existing.agreementHash = hash(existing.agreement)
+  existing.selfService.offerVersion = 'previous-issued-version'
+  store.values.set('portal:engagements', JSON.stringify([existing]))
+  assert.equal((await verify(challenge)).statusCode, 200)
+  assert.deepEqual(ledger(), [existing])
+})
+test('signing and saving a payment card do not activate or charge a new subscription', async () => {
+  const response = await verify(await start())
+  const buyerCookie = cookie(response)
   const [e] = ledger()
-  assert.equal(e.amount, aiPackages.inquiry.price * 100); assert.equal(e.state, 'issued'); assert.equal(e.signature, undefined)
-  assert.equal(e.invoices.length, 1); assert.equal(e.invoices[0].status, 'open')
-  assert.equal(e.agreementHash, hash(e.agreement)); assert.ok(e.agreement.includes(aiOffer.websiteScope)); assert.ok(e.agreement.includes(aiPackages.inquiry.delivery))
-  assert.deepEqual(e.selfService.answers, answers); assert.equal(e.selfService.orderId, challenge.input.submissionId)
-  assert.equal(response.body.url, `/client-portal?engagement=${e.id}`)
-  const session = await call(undefined, cookie(response), { dispatch: portal, url: '/api/client-portal' })
-  assert.equal(session.body.authenticated, true); assert.equal(session.body.admin, false); assert.deepEqual(session.body.engagements.map(item => item.id), [e.id])
-  assert.equal(stripeCalls.length, 0)
+  const portalCall = input => call(input, buyerCookie, { dispatch: portal, url: '/api/client-portal' })
+  assert.equal((await portalCall({ action: 'sign', id: e.id, name: 'Buyer Name', consent: true, agreementHash: e.agreementHash })).statusCode, 200)
+  allowPaymentMocks = true
+  assert.equal((await portalCall({ action: 'setup-card', id: e.id })).body.url, 'https://checkout.stripe.com/test')
+  assert.equal((await portalCall({ action: 'finish-setup', id: e.id, sessionId: 'cs_checkout_test' })).statusCode, 200)
+  const [saved] = ledger()
+  assert.equal(saved.aiSubscription.trialStart, undefined)
+  assert.equal(saved.nextDue, undefined)
+  assert.equal(saved.invoices.length, 0)
+  assert.equal(saved.autopay?.enabled, undefined)
+  assert.equal(stripeCalls.some(request => request.url.endsWith('/payment_intents')), false)
 })
 test('buying with the owner email cannot grant administrative privileges', async () => {
   const response = await verify(await start(body({ email: process.env.PORTAL_ADMIN_EMAIL })))
@@ -193,12 +247,13 @@ test('a purchase session cannot read or act on other engagements for the same em
   assert.equal(attempt.statusCode, 404)
   assert.equal(ledger()[1].signature, undefined)
 })
-test('repeated and concurrent verification creates only one agreement and invoice', async () => {
-  const challenge = await start(body({ packageId: 'notes' }))
+test('repeated and concurrent verification creates only one setup agreement without an invoice', async () => {
+  const challenge = await start(body({ interval: 'yearly' }))
   const responses = await Promise.all([verify(challenge), verify(challenge), verify(challenge)])
   assert.ok(responses.every(response => response.statusCode === 200))
   assert.equal(new Set(responses.map(response => response.body.url)).size, 1)
-  assert.equal(ledger().length, 1); assert.equal(ledger()[0].invoices.length, 1); assert.equal(ledger()[0].amount, aiPackages.notes.price * 100)
+  assert.equal(ledger().length, 1); assert.equal(ledger()[0].invoices.length, 0); assert.equal(ledger()[0].amount, aiSubscriptionPlans.yearly.amount)
+  assert.equal(emails.filter(item => item.subject.startsWith('AI service setup requested:')).length, 1)
 })
 test('verified proof survives ledger and session write failures without duplicate orders', async () => {
   const challenge = await start()
@@ -207,7 +262,9 @@ test('verified proof survives ledger and session write failures without duplicat
   failSessionOnce = true
   assert.equal((await verify(challenge)).statusCode, 503)
   assert.equal((await verify(challenge)).statusCode, 200)
-  assert.equal(ledger().length, 1); assert.equal(emails.length, 1)
+  assert.equal(ledger().length, 1)
+  assert.equal(emails.length, 2, 'One verification code and one setup notice survive the retries.')
+  assert.equal(emails.filter(item => item.subject.startsWith('AI service setup requested:')).length, 1)
 })
 test('another verified buyer cannot reuse an existing order identity', async () => {
   const first = await start(); await verify(first)
@@ -235,18 +292,25 @@ test('email cooldown prevents repeated sends and purchase code cannot sign or pa
   assert.equal(payment.body.error, 'signature_required')
   assert.equal(e.signature, undefined); assert.equal(stripeCalls.length, 0)
 })
-test('public buyer can verify, sign, save a card and pay with automatic owner handoff and no owner action', async () => {
+test('a previously issued legacy package still signs and pays its frozen terms with the original paid-project handoff', async () => {
   const impactDetails = 'Customers repeat their requests.\nWe lose the previous conversation.'
-  const response = await verify(await start(body({ answers: { ...answers, impacts: ['other', 'delay'], impactDetails: `  ${impactDetails}  ` } })))
-  const buyerCookie = cookie(response)
-  const e = ledger()[0]
+  const legacy = legacyAiPackages.inquiry
+  const e = draft({ client: 'Existing Buyer Company', email: 'buyer@example.test', title: legacy.name,
+    scope: `${legacy.scope.join('\n')}\nIncluded business website: ${aiOffer.websiteScope}.`,
+    exclusions: legacy.boundary, delivery: legacy.delivery,
+    amount: legacy.price * 100, cadence: 'once', firstDue: new Date().toISOString().slice(0, 10),
+  }, 'Historical fixture')
+  e.selfService = { orderId: randomUUID(), packageId: 'inquiry', offerVersion: '2026-11-02-3', buyerName: 'Buyer Name', answers: { ...answers, impacts: ['other', 'delay'], impactDetails }, fingerprint: 'frozen-legacy-order' }
+  changeLedger([e], { action: 'issue', id: e.id }, { email: 'owner@example.test', admin: true })
+  store.values.set('portal:engagements', JSON.stringify([e]))
+  const buyerCookie = String(await createPurchaseSession(e.email, e.id, 'http://localhost:5176')).split(';')[0]
   assert.equal(e.selfService.answers.impactDetails, impactDetails)
   const portalCall = input => call(input, buyerCookie, { dispatch: portal, url: '/api/client-portal' })
   const signed = await portalCall({ action: 'sign', id: e.id, name: 'Buyer Name', consent: true, agreementHash: e.agreementHash })
   assert.equal(signed.statusCode, 200)
   assert.equal(ledger()[0].signature.hash, e.agreementHash)
   assert.equal(ledger()[0].invoices[0].status, 'open')
-  assert.equal(emails.length, 1, 'Verification does not send a paid project')
+  assert.equal(emails.length, 0, 'Signing a legacy agreement does not send a paid project')
   allowPaymentMocks = true
   const setup = await portalCall({ action: 'setup-card', id: e.id })
   assert.equal(setup.body.url, 'https://checkout.stripe.com/test')
@@ -254,7 +318,7 @@ test('public buyer can verify, sign, save a card and pay with automatic owner ha
   assert.equal(ledger()[0].invoices[0].status, 'open', 'Saving a card is not a payment')
   const invoiceId = e.invoices[0].id
   const { quote } = (await portalCall({ action: 'quote', id: e.id, invoiceId })).body
-  assert.equal(quote.total, aiPackages.inquiry.price * 100); assert.equal(quote.fee, 0)
+  assert.equal(quote.total, legacyAiPackages.inquiry.price * 100); assert.equal(quote.fee, 0)
   const charge = { action: 'pay', id: e.id, invoiceId, total: quote.total, consent: true }
   assert.equal((await portalCall({ ...charge, consent: false })).statusCode, 409)
   assert.equal(stripeCalls.some(call => call.url.endsWith('/payment_intents')), false)
@@ -262,9 +326,9 @@ test('public buyer can verify, sign, save a card and pay with automatic owner ha
   assert.equal(paid.statusCode, 200); assert.equal(paid.body.status, 'succeeded')
   const saved = ledger()[0]
   assert.equal(saved.invoices[0].status, 'paid'); assert.equal(saved.invoices[0].method, 'stripe'); assert.equal(saved.selfService.ownerNotification.state, 'sent')
-  assert.equal(emails.length, 2); assert.deepEqual(emails[1].to, [process.env.PORTAL_ADMIN_EMAIL])
-  assert.ok(emails[1].text.includes('Website and Gmail')); assert.ok(emails[1].text.includes(e.id)); assert.ok(emails[1].text.includes('agreement is signed'))
-  assert.ok(emails[1].text.includes(impactDetails))
+  assert.equal(emails.length, 1); assert.deepEqual(emails[0].to, [process.env.PORTAL_ADMIN_EMAIL])
+  assert.ok(emails[0].text.includes('Website and Gmail')); assert.ok(emails[0].text.includes(e.id)); assert.ok(emails[0].text.includes('agreement is signed'))
+  assert.ok(emails[0].text.includes(impactDetails))
   assert.equal((await portalCall(charge)).statusCode, 409)
   assert.equal(stripeCalls.filter(call => call.url.endsWith('/payment_intents')).length, 1)
 })

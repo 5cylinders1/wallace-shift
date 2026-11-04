@@ -46,7 +46,10 @@
 .cp-sidebar { padding: 36px 22px; border-right: 1px solid #c7d1d7; }
 .cp-sidebar h2 { font-size: 15px; }
 .cp-account { color: #52616b; font-size: 11px; overflow-wrap: anywhere; margin-top: 5px !important; }
-.cp-sidebar nav { display: grid; gap: 5px; margin: 30px -10px 24px; }
+.cp-list-filters { display: inline-flex; gap: 4px; padding: 3px; margin-top: 22px; border: 1px solid #bdcbd4; border-radius: 7px; }
+.cp-list-filters button { min-height: 40px; padding: 6px 12px; border: 0; border-radius: 4px; background: transparent; color: #445965; }
+.cp-list-filters button[aria-pressed="true"] { background: #dbe8f2; color: #163e60; font-weight: 650; }
+.cp-sidebar nav { display: grid; gap: 5px; margin: 14px -10px 24px; }
 .cp-sidebar nav button { display: grid; text-align: left; padding: 13px 10px; gap: 3px; background: none; border: 1px solid transparent; border-radius: 6px; color: #121a21; overflow-wrap: anywhere; }
 .cp-sidebar nav button:hover { background: #e0e8ed; }
 .cp-sidebar nav button.is-current { background: #dbe8f2; border-color: #b9cede; }
@@ -58,6 +61,11 @@
 .cp-project-heading { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
 .cp-project-heading p { margin-top: 12px; color: #52616b; }
 .cp-project-heading p span { margin: 0 10px; }
+.cp-project-controls { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.cp-archive-confirm, .cp-archive-note { margin-top: 20px !important; padding: 16px 20px; border: 1px solid #bdcbd4; border-radius: 8px; }
+.cp-archive-confirm p { margin-top: 8px; color: #445965; }
+.cp-archive-confirm > div { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; }
+.cp-archive-note { color: #445965; }
 .cp-status { display: inline-flex; padding: 5px 10px; border-radius: 4px; background: #dce5eb; color: #304d60; font-size: 11px; font-weight: 650; text-transform: capitalize; white-space: normal; }
 .cp-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; padding: 30px 0; margin-top: 22px; border-top: 1px solid #c7d1d7; }
 .cp-summary > div { display: grid; gap: 5px; }
@@ -123,7 +131,7 @@
   .cp-main { padding: 30px 24px 55px; }
   .cp-summary { grid-template-columns: 1fr 1fr; }
   .cp-project-heading { display: block; }
-  .cp-project-heading > .cp-status { margin-top: 14px; }
+  .cp-project-controls { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px; }
 }
 @media (max-width: 650px) {
   .cp-header { min-height: 76px; gap: 16px; padding: 18px 20px; flex-wrap: wrap; }
@@ -153,7 +161,7 @@
   .cp-primary, .cp-secondary { max-width: 100%; }
 }
 @media print {
-  .cp-header, .cp-sidebar, .cp-tabs, .cp-cancel, .cp-footer, .cp-notice, .client-portal button, .cp-sign-form { display: none !important; }
+  .cp-header, .cp-sidebar, .cp-tabs, .cp-cancel, .cp-footer, .cp-notice, .client-portal button, .cp-sign-form, .cp-archive-confirm, .cp-archive-note { display: none !important; }
   .cp-workspace { display: block; }
   .cp-main { padding: 0; }
   .client-portal, .cp-document { background: white; color: black; }
@@ -174,7 +182,7 @@
 .cp-next-step p { max-width: 65ch; margin-top: 14px; color: #445965; font-size: 16px; }
 .cp-client-flow .cp-project-heading h1 { font-size: 20px; }
 .cp-client-flow .cp-project-heading { margin-bottom: 24px; }
-.cp-client-flow .cp-project-heading > .cp-status { display: none; }
+.cp-client-flow .cp-project-controls { display: none; }
 .cp-client-flow .cp-document { font-size: 15px; max-width: none; }
 .cp-client-flow .cp-sign-form { max-width: none; }
 .cp-client-flow .cp-check { font-size: 14px; }
@@ -221,3 +229,11 @@
 .cp-calendar-booking summary { cursor: pointer; }
 .cp-calendar-booking summary span { display: block; margin-top: 4px; color: #445965; overflow-wrap: anywhere; }
 .cp-calendar-booking time { font-weight: 650; font-variant-numeric: tabular-nums; }
+.cp-ai-subscription { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--cp-border, #cbd5dc); }
+.cp-ai-subscription > p { line-height: 1.65; margin-block: 12px; }
+.cp-ai-dates { display: grid; gap: 12px; margin-block: 20px; }
+.cp-ai-dates > div { display: grid; grid-template-columns: minmax(130px, .7fr) 1.3fr; gap: 16px; }
+.cp-ai-dates dt { font-weight: 600; }
+.cp-ai-dates dd { margin: 0; overflow-wrap: anywhere; }
+.cp-ai-subscription .cp-payment form { display: grid; gap: 14px; }
+@media (max-width: 600px) { .cp-ai-dates > div { grid-template-columns: 1fr; gap: 4px; } }

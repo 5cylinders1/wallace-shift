@@ -109,7 +109,7 @@ export function validateAiOpportunity(values: AiOpportunityFormValues, step?: Ai
       const digits = phone.replace(/\D/g, '')
       if (phone.length > 40 || !/^[+()\d .-]+$/.test(phone) || digits.length < 7 || digits.length > 15) errors.phone = 'Please enter a phone number with 7 to 15 digits.'
     }
-    if (routeAiOpportunity(values) !== 'resource' && !values.offerAcknowledged) errors.offerAcknowledged = 'Please confirm that you understand the conditional website offer.'
+    if (routeAiOpportunity(values) !== 'resource' && !values.offerAcknowledged) errors.offerAcknowledged = 'Please confirm that you will review the service and payment terms before activation.'
     if (!values.contactConsent) errors.contactConsent = 'Please confirm that we may respond to your request.'
   }
   return errors

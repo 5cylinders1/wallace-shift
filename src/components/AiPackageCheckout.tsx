@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { aiOffer, aiPackages, type AiPackageId, type AiQualificationAnswers } from '../content/aiOffer'
 import type { AiOpportunityFormValues } from '../lib/aiOpportunityAdapter'
+import { aiSubscriptionMoney, aiSubscriptionOffer, aiSubscriptionPlans, type AiSubscriptionInterval } from '../content/aiSubscriptionOffer'
+import { AiSubscriptionPlanChoices } from './AiSubscriptionPlanChoices'
 
 const checkoutErrors: Record<string, string> = {
   invalid: 'Please check your purchase details and confirm that you are authorized to purchase.',
@@ -22,6 +24,7 @@ const checkoutErrors: Record<string, string> = {
 }
 
 export type AiCheckoutDraft = {
+  interval: AiSubscriptionInterval
   details: { name: string; businessName: string; email: string; authorityConfirmed: boolean; company: string }
   stage: 'details' | 'code'
   code: string
@@ -40,9 +43,10 @@ async function checkoutRequest(body?: Record<string, unknown>) {
 }
 
 /** The server creates the priced agreement only after email ownership is verified. */
-export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftChange }: {
+export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftChange, initialInterval }: {
   packageId: AiPackageId; values: AiOpportunityFormValues; onBack: () => void
   draft?: AiCheckoutDraft; onDraftChange: (draft: AiCheckoutDraft) => void
+  initialInterval: AiSubscriptionInterval
 }) {
   const offer = aiPackages[packageId]
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -55,6 +59,8 @@ export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftCha
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState('')
   const [notice, setNotice] = useState('')
+  const [interval, setInterval] = useState<AiSubscriptionInterval>(draft?.interval ?? initialInterval)
+  const plan = aiSubscriptionPlans[interval]
 
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true })
@@ -65,7 +71,7 @@ export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftCha
     return () => { active = false }
   }, [])
   useEffect(() => { if (stage === 'code') codeRef.current?.focus() }, [stage])
-  useEffect(() => { onDraftChange({ details, stage, code, attempt: attempt.current }) }, [details, stage, code, onDraftChange])
+  useEffect(() => { onDraftChange({ interval, details, stage, code, attempt: attempt.current }) }, [interval, details, stage, code, onDraftChange])
 
   async function checkAgain() {
     setReadiness('loading')
@@ -81,7 +87,7 @@ export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftCha
       approverAvailability: values.approverAvailability, revenue: values.revenue, aiExperience: values.aiExperience,
       aiBarriers: values.aiBarriers, budget: values.budget, timing: values.timing,
     } as AiQualificationAnswers
-    const purchase = { ...details, packageId, offerVersion: aiOffer.version, answers }
+    const purchase = { ...details, packageId, interval, offerVersion: aiOffer.version, answers }
     const fingerprint = JSON.stringify(purchase)
     if (attempt.current.fingerprint && attempt.current.fingerprint !== fingerprint) attempt.current.id = crypto.randomUUID()
     attempt.current.fingerprint = fingerprint
@@ -111,22 +117,29 @@ export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftCha
 
   return <section className="qf-checkout" aria-labelledby="qf-checkout-title">
     <header className="qf-result-intro">
-      <button className="qf-text-link qf-path-back" type="button" onClick={onBack} disabled={busy}>Back to packages</button>
-      <h1 id="qf-checkout-title" ref={headingRef} tabIndex={-1}>Complete your purchase.</h1>
-      <p>Your details, then your agreement and secure payment.</p>
+      <button className="qf-text-link qf-path-back" type="button" onClick={onBack} disabled={busy}>Back to offer</button>
+      <h1 id="qf-checkout-title" ref={headingRef} tabIndex={-1}>Request your free month.</h1>
+      <p>Reserve setup for your business. Your trial starts after both services are ready and you confirm activation.</p>
     </header>
     <div className="qf-checkout-layout">
       <section className="qf-checkout-order" aria-labelledby="qf-order-title">
-        <div className="qf-checkout-order-heading"><h2 id="qf-order-title">{offer.name}</h2><div className="qf-checkout-total"><strong>${offer.price.toLocaleString('en-US')}</strong><span>One time</span></div></div>
-        <p><strong>Free business website included.</strong></p>
-        <details><summary>Scope, delivery, and separate costs</summary>
+        <div className="qf-checkout-order-heading"><h2 id="qf-order-title">{offer.name}</h2><div className="qf-checkout-total"><strong>$0 today</strong><span>One free calendar month</span></div></div>
+        <AiSubscriptionPlanChoices value={interval} name="checkout-interval" disabled={busy} onChange={value => { setInterval(value); setStage('details'); setCode(''); setFailure(''); setNotice('') }} />
+        <p><strong>{aiSubscriptionMoney(plan.amount)} {plan.label.toLowerCase()} after your trial.</strong>{plan.months > 1 && <> Equivalent to {aiSubscriptionMoney(plan.monthlyEquivalent)} per month, paid in advance.</>} Applicable service taxes are included.</p>
+        <p>{aiSubscriptionOffer.trialNotice} A payment card and your authorization are required before activation.</p>
+        <p>Trial: {aiSubscriptionOffer.trialPhoneMinutes} phone minutes and {aiSubscriptionOffer.trialChatReplies} AI replies, with no paid usage. Paid service: {aiSubscriptionOffer.monthlyPhoneMinutes} phone minutes and {aiSubscriptionOffer.monthlyChatReplies.toLocaleString('en-US')} AI replies per service month. Each AI call is limited to {aiSubscriptionOffer.maxPhoneCallMinutes} minutes.</p>
+        <p>{aiSubscriptionOffer.renewalNotice} {aiSubscriptionOffer.intervalChangeNotice}</p>
+        <details><summary>Scope, included usage, and setup</summary>
           <ul>{offer.scope.map(item => <li key={item}>{item}</li>)}</ul>
-          <p>The included website has one page, one inquiry form, and one revision round using your branding and content.</p>
-          <p>{offer.boundary} Ongoing support and software subscriptions are separate. Any eligible credit card surcharge is shown before you authorize payment.</p><p>{offer.delivery}</p>
+          <p>Installed on your existing website. A new website is not included.</p>
+          <p>Allowances reset on monthly service anniversaries at 14:00 UTC and do not roll over. {aiSubscriptionOffer.phoneUsageNotice}</p>
+          <p>{aiSubscriptionOffer.extraPhoneNotice} The affected service pauses at its limit until the allowance resets or, for paid phone service, you buy extra minutes.</p>
+          <p>{offer.boundary}</p><p>{offer.delivery}</p>
+          <p>{aiSubscriptionOffer.resultsNotice}</p>
         </details>
       </section>
       <form className="ao-form qf-checkout-form" onSubmit={event => void submit(event)} aria-busy={busy}>
-        <h2>{stage === 'details' ? 'Your purchase details' : 'Verify your email'}</h2>
+        <h2>{stage === 'details' ? 'Your business details' : 'Verify your email'}</h2>
         {readiness === 'loading' && <p className="ao-form__hint" role="status">Checking secure checkout…</p>}
         {readiness === 'unavailable' && <div className="ao-form__notice" role="alert"><p>Online payment is temporarily unavailable. You have not been charged.</p><button className="qf-text-link" type="button" onClick={() => void checkAgain()}>Try checkout again</button></div>}
         <fieldset disabled={busy || readiness !== 'ready'}>
@@ -135,7 +148,7 @@ export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftCha
             <div className="ao-field"><label htmlFor="purchase-name">Your full legal name</label><input id="purchase-name" name="name" required maxLength={120} autoComplete="name" value={details.name} onChange={event => setDetails({ ...details, name: event.target.value })} /></div>
             <div className="ao-field"><label htmlFor="purchase-business">Legal business name</label><input id="purchase-business" name="businessName" required maxLength={160} autoComplete="organization" value={details.businessName} onChange={event => setDetails({ ...details, businessName: event.target.value })} /></div>
             <div className="ao-field"><label htmlFor="purchase-email">Email address</label><input id="purchase-email" name="email" required type="email" inputMode="email" maxLength={254} autoComplete="email" value={details.email} onChange={event => setDetails({ ...details, email: event.target.value })} /><p className="ao-form__hint">We will send your verification code here.</p></div>
-            <label className="ao-check"><input type="checkbox" required checked={details.authorityConfirmed} onChange={event => setDetails({ ...details, authorityConfirmed: event.target.checked })} /><span>I am authorized to purchase this package for the business.</span></label>
+            <label className="ao-check"><input type="checkbox" required checked={details.authorityConfirmed} onChange={event => setDetails({ ...details, authorityConfirmed: event.target.checked })} /><span>I am authorized to arrange this service for the business.</span></label>
             <div className="visually-hidden" aria-hidden="true"><label htmlFor="purchase-company">Leave this field empty</label><input id="purchase-company" name="company" tabIndex={-1} autoComplete="off" value={details.company} onChange={event => setDetails({ ...details, company: event.target.value })} maxLength={200} /></div>
             <p className="ao-form__hint">Your quiz answers will accompany your project. See our <a href="/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a>.</p>
           </> : <>
@@ -147,7 +160,7 @@ export function AiPackageCheckout({ packageId, values, onBack, draft, onDraftCha
         </fieldset>
         {notice && <p className="ao-form__hint" role="status">{notice}</p>}
         {failure && <div className="ao-form__notice" role="alert"><p>{failure}</p>{failure === checkoutErrors.submission_conflict && <a href="/client-portal">Open client portal</a>}</div>}
-        <p className="ao-form__hint">You will review the full agreement and payment total before signing and paying.</p>
+        <p className="ao-form__hint">Requesting setup does not charge your card. Before starting the trial, you will review the agreement, exact dates, and recurring amount, then authorize automatic payments.</p>
       </form>
     </div>
   </section>

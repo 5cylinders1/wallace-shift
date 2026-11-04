@@ -1,6 +1,6 @@
 # Consultation booking and owner email
 
-Qualified visitors book a free 45 minute Google Meet consultation inside the funnel. Calendly supplies the scheduling form and confirms the appointment. Its confirmation opens the film automatically. Finishing the film reveals the packages.
+Qualified visitors book a free 45 minute Google Meet consultation inside the funnel. Calendly supplies the scheduling form and confirms the appointment. Its confirmation opens the film automatically. Finishing the film reveals one AI website chatbot and AI phone agent bundle with three payment intervals.
 
 ## Connect the consultation event
 
@@ -9,9 +9,11 @@ Qualified visitors book a free 45 minute Google Meet consultation inside the fun
 3. On this event’s card, choose **Copy link**. Use the reusable event link so visitors land directly on this consultation. [Share an event link](https://calendly.com/help/how-to-share-your-scheduling-link)
 4. The funnel defaults to the owner's [Wallace Shift consultation](https://calendly.com/matthew-wallaceshift/consultation). No environment variable is needed for this link. To switch events, override `VITE_CALENDLY_EVENT_URL` with the new public URL, restart Vite locally, and redeploy for the Vercel environment you change. An explicitly empty or invalid override uses the existing Google schedule instead. Google can book the appointment and send its usual confirmation, but that fallback cannot advance to the film.
 
+The booking screen also provides **Open calendar in a new tab** in case a browser or network blocks the embed. A failed script or an embed that remains unready for 15 seconds collapses the blank calendar area and offers a retry. A slow embed can still recover when Calendly signals that it is ready. Bookings completed in a separate tab receive Calendly's normal confirmation but cannot automatically open the film in the original tab. See [Calendly's embed troubleshooting guidance](https://calendly.com/help/troubleshooting-calendly-embeds).
+
 ## Check one booking before running ads
 
-Complete a qualified quiz in the intended environment. Selecting a date or time should leave the scheduler visible. Finish an appointment using the embedded form. On success the funnel should bring the film into view automatically. Confirm the event appears on the chosen Google calendar with a Meet link and that the booking notice reaches the intended inbox. After the 15 second film ends, the packages should appear. Cancel the test appointment through its confirmation. [Calendly embed events](https://developer.calendly.com/api-docs/overview/embedding/notifying-the-parent-window)
+Complete a qualified quiz in the intended environment. Selecting a date or time should leave the scheduler visible. Finish an appointment using the embedded form. On success the funnel should bring the film into view automatically. Confirm the event appears on the chosen Google calendar with a Meet link and that the booking notice reaches the intended inbox. After the 15 second film ends, the single bundle and its three prepaid interval choices should appear. Cancel the test appointment through its confirmation. [Calendly embed events](https://developer.calendly.com/api-docs/overview/embedding/notifying-the-parent-window)
 
 ## Quiz summary and booking notices
 
@@ -21,9 +23,13 @@ For quiz delivery, set `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and a writable Re
 
 If the host booking notice arrives in `matthew.wallaceshift@gmail.com` and should also reach `matthew@wallaceshift.com`, preview or update the existing Gmail filter using an actual new Calendly booking notice. Its sender and subject may differ from the old Google appointment schedule. Keep global forwarding disabled and forward only matching messages to the verified address. Check a *subsequent* new booking in the destination inbox for the correct Meet link. [Gmail forwarding](https://support.google.com/mail/answer/10957?hl=en) · [Create a Gmail filter](https://support.google.com/mail/answer/6579?hl=en)
 
-## Walkthrough and purchases
+## Walkthrough and service registration
 
-Only the active Calendly embed’s completed booking event reveals the player. The site then scrolls to **Put AI to work**, the supplied film with English captions in `public/media/ai-consultation/`. Update future media URLs in `src/content/aiConsultation.ts`. When playback ends, visitors can review a package, sign the agreement and pay. An unavailable film leaves the offers locked. Visitors who purchase can cancel the appointment through their booking confirmation.
+Only the active Calendly embed’s completed booking event reveals the player. The site then scrolls to **Put AI to work**, the supplied film with English captions in `public/media/ai-consultation/`. Update future media URLs in `src/content/aiConsultation.ts`. When playback ends, visitors can request one free month of both services, selecting $750 every calendar month, $4,050 every six calendar months, or $7,200 every twelve calendar months after the trial. The latter two amounts prepay the full service period. Applicable service taxes are included. The chatbot uses the client's existing website; the former free website benefit and $2,500 qualification do not apply to the current offer.
+
+Requesting setup verifies the buyer email and creates an immutable agreement with no trial dates or invoice. The portal collects signature and a saved payment card. After Reply365 confirms both services are operational, the client reviews exact activation, trial-end, first-charge and renewal dates in UTC and explicitly starts the free month. No booking, signature, card-storage, or setup request starts billing by itself. The trial lasts at least a calendar month, with any extension to the next 14:00 UTC billing boundary free. [Full subscription specification](ai-subscription-offer.md)
+
+An unavailable film leaves the offer locked. Registration leaves the consultation in place; clients can cancel their appointment through its booking confirmation. Reply365 readiness, usage, and access enforcement must be connected through the authenticated service gateway and verified before production activation. The local implementation does not establish that the provider integration or deployment is complete.
 
 The phone option collects a phone number without requiring an email address. Wallace Shift arranges the time separately. A callback request does not unlock the video.
 

@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { aiConsultation } from '../content/aiConsultation'
-import { aiOffer, aiPackages, recommendAiOpportunity, type AiPackageId } from '../content/aiOffer'
+import { aiPackages, type AiPackageId } from '../content/aiOffer'
+import { aiSubscriptionOffer, type AiSubscriptionInterval } from '../content/aiSubscriptionOffer'
+import { AiSubscriptionPlanChoices } from './AiSubscriptionPlanChoices'
 import type { AiOpportunityFormValues } from '../lib/aiOpportunityAdapter'
 import './AiConsultationWalkthrough.css'
 
-export function AiConsultationWalkthrough({ values, onChoosePackage, completedVideoSrc, onVideoComplete }: {
+export function AiConsultationWalkthrough({ onChoosePackage, completedVideoSrc, onVideoComplete, interval, onIntervalChange }: {
   values: AiOpportunityFormValues
-  onChoosePackage: (packageId: AiPackageId) => void
+  onChoosePackage: (packageId: AiPackageId, interval: AiSubscriptionInterval) => void
+  interval: AiSubscriptionInterval
+  onIntervalChange: (interval: AiSubscriptionInterval) => void
   completedVideoSrc: string | null
   onVideoComplete: (src: string) => void
 }) {
@@ -16,7 +20,7 @@ export function AiConsultationWalkthrough({ values, onChoosePackage, completedVi
   const [failedSource, setFailedSource] = useState<string | null>(null)
   const video = aiConsultation.walkthrough
   const completed = Boolean(video.src && completedVideoSrc === video.src)
-  const suggested = recommendAiOpportunity(values).packageId
+  const offer = aiPackages.assistant
 
   useEffect(() => {
     const target = completed ? offersRef.current : headingRef.current
@@ -55,7 +59,7 @@ export function AiConsultationWalkthrough({ values, onChoosePackage, completedVi
         <p>The video could not load. Your consultation is still booked.</p>
         <button className="ao-button ao-button--secondary" type="button" onClick={() => { setFailedSource(null); playerRef.current?.load() }}>Retry video</button>
       </div>}
-      {!completed && <p className="qf-walkthrough-note">After the video, you can explore packages to purchase online with a free business website included.</p>}
+      {!completed && <p className="qf-walkthrough-note">After the video, explore a free month of an AI chatbot and phone agent for your business.</p>}
     </div> : <div className="qf-walkthrough-placeholder">
       <h2>Video coming soon</h2>
       <p>Bring one task your team repeats every week. During the consultation, we’ll estimate what it costs and explore where AI could save you time.</p>
@@ -63,26 +67,35 @@ export function AiConsultationWalkthrough({ values, onChoosePackage, completedVi
 
     {completed && <section className="qf-walkthrough-offers" aria-labelledby="qf-walkthrough-offers-title">
       <header>
-        <h2 id="qf-walkthrough-offers-title" ref={offersRef} tabIndex={-1}>Ready to start without a meeting?</h2>
-        <p>Choose a package, review and sign the agreement, and pay online. Each package includes a free business website.</p>
+        <h2 id="qf-walkthrough-offers-title" ref={offersRef} tabIndex={-1}>One free month. Two ways to help customers.</h2>
+        <p>Answer questions on your website and handle incoming calls with one AI chatbot and phone agent bundle.</p>
       </header>
       <div className="qf-walkthrough-package-list">
-        {Object.values(aiPackages).map(item => <article className="qf-walkthrough-package" key={item.id}>
+        <article className="qf-walkthrough-package qf-walkthrough-package--subscription">
           <div>
-            <h3>{item.name}</h3>
-            {suggested === item.id && <p className="qf-walkthrough-suggested">Suggested by your quiz answers</p>}
-            <p>{item.description}</p>
-            <ul>{item.scope.map(scope => <li key={scope}>{scope}</li>)}</ul>
-            <details><summary>Scope, delivery, and separate costs</summary><p>{item.boundary}</p><p>{item.delivery}</p></details>
+            <h3>{offer.name}</h3>
+            <p>{offer.description}</p>
+            <ul>{offer.scope.map(scope => <li key={scope}>{scope}</li>)}</ul>
+            <details><summary>What is included and how the free month works</summary>
+              <p>{aiSubscriptionOffer.trialNotice}</p>
+              <p>The trial includes {aiSubscriptionOffer.trialPhoneMinutes} phone minutes and {aiSubscriptionOffer.trialChatReplies} AI chat replies. There are no trial usage charges. At either limit, that service pauses for the rest of the trial.</p>
+              <p>Paid service includes {aiSubscriptionOffer.monthlyPhoneMinutes} phone minutes and {aiSubscriptionOffer.monthlyChatReplies.toLocaleString('en-US')} AI chat replies per service month. Allowances reset on monthly service anniversaries at 14:00 UTC and do not roll over.</p>
+              <p>{aiSubscriptionOffer.phoneUsageNotice}</p>
+              <p>{aiSubscriptionOffer.extraPhoneNotice} At the included limit, the affected service pauses until the allowance resets or, for paid phone service, you buy extra minutes.</p>
+              <p>{offer.boundary}</p><p>{offer.delivery}</p>
+            </details>
           </div>
-          <div className="qf-walkthrough-purchase">
-            <p><strong>${item.price.toLocaleString('en-US')}</strong><span>One time</span></p>
-            <button className="ao-button" type="button" onClick={() => onChoosePackage(item.id)}>Buy {item.name}</button>
+          <div className="qf-walkthrough-purchase qf-subscription-purchase">
+            <p className="qf-subscription-trial"><strong>$0 for your first month</strong><span>{aiSubscriptionOffer.trialPhoneMinutes} phone minutes and {aiSubscriptionOffer.trialChatReplies} AI replies included. Each AI call is limited to {aiSubscriptionOffer.maxPhoneCallMinutes} minutes. No charge when you request setup.</span></p>
+            <AiSubscriptionPlanChoices value={interval} onChange={onIntervalChange} name="offer-interval" />
+            <button className="ao-button" type="button" onClick={() => onChoosePackage(offer.id, interval)}>Request free month</button>
+            <p className="qf-subscription-activation-note">We prepare both services first. A payment card and your authorization are required before the free month starts. You will review your exact trial end and first charge time in UTC before activating.</p>
           </div>
-        </article>)}
+        </article>
       </div>
-      <p className="qf-walkthrough-note">The free website is included with a paid project of ${aiOffer.minimumProjectFee.toLocaleString('en-US')} or more. Website scope: {aiOffer.websiteScope.toLowerCase()}.</p>
-      <p className="qf-walkthrough-cancellation"><strong>Prefer to skip the meeting?</strong> After purchasing, use your booking confirmation to cancel if you no longer need the appointment. Your meeting stays scheduled until you cancel it.</p>
+      <p className="qf-walkthrough-note">{aiSubscriptionOffer.renewalNotice} {aiSubscriptionOffer.intervalChangeNotice} Applicable service taxes are included.</p>
+      <p className="qf-walkthrough-note">{aiSubscriptionOffer.resultsNotice}</p>
+      <p className="qf-walkthrough-cancellation"><strong>About your consultation:</strong> Requesting setup does not cancel your meeting. Use your booking confirmation if you no longer need the appointment.</p>
     </section>}
 
   </section>

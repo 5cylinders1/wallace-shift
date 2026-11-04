@@ -1,13 +1,15 @@
+import { aiSubscriptionOffer } from './aiSubscriptionOffer.js'
+
 /** Versioned public offer. Issued agreements retain their own immutable copy. */
 export const aiOffer = {
   path: '/offers/ai-business-integration',
-  version: '2026-11-02-3',
+  version: '2026-11-03-subscription-1',
   minimumProjectFee: 2500,
   websiteScope: 'One page, one inquiry form, and one consolidated revision round',
 } as const
 
 /** Self service uses a form and email workflow so purchase does not depend on a custom integration quote. */
-export const aiPackages = {
+export const legacyAiPackages = {
   inquiry: {
     id: 'inquiry', name: 'AI Inquiry Assistant', price: 2500,
     description: 'Give incoming inquiries a consistent first step, with a person reviewing the response.',
@@ -21,6 +23,24 @@ export const aiPackages = {
     scope: ['One internal form for written staff notes, connected to one team email address', 'One consistent summary template with an action list', 'Email your team a draft update for a person to review before using it'],
     boundary: 'Custom CRM connections, audio transcription, historical cleanup, complex permissions, and additional workflows are excluded. Domain, hosting, and AI usage costs are separate and require your approval before activation.',
     delivery: 'After payment, provide your note format, team email address, summary requirements, account access, and five example notes. Delivery includes the working workflow, a demonstration against those examples, one consolidated revision round, and written operating instructions. The included website uses client supplied content. Any applicable service taxes are included in the package price.',
+  },
+} as const
+export type LegacyAiPackageId = keyof typeof legacyAiPackages
+
+/** Retired packages above remain available only for historical record compatibility. */
+export const aiPackages = {
+  assistant: {
+    id: aiSubscriptionOffer.id,
+    name: aiSubscriptionOffer.name,
+    price: 750,
+    description: aiSubscriptionOffer.description,
+    scope: [
+      'An AI chatbot on your existing website using your approved business information',
+      'An AI phone agent that answers incoming calls and follows your approved handoff instructions',
+      'Setup, testing, and an operating walkthrough before your free month starts',
+    ],
+    boundary: 'One business, one existing website, and one phone agent. Custom CRM work, outbound campaigns, and additional workflows require a separate agreement. Usage limits apply.',
+    delivery: 'Provide your website access, business information, and approved answers and call instructions. We prepare and test both services. You review the exact trial and billing dates and authorize recurring payments before starting your free month. Requesting setup does not start the trial or charge your card.',
   },
 } as const
 export type AiPackageId = keyof typeof aiPackages
@@ -111,7 +131,7 @@ export const qualificationSteps = [
   { id: 'experience', label: 'AI so far', heading: 'Where are you with AI today?', description: 'Your experience helps us address what has made progress difficult.' },
   { id: 'context', label: 'Your context', heading: 'Anything else we should understand about the work?', description: 'This is optional. A recent example can help us prepare for your consultation.' },
   { id: 'authority', label: 'The decision', heading: 'Are you authorized to approve a purchase for this business?', description: 'Your role helps us understand whether you can move forward with a project.' },
-  { id: 'readiness', label: 'The next step', heading: 'When would you like to put this to work?', description: 'Paid implementation projects start at $2,500. Your answers help us recommend an appropriate next step.' },
+  { id: 'readiness', label: 'The next step', heading: 'When would you like to put this to work?', description: 'The chatbot and phone agent include one free month. After the trial, pay $750 monthly, $4,050 every six months, or $7,200 every twelve months.' },
 ] as const
 export type AiQualificationStep = typeof qualificationSteps[number]['id']
 
@@ -163,7 +183,7 @@ export function isAiBookingQualified(input: Pick<AiQualificationInput, 'role' | 
 export type AiOpportunityRecommendation = {
   route: AiOpportunityRoute
   kind: 'package' | 'consultation' | 'preparation'
-  packageId: 'inquiry' | 'notes' | null
+  packageId: AiPackageId | null
   title: string
   rationale: string
   priority: 'standard' | 'established'
@@ -194,7 +214,7 @@ export function recommendAiOpportunity(input: AiQualificationInput): AiOpportuni
   if ((input.role === 'joint' || input.role === 'researching') && input.approverAvailability !== 'yes') {
     return preparation('Bring the decision maker into the next step.', 'Share your answers with the person who approves this work. A useful project conversation needs their participation.')
   }
-  if (input.budget === 'unavailable') return preparation('A smaller first step may be more useful.', 'The proposed implementation starts at $2,500. Review a smaller setup or return when that investment is practical.')
+  if (input.budget === 'unavailable') return preparation('A smaller first step may be more useful.', 'The chatbot and phone agent cost $750 monthly after the free month, with lower monthly equivalents for prepaid periods. Return when that ongoing investment is practical.')
   if (input.revenue === 'not_trading') return preparation('Start by establishing the work you need to support.', 'A repeatable customer process gives us a clearer basis for an implementation. A simpler setup may be a better first project.')
   if (input.workflows.length === 1 && input.workflows[0] === 'demand') return preparation('Focus on the customer demand problem first.', 'An internal AI workflow may not address a shortage of inquiries. Review the way customers find and contact your business before choosing an automation package.')
   if (input.timing === 'exploring') return preparation('Use this as a plan for when you are ready.', 'Document one repeated task and the result you want. You can return to these questions when an implementation becomes a current priority.')
@@ -214,11 +234,10 @@ export function recommendAiOpportunity(input: AiQualificationInput): AiOpportuni
     return consultation('Find a useful starting point across these issues.', 'You have identified several challenges. We can review how they connect and agree on a focused first project without asking you to rank them now.', 'fit_call')
   }
   if (input.workflows[0] === 'inquiries' || input.workflows[0] === 'admin') {
-    const inquiry = input.workflows[0] === 'inquiries'
     return {
-      ...base, route: 'fit_call', kind: 'package', packageId: inquiry ? 'inquiry' : 'notes',
-      title: inquiry ? 'Explore an AI Inquiry Assistant.' : 'Explore AI Notes and Updates.',
-      rationale: 'Your answers suggest a possible fit for a focused implementation. We still need to confirm the exact task, software compatibility, access, and available delivery time.',
+      ...base, route: 'fit_call', kind: 'package', packageId: 'assistant',
+      title: 'Explore an AI chatbot and phone agent.',
+      rationale: 'We can check whether answering website questions and incoming calls would help with the work you described. Both services must be ready before you activate the free month.',
     }
   }
   return consultation('Scope the change around your business.', 'Your answers point to an operational constraint that deserves a closer look. Agree on the workflow and connections before pricing the implementation.', 'fit_call')
