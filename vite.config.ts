@@ -243,7 +243,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demo\/anthony|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -308,6 +308,8 @@ function roofingDemoRoutes(): Plugin {
         '/riffle': '/demos/water/index.html',
         '/mitre': '/demos/cabinetry-2/index.html',
         '/bucyrus-auto': '/demos/bucyrus-auto/index.html',
+        // A static copy of a prospect's live site, served from public/.
+        '/demo/anthony': '/demo/anthony/index.html',
       }
       if (destinations[alias]) {
         req.url = `${destinations[alias]}${url.search}`
