@@ -30,6 +30,7 @@ const captureMap = !process.argv.includes('--no-map')
 /** Injected before </body>. The chat widget goes here. */
 const BODY_END = `
 <!-- Wallace Shift demo additions -->
+<script src="https://www.reply365.app/chat/widget.js" data-widget="c57ffa261a3cde7c8b5e9c8a340c197d" defer></script>
 `
 
 const removedScripts = [
