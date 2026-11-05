@@ -67,6 +67,19 @@
         "set -a; . ./.demo-preview.local; set +a; exec npm run dev -- --port 5184 --strictPort"
       ],
       "port": 5184
+    },
+    {
+      "name": "anthony-demo-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5185",
+        "--strictPort"
+      ],
+      "port": 5185
     }
   ]
 }
