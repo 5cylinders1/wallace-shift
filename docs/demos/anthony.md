@@ -13,11 +13,20 @@ A static copy of the home page of Anthony Plumbing, Heating, Cooling & Electric
 - Local preview: launch config `anthony-demo-preview` (port 5185), then open
   `/demo/anthony`.
 
-## Adding the chat widget
+## Chat widget
 
-Put the widget's tag in `BODY_END` in `scripts/anthony/mirror.mjs`; it is injected
-before `</body>` and survives a re-mirror. Editing `public/demo/anthony/index.html`
-directly also works, but the next mirror run overwrites it.
+The Reply365 widget (`data-widget="c57ffa261a3cde7c8b5e9c8a340c197d"`) is in
+`BODY_END` in `scripts/anthony/mirror.mjs` and in the generated
+`public/demo/anthony/index.html`. `BODY_END` is injected before `</body>` and
+survives a re-mirror; an edit made only to `index.html` is lost on the next run.
+
+The widget only shows on sites allowed in its Reply365 settings. On 2026-11-05 it
+allowed `https://anthonyphc.com` only, so its frame
+(`/chat/embed/<id>?origin=…`) answered 403 "Chat is not enabled on this website"
+for `wallaceshift.com`, `www.wallaceshift.com` and `localhost`. Both
+wallaceshift.com hosts serve the site, so add both (and `http://localhost:5185`
+to test locally). While the frame is refused, the widget's host element stays
+`visibility: hidden` and the console logs one `frame-ancestors` error.
 
 ## What differs from the live page
 
