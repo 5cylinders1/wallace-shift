@@ -80,6 +80,19 @@
         "--strictPort"
       ],
       "port": 5185
+    },
+    {
+      "name": "otv-demo-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5187",
+        "--strictPort"
+      ],
+      "port": 5187
     }
   ]
 }
