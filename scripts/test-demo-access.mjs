@@ -206,6 +206,14 @@ test('Complete Painting is a public demo: page, media, source and capped color s
   for (const path of ['/demos/painting-2/', '/demos/paintingx/index.html', '/src/demos/paintingx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
+test('the OTV concept is a public demo: page, media and source need no access', async () => {
+  for (const path of ['/demo/otv', '/demo/otv/', '/demos/otv', '/demos/otv/', '/demos/otv/index.html', '/src/demos/otv/main.tsx', '/demos/otv/channels/quarelife-1920.webp', '/public/demos/otv/preview.jpg']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('otv'), 'roofers', 'Public demos have no access-request key')
+  for (const path of ['/demos/otv-2/', '/demos/otvx/index.html', '/src/demos/otvx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('session authorizes all demo resources on its origin only; invite cannot be a cookie', async () => {
   const token = session()
   for (const path of ['/northvane', '/velar', '/demo-assets/any.js', '/api/roof-suggest']) assert.equal(await access.gateDemoRequest(new Request(origin + path, { headers: { cookie: `${access.DEMO_COOKIE}=${token}` } })), null)
