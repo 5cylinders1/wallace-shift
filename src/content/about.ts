@@ -24,21 +24,23 @@ export const aboutMeta = {
   headlineLines: ['About', 'Wallace'],
   headlineAccent: 'Shift.',
   supporting:
-    'A two-person software company serving small businesses in Greater Kansas City and remotely. We build custom CRMs, AI integrations, and connected workflows. Bella handles the first conversation. Matthew scopes and builds the system.',
+    'A two-person software company serving small businesses in Greater Kansas City and remotely. We build custom CRMs, AI integrations, and connected workflows. Bella handles sales. Matthew scopes and builds every system, and enquiries through this site go straight to him.',
 }
 
 export const aboutPeople: Person[] = [
   {
     name: 'Matthew Wallace',
     role: 'Software engineering and design',
-    bio: 'The software engineer who maps the technical requirements and designs and builds each system. You can discuss workflows, integrations, and build decisions directly with the person doing the work.',
+    bio: 'The software engineer who maps the technical requirements and designs and builds each system. Enquiries through this site come straight to him, so you discuss workflows, integrations, and build decisions directly with the person doing the work.',
     email: 'matthew@wallaceshift.com',
   },
   {
     name: 'Bella Wallace',
-    role: 'Sales and first contact',
-    bio: 'Your first point of contact. Bella learns what is getting in the way and coordinates the next conversation. Technical questions and project scoping go directly to Matthew.',
-    email: 'bella@wallaceshift.com',
+    role: 'Sales',
+    // Leads from the site go to Matthew, so Bella's card carries no
+    // address and no "first contact" wording. She is not technical.
+    bio: 'Bella handles sales for Wallace Shift. Technical questions and project scoping go directly to Matthew.',
+    email: null,
   },
 ]
 

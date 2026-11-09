@@ -92,12 +92,12 @@ export function WhatNowPage() {
             </ul>
 
             {/* Only offered while a real mailbox exists. */}
-            {business.salesEmail && (
+            {business.email && (
               <div className="what-now__fallback">
                 <h3 className="service-block__label">{noReply.label}</h3>
                 <p>{noReply.body}</p>
-                <a className="person__email" href={`mailto:${business.salesEmail}`}>
-                  {business.salesEmail}
+                <a className="person__email" href={`mailto:${business.email}`}>
+                  {business.email}
                 </a>
               </div>
             )}

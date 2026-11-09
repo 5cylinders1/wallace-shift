@@ -41,9 +41,9 @@ export function DemoRequestPage() {
   const [status, setStatus] = useState<Status>('idle')
   const statusRef = useRef<HTMLDivElement>(null)
   const submitting = status === 'submitting'
-  const salesEmail = business.salesEmail
-  const mailto = salesEmail
-    ? `mailto:${salesEmail}?subject=${encodeURIComponent(`Demo request${demo ? `: ${demo.name}` : ''}`)}`
+  const contactEmail = business.email
+  const mailto = contactEmail
+    ? `mailto:${contactEmail}?subject=${encodeURIComponent(`Demo request${demo ? `: ${demo.name}` : ''}`)}`
     : null
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -177,17 +177,17 @@ export function DemoRequestPage() {
                 <a href={studioUrl}>Explore Wallace Shift <Arrow /></a>
               </>
             )}
-            {status === 'not_configured' && <p>This form isn’t connected to an inbox yet, so nothing was sent. Please email Bella below to request your demo.</p>}
+            {status === 'not_configured' && <p>This form isn’t connected to an inbox yet, so nothing was sent. Please email Matthew below to request your demo.</p>}
             {status === 'invalid' && <p>Your request wasn’t sent. Please check your name, business name, and email, then try again.</p>}
-            {status === 'rate_limited' && <p>Too many requests were received. Please wait a few minutes and try again, or email Bella below.</p>}
-            {status === 'error' && <p>We couldn’t confirm your request was sent. Please try again or email Bella below.</p>}
+            {status === 'rate_limited' && <p>Too many requests were received. Please wait a few minutes and try again, or email Matthew below.</p>}
+            {status === 'error' && <p>We couldn’t confirm your request was sent. Please try again or email Matthew below.</p>}
           </div>
 
           {mailto && (
             <div className="demo-access__email">
               <p>Prefer a conversation?</p>
-              <a href={mailto}>Email Bella <Arrow diagonal /></a>
-              <span>{salesEmail}</span>
+              <a href={mailto}>Email Matthew <Arrow diagonal /></a>
+              <span>{contactEmail}</span>
             </div>
           )}
         </section>

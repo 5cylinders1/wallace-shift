@@ -34,10 +34,10 @@ const messages: Record<string, string> = {
   expired: 'Your invitation has expired. Please request a new invitation to continue.',
   invite_expired: 'Your invitation has expired. Please request a new invitation to continue.',
   invalid_invite: 'This invitation is no longer valid. Please request a new invitation to continue.',
-  not_configured: 'Private demo access is not available yet. Please email Bella for help arranging your demo.',
-  rate_limited: 'Too many attempts were received. Please wait a few minutes before trying again, or email Bella for help.',
-  wrong_email: 'Use the email address approved for this invitation. Contact Bella if your email has changed.',
-  email_mismatch: 'Use the email address approved for this invitation. Contact Bella if your email has changed.',
+  not_configured: 'Private demo access is not available yet. Please email Matthew for help arranging your demo.',
+  rate_limited: 'Too many attempts were received. Please wait a few minutes before trying again, or email Matthew for help.',
+  wrong_email: 'Use the email address approved for this invitation. Contact Matthew if your email has changed.',
+  email_mismatch: 'Use the email address approved for this invitation. Contact Matthew if your email has changed.',
   invalid_code: 'That code is incorrect or has expired. Check the six digits in your email, or request a new code.',
   code_invalid: 'That code is incorrect. Check the six digits in your email, or request a new code.',
   code_expired: 'Your verification code has expired. Request a new code to continue.',
@@ -46,12 +46,12 @@ const messages: Record<string, string> = {
   agreement_mismatch: 'The agreement has been updated. Reload this page to read the current terms before accepting.',
   invalid: 'Please check the information you entered and try again.',
   acceptance_required: 'Enter your full legal name and business name, then select both confirmations to accept the agreement.',
-  identity_mismatch: 'This invitation already has an acceptance record with different details. Please contact Bella for help with your invitation.',
-  forbidden: 'We couldn’t validate this request. Reload the page and try again, or email Bella for help.',
+  identity_mismatch: 'This invitation already has an acceptance record with different details. Please contact Matthew for help with your invitation.',
+  forbidden: 'We couldn’t validate this request. Reload the page and try again, or email Matthew for help.',
   too_large: 'Some information is too long. Please shorten your entries and try again.',
-  unavailable: 'We couldn’t complete that step. Your demo remains locked. Please try again or email Bella for help.',
-  upstream: 'We couldn’t complete that step. Your demo remains locked. Please try again or email Bella for help.',
-  error: 'We couldn’t complete that step. Your demo remains locked. Please try again or email Bella for help.',
+  unavailable: 'We couldn’t complete that step. Your demo remains locked. Please try again or email Matthew for help.',
+  upstream: 'We couldn’t complete that step. Your demo remains locked. Please try again or email Matthew for help.',
+  error: 'We couldn’t complete that step. Your demo remains locked. Please try again or email Matthew for help.',
 }
 
 async function requestAgreement(body?: Record<string, unknown>, signal?: AbortSignal): Promise<ApiResult> {
@@ -97,8 +97,8 @@ export function DemoAgreementPage() {
   const statusRef = useRef<HTMLDivElement>(null)
   const codeRef = useRef<HTMLInputElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
-  const salesEmail = business.salesEmail
-  const mailto = `mailto:${salesEmail}?subject=${encodeURIComponent('Private demo access')}`
+  const contactEmail = business.email
+  const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent('Private demo access')}`
   const canAccept = access?.verified && renderedHash.length > 0 && name.trim().length > 0 && businessName.trim().length > 0 && accepted && authority && !busy
 
   useEffect(() => {
@@ -296,7 +296,7 @@ export function DemoAgreementPage() {
               {notice && <p>{notice}</p>}
               {!loading && !access && <a href={error === 'agreement_changed' || error === 'agreement_mismatch' ? '/demo-agreement/' : '/request-demo/'}>{error === 'agreement_changed' || error === 'agreement_mismatch' ? 'Reload the agreement' : 'Request a demo invitation'} <span aria-hidden="true">→</span></a>}
             </div>
-            <div className="demo-access__email"><p>Need a hand?</p><a href={mailto}>Email Bella <span aria-hidden="true">↗</span></a><span>{salesEmail}</span></div>
+            <div className="demo-access__email"><p>Need a hand?</p><a href={mailto}>Email Matthew <span aria-hidden="true">↗</span></a><span>{contactEmail}</span></div>
           </aside>
         </div>
       </main>

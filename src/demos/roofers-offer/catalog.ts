@@ -93,7 +93,7 @@ export const roofingDesigns: RoofingDesign[] = [
 export const roofingOffer = 'Free website with purchase of a CRM integrated with AI'
 export const roofingMonthlyMinimum = 750
 export const roofingCommitmentMonths = 12
-export const roofingContactEmail = 'bella@wallaceshift.com'
+export const roofingContactEmail = 'matthew@wallaceshift.com'
 
 export function roofingDemoHref(design: RoofingDesign, hostname: string): string {
   return (hostname === 'roofers.wallaceshift.com'

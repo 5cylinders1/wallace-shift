@@ -215,11 +215,11 @@ def build():
     pdf.rect(MARGIN, HEIGHT - 759, 540, 62, fill=1, stroke=0)
     text(pdf, "Where is work getting stuck?", 50, 709, 17,
          "Instrument-Italic", PEARL)
-    text(pdf, "Start a conversation with Bella.", 50, 737, 8.4, color=SILVER)
-    text(pdf, "bella@wallaceshift.com", 381, 710, 9.1,
+    text(pdf, "Start a conversation with Matthew.", 50, 737, 8.4, color=SILVER)
+    text(pdf, "matthew@wallaceshift.com", 381, 710, 9.1,
          "Manrope-Semibold", AZURE)
     text(pdf, "wallaceshift.com/contact", 381, 734, 8.6, color=PEARL)
-    pdf.linkURL("mailto:bella@wallaceshift.com", (381, HEIGHT - 725, 562, HEIGHT - 706), relative=0)
+    pdf.linkURL("mailto:matthew@wallaceshift.com", (381, HEIGHT - 725, 562, HEIGHT - 706), relative=0)
     pdf.linkURL("https://wallaceshift.com/contact", (381, HEIGHT - 749, 562, HEIGHT - 730), relative=0)
 
     text(pdf, "Greater Kansas City / Working remotely", MARGIN, 775, 7.3, color=MUTED)

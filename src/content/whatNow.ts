@@ -5,9 +5,9 @@
  * Every statement here is already published elsewhere on the site: the
  * reply time comes from `business.responseTime`, the three steps restate
  * the contact page's "What happens next" list, the preparation list is its
- * "Before you write" note, and the split between Bella and Matthew is the
- * one on the About page. Nothing here promises a timeline, a price, or an
- * outcome the site does not already state.
+ * "Before you write" note, and Matthew's role is the one on the About
+ * page. Nothing here promises a timeline, a price, or an outcome the site
+ * does not already state.
  */
 import { business } from './siteConfig'
 
@@ -31,7 +31,7 @@ export const whatNow = {
         index: '01',
         title: `We reply ${business.responseTime}.`,
         body:
-          'We read every message properly before answering. Bella Wallace handles first contact. Technical questions and project scoping go straight to Matthew Wallace, who builds every project.',
+          'We read every message properly before answering. It goes to Matthew Wallace, who designs and builds every project, so the person replying is the person who would do the work.',
       },
       {
         index: '02',
@@ -62,10 +62,10 @@ export const whatNow = {
     ],
   },
 
-  /** Rendered only while `business.salesEmail` is set. */
+  /** Rendered only while `business.email` is set. */
   noReply: {
     label: 'Not heard back?',
-    body: 'If a business day passes without a reply, check your spam or junk folder first. Then email Bella directly:',
+    body: 'If a business day passes without a reply, check your spam or junk folder first. Then email Matthew directly:',
   },
 
   /** After a send, the useful next click is reading, not another form. */
