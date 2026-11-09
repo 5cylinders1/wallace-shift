@@ -15,7 +15,7 @@
   const paths = new Set([
     '/', '/services', '/pricing', '/about', '/approach', '/contact', '/privacy',
     '/request-demo', '/demos/contractors', '/demos/roofers-offer', '/blog',
-    '/offers/ai-business-integration',
+    '/offers/ai-business-integration', '/what-now',
   ])
   const offerPath = '/offers/ai-business-integration'
   const offerSteps = new Set(['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'context', 'readiness', 'contact'])

@@ -3,6 +3,7 @@ import { business } from '../../content/siteConfig'
 import { enquiryBudgets, enquiryCopy, enquiryPackages, enquiryServices,
   type EnquiryOption } from '../../content/enquiry'
 import { submitContactRequest } from '../../lib/contactAdapter'
+import { continueToWhatNow } from '../../lib/enquiryReceipt'
 import { trackSiteEvent } from '../../lib/analytics'
 import type { ServiceRecommendation } from '../../content/shiftQuiz'
 import './ContactForm.css'
@@ -14,7 +15,6 @@ const labelFor = (options: EnquiryOption[], value: string) =>
 type Status =
   | 'idle'
   | 'submitting'
-  | 'sent'
   | 'not_configured'
   | 'invalid'
   | 'error'
@@ -101,15 +101,9 @@ export function ContactForm({
 
     if (result.ok) {
       trackSiteEvent({ name: 'enquiry_submitted', value: 'contact_form' })
-      setStatus('sent')
-      setName('')
-      setEmail('')
-      setMessage('')
-      setWebsite('')
-      setNoWebsite(false)
-      setService('')
-      setPackageChoice('')
-      setBudget('')
+      // The form leaves with the page. /what-now confirms the send and
+      // explains what follows, so the button stays on "Sending…" until then.
+      continueToWhatNow()
       return
     }
 
@@ -228,8 +222,6 @@ export function ContactForm({
       </button>
 
       <p id={statusId} className="contact-form__status" role="status">
-        {status === 'sent' &&
-          'Thanks — we have received your message and will be in touch.'}
         {status === 'not_configured' && (
           <>
             This form is not connected to an inbox yet, so nothing was sent.

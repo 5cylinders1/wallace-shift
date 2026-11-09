@@ -176,7 +176,7 @@ test('phone consultation stores the chosen format without requiring email or inv
     assert.equal(record.application.nextStep, 'consultation')
     assert.equal(record.application.packageId, '')
     assert.equal(Object.hasOwn(emailRequests.at(-1).payload, 'reply_to'), false)
-    assert.match(emailRequests.at(-1).payload.text, /Requested next step: Free 45 minute consultation/)
+    assert.match(emailRequests.at(-1).payload.text, /Requested next step: Free 30 minute consultation/)
     assert.match(emailRequests.at(-1).payload.text, /Consultation format: Phone call/)
     assert.match(emailRequests.at(-1).payload.text, /A time still needs to be arranged/)
   }

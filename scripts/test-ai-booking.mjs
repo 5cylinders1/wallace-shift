@@ -31,7 +31,7 @@ let store, emails, tokenRequests, calendarRequests, events, nextEvents, tokenFai
 const answers = { businessType: '', workflows: ['inquiries'], workflowDetails: '', currentTools: 'Website and Gmail', weeklyHours: '6_10', impacts: ['delay'], impactDetails: '', role: 'owner', approverAvailability: '', revenue: '250k_1m', aiExperience: 'new', aiBarriers: [], budget: 'ready', timing: 'soon' }
 const body = (overrides = {}) => ({ action: 'send-code', attemptId: randomUUID(), email: 'visitor@example.test', answers, company: '', ...overrides })
 const attempt = (overrides = {}) => ({ action: 'start-attempt', attemptId: randomUUID(), answers, company: '', ...overrides })
-const event = (overrides = {}) => ({ id: 'event-123', status: 'confirmed', summary: 'Wallace Shift - Project Consultation', created: new Date(Date.now()).toISOString(), organizer: { self: true, email: 'owner@example.test' }, start: { dateTime: new Date(Date.now() + 86400000).toISOString() }, end: { dateTime: new Date(Date.now() + 86400000 + 45 * 60000).toISOString() }, attendees: [{ email: 'visitor@example.test', responseStatus: 'needsAction' }], ...overrides })
+const event = (overrides = {}) => ({ id: 'event-123', status: 'confirmed', summary: 'Wallace Shift - Project Consultation', created: new Date(Date.now()).toISOString(), organizer: { self: true, email: 'owner@example.test' }, start: { dateTime: new Date(Date.now() + 86400000).toISOString() }, end: { dateTime: new Date(Date.now() + 86400000 + 30 * 60000).toISOString() }, attendees: [{ email: 'visitor@example.test', responseStatus: 'needsAction' }], ...overrides })
 function get(key) {
   if (store.expirations.has(key) && store.expirations.get(key) <= Date.now()) { store.values.delete(key); store.expirations.delete(key) }
   return store.values.get(key)
@@ -447,13 +447,13 @@ test('old verified sessions must qualify before returning cached confirmation or
   put(sessionKey, JSON.stringify({ ...savedSession, intent: { ...savedSession.intent, answers: { ...legacyAnswers, role: 'decision_maker' } } }))
   assert.equal((await poll(session)).body.status, 'confirmed')
 })
-test('requires owner organizer, exact verified attendee, configured title, future 45 minute confirmed appointment and recent creation', () => {
+test('requires owner organizer, exact verified attendee, configured title, future 30 minute confirmed appointment and recent creation', () => {
   const now = Date.now()
   for (const responseStatus of ['accepted', 'tentative', 'needsAction']) assert.equal(isMatchingBooking(event({ attendees: [{ email: 'VISITOR@example.test', responseStatus }] }), 'visitor@example.test', now), true)
   for (const invalid of [
     { status: 'cancelled' }, { status: 'tentative' }, { organizer: { self: false } }, { organizer: {} }, { organizer: { self: true } }, { summary: 'Another appointment' }, { summary: 'Wallace Shift - Project ConsultationEvil' },
     { attendees: [{ email: 'other@example.test', responseStatus: 'accepted' }] }, { attendees: [{ email: 'visitor@example.test', responseStatus: 'declined' }] }, { attendees: [{ email: 'visitor@example.test' }] }, { attendees: [{ email: 'visitor@example.test', responseStatus: 'unknown' }] },
-    { created: new Date(now - 301000).toISOString() }, { created: 'invalid' }, { start: { dateTime: new Date(now - 1000).toISOString() } }, { start: { date: '2026-11-04' } }, { end: { dateTime: new Date(now + 86400000 + 30 * 60000).toISOString() } },
+    { created: new Date(now - 301000).toISOString() }, { created: 'invalid' }, { start: { dateTime: new Date(now - 1000).toISOString() } }, { start: { date: '2026-11-04' } }, { end: { dateTime: new Date(now + 86400000 + 45 * 60000).toISOString() } },
   ]) assert.equal(isMatchingBooking(event(invalid), 'visitor@example.test', now), false, JSON.stringify(invalid))
   assert.equal(isMatchingBooking(event({ summary: 'Wallace Shift - Project Consultation (Visitor)' }), 'visitor@example.test', now), true)
 })
