@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- A concept site prepared for Deer Creek Plumbing and shown by link. It
+         must not compete with deercreekplumbing.com in search. The build
+         (deercreek/vite-plugin.ts) writes each page's own title, description,
+         canonical and JSON-LD here and keeps every page noindex. -->
+    <title>Plumber in Olathe, KS | Deer Creek Plumbing, Kansas City Metro</title>
+    <meta name="description" content="Family-owned Olathe plumber serving the Kansas City metro since 2017." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0b1724" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:image" content="https://wallaceshift.com/demos/deercreek/photos/truck-1600.webp" />
+    <link rel="icon" type="image/png" href="/demos/deercreek/favicon.png" />
+    <link rel="apple-touch-icon" href="/demos/deercreek/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400..600&amp;family=Atkinson+Hyperlegible+Next:ital,wght@0,400..800;1,400..600&amp;display=swap" rel="stylesheet" />
+    <script>
+      // Apply saved display settings before first paint (see DisplaySettings.tsx).
+      (function () {
+        var root = document.documentElement
+        root.classList.add('dc-js')
+        try {
+          var prefs = JSON.parse(localStorage.getItem('dc-display') || '{}')
+          if (prefs.text) root.setAttribute('data-dc-text', prefs.text)
+          if (prefs.contrast) root.setAttribute('data-dc-contrast', '')
+          if (prefs.motion) root.setAttribute('data-dc-motion', '')
+          if (prefs.underline) root.setAttribute('data-dc-underline', '')
+          if (prefs.spacing) root.setAttribute('data-dc-spacing', '')
+        } catch (error) { /* storage unavailable: defaults apply */ }
+      })()
+    </script>
+  </head>
+  <body class="dc-body">
+    <div id="root"></div>
+    <script type="module" src="/src/demos/deercreek/main.tsx"></script>
+  </body>
+</html>
