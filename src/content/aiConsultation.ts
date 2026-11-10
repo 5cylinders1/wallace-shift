@@ -1,8 +1,8 @@
-const bookingUrl = 'https://calendar.google.com/appointments/schedules/AcZssZ0sJQOQw_yPeOv8Nm_ZBh-hMDulDvuG2vjeUKuqnOlrIYWBcMZkridN50_p7AIMDnlRWSm47HrE'
+const bookingUrl = 'https://calendly.com/matthew-wallaceshift/consultation'
 const filmPath = '/media/ai-consultation/wallace-shift-put-ai-to-work'
 
 export const aiConsultation = {
-  durationMinutes: 45,
+  durationMinutes: 30,
   fallbackBookingUrl: bookingUrl,
   /** The short studio film plays here until the full consultation walkthrough is ready. */
   walkthrough: {

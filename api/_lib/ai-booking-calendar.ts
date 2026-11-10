@@ -2,6 +2,7 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 import { DemoError } from './demo-access.js'
 import { ownerEmail, hash } from './portal-auth.js'
 import { getValue, redis } from './portal-store.js'
+import { aiConsultation } from '../../src/content/aiConsultation.js'
 
 export const CALENDAR_SCOPE = 'https://www.googleapis.com/auth/calendar.events.readonly'
 const CONNECTION = 'booking:calendar'
@@ -85,7 +86,7 @@ export function isMatchingBooking(event: CalendarEvent, email: string, intentSta
   const end = Date.parse(event.end?.dateTime ?? '')
   const created = Date.parse(event.created ?? '')
   const organizerEmail = event.organizer?.email?.trim() ?? ''
-  return Boolean(event.id && event.status === 'confirmed' && event.organizer?.self === true && organizerEmail.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(organizerEmail) && titleMatches && start > now && end - start === 45 * 60000 && created >= intentStartedAt - 5 * 60000 && created <= now + 60000 && event.attendees?.some(attendee => attendee.email?.trim().toLowerCase() === email && ['accepted', 'tentative', 'needsAction'].includes(attendee.responseStatus ?? '')))
+  return Boolean(event.id && event.status === 'confirmed' && event.organizer?.self === true && organizerEmail.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(organizerEmail) && titleMatches && start > now && end - start === aiConsultation.durationMinutes * 60000 && created >= intentStartedAt - 5 * 60000 && created <= now + 60000 && event.attendees?.some(attendee => attendee.email?.trim().toLowerCase() === email && ['accepted', 'tentative', 'needsAction'].includes(attendee.responseStatus ?? '')))
 }
 export async function findBooking(connection: CalendarConnection, email: string, startedAt: number): Promise<CalendarEvent | null> {
   try {

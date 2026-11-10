@@ -15,8 +15,8 @@ export const organizationNode = {
   logo: `${SITE_ORIGIN}/brand/wallace-shift-logo-black.svg`,
   description: siteMeta.description,
   areaServed: { '@type': 'Place', name: business.serviceArea ?? 'Greater Kansas City' },
-  ...(business.salesEmail ? {
-    contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: business.salesEmail },
+  ...(business.email ? {
+    contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: business.email },
   } : {}),
 }
 

@@ -9,6 +9,8 @@ import ts from 'typescript'
 const base = new URL('../src/components/Hero/', import.meta.url)
 const asModule = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
 const adapter = asModule('export async function submitContactRequest() { throw new Error("Unexpected default submission in offline test") }')
+// The real hand-off navigates the browser; each test passes its own onSent.
+const receipt = asModule('export function continueToWhatNow() { throw new Error("Unexpected default navigation in offline test") }')
 const modules = new Map()
 async function compileModule(url) {
   if (modules.has(url.href)) return modules.get(url.href)
@@ -20,6 +22,7 @@ async function compileModule(url) {
     const specifier = match[2]
     let target
     if (specifier.endsWith('/contactAdapter')) target = adapter
+    else if (specifier.endsWith('/enquiryReceipt')) target = receipt
     else if (!specifier.startsWith('.')) target = import.meta.resolve(specifier)
     else {
       for (const extension of ['.ts', '.tsx']) {
@@ -71,7 +74,8 @@ await test('drafts survive presentation subscriptions while separate controllers
 await test('a pending request survives a presentation swap and cannot send twice', async () => {
   const result = deferred()
   const payloads = []
-  const controller = createHeroContactState(payload => { payloads.push(payload); return result.promise })
+  let handoffs = 0
+  const controller = createHeroContactState(payload => { payloads.push(payload); return result.promise }, () => { handoffs += 1 })
   controller.setName('Casey Example')
   controller.setEmail('casey@example.com')
   const stop = controller.subscribe(() => {})
@@ -85,10 +89,12 @@ await test('a pending request survives a presentation swap and cannot send twice
   controller.setEmail('later-edit@example.com')
   await Promise.resolve()
   assert.deepEqual(payloads, [{ name: 'Casey Example', email: 'casey@example.com', message: '' }])
+  assert.equal(handoffs, 0, 'nothing moves on before delivery is confirmed')
   result.resolve({ ok: true })
   await first
   assert.deepEqual(controller.getSnapshot(), { name: '', email: '', status: 'sent' })
-  assert.match(renderCard(controller), /Thanks — we will be in touch\./)
+  assert.equal(handoffs, 1, 'a delivered message hands off to /what-now exactly once')
+  assert.doesNotMatch(renderCard(controller), /Thanks/, 'the card no longer carries a thank-you line')
   assert.doesNotMatch(renderCard(controller), /disabled=""/)
 })
 
@@ -96,10 +102,12 @@ await test('unsent requests retain the draft and existing feedback, with a worki
   for (const reason of ['not_configured', 'invalid', 'network_error']) {
     const responses = [{ ok: false, reason }, { ok: true }]
     const payloads = []
-    const controller = createHeroContactState(async payload => { payloads.push(payload); return responses.shift() })
+    let handoffs = 0
+    const controller = createHeroContactState(async payload => { payloads.push(payload); return responses.shift() }, () => { handoffs += 1 })
     controller.setName('Taylor Example')
     controller.setEmail('taylor@example.com')
     await controller.submit()
+    assert.equal(handoffs, 0, `${reason} never reaches /what-now`)
     assert.equal(controller.getSnapshot().status, reason === 'not_configured' ? 'not_configured' : 'error')
     assert.equal(controller.getSnapshot().name, 'Taylor Example')
     assert.equal(controller.getSnapshot().email, 'taylor@example.com')
@@ -107,6 +115,7 @@ await test('unsent requests retain the draft and existing feedback, with a worki
       ? /This form is not connected yet\./ : /Something went wrong\. Please retry\./)
     await controller.submit()
     assert.equal(controller.getSnapshot().status, 'sent')
+    assert.equal(handoffs, 1)
     assert.equal(payloads.length, 2)
     assert.deepEqual(payloads[1], payloads[0])
   }
@@ -114,16 +123,19 @@ await test('unsent requests retain the draft and existing feedback, with a worki
 
 await test('a rejected adapter does not leave the shared form stuck submitting', async () => {
   let attempts = 0
+  let handoffs = 0
   const controller = createHeroContactState(async () => {
     if (++attempts === 1) throw new Error('offline mock failure')
     return { ok: true }
-  })
+  }, () => { handoffs += 1 })
   controller.setName('Alex Example')
   await controller.submit()
   assert.equal(controller.getSnapshot().status, 'error')
+  assert.equal(handoffs, 0)
   assert.equal(controller.getSnapshot().name, 'Alex Example')
   await controller.submit()
   assert.equal(controller.getSnapshot().status, 'sent')
+  assert.equal(handoffs, 1)
   assert.equal(attempts, 2)
 })
 

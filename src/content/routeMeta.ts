@@ -33,8 +33,10 @@ export interface RouteMeta {
   priority: number
   /** Excluded from sitemap.xml and marked noindex. */
   noindex?: boolean
-  /** Public review page: render its HTML and consent-based analytics even
-   * while noindex keeps the draft out of search. Never set for private pages. */
+  /** A public page kept out of search: render its HTML and consent-based
+   * analytics, and navigate to it client-side, even while noindex keeps it
+   * out of the index. Set for review drafts and for /what-now, which only
+   * makes sense after an enquiry. Never set for private pages. */
   publicDraft?: boolean
   /**
    * Overrides the robots directive emitted for a `noindex` route.
@@ -51,6 +53,10 @@ export const PIT_STOP_EXPERIMENT_PATH = '/experiments/pit-stop'
 
 /** Unlisted offer draft. Commercial terms still require review before launch. */
 export const AI_OFFER_PATH = '/offers/ai-business-integration'
+
+/** Where both enquiry forms land after a confirmed send. Linked from nowhere
+ *  else: it explains what happens next, so it belongs after the form. */
+export const WHAT_NOW_PATH = '/what-now'
 
 export const routeMeta: RouteMeta[] = [
   { path: '/client-portal', title: 'Client Portal | Wallace Shift', description: 'Review agreements, invoices, and payments with Wallace Shift.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
@@ -125,6 +131,15 @@ export const routeMeta: RouteMeta[] = [
     noindex: true,
     publicDraft: true,
     robots: 'noindex, nofollow',
+  },
+  {
+    path: WHAT_NOW_PATH,
+    title: 'What Happens Next | Wallace Shift',
+    description:
+      'What happens after you contact Wallace Shift: a reply within one business day, a conversation about how your work runs, and a first step agreed in writing.',
+    priority: 0,
+    noindex: true,
+    publicDraft: true,
   },
   {
     path: WATER_HERO_EXPERIMENT_PATH,

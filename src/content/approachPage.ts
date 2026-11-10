@@ -31,13 +31,11 @@ export interface ApproachStage {
  *  site itself rather than a claim about outcomes. */
 export const approachAssurances = [
   {
-    // NOT "no handoffs". Bella is sales and routes technical detail to
-    // Matthew, so a handoff is exactly what happens — claiming otherwise
-    // oversells her remit and sends prospects to her with questions she
-    // cannot answer, at the first-contact moment this page exists to
-    // protect. The honest version is who does what.
+    // Enquiries through the site go to Matthew (since 2026-11-09). Bella
+    // handles sales and is not technical, so nothing here may route
+    // technical detail or site enquiries to her.
     title: 'One engineer, every project',
-    body: 'Bella is who you speak to first. Matthew designs and builds every project himself.',
+    body: 'Enquiries through this site go straight to Matthew, who designs and builds every project himself.',
   },
   {
     title: 'Starting prices published',
@@ -252,21 +250,22 @@ export const approachProof = {
   heading: 'Work directly with the people responsible.',
   people: [
     {
-      name: 'Bella Wallace',
-      role: 'Sales and first contact',
-      email: business.salesEmail,
-      // Must never imply she scopes or answers technical questions.
-      body: 'The first person you speak to. She handles enquiries and keeps things moving; anything technical goes straight to Matthew rather than through her.',
-    },
-    {
       name: 'Matthew Wallace',
       role: 'Engineer',
+      email: business.email,
+      body: 'Enquiries through this site come straight to Matthew. He scopes, designs, and builds each project, and has been building production websites and web applications since 2009.',
+    },
+    {
+      name: 'Bella Wallace',
+      role: 'Sales',
+      // No address: leads from the site go to Matthew. Must never imply
+      // she scopes or answers technical questions.
       email: null,
-      body: 'Scopes, designs, and builds each project. Matthew has been building production websites and web applications since 2009; technical decisions and questions about your workflows go directly to him.',
+      body: 'Handles sales for Wallace Shift. Anything technical goes straight to Matthew rather than through her.',
     },
   ],
   paragraphs: [
-    'Bella handles first contact and coordination. Matthew takes responsibility for technical scope, the build, and the handover.',
+    'Enquiries through this site go to Matthew, who takes responsibility for technical scope, the build, and the handover. Bella handles sales.',
     'We limit concurrent projects so the person defining your system stays involved in building it. Ongoing development and maintenance have their own agreed scope.',
   ],
   /** Factual, checkable, and about depth rather than any one technology. */

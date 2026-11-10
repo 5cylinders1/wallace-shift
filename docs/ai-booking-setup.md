@@ -1,19 +1,21 @@
 # Consultation booking and owner email
 
-Qualified visitors book a free 45 minute Google Meet consultation inside the funnel. Calendly supplies the scheduling form and confirms the appointment. Its confirmation opens the film automatically. Finishing the film reveals one AI website chatbot and AI phone agent bundle with three payment intervals.
+Qualified visitors book a free 30 minute Google Meet consultation inside the funnel. Calendly supplies the scheduling form and confirms the appointment. Its confirmation opens the film automatically. Finishing the film reveals one AI website chatbot and AI phone agent bundle with three payment intervals.
 
 ## Connect the consultation event
 
 1. In Calendly, go to **Settings → Scheduling → Calendars** and connect Google Calendar. Sign in as the calendar owner, `matthew.wallaceshift@gmail.com`. Choose the calendars to check for conflicts and select the consultation calendar under **Calendar to add events to**. [Connect Google Calendar](https://calendly.com/help/how-to-connect-your-google-calendar)
-2. Go to **Scheduling → + Create → One-on-one**. Name the event **Wallace Shift Project Consultation**, set the duration to **45 minutes**, choose **Google Meet** as its location, set your available hours, and save. [Create an event type](https://calendly.com/help/how-to-set-up-an-event-type) · [Connect Google Meet](https://calendly.com/help/calendly-google-meet)
+2. Edit the existing **Free 30 Minute Consultation** event, or use **Scheduling → + Create → One-on-one** for a new setup. Set the duration to **30 minutes**, choose **Google Meet** as its location, set your available hours, and save. [Create an event type](https://calendly.com/help/how-to-set-up-an-event-type) · [Connect Google Meet](https://calendly.com/help/calendly-google-meet)
 3. On this event’s card, choose **Copy link**. Use the reusable event link so visitors land directly on this consultation. [Share an event link](https://calendly.com/help/how-to-share-your-scheduling-link)
-4. The funnel defaults to the owner's [Wallace Shift consultation](https://calendly.com/matthew-wallaceshift/consultation). No environment variable is needed for this link. To switch events, override `VITE_CALENDLY_EVENT_URL` with the new public URL, restart Vite locally, and redeploy for the Vercel environment you change. An explicitly empty or invalid override uses the existing Google schedule instead. Google can book the appointment and send its usual confirmation, but that fallback cannot advance to the film.
+4. The funnel defaults to the owner's [Wallace Shift consultation](https://calendly.com/matthew-wallaceshift/consultation). No environment variable is needed for this link. To switch events, override `VITE_CALENDLY_EVENT_URL` with the new public URL, restart Vite locally, and redeploy for the Vercel environment you change. An explicitly empty or invalid override shows a direct link to the default Calendly consultation without an embed. The phone alternative remains available. Calendly sends its usual confirmation for a booking completed in a separate tab, but that fallback cannot advance to the film.
+
+The owner changed the existing Calendly event to 30 minutes on November 9, 2026. Its reusable URL remains unchanged. `src/content/aiConsultation.ts` supplies the duration for consultation copy, owner notifications, and the legacy Calendar verifier. The independent Google appointment schedule still offers 45 minutes and is no longer linked by the funnel. The funnel's embedded scheduler and direct fallback both use Calendly.
 
 The booking screen also provides **Open calendar in a new tab** in case a browser or network blocks the embed. A failed script or an embed that remains unready for 15 seconds collapses the blank calendar area and offers a retry. A slow embed can still recover when Calendly signals that it is ready. Bookings completed in a separate tab receive Calendly's normal confirmation but cannot automatically open the film in the original tab. See [Calendly's embed troubleshooting guidance](https://calendly.com/help/troubleshooting-calendly-embeds).
 
 ## Check one booking before running ads
 
-Complete a qualified quiz in the intended environment. Selecting a date or time should leave the scheduler visible. Finish an appointment using the embedded form. On success the funnel should bring the film into view automatically. Confirm the event appears on the chosen Google calendar with a Meet link and that the booking notice reaches the intended inbox. After the 15 second film ends, the single bundle and its three prepaid interval choices should appear. Cancel the test appointment through its confirmation. [Calendly embed events](https://developer.calendly.com/api-docs/overview/embedding/notifying-the-parent-window)
+Complete a qualified quiz in the intended environment. Selecting a date or time should leave the scheduler visible. Finish an appointment using the embedded form. On success the funnel should bring the film into view automatically. Confirm the event appears on the chosen Google calendar with a 30 minute duration and a Meet link, and that the booking notice reaches the intended inbox. After the 15 second film ends, the single bundle and its three prepaid interval choices should appear. Cancel the test appointment through its confirmation. [Calendly embed events](https://developer.calendly.com/api-docs/overview/embedding/notifying-the-parent-window)
 
 ## Quiz summary and booking notices
 
@@ -97,7 +99,7 @@ The portal's **Ready to connect** state means the required Calendar environment 
 
 ### Legacy verification and recovery
 
-For a legacy client, an eight hour quiz attempt and a verified attendee email identify a new appointment on the configured calendar. A matching event must be confirmed, future, organized on the connected calendar, use the expected title, and last 45 minutes. Ambiguous results do not confirm a booking. Previously verified records can be read in the owner portal under **Previously matched consultations and quiz answers**. These snapshots do not track subsequent reschedules or cancellations.
+For a legacy client, an eight hour quiz attempt and a verified attendee email identify a new appointment on the configured calendar. A new matching event must be confirmed, future, organized on the connected calendar, use the expected title, and last 30 minutes, as defined in the shared consultation configuration. Ambiguous results do not confirm a booking. The duration change does not modify previously stored confirmed bookings. Previously verified records can be read in the owner portal under **Previously matched consultations and quiz answers**. These snapshots do not track subsequent reschedules or cancellations.
 
 The connection requests offline access with `calendar.events.readonly`. That Google permission can read events on calendars available to the account; this implementation queries only the configured calendar. It never creates, modifies, or cancels Google events. The refresh token is encrypted with AES 256 GCM and stored durably. Tokens remain on the server.
 
@@ -109,7 +111,7 @@ Owner OAuth state is bound to the signed in owner session and expires after ten 
 | Google blocks authorization | Correct test user while testing, audience configuration, requested scope, and applicable Workspace policy or verification requirements. |
 | Calendar connection unavailable | Required server values, durable Redis, Resend sender, and owner authorization. Redeploy or restart after environment changes. |
 | Reconnection required | Revoked or expired access, a changed encryption key/client/calendar/owner, or a Testing refresh token reaching its seven day lifetime. |
-| Booking stays pending | Same verified attendee email, correct calendar and schedule title, new future 45 minute event, and no duplicate matching appointments. Check Google directly before making another booking. |
+| Booking stays pending | Same verified attendee email, correct calendar and schedule title, new future 30 minute event, and no duplicate matching appointments. Check Google directly before making another booking. |
 
 
 The current funnel does not poll this legacy Calendar integration. Payment webhooks and billing jobs are documented in the [client portal guide](client-portal/README.md).

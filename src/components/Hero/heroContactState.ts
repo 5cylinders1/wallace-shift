@@ -1,12 +1,18 @@
 import { submitContactRequest } from '../../lib/contactAdapter'
 import { trackSiteEvent } from '../../lib/analytics'
+import { continueToWhatNow } from '../../lib/enquiryReceipt'
 
 type Status = 'idle' | 'submitting' | 'sent' | 'not_configured' | 'error'
 type ContactState = { name: string; email: string; status: Status }
 
 /** One controller belongs to one homepage, so presentation changes cannot
- * discard a draft or detach the result of an in-flight submission. */
-export function createHeroContactState(submitRequest = submitContactRequest) {
+ * discard a draft or detach the result of an in-flight submission.
+ * `onSent` runs once per delivered message, after the event is recorded
+ * against the page the visitor sent it from. */
+export function createHeroContactState(
+  submitRequest = submitContactRequest,
+  onSent: () => void = continueToWhatNow,
+) {
   let state: ContactState = { name: '', email: '', status: 'idle' }
   let pending: Promise<void> | null = null
   const listeners = new Set<() => void>()
@@ -34,6 +40,7 @@ export function createHeroContactState(submitRequest = submitContactRequest) {
           if (result.ok) {
             update({ status: 'sent', name: '', email: '' })
             trackSiteEvent({ name: 'enquiry_submitted', value: 'home_hero' })
+            onSent()
           } else {
             update({ status: result.reason === 'not_configured' ? 'not_configured' : 'error' })
             if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: 'home_hero' })

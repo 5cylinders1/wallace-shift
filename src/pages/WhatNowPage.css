@@ -1,0 +1,168 @@
+/* /what-now: the page after a sent enquiry. It reads like the rest of the
+   interior pages (ink opening, bone body, ink close) so a visitor who has
+   just sent a message is still clearly on the same site. */
+
+/* The heading takes focus after a send so screen readers announce the new
+   page. It is not a control, so it gets no focus ring. */
+.what-now__hero h1:focus {
+  outline: none;
+}
+
+/* ---------- steps ---------- */
+
+.what-now__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.what-now__step {
+  position: relative;
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+/* A short, heavier segment on each divider: the offset rule the rest of
+   the site uses in place of bullets and boxes. */
+.what-now__step::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: clamp(40px, 4vw, 56px);
+  height: 2px;
+  background: var(--color-ember-deep);
+}
+
+.what-now__step-inner {
+  display: grid;
+  grid-template-columns: minmax(72px, 1.1fr) minmax(0, 4fr) minmax(0, 5fr);
+  gap: clamp(16px, 3vw, 48px);
+  align-items: baseline;
+  padding-block: clamp(26px, 3.2vw, 44px);
+}
+
+.what-now__index {
+  font-size: clamp(2.25rem, 4.6vw, 3.75rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--color-ember-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+.what-now__title {
+  margin: 0;
+  max-width: 20ch;
+  font-size: clamp(1.35rem, 2.3vw, 1.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.what-now__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.what-now__body p {
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(1rem, 1.2vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+}
+
+.what-now__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-ember-deep);
+  padding-bottom: 3px;
+  transition: gap var(--duration-hover) var(--ease-out-soft);
+}
+
+.what-now__link:hover {
+  gap: 0.85em;
+}
+
+/* ---------- before we talk ---------- */
+
+.what-now--prepare {
+  padding-bottom: var(--section-pad-y);
+}
+
+.what-now__prepare {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: start;
+}
+
+.what-now__prepare-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(12px, 1.6vw, 18px);
+}
+
+.what-now__checklist li {
+  font-size: clamp(1rem, 1.25vw, 1.0625rem);
+}
+
+.what-now__fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: clamp(28px, 3vw, 40px);
+  padding-top: 20px;
+  border-top: 1px solid rgba(6, 7, 8, 0.14);
+}
+
+.what-now__fallback .service-block__label {
+  margin: 0;
+}
+
+.what-now__fallback p {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-muted-on-bone);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .what-now__step-inner {
+    grid-template-columns: minmax(56px, auto) minmax(0, 1fr);
+    row-gap: 12px;
+  }
+
+  .what-now__body {
+    grid-column: 2;
+  }
+
+  .what-now__prepare {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .what-now__step-inner {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .what-now__body {
+    grid-column: auto;
+  }
+}

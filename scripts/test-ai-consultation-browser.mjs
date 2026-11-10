@@ -17,10 +17,10 @@ const payload = {
   invitee: { uri: 'https://api.calendly.com/api/v2/scheduled_events/local-booking/invitees/local-visitor' },
 }
 const scheduled = { event: 'calendly.event_scheduled', payload }
-function testServer(googleFallback) {
+function testServer(eventUrlOverride) {
   return createServer({
     configFile: false, plugins: [react()], logLevel: 'error',
-    define: { 'import.meta.env.VITE_CALENDLY_EVENT_URL': googleFallback ? '""' : 'undefined' },
+    define: { 'import.meta.env.VITE_CALENDLY_EVENT_URL': JSON.stringify(eventUrlOverride) ?? 'undefined' },
     server: { host: '127.0.0.1', port: 0, hmr: false, open: false },
   })
 }
@@ -46,7 +46,7 @@ async function finishQuiz(page) {
   await page.getByRole('button', { name: 'Send answers and see times' }).click()
 }
 
-async function check(browser, server, viewport, reducedMotion, googleFallback = false) {
+async function check(browser, server, viewport, reducedMotion, directFallback = false) {
   const page = await browser.newPage({ viewport, reducedMotion, serviceWorkers: 'block' })
   const origin = server.resolvedUrls.local[0]
   const errors = []
@@ -57,7 +57,6 @@ async function check(browser, server, viewport, reducedMotion, googleFallback = 
   await page.route('**/*', async route => {
     const target = new URL(route.request().url())
     if (target.href === widgetUrl) return route.fulfill({ contentType: 'application/javascript', body: widget })
-    if (target.origin === 'https://calendar.google.com') return route.fulfill({ contentType: 'text/html', body: '<title>Local Google schedule</title>' })
     if (target.origin === 'https://calendly.com') return route.fulfill({ contentType: 'text/html', body: '<title>Local booking simulation</title><p>Consultation scheduler</p>' })
     if (target.origin !== new URL(origin).origin) return route.abort()
     if (target.pathname === '/api/ai-booking') {
@@ -79,19 +78,23 @@ async function check(browser, server, viewport, reducedMotion, googleFallback = 
   try {
     await page.goto(new URL('/offers/ai-business-integration', origin).href)
     await finishQuiz(page)
-    if (googleFallback) {
-      const link = page.getByRole('link', { name: /Open in Google Calendar/ })
+    if (directFallback) {
+      const link = page.getByRole('link', { name: /Open calendar in a new tab/ })
       await link.waitFor()
-      const googleFrame = page.getByTitle('Wallace Shift consultation times in Google Calendar')
-      assert.equal(await googleFrame.getAttribute('src'), (await link.getAttribute('href')) + '?gv=true')
-      assert.equal(await page.locator('video, .qf-walkthrough-offers').count(), 0)
+      assert.equal(await link.getAttribute('href'), 'https://calendly.com/matthew-wallaceshift/consultation')
+      assert.equal(await link.getAttribute('target'), '_blank')
+      assert.deepEqual(new Set((await link.getAttribute('rel')).split(/\s+/)), new Set(['noopener', 'noreferrer']))
+      assert.match(await page.locator('.qf-booking-instruction').innerText(), /free 30 minute Google Meet/)
+      assert.equal(await page.locator('iframe, video, .qf-walkthrough-offers').count(), 0)
       await page.getByRole('button', { name: 'Prefer a phone call without email?' }).click()
       await page.getByLabel('Phone number').waitFor()
+      assert.equal(await page.getByText(/Share your details to arrange a free 30 minute phone call/).isVisible(), true)
       assert.equal(await page.locator('video, .qf-walkthrough-offers').count(), 0)
       assert.deepEqual(errors, [])
-      console.log('Passed Google booking and phone fallback without a Calendly event URL.')
+      console.log('Passed direct 30 minute Calendly booking and phone fallback without a valid embed URL.')
       return
     }
+    assert.match(await page.locator('.qf-booking-instruction').innerText(), /free 30 minute Google Meet/)
     const frame = await page.locator('.qf-booking-frame iframe').elementHandle().then(element => element.contentFrame())
     await frame.waitForURL(url => url.origin === 'https://calendly.com' && url.pathname === '/matthew-wallaceshift/consultation')
     const post = value => frame.evaluate(data => window.parent.postMessage(data, '*'), value)
@@ -262,11 +265,11 @@ async function checkCalendarRecovery(browser, server, failure) {
 const { chromium } = await playwright()
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 try {
-  for (const googleFallback of [false, true]) {
-    const server = await testServer(googleFallback)
+  for (const eventUrlOverride of [undefined, '', 'https://invalid.example.test/consultation']) {
+    const server = await testServer(eventUrlOverride)
     try {
       await server.listen()
-      if (!googleFallback) {
+      if (eventUrlOverride === undefined) {
         await check(browser, server, { width: 1280, height: 900 }, 'no-preference')
         await check(browser, server, { width: 390, height: 844 }, 'reduce')
         for (const failure of ['script', 'slow-retry', 'slow-recovery']) await checkCalendarRecovery(browser, server, failure)

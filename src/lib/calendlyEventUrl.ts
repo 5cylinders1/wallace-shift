@@ -1,3 +1,5 @@
+import { aiConsultation } from '../content/aiConsultation'
+
 function readEventUrl(value: string | undefined): string | null {
   if (!value) return null
   try {
@@ -11,5 +13,4 @@ function readEventUrl(value: string | undefined): string | null {
   }
 }
 
-const wallaceShiftConsultation = 'https://calendly.com/matthew-wallaceshift/consultation'
-export const calendlyEventUrl = readEventUrl(import.meta.env.VITE_CALENDLY_EVENT_URL ?? wallaceShiftConsultation)
+export const calendlyEventUrl = readEventUrl(import.meta.env.VITE_CALENDLY_EVENT_URL ?? aiConsultation.fallbackBookingUrl)

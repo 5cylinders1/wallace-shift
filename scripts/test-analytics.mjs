@@ -77,7 +77,7 @@ test('an unconfigured identifier loads neither analytics nor a consent interface
 
 test('loads only on production hosts and explicitly public routes after consent', () => {
   for (const host of ['wallaceshift.com', 'www.wallaceshift.com', 'contractors.wallaceshift.com', 'roofers.wallaceshift.com']) {
-    for (const path of ['/', '/services', '/pricing/', '/about', '/approach', '/contact', '/privacy', '/request-demo/', '/demos/contractors/', '/demos/roofers-offer', '/blog', '/blog/a-useful-crm-guide', '/offers/ai-business-integration']) {
+    for (const path of ['/', '/services', '/pricing/', '/about', '/approach', '/contact', '/privacy', '/request-demo/', '/demos/contractors/', '/demos/roofers-offer', '/blog', '/blog/a-useful-crm-guide', '/offers/ai-business-integration', '/what-now']) {
       const app = browser({ href: `https://${host}${path}`, savedConsent: 'granted' })
       assert.equal(app.scripts.length, 1, `${host}${path}`)
       assert.equal(app.scripts[0].src, `https://www.googletagmanager.com/gtag/js?id=${testId}`)

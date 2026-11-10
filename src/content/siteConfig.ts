@@ -19,11 +19,12 @@ export const siteMeta = {
  * the site is correct rather than advertising an address that bounces.
  */
 export const business = {
-  /** The published address. Live and receiving as of 2026-09-02. */
+  /**
+   * The published address, and where every lead from the site is pointed.
+   * Live and receiving as of 2026-09-02. Since 2026-11-09 Matthew handles
+   * new enquiries himself, so no page sends prospects anywhere else.
+   */
   email: 'matthew@wallaceshift.com' as string | null,
-
-  /** Bella handles sales and new project enquiries. */
-  salesEmail: 'bella@wallaceshift.com' as string | null,
 
   /**
    * Where the studio works from — region only, never a street address.
@@ -182,10 +183,10 @@ export const contactCta = {
   /** Real alternatives for a reader who does not want to fill in a form.
    *  Both destinations already exist, and nothing here promises a response
    *  time or anything else that is not already true. The email link is
-   *  rendered only while `business.salesEmail` is set. */
+   *  rendered only while `business.email` is set. */
   alternatives: {
     eyebrow: 'Rather not fill in a form?',
-    emailLead: 'Email Bella in sales:',
+    emailLead: 'Email Matthew directly:',
     pricingLabel: 'See what this costs',
     pricingHref: '/pricing',
   },

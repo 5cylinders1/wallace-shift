@@ -12,9 +12,10 @@ import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { AiOfferPage } from './pages/AiOfferPage'
+import { WhatNowPage } from './pages/WhatNowPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { scrollToRouteTarget, useRoutePath } from './lib/router'
-import { AI_OFFER_PATH, PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH } from './content/routeMeta'
+import { AI_OFFER_PATH, PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH, WHAT_NOW_PATH } from './content/routeMeta'
 
 const pages: Record<string, () => ReactElement> = {
   ...Object.fromEntries(serviceLandingPages.map(service => [service.path, () => <ServiceLandingPage service={service} />])),
@@ -26,6 +27,7 @@ const pages: Record<string, () => ReactElement> = {
   '/contact': ContactPage,
   '/privacy': PrivacyPage,
   [AI_OFFER_PATH]: AiOfferPage,
+  [WHAT_NOW_PATH]: WhatNowPage,
   '/404': NotFoundPage,
 }
 

@@ -104,13 +104,19 @@ export function scrollToRouteTarget(behavior?: ScrollBehavior) {
   window.scrollTo({ top: 0, behavior: behavior ?? 'auto' })
 }
 
+/** Unindexed documents without the public bootstrap: the portal, the
+ *  experiments, and the 404. A public draft keeps the bootstrap. */
+function isPrivateDocument(pathname: string): boolean {
+  const route = findRoute(normalizePath(pathname))
+  return Boolean(route?.noindex && !route.publicDraft)
+}
+
 export function navigate(href: string) {
   const url = new URL(href, window.location.origin)
   // A tracker already loaded in the public document must not survive entry
   // into the portal or an experiment. Leaving those documents also needs a
   // fresh load because their HTML deliberately omits the public bootstrap.
-  if (findRoute(normalizePath(url.pathname))?.noindex ||
-      findRoute(normalizePath(window.location.pathname))?.noindex) {
+  if (isPrivateDocument(url.pathname) || isPrivateDocument(window.location.pathname)) {
     window.location.assign(url.href)
     return
   }

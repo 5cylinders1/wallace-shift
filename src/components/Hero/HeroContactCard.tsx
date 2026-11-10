@@ -60,9 +60,10 @@ export function HeroContactCard() {
 
         <div className="hero-contact-card__row">
           <p id={statusId} className="hero-contact-card__status" role="status">
-            {(status === 'idle' || status === 'submitting') &&
+            {/* A sent message moves on to /what-now, so 'sent' keeps the
+                resting line for the moment before the page changes. */}
+            {(status === 'idle' || status === 'submitting' || status === 'sent') &&
               "By sending, you're okay with us following up about your project."}
-            {status === 'sent' && 'Thanks — we will be in touch.'}
             {status === 'not_configured' &&
               'This form is not connected yet.'}
             {status === 'error' && 'Something went wrong. Please retry.'}

@@ -77,16 +77,16 @@ export function ContactPage() {
             {/* Renders only once a real mailbox exists. Until then the form
                 is the only channel offered, rather than an address that
                 would bounce. */}
-            {business.salesEmail && (
+            {business.email && (
               <Reveal delay={0.08}>
                 <div className="contact-page__block">
                   <h2 className="service-block__label">Prefer email?</h2>
-                  <p className="contact-page__hint">Bella Wallace · Sales and first contact</p>
+                  <p className="contact-page__hint">Matthew Wallace · Designs and builds every project</p>
                   <a
                     className="contact-page__email"
-                    href={`mailto:${business.salesEmail}`}
+                    href={`mailto:${business.email}`}
                   >
-                    {business.salesEmail}
+                    {business.email}
                   </a>
                 </div>
               </Reveal>
