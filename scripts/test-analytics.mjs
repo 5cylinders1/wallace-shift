@@ -310,6 +310,15 @@ test('demo handoff context is labelled only with a known demo id', () => {
   assert.doesNotMatch(JSON.stringify(app.events()), /private@example|arbitrary-id/)
 })
 
+test('Site B website handoff records its own fixed demo id without query details', () => {
+  const app = browser({ href: 'https://wallaceshift.com/contact?demo=deercreekplumbing&project=website', savedConsent: 'granted' })
+  app.dispatch({ name: 'demo_handoff_viewed', value: 'deercreekplumbing' })
+  app.dispatch({ name: 'enquiry_submitted', value: 'contact_form', demo: 'deercreekplumbing' })
+  assert.equal(app.events('demo_handoff_viewed')[0][2].demo_id, 'deercreekplumbing')
+  assert.equal(app.events('demo_handoff_viewed')[0][2].page_location, 'https://wallaceshift.com/contact')
+  assert.equal(app.events('generate_lead')[0][2].demo_id, 'deercreekplumbing')
+})
+
 test('AI offer funnel emits fixed labels only on its own route, without answers or click IDs', () => {
   const app = browser({
     href: 'https://wallaceshift.com/offers/ai-business-integration?gclid=private-click-id&email=private%40example.com&utm_campaign=ai_workflow#private',
