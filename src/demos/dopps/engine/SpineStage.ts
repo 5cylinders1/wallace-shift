@@ -120,6 +120,7 @@ export class SpineStage {
     canvas.addEventListener('pointermove', this.onPointerMove)
     canvas.addEventListener('pointerdown', this.onPointerDown)
     window.addEventListener('pointerup', this.onPointerUp)
+    window.addEventListener('pointercancel', this.onPointerCancel)
     canvas.addEventListener('pointerleave', this.onPointerLeave)
     document.addEventListener('visibilitychange', this.onVisibility)
   }
@@ -214,6 +215,7 @@ export class SpineStage {
     this.canvas.removeEventListener('pointermove', this.onPointerMove)
     this.canvas.removeEventListener('pointerdown', this.onPointerDown)
     window.removeEventListener('pointerup', this.onPointerUp)
+    window.removeEventListener('pointercancel', this.onPointerCancel)
     this.canvas.removeEventListener('pointerleave', this.onPointerLeave)
     document.removeEventListener('visibilitychange', this.onVisibility)
     this.scene.traverse((node) => {
@@ -341,15 +343,26 @@ export class SpineStage {
 
   // ------------------------------------------------------------------ input
 
+  /**
+   * Resizing a WebGL canvas wipes what it has drawn, so a resize redraws in the
+   * same task, before the browser paints. The stage's CSS height is the large
+   * viewport (100lvh), so phone toolbars sliding in and out while scrolling do
+   * not resize it at all; this only runs for real changes such as rotation.
+   */
   private resize() {
     const rect = this.canvas.getBoundingClientRect()
-    this.width = Math.max(1, rect.width)
-    this.height = Math.max(1, rect.height)
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.width < 700 ? 2 : 1.75))
-    this.renderer.setSize(this.width, this.height, false)
-    this.camera.aspect = this.width / this.height
+    const width = Math.max(1, Math.round(rect.width))
+    const height = Math.max(1, Math.round(rect.height))
+    const ratio = Math.min(window.devicePixelRatio || 1, width < 700 ? 2 : 1.75)
+    if (width === this.width && height === this.height && ratio === this.renderer.getPixelRatio()) return
+    this.width = width
+    this.height = height
+    this.renderer.setPixelRatio(ratio)
+    this.renderer.setSize(width, height, false)
+    this.camera.aspect = width / height
     if (this.ready) this.applyCamera()
     else this.camera.updateProjectionMatrix()
+    this.renderer.render(this.scene, this.camera)
   }
 
   private pick(clientX: number, clientY: number): Part | null {
@@ -398,6 +411,11 @@ export class SpineStage {
       const part = this.pick(event.clientX, event.clientY)
       if (part) this.onSelect(this.hitFor(part))
     }
+  }
+
+  private onPointerCancel = () => {
+    this.drag.active = false
+    this.drag.velocity = 0
   }
 
   private onPointerLeave = () => {
