@@ -18,6 +18,9 @@ export type ContactPayload = {
   service?: string
   package?: string
   budget?: string
+  /** The demo the visitor came from, e.g. `deercreek`. The endpoint keeps
+   *  its own allowlist and drops anything it does not recognise. */
+  source?: string
   /** Honeypot. Always empty for a real person; see ContactForm. */
   company?: string
 }

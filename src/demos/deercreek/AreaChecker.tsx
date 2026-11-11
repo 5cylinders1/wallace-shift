@@ -100,7 +100,7 @@ function Outcome({ result, onChoose }: { result: Result; onChoose: (place: Locat
         <div className="dc-area-outcome" data-band="core">
           <p className="dc-area-verdict">Yes. {result.label} is in our service area.</p>
           <p>About {miles} {miles === 1 ? 'mile' : 'miles'} from our Olathe shop.</p>
-          <a className="dc-button" href={`${href('schedule')}${/^ZIP \d{5}$/.test(result.label) ? `?zip=${result.label.slice(4)}` : ''}`}>Book a visit <ArrowIcon /></a>
+          <a className="dc-button" href={`${href('schedule')}${/^ZIP \d{5}$/.test(result.label) ? `?zip=${result.label.slice(4)}` : ''}`}>Request a visit <ArrowIcon /></a>
         </div>
       )
       if (result.band === 'edge') return (

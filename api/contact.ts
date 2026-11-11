@@ -30,6 +30,22 @@ const MAX_MESSAGE = 5000
 const MAX_CHOICE = 80
 const MAX_URL = 300
 
+/** Demos whose "Discuss my website" link carries a source id to /contact.
+ *  Kept here rather than trusted from the client: an id the endpoint does
+ *  not know is dropped, so the email only ever names a real demo. */
+const DEMO_SOURCES: Record<string, { line: string; tag: string }> = {
+  deercreek: {
+    line: 'Deer Creek Plumbing website demo (/demo/deercreek)',
+    tag: 'Deer Creek demo',
+  },
+}
+
+function demoSource(value: unknown): { line: string; tag: string } | null {
+  return typeof value === 'string' && Object.hasOwn(DEMO_SOURCES, value)
+    ? DEMO_SOURCES[value]
+    : null
+}
+
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -94,6 +110,7 @@ export default async function handler(request: Request): Promise<Response> {
   const service = optionalField(body.service, MAX_CHOICE)
   const packageChoice = optionalField(body.package, MAX_CHOICE)
   const budget = optionalField(body.budget, MAX_CHOICE)
+  const source = demoSource(body.source)
 
   if (!name || !email || !message) {
     return json({ ok: false, error: 'invalid' }, 400)
@@ -119,10 +136,11 @@ export default async function handler(request: Request): Promise<Response> {
         // So replying in the mail client answers the enquirer directly
         // rather than the noreply sender.
         reply_to: email,
-        subject: `New enquiry from ${name}`,
+        subject: `New enquiry from ${name}${source ? ` (${source.tag})` : ''}`,
         text: [
           `Name: ${name}`,
           `Email: ${email}`,
+          ...(source ? [`Source: ${source.line}`] : []),
           ...(website ? [`Website: ${website}`] : []),
           ...(service ? [`Service: ${service}`] : []),
           ...(packageChoice ? [`Package: ${packageChoice}`] : []),

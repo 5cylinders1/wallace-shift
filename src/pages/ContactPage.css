@@ -54,6 +54,19 @@
   color: var(--color-silver);
 }
 
+/* The way back to the demo the visitor came from. */
+.contact-page__handoff-link {
+  color: var(--color-soft-white);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.contact-page__handoff-link:hover {
+  color: var(--color-ember);
+}
+
 .contact-page__aside {
   display: flex;
   flex-direction: column;

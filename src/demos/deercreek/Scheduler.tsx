@@ -1,32 +1,11 @@
 import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { lookupArea } from './area'
-import { business, problems, serviceBySlug, services, visitPreferences, type ServiceSlug } from './content'
+import { prefillFrom, EMPTY, type Contact, type Draft, type Property, type Urgency, type Window } from './booking'
+import { business, serviceBySlug, services, visitPreferences } from './content'
 import { useHydrated } from './hooks'
 import { ArrowIcon, CheckIcon, PhoneIcon, ServiceIcon } from './Icons'
 import { submitRequest, type SubmitResult } from './requestAdapter'
 
-type Urgency = 'emergency' | 'soon' | 'week' | 'flexible'
-type Window = 'morning' | 'afternoon' | 'any'
-type Contact = 'call' | 'text' | 'email'
-type Property = 'home' | 'rental' | 'business'
-
-interface Draft {
-  service: ServiceSlug | 'other' | ''
-  details: string
-  urgency: Urgency | ''
-  zip: string
-  property: Property | ''
-  day: string
-  window: Window
-  name: string
-  phone: string
-  email: string
-  contact: Contact
-  prefs: string[]
-  notes: string
-}
-
-const EMPTY: Draft = { service: '', details: '', urgency: '', zip: '', property: '', day: 'first', window: 'any', name: '', phone: '', email: '', contact: 'call', prefs: [], notes: '' }
 const STEPS = ['What’s wrong', 'How soon', 'Where', 'When', 'Your details', 'Review'] as const
 
 const URGENCY: Array<[Urgency, string, string]> = [
@@ -62,30 +41,20 @@ const serviceName = (value: Draft['service']) => value === 'other' ? 'Not sure /
 
 type Errors = Partial<Record<keyof Draft, string>>
 
-/** Prefill from links such as ?issue=leak&service=leak-repair&zip=66062. */
-function prefilled(): Draft {
-  const params = new URLSearchParams(window.location.search)
-  const issue = problems.find(problem => problem.id === params.get('issue'))
-  const service = params.get('service')
-  const zip = params.get('zip') ?? ''
-  return {
-    ...EMPTY,
-    service: service && serviceBySlug(service) ? service as ServiceSlug : issue?.urgency === 'plan' ? 'other' : '',
-    urgency: issue ? (issue.urgency === 'now' || issue.urgency === 'safety' ? 'emergency' : issue.urgency === 'plan' ? 'flexible' : 'soon') : '',
-    details: issue && issue.urgency !== 'plan' ? issue.label : '',
-    zip: /^\d{5}$/.test(zip) ? zip : '',
-  }
-}
-
 /** The form depends on today's date and the page URL, so it renders only in
  * the browser; the static HTML carries a short placeholder instead. */
 export default function Scheduler() {
-  return useHydrated() ? <SchedulerForm /> : <div className="dc-scheduler"><p className="dc-field-hint">Loading the booking form…</p></div>
+  return useHydrated() ? <SchedulerForm /> : <div className="dc-scheduler"><p className="dc-field-hint">Loading the request form…</p></div>
 }
 
 function SchedulerForm() {
   const id = useId()
-  const [draft, setDraft] = useState<Draft>(prefilled)
+  const [initial] = useState(() => prefillFrom(window.location.search))
+  const [draft, setDraft] = useState<Draft>(initial.draft)
+  // Someone who arrived with a service already chosen sees it as a summary
+  // with a Change button, not the whole catalog again.
+  const [catalog, setCatalog] = useState(!initial.preselected)
+  const focusCatalog = useRef(false)
   const [step, setStep] = useState(0)
   const [errors, setErrors] = useState<Errors>({})
   const days = useMemo(() => businessDays(), [])
@@ -100,6 +69,14 @@ function SchedulerForm() {
     if (!moved.current) return
     heading.current?.focus()
   }, [step, result])
+
+  // "Change" reveals the catalog and moves focus to the current choice, so
+  // keyboard and screen-reader users land where the decision is.
+  useEffect(() => {
+    if (!catalog || !focusCatalog.current) return
+    focusCatalog.current = false
+    document.getElementById(`${id}-service-${draft.service || services[0].slug}`)?.focus()
+  }, [catalog, draft.service, id])
 
   // Only a failed Continue moves focus to the summary; fixing a field while
   // typing must never pull focus away from it.
@@ -153,7 +130,7 @@ function SchedulerForm() {
   async function send() {
     setSending(true)
     const outcome = await submitRequest({
-      service: serviceName(draft.service), details: draft.details.trim(), urgency: draft.urgency, zip: draft.zip.trim(), property: draft.property,
+      service: serviceName(draft.service), issue: draft.issue, details: draft.details.trim(), urgency: draft.urgency, zip: draft.zip.trim(), property: draft.property,
       day: draft.day, window: draft.window, name: draft.name.trim(), phone: draft.phone.trim(), email: draft.email.trim(), contact: draft.contact,
       preferences: draft.prefs, notes: draft.notes.trim(),
     })
@@ -165,6 +142,7 @@ function SchedulerForm() {
   function restart() {
     moved.current = true
     setDraft({ ...EMPTY })
+    setCatalog(true)
     setResult(null)
     setErrors({})
     setStep(0)
@@ -200,8 +178,20 @@ function SchedulerForm() {
   const groupTarget = (name: keyof Draft) => name === 'service' ? `${id}-service-${services[0].slug}` : name === 'urgency' ? `${id}-urgency-emergency` : name === 'property' ? `${id}-property-home` : fieldId(name)
 
   let body: ReactNode = null
+  const chosen = draft.service === 'other' && draft.issue ? draft.issue : serviceName(draft.service)
   if (step === 0) body = (
     <>
+      {!catalog && draft.service ? (
+        <div className="dc-chosen">
+          {draft.service !== 'other' && <ServiceIcon slug={draft.service} size={34} />}
+          <div className="dc-chosen-text">
+            <p className="dc-chosen-k">Your choice</p>
+            <p className="dc-chosen-name">{chosen}</p>
+            {draft.issue && draft.service !== 'other' && <p className="dc-chosen-sub">What’s going on: {draft.issue}</p>}
+          </div>
+          <button type="button" className="dc-button dc-button-quiet dc-button-small" onClick={() => { focusCatalog.current = true; setCatalog(true) }}>Change<span className="dc-visually-hidden"> service</span></button>
+        </div>
+      ) : (
       <div className="dc-option-grid">
         {[...services.map(service => ({ value: service.slug, label: service.name, hint: service.short })), { value: 'other' as const, label: 'Not sure / something else', hint: 'Describe it below and we’ll sort it out.' }].map(option => (
           <label key={option.value} className="dc-option" htmlFor={`${id}-service-${option.value}`}>
@@ -214,9 +204,10 @@ function SchedulerForm() {
           </label>
         ))}
       </div>
+      )}
       {errorText('service')}
       <div className="dc-field">
-        <label htmlFor={fieldId('details')}>Tell us what’s going on <span className="dc-optional">(optional)</span></label>
+        <label htmlFor={fieldId('details')}>{draft.issue ? 'Anything to add about the problem?' : 'Tell us what’s going on'} <span className="dc-optional">(optional)</span></label>
         <textarea id={fieldId('details')} rows={3} maxLength={1200} value={draft.details} onChange={event => set('details', event.target.value)} />
       </div>
     </>
@@ -342,7 +333,7 @@ function SchedulerForm() {
   )
   if (step === 5) body = (
     <>
-      <Summary draft={draft} onEdit={go} />
+      <Summary draft={draft} onEdit={target => { if (target === 0) setCatalog(true); go(target) }} />
       <p className="dc-field-hint">We’ll contact you by the next business day to confirm a time. Nothing is booked until we do.</p>
     </>
   )
@@ -352,7 +343,7 @@ function SchedulerForm() {
 
   return (
     <div className="dc-scheduler">
-      <ol className="dc-progress" aria-label="Booking steps">
+      <ol className="dc-progress" aria-label="Request steps">
         {STEPS.map((label, index) => (
           <li key={label} data-state={index < step ? 'done' : index === step ? 'current' : 'todo'} aria-current={index === step ? 'step' : undefined}>
             <span className="dc-progress-dot" aria-hidden="true">{index < step ? <CheckIcon size={14} /> : index + 1}</span>
@@ -391,7 +382,7 @@ function SchedulerForm() {
 function Summary({ draft, onEdit }: { draft: Draft; onEdit?: (step: number) => void }) {
   const urgency = URGENCY.find(([value]) => value === draft.urgency)?.[1] ?? ''
   const rows: Array<[string, ReactNode, number]> = [
-    ['Service', <>{serviceName(draft.service)}{draft.details.trim() && <><br /><span className="dc-summary-sub">{draft.details.trim()}</span></>}</>, 0],
+    ['Service', <>{serviceName(draft.service)}{draft.issue && <><br /><span className="dc-summary-sub">What’s going on: {draft.issue}</span></>}{draft.details.trim() && <><br /><span className="dc-summary-sub">{draft.details.trim()}</span></>}</>, 0],
     ['How soon', urgency, 1],
     ['Where', `ZIP ${draft.zip} · ${PROPERTY.find(([value]) => value === draft.property)?.[1] ?? ''}`, 2],
     ['When', `${formatDay(draft.day)} · ${WINDOWS.find(([value]) => value === draft.window)?.[1]}`, 3],

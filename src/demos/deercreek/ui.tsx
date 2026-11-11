@@ -17,7 +17,7 @@ export function Eyebrow({ children }: { children: ReactNode }) {
 export function CallBook({ service, tone = 'light' }: { service?: string; tone?: 'light' | 'dark' }) {
   return (
     <div className={`dc-cta-row dc-cta-${tone}`}>
-      <a className="dc-button dc-button-large" href={`${href('schedule')}${service ? `?service=${service}` : ''}`}><CalendarIcon /> Book a visit</a>
+      <a className="dc-button dc-button-large" href={`${href('schedule')}${service ? `?service=${service}` : ''}`}><CalendarIcon /> Request a visit</a>
       <a className="dc-button dc-button-large dc-button-quiet" href={business.phoneHref}><PhoneIcon /> Call {business.phone}</a>
     </div>
   )
@@ -72,7 +72,7 @@ export function PromiseList({ limit = promises.length }: { limit?: number }) {
 }
 
 const processSteps = [
-  { title: 'Call, text or book online', text: 'Tell us what’s going on. The office confirms a time with you, usually within a day.' },
+  { title: 'Call, text or request online', text: 'Tell us what’s going on and when suits you. The office confirms a time by the next business day.' },
   { title: 'Same-day estimate', text: 'A licensed plumber looks at the problem and explains what’s causing it.' },
   { title: 'The price before the work', text: 'You get options and an upfront price. Nothing starts until you say yes.' },
   { title: 'Booties on, mess out', text: 'We protect your floors, do the work properly and clean up after ourselves.' },
