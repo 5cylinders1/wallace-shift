@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { services, pages, href } from './data'
 import { AreaChecker, BookingForm, QuickServiceSelector } from './LeadTools'
-import { demoHandoffHref } from '../../lib/demoHandoff'
 import './site.css'
 
 const media = '/demos/deercreek/photos/'
@@ -10,7 +9,6 @@ const tel = 'tel:+19134409102'
 const google = 'https://maps.google.com/maps?cid=6948310473349042081'
 const facebook = 'https://www.facebook.com/DeerCreekPlumbing/reviews'
 const mail = 'deercreekplumbinginc@gmail.com'
-const websiteInquiry = demoHandoffHref('deercreekplumbing')
 
 export function Arrow() { return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" /></svg> }
 function LinkButton({ children, to = 'schedule', quiet = false }: {children: ReactNode; to?: string; quiet?: boolean}) {
@@ -45,7 +43,6 @@ function Header({slug}:{slug:string}) {
   useEffect(()=> { if(!open)return; const close=(e:KeyboardEvent)=>{if(e.key==='Escape'){setOpen(false);menu.current?.focus()}};document.addEventListener('keydown',close);return()=>document.removeEventListener('keydown',close) },[open])
   return <>
     <a className="dcp-skip" href="#main">Skip to content</a>
-    <aside className="dcp-attribution" aria-label="About this website concept"><div className="dcp-wrap"><p>Independent website concept by Wallace Shift</p><a href={websiteInquiry}>Discuss your website <Arrow /></a></div></aside>
     <header className="dcp-header dcp-wrap">
       <a href={href()} className="dcp-brand" aria-label="Deer Creek Plumbing home"><img src="/demos/deercreek/mark-ink.png" alt="" width="48" height="46" /><span>Deer Creek<br /><strong>Plumbing</strong></span></a>
       <button className="dcp-menu" ref={menu} aria-expanded={open} aria-controls="dcp-navigation" onClick={()=>setOpen(!open)}>{open?'Close menu':'Menu'}</button>

@@ -154,3 +154,10 @@ No stock/generated imagery, invented testimonials, availability guarantees, or c
 Screenshots: `tmp/deercreekplumbing-final-handoff/` (desktop/tablet/mobile composition), `tmp/deercreekplumbing-handoff-browser/` (all widths and request review), and `tmp/deercreekplumbing-contact-browser/` (website inquiry at three widths). Live reference captures: `tmp/deercreekplumbing-current-review/`.
 
 Commit message for this revision: `Refine Deer Creek Plumbing website handoff and inquiry flow`.
+
+
+## Subsequent requested removal
+
+The top Wallace Shift attribution strip and closing website invitation were both removed at Matthew’s request. The earlier design record above describes the superseded version. Site B now keeps its plumbing navigation and footer without those agency promotion sections. The existing contextual contact URL still works when shared directly.
+
+Commit message: `Remove top agency attribution from Deer Creek demo`.
