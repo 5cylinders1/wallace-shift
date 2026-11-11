@@ -67,9 +67,6 @@ const reviewExcerpts = [
 function ReviewList() {
  return <div className="dcp-review-list">{reviewExcerpts.map(review=><figure className="dcp-review" key={review.name}><blockquote><p>“{review.quote}”</p></blockquote><figcaption><strong>{review.name}</strong><span>{review.context}</span><span>Excerpt from a Google review</span><a href={google}>View Google Business Profile <span aria-hidden="true">↗</span></a></figcaption></figure>)}</div>
 }
-function AgencyInvitation() {
- return <aside className="dcp-agency-close" aria-labelledby="agency-title"><div className="dcp-wrap"><div><h2 id="agency-title">Your business.<br />Your next website.</h2><p>Independent website concept by Wallace Shift. Tell Matthew what your customers need to understand or accomplish online.</p></div><a className="dcp-button dcp-button-quiet" href={websiteInquiry}>Discuss your website <Arrow /></a></div></aside>
-}
 function Home() {
  return <>
   <section className="dcp-hero dcp-wrap" aria-labelledby="hero-title"><div className="dcp-hero-heading"><h1 id="hero-title">Plumbing.<br />With care.</h1><div className="dcp-hero-intro"><p>Local plumbing for Olathe and the Kansas City metro. Family owned since 2017. Transparent pricing, same-day estimates and a one year parts and labor warranty.</p><LinkButton>Request service</LinkButton><a className="dcp-text-link" href={tel}>Or call {phone}</a></div></div>
@@ -104,5 +101,5 @@ function OtherPage({slug}:{slug:string}) {
 export default function App({slug=''}:{slug?:string}) {
  // Keep every document independent and readable before React hydrates.
  const known=pages.some(p=>p.slug===slug)
- return <div className="dcp-site"><Header slug={slug}/><main id="main" tabIndex={-1}>{!known?<PageIntro title="Page not found."><a href={href()}>Return home</a></PageIntro>:slug===''?<Home/>:<OtherPage slug={slug}/>}</main><Footer/><AgencyInvitation/></div>
+ return <div className="dcp-site"><Header slug={slug}/><main id="main" tabIndex={-1}>{!known?<PageIntro title="Page not found."><a href={href()}>Return home</a></PageIntro>:slug===''?<Home/>:<OtherPage slug={slug}/>}</main><Footer/></div>
 }

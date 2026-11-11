@@ -20,7 +20,7 @@ try {
       await route.fulfill({ status: payloads.length === 1 ? 500 : 200, contentType: 'application/json', body: JSON.stringify(payloads.length === 1 ? { ok: false, error: 'temporary' } : { ok: true }) })
     })
     await page.goto(`${origin}/demo/deercreekplumbing`, { waitUntil: 'networkidle' })
-    assert.equal(await page.getByRole('link', { name: 'Discuss your website', exact: true }).count(), 2)
+    assert.equal(await page.getByRole('link', { name: 'Discuss your website', exact: true }).count(), 1)
     await page.getByRole('link', { name: 'Discuss your website', exact: true }).first().click()
     await page.waitForURL('**/contact?demo=deercreekplumbing&project=website')
     await page.getByRole('heading', { level: 1 }).filter({ hasText: 'Let’s discuss' }).waitFor()

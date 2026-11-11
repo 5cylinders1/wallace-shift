@@ -38,16 +38,16 @@ html[data-dcp-large]{font-size:120%}html[data-dcp-still]{scroll-behavior:auto}ht
 .dcp-attribution>.dcp-wrap{display:flex;justify-content:space-between;align-items:center;gap:12px 32px;min-height:54px;padding-block:5px}
 .dcp-attribution p{margin:0}.dcp-attribution a{display:inline-flex;align-items:center;gap:14px;min-height:44px;font-weight:600;text-decoration:none;white-space:nowrap}
 .dcp-attribution a:hover{text-decoration:underline}.dcp-attribution svg{width:18px;height:18px}
-.dcp-agency-close{background:var(--dcp-soft);padding-block:64px}
-.dcp-agency-close>.dcp-wrap{display:flex;align-items:center;justify-content:space-between;gap:48px}
-.dcp-agency-close h2{font-size:clamp(2rem,3.5vw,3.2rem);margin-bottom:24px}
-.dcp-agency-close p{max-width:50ch;margin:0}.dcp-agency-close .dcp-button{flex-shrink:0;background:var(--dcp-ink);color:white!important}
-.dcp-agency-close .dcp-button:hover{background:var(--dcp-red)}
+
+
+
+
+
 .dcp-selection-summary{padding:24px;background:var(--dcp-soft);margin-bottom:24px}
 .dcp-selection-summary p:last-child{margin-bottom:0}.dcp-selection-summary .dcp-text-button{margin:8px 0 0}
 .dcp-issue-guidance{font-size:var(--dcp-small);line-height:1.5;margin-top:12px!important;margin-bottom:0!important}
 .dcp-quick-start .dcp-issue-guidance{color:white}
 @media(max-width:900px){.dcp-hero-heading{grid-template-columns:1fr 1fr;gap:36px}.dcp-hero h1{font-size:clamp(3rem,7vw,5.5rem)}.dcp-review-list{gap:40px}}
-@media(max-width:680px){.dcp-attribution>.dcp-wrap{display:block;padding-block:12px 4px}.dcp-attribution p{font-size:.8125rem;max-width:31ch}.dcp-attribution a{margin-top:2px}.dcp-hero-heading{grid-template-columns:1fr;gap:24px}.dcp-hero h1{font-size:clamp(3.1rem,13vw,4.5rem)}.dcp-hero-stage{margin-bottom:48px}.dcp-review-list{gap:36px}.dcp-review blockquote{margin-bottom:20px;max-width:29ch}.dcp-agency-close{padding-block:48px}.dcp-agency-close>.dcp-wrap{display:block}.dcp-agency-close .dcp-button{margin-top:28px}.dcp-selection-summary{padding:20px}}
-@media print{.dcp-attribution,.dcp-agency-close{display:none}}
+@media(max-width:680px){.dcp-attribution>.dcp-wrap{display:block;padding-block:12px 4px}.dcp-attribution p{font-size:.8125rem;max-width:31ch}.dcp-attribution a{margin-top:2px}.dcp-hero-heading{grid-template-columns:1fr;gap:24px}.dcp-hero h1{font-size:clamp(3.1rem,13vw,4.5rem)}.dcp-hero-stage{margin-bottom:48px}.dcp-review-list{gap:36px}.dcp-review blockquote{margin-bottom:20px;max-width:29ch}.dcp-selection-summary{padding:20px}}
+@media print{.dcp-attribution,}
 .dcp-review-edit-actions{margin-top:12px;gap:8px 24px}.dcp-review-edit-actions .dcp-text-button{margin-top:0}
