@@ -222,6 +222,14 @@ test('the SoLara Salon concept is a public demo: page, media and source need no 
   for (const path of ['/demos/solara-2/', '/demos/solarax/index.html', '/src/demos/solarax/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
+test('the Dopps Chiropractic concept is a public demo: page, 3D model and source need no access', async () => {
+  for (const path of ['/demo/dopps', '/demo/dopps/', '/demos/dopps', '/demos/dopps/', '/demos/dopps/index.html', '/src/demos/dopps/main.tsx', '/demos/dopps/spine.glb', '/demos/dopps/draco/draco_decoder.wasm', '/public/demos/dopps/preview.jpg']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('dopps'), 'roofers', 'Public demos have no access-request key')
+  for (const path of ['/demos/dopps-2/', '/demos/doppsx/index.html', '/src/demos/doppsx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('the Deer Creek Plumbing concept is a public demo: pages, media and source need no access', async () => {
   for (const path of ['/demo/deercreek', '/demo/deercreek/', '/demo/deercreek/services/water-heaters', '/demo/deercreek/schedule', '/demos/deercreek/', '/demos/deercreek/index.html', '/src/demos/deercreek/main.tsx', '/demos/deercreek/photos/truck-1600.webp', '/public/demos/deercreek/logo-white.png']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)

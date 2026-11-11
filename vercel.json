@@ -71,6 +71,18 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
+      "source": "/demo/dopps",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demo/dopps/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/dopps/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
       "source": "/demo/deercreekplumbing",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
@@ -250,6 +262,10 @@
     {
       "source": "/demo/solara",
       "destination": "/demos/solara"
+    },
+    {
+      "source": "/demo/dopps",
+      "destination": "/demos/dopps"
     }
   ]
 }
