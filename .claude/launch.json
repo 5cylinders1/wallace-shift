@@ -95,6 +95,19 @@
       "port": 5187
     },
     {
+      "name": "solara-demo-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5189",
+        "--strictPort"
+      ],
+      "port": 5189
+    },
+    {
       "name": "deercreek-demo-preview",
       "runtimeExecutable": "npm",
       "runtimeArgs": [

@@ -59,6 +59,18 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
+      "source": "/demo/solara",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demo/solara/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/solara/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
       "source": "/demo/deercreekplumbing",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
@@ -234,6 +246,10 @@
     {
       "source": "/demo/otv",
       "destination": "/demos/otv"
+    },
+    {
+      "source": "/demo/solara",
+      "destination": "/demos/solara"
     }
   ]
 }
