@@ -291,6 +291,25 @@ test('conversion bridge accepts only known values and emits each success as one 
   assert.doesNotMatch(JSON.stringify(app.events()), /private@example|arbitrary-id/)
 })
 
+test('demo handoff context is labelled only with a known demo id', () => {
+  const app = browser({ href: 'https://wallaceshift.com/contact?demo=deercreek', savedConsent: 'granted' })
+  app.dispatch({ name: 'demo_handoff_viewed', value: 'deercreek' })
+  app.dispatch({ name: 'enquiry_submitted', value: 'contact_form', demo: 'deercreek' })
+  app.dispatch({ name: 'enquiry_failed', value: 'contact_form', demo: 'deercreek' })
+  app.dispatch({ name: 'enquiry_submitted', value: 'contact_form', demo: 'private@example.com' })
+  for (const detail of [{ name: 'demo_handoff_viewed', value: 'arbitrary-id' }, { name: 'demo_handoff_viewed' }, { name: 'demo_handoff_viewed', value: 'private@example.com' }]) app.dispatch(detail)
+  assert.equal(app.events('demo_handoff_viewed').length, 1)
+  assert.equal(app.events('demo_handoff_viewed')[0][2].demo_id, 'deercreek')
+  assert.equal(app.events('demo_handoff_viewed')[0][2].page_location, 'https://wallaceshift.com/contact', 'the query string never reaches GA')
+  const leads = app.events('generate_lead')
+  assert.equal(leads.length, 2)
+  assert.equal(leads[0][2].demo_id, 'deercreek')
+  assert.equal(leads[0][2].form_surface, 'contact_form')
+  assert.equal('demo_id' in leads[1][2], false, 'an unknown demo value is dropped, not forwarded')
+  assert.equal(app.events('enquiry_failed')[0][2].demo_id, 'deercreek')
+  assert.doesNotMatch(JSON.stringify(app.events()), /private@example|arbitrary-id/)
+})
+
 test('AI offer funnel emits fixed labels only on its own route, without answers or click IDs', () => {
   const app = browser({
     href: 'https://wallaceshift.com/offers/ai-business-integration?gclid=private-click-id&email=private%40example.com&utm_campaign=ai_workflow#private',

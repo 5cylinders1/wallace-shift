@@ -9,6 +9,8 @@ export const REQUEST_ENDPOINT: string | null = null
 
 export interface ScheduleRequest {
   service: string
+  /** The problem-finder choice, if the visitor came from it. */
+  issue: string
   details: string
   urgency: string
   zip: string

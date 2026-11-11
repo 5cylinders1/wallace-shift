@@ -10,7 +10,7 @@ const urgencyLabel = {
 } as const
 
 /** "What's going on?" Each choice shows what to do before a plumber arrives
- * and hands the choice to the booking form. */
+ * and hands the choice to the request form. */
 export default function ProblemFinder() {
   const id = useId()
   const [active, setActive] = useState<string | null>(null)
@@ -43,7 +43,7 @@ export default function ProblemFinder() {
               ) : (
                 <>
                   {problem.urgency === 'now' && <a className="dc-button" href={business.phoneHref}><PhoneIcon /> Call {business.phone}</a>}
-                  <a className={problem.urgency === 'now' ? 'dc-button dc-button-quiet' : 'dc-button'} href={bookHref}>Book a visit <ArrowIcon /></a>
+                  <a className={problem.urgency === 'now' ? 'dc-button dc-button-quiet' : 'dc-button'} href={bookHref}>Request a visit <ArrowIcon /></a>
                   {problem.urgency !== 'now' && <a className="dc-button dc-button-quiet" href={business.phoneHref}><PhoneIcon /> {business.phone}</a>}
                 </>
               )}

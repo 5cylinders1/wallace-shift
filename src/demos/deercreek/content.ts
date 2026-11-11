@@ -15,6 +15,23 @@ export const SITE = {
   robots: 'noindex, nofollow',
 } as const
 
+/** Wallace Shift's layer over the concept: the bar above the header and the
+ * footer credit. The inquiry link carries `?demo=deercreek` so the contact
+ * page opens on website copy and the enquiry says where it came from
+ * (src/lib/demoHandoff.ts). Remove both when the site moves to Deer Creek's
+ * own domain. */
+export const agency = {
+  name: 'Wallace Shift',
+  inquiry: '/contact?demo=deercreek',
+  logo: '/brand/wallace-shift-logo-black.svg',
+  /** Only what the demo actually does. Nothing here is sent anywhere. */
+  capabilities: [
+    { title: 'Problem finder', text: 'Visitors pick what’s happening and get safety steps before anyone arrives.' },
+    { title: 'Carried-over booking details', text: 'That choice fills in the service, the urgency and the problem on the request form.' },
+    { title: 'Accommodation preferences', text: 'A household can note a mobility aid, extra time to reach the door, sensitivity to noise, or text instead of calls.' },
+  ],
+} as const
+
 export const href = (slug = '') => `${SITE.base}${slug ? `/${slug}` : ''}`
 export const absolute = (slug = '') => `${SITE.origin}${href(slug)}`
 
@@ -142,14 +159,15 @@ export const reviews: Review[] = [
 
 export const reviewsFor = (tag: ReviewTag, limit = 3) => reviews.filter(review => review.tags.includes(tag)).slice(0, limit)
 
-/** The people customers name in reviews (Google, counted 2026-11-10). */
-export const team = [
-  { name: 'Beau', role: 'Owner', mentions: 12, note: 'Started Deer Creek in 2017. Customers mention quotes over the phone that matched the final bill.' },
-  { name: 'Laura', role: 'Office & scheduling', mentions: 3, note: 'The voice that sets up your visit and follows up.' },
-  { name: 'Ryan', role: 'Plumber', mentions: 62, note: 'Named in more reviews than anyone: “my go to guy for all things plumbing.”' },
-  { name: 'Mark', role: 'Plumber', mentions: 29, note: 'Known for explaining the fix and how to prevent the next one.' },
-  { name: 'Matt', role: 'Plumber', mentions: 2, note: '“Matt did a great job!”' },
-] as const
+/** The people customers name in reviews. Roles come from those reviews and
+ * still need Beau's confirmation (docs/demos/deercreek.md). */
+export const team: ReadonlyArray<{ name: string; role: string; note?: string }> = [
+  { name: 'Beau', role: 'Owner', note: 'Founded Deer Creek in 2017.' },
+  { name: 'Laura', role: 'Office & scheduling', note: 'Sets up your visit.' },
+  { name: 'Ryan', role: 'Plumber' },
+  { name: 'Mark', role: 'Plumber' },
+  { name: 'Matt', role: 'Plumber' },
+]
 
 export interface Faq { q: string; a: string }
 
@@ -387,7 +405,7 @@ export const generalFaqs: Faq[] = [
   { q: 'Are your plumbers licensed and insured?', a: 'Yes. Our plumbers are certified, licensed and insured, and keep up with continuing education.' },
   { q: 'Which brands do you install?', a: 'We regularly install Delta, Moen, A. O. Smith and American Standard, and we can work with the fixture you’ve chosen.' },
   { q: 'How can I pay?', a: 'Cash, check, Visa, Mastercard, American Express and Discover.' },
-  { q: 'Can I ask for accommodations during a visit?', a: 'Yes. When you book, tell us what makes a visit easier for your household, such as text instead of calls, extra time to reach the door or a quieter visit. You can also call and tell the office.' },
+  { q: 'Can I ask for accommodations during a visit?', a: 'Yes. When you request a visit, tell us what makes it easier for your household, such as text instead of calls, extra time to reach the door or a quieter visit. You can also call and tell the office.' },
 ]
 
 /** The quick triage on the home page. Steps are standard safety guidance. */
@@ -439,7 +457,7 @@ export const pages: Page[] = [
   { slug: 'service-area', kind: 'area', nav: 'Service area', title: 'Plumbing Service Area: Olathe & Kansas City Metro | Deer Creek Plumbing', description: 'Check whether Deer Creek Plumbing serves your ZIP code or town. Based in Olathe, serving Johnson County, Overland Park, Lenexa, Shawnee, Kansas City and the wider metro.' },
   { slug: 'reviews', kind: 'reviews', nav: 'Reviews', title: 'Deer Creek Plumbing Reviews | 5.0 Stars from 286 Google Reviews', description: 'What Kansas City metro homeowners and businesses say about Deer Creek Plumbing: fair pricing, on-time plumbers, honest advice and careful clean-up.' },
   { slug: 'about', kind: 'about', nav: 'About', title: 'About Deer Creek Plumbing | Family-Owned Olathe Plumber Since 2017', description: 'Deer Creek Plumbing is a family and locally owned Olathe plumbing company serving the Kansas City metro since 2017. Meet the team customers mention by name.' },
-  { slug: 'schedule', kind: 'schedule', nav: 'Book a visit', title: 'Book a Plumber in Olathe & Kansas City | Deer Creek Plumbing', description: 'Request a plumbing visit online in about two minutes. Pick a service, a preferred day and a time window, and tell us what makes the visit easier for your household.' },
+  { slug: 'schedule', kind: 'schedule', nav: 'Request a visit', title: 'Request a Plumber Visit in Olathe & Kansas City | Deer Creek Plumbing', description: 'Request a plumbing visit online in about two minutes. Pick a service, a preferred day and a time window, and tell us what makes the visit easier for your household.' },
   { slug: 'faq', kind: 'faq', nav: 'FAQ', title: 'Plumbing Questions & Answers | Deer Creek Plumbing, Olathe KS', description: 'Answers to common plumbing questions: hours, emergencies, service area, pricing, warranty, water heaters, drains, sewer lines, frozen pipes and radiant heat.' },
   { slug: 'accessibility', kind: 'accessibility', nav: 'Accessibility', title: 'Accessibility Statement | Deer Creek Plumbing', description: 'How the Deer Creek Plumbing website is built to work for everyone, how to adjust the display, and how to ask for help or report a barrier.' },
 ]

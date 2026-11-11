@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import AreaChecker from './AreaChecker'
 import { AREA, bandFor, milesFromShop } from './area'
 import { placePoints } from './areaData'
-import { business, generalFaqs, href, promises, reviews, reviewStats, services, team, visitPreferences } from './content'
+import { agency, business, generalFaqs, href, promises, reviews, reviewStats, services, team, visitPreferences } from './content'
 import { ArrowIcon, ClockIcon, PhoneIcon, ShieldIcon, Stars } from './Icons'
 import Scheduler from './Scheduler'
 import { CallBook, CheckList, Eyebrow, FaqList, PromiseList, ReviewBrowser, ReviewCard, Section } from './ui'
@@ -122,7 +122,7 @@ export function ReviewsPage() {
       <Section tone="night" labelledBy="dc-rfinal-title" className="dc-final">
         <div className="dc-final-inner">
           <h2 id="dc-rfinal-title">See for yourself</h2>
-          <p className="dc-lede">Book a visit and find out why {reviewStats.distribution[0].count} customers gave five stars.</p>
+          <p className="dc-lede">Request a visit and find out why {reviewStats.distribution[0].count} customers gave five stars.</p>
           <CallBook tone="dark" />
         </div>
       </Section>
@@ -162,8 +162,7 @@ export function AboutPage() {
             <li key={person.name}>
               <h3>{person.name}</h3>
               <p className="dc-team-role">{person.role}</p>
-              <p>{person.note}</p>
-              {person.mentions > 2 && <p className="dc-muted">Named in {person.mentions} Google reviews</p>}
+              {person.note && <p>{person.note}</p>}
             </li>
           ))}
         </ul>
@@ -198,12 +197,18 @@ export function AboutPage() {
 export function SchedulePage() {
   return (
     <>
-      <PageHero eyebrow="Book a visit" title="Book a plumber online" lede="It takes about two minutes. Tell us what’s wrong, pick a day and a time window, and the office will contact you by the next business day to confirm." />
+      <PageHero eyebrow="Request a visit" title="Request a plumber visit" lede="Choose your preferred day and time. Our office will contact you by the next business day to confirm availability." />
       <Section tone="white" labelledBy="dc-book-title" className="dc-book">
-        <h2 id="dc-book-title" className="dc-visually-hidden">Booking request</h2>
+        <h2 id="dc-book-title" className="dc-visually-hidden">Visit request</h2>
         <div className="dc-book-grid">
           <div className="dc-book-main">
-            <noscript><p className="dc-callout">The online booking form needs JavaScript. Please call <a href={business.phoneHref}>{business.phone}</a> or email <a href={`mailto:${business.email}`}>{business.email}</a>.</p></noscript>
+            {/* Wallace Shift's notice, styled like the bar above the header:
+                the form is real to use, but nothing it collects is sent. */}
+            <div className="dc-demo-notice" role="note" aria-labelledby="dc-demo-notice-title">
+              <img className="dc-agency-logo" src={agency.logo} alt="" width="28" height="17" />
+              <p><strong id="dc-demo-notice-title">Interactive demo</strong> Explore the booking experience. Requests entered here are not sent to Deer Creek.</p>
+            </div>
+            <noscript><p className="dc-callout">The online request form needs JavaScript. Please call <a href={business.phoneHref}>{business.phone}</a> or email <a href={`mailto:${business.email}`}>{business.email}</a>.</p></noscript>
             <Scheduler />
           </div>
           <aside className="dc-book-aside" aria-label="Other ways to reach us">
@@ -255,7 +260,7 @@ export function FaqPage() {
 export function AccessibilityPage() {
   return (
     <>
-      <PageHero eyebrow="Accessibility" title="Accessibility statement" lede="Deer Creek Plumbing wants every customer to be able to find what they need, book a visit and get help, whatever their ability or the technology they use." />
+      <PageHero eyebrow="Accessibility" title="Accessibility statement" lede="Deer Creek Plumbing wants every customer to be able to find what they need, request a visit and get help, whatever their ability or the technology they use." />
       <Section tone="white" labelledBy="dc-a11y-standard">
         <div className="dc-prose dc-prose-wide">
           <h2 id="dc-a11y-standard">Our standard</h2>
@@ -275,7 +280,7 @@ export function AccessibilityPage() {
           <h2>Adjust the display</h2>
           <p>Use <strong>Display settings</strong> at the top of any page to make the text larger, raise the contrast, turn off motion, underline every link or add extra spacing. Your choices are saved on your device. Your browser’s own zoom and text-size settings also work throughout the site.</p>
           <h2>Help during a visit</h2>
-          <p>When you book, you can tell us what makes a visit easier for your household. For example:</p>
+          <p>When you request a visit, you can tell us what makes it easier for your household. For example:</p>
           <CheckList columns={1} items={visitPreferences.filter(item => item !== 'Pets at home')} />
           <p>You can also call the office at <a href={business.phoneHref}>{business.phone}</a> and tell us. If you prefer writing, email <a href={`mailto:${business.email}`}>{business.email}</a> or send a text.</p>
           <h2>Known limitations</h2>

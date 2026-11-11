@@ -22,6 +22,8 @@
   const offerRecommendations = new Set(['package', 'consultation', 'resource'])
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
   const surfaces = new Set(['home_hero', 'contact_form', 'roofing_offer'])
+  // Demos whose "Discuss my website" link carries context to /contact.
+  const demoContexts = new Set(['deercreek'])
   const demos = new Set([
     'roofers', 'roofers-2', 'roofers-3', 'roofers-4', 'roofers-5', 'roofers-6',
     'foundation', 'cabinetry', 'cabinetry-2', 'pools', 'roofers-dashboard',
@@ -270,12 +272,16 @@
     const detail = event.detail
     if (!detail || typeof detail !== 'object') return
     const { name, value } = detail
+    const fromDemo = demoContexts.has(detail.demo) ? { demo_id: detail.demo } : {}
     if (name === 'enquiry_submitted' && surfaces.has(value)) {
-      send('generate_lead', { lead_type: 'enquiry', form_surface: value })
+      send('generate_lead', { lead_type: 'enquiry', form_surface: value, ...fromDemo })
     } else if (name === 'demo_request_submitted' && (value === undefined || demos.has(value))) {
       send('generate_lead', { lead_type: 'demo_request', ...(value ? { demo_id: value } : {}) })
     } else if (name === 'enquiry_failed' && surfaces.has(value)) {
-      send(name, { form_surface: value })
+      send(name, { form_surface: value, ...fromDemo })
+    } else if (name === 'demo_handoff_viewed' && demoContexts.has(value)) {
+      // Arrival on /contact from a demo's agency link, not an enquiry.
+      send(name, { demo_id: value })
     } else if (name === 'demo_request_failed' && (value === undefined || demos.has(value))) {
       send(name, value ? { demo_id: value } : {})
     } else if (name === 'demo_preview_played' && previews.has(value)) {

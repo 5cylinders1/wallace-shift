@@ -1,8 +1,11 @@
+import { useEffect } from 'react'
 import { PageHero } from '../components/PageHero/PageHero'
 import { ContactForm } from '../components/ContactForm/ContactForm'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
 import { business } from '../content/siteConfig'
+import { trackSiteEvent } from '../lib/analytics'
+import { readDemoHandoff } from '../lib/demoHandoff'
 import { readShiftHandoff } from '../lib/quizHandoff'
 import { useLocation } from '../lib/router'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
@@ -17,19 +20,47 @@ export function ContactPage() {
   // updates the page instead of showing the first recommendation.
   const { search } = useLocation()
   const handoff = readShiftHandoff(search)
+  // Present when the visitor followed "Discuss my website" from a demo. Like
+  // ?shift=, it is applied after hydration; everyone else sees the page as
+  // it always was.
+  const demo = readDemoHandoff(search)
+
+  // Arriving here is the measurable half of the demo's agency link: the demo
+  // pages themselves load no analytics. The bootstrap applies consent and
+  // its own allowlist before anything is sent.
+  useEffect(() => {
+    if (demo) trackSiteEvent({ name: 'demo_handoff_viewed', value: demo.id })
+  }, [demo])
 
   return (
     <>
+      {/* Keyed so a demo's copy replays the masked entrance instead of
+          swapping text inside lines that have already animated. */}
       <PageHero
-        eyebrow="Start a project"
-        headlineLines={['Discuss your', 'AI or CRM']}
-        headlineAccent="project."
-        supporting="Talk with Wallace Shift about AI integration, a custom CRM, workflow automation, or a connected website. Tell us where work gets stuck and we will discuss a practical first step."
+        key={demo?.id ?? 'default'}
+        eyebrow={demo?.eyebrow ?? 'Start a project'}
+        headlineLines={demo?.headlineLines ?? ['Discuss your', 'AI or CRM']}
+        headlineAccent={demo?.headlineAccent ?? 'project.'}
+        supporting={demo?.supporting ?? 'Talk with Wallace Shift about AI integration, a custom CRM, workflow automation, or a connected website. Tell us where work gets stuck and we will discuss a practical first step.'}
       />
 
       <section className="interior contact-page">
         <div className="container contact-page__grid">
           <div className="contact-page__form-column">
+            {demo && (
+              <div className="contact-page__handoff">
+                <p className="contact-page__handoff-label">From the demo</p>
+                <p className="contact-page__handoff-title">{demo.name}</p>
+                <p className="contact-page__handoff-body">
+                  Your message will say which demo you looked at, so the
+                  conversation can start from it.{' '}
+                  <a className="contact-page__handoff-link" href={demo.href}>
+                    Back to the demo
+                  </a>
+                </p>
+              </div>
+            )}
+
             {handoff && (
               <div className="contact-page__handoff">
                 <p className="contact-page__handoff-label">
@@ -42,14 +73,17 @@ export function ContactPage() {
               </div>
             )}
 
-            {/* Keyed on the recommendation so a different one re-runs the
-                message field's initial state instead of stranding the
-                previous prefill. */}
+            {/* Keyed on the recommendation and the demo so a different one
+                re-runs the message field's initial state instead of
+                stranding the previous prefill. */}
             <ContactForm
-              key={handoff?.key ?? 'none'}
+              key={`${handoff?.key ?? 'none'}-${demo?.id ?? 'none'}`}
               idPrefix="contact-page"
-              submitLabel="Send project details"
+              submitLabel={demo?.submitLabel ?? 'Send project details'}
               handoff={handoff}
+              source={demo?.id}
+              messageLabel={demo?.messageLabel}
+              messagePlaceholder={demo?.messagePlaceholder}
             />
           </div>
 
@@ -62,8 +96,9 @@ export function ContactPage() {
                     We read it properly and reply {business.responseTime}.
                   </li>
                   <li>
-                    A conversation about your workflow, current tools,
-                    and what needs to change.
+                    {demo
+                      ? 'A conversation about your business, your customers, and what the website needs to do.'
+                      : 'A conversation about your workflow, current tools, and what needs to change.'}
                   </li>
                   <li>
                     An agreed first step, with scope and cost in writing.
@@ -107,9 +142,7 @@ export function ContactPage() {
               <div className="contact-page__block">
                 <h2 className="service-block__label">Before you write</h2>
                 <p className="contact-page__hint">
-                  A useful starting point is one real example: where an enquiry
-                  arrives, who follows up, which tools hold the details, and
-                  where the process gets stuck. You do not need a technical brief.
+                  {demo?.beforeYouWrite ?? 'A useful starting point is one real example: where an enquiry arrives, who follows up, which tools hold the details, and where the process gets stuck. You do not need a technical brief.'}
                 </p>
                 <PageLink href="/pricing" className="contact-page__link">
                   See what things cost

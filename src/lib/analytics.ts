@@ -1,7 +1,13 @@
+import type { DemoHandoffId } from '../content/demoHandoff'
+
 type EnquirySurface = 'home_hero' | 'contact_form' | 'roofing_offer'
 
+/** Demos whose "Discuss my website" link carries context to /contact. */
+type DemoContext = DemoHandoffId
+
 type SiteAnalyticsEvent =
-  | { name: 'enquiry_submitted' | 'enquiry_failed'; value: EnquirySurface }
+  | { name: 'enquiry_submitted' | 'enquiry_failed'; value: EnquirySurface; demo?: DemoContext }
+  | { name: 'demo_handoff_viewed'; value: DemoContext }
   | { name: 'demo_request_submitted' | 'demo_request_failed'; value?: string }
   | { name: 'quiz_started' | 'quiz_completed' }
   | { name: 'demo_preview_played'; value: string }

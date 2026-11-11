@@ -6,6 +6,7 @@ import { submitContactRequest } from '../../lib/contactAdapter'
 import { continueToWhatNow } from '../../lib/enquiryReceipt'
 import { trackSiteEvent } from '../../lib/analytics'
 import type { ServiceRecommendation } from '../../content/shiftQuiz'
+import type { DemoHandoffId } from '../../content/demoHandoff'
 import './ContactForm.css'
 
 /** The endpoint receives what the reader actually read, not an internal id. */
@@ -33,6 +34,13 @@ type ContactFormProps = {
    *  form stays the default: the extra context is worth asking for where
    *  there is room for it, and a barrier everywhere else. */
   detailed?: boolean
+  /** The demo the visitor came from. Sent with the enquiry so the inbox says
+   *  which concept they saw; it is never shown in or typed into the form. */
+  source?: DemoHandoffId
+  /** Contextual wording for the message field. The field itself, and the
+   *  name / email / message structure, stay the same for every visitor. */
+  messageLabel?: string
+  messagePlaceholder?: string
 }
 
 /** One labelled select. The blank first option is the unanswered state:
@@ -68,6 +76,9 @@ export function ContactForm({
   submitLabel,
   handoff,
   detailed = false,
+  source,
+  messageLabel = enquiryCopy.messageLabel,
+  messagePlaceholder = enquiryCopy.messagePlaceholder,
 }: ContactFormProps) {
   const uid = useId()
   const [name, setName] = useState('')
@@ -91,6 +102,7 @@ export function ContactForm({
 
     const result = await submitContactRequest({
       name, email, message, company,
+      ...(source ? { source } : {}),
       ...(detailed ? {
         website: noWebsite ? '' : website, noWebsite,
         service: labelFor(enquiryServices, service),
@@ -100,14 +112,14 @@ export function ContactForm({
     })
 
     if (result.ok) {
-      trackSiteEvent({ name: 'enquiry_submitted', value: 'contact_form' })
+      trackSiteEvent({ name: 'enquiry_submitted', value: 'contact_form', ...(source ? { demo: source } : {}) })
       // The form leaves with the page. /what-now confirms the send and
       // explains what follows, so the button stays on "Sending…" until then.
       continueToWhatNow()
       return
     }
 
-    if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: 'contact_form' })
+    if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: 'contact_form', ...(source ? { demo: source } : {}) })
     setStatus(result.reason === 'network_error' ? 'error' : result.reason)
   }
 
@@ -185,12 +197,12 @@ export function ContactForm({
       )}
 
       <div className="contact-form__field">
-        <label htmlFor={`${idPrefix}-message`}>{enquiryCopy.messageLabel}</label>
+        <label htmlFor={`${idPrefix}-message`}>{messageLabel}</label>
         <textarea
           id={`${idPrefix}-message`}
           name="message"
           rows={4}
-          placeholder={enquiryCopy.messagePlaceholder}
+          placeholder={messagePlaceholder}
           required
           value={message}
           onChange={(event) => setMessage(event.target.value)}
