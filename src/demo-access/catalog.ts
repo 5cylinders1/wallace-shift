@@ -27,6 +27,10 @@ export const adminDemos: AdminDemo[] = [
     name: 'OTV | Open Television', detail: 'Arts nonprofit website concept',
   },
   {
+    id: 'solara', slug: 'solara', href: '/demo/solara',
+    name: 'SoLara Salon', detail: 'Hair salon website concept',
+  },
+  {
     id: 'deercreek', slug: 'deercreek', href: '/demo/deercreek',
     name: 'Deer Creek Plumbing — Site A', detail: 'Plumbing website concept',
   },
