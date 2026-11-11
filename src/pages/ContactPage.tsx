@@ -19,11 +19,13 @@ export function ContactPage() {
   // Derived from tracked router state, so following a second ?shift= link
   // updates the page instead of showing the first recommendation.
   const { search } = useLocation()
-  const handoff = readShiftHandoff(search)
   // Present when the visitor followed "Discuss my website" from a demo. Like
   // ?shift=, it is applied after hydration; everyone else sees the page as
   // it always was.
   const demo = readDemoHandoff(search)
+  // A website enquiry keeps that context even if an old quiz parameter
+  // remains in the URL. Other contact visitors retain the quiz handoff.
+  const handoff = demo?.project === 'website' ? null : readShiftHandoff(search)
 
   // Arriving here is the measurable half of the demo's agency link: the demo
   // pages themselves load no analytics. The bootstrap applies consent and
@@ -82,6 +84,7 @@ export function ContactPage() {
               submitLabel={demo?.submitLabel ?? 'Send project details'}
               handoff={handoff}
               source={demo?.id}
+              project={demo?.project}
               messageLabel={demo?.messageLabel}
               messagePlaceholder={demo?.messagePlaceholder}
             />

@@ -8,7 +8,10 @@ import { demoHandoffs, type DemoHandoff, type DemoHandoffId } from '../content/d
 export const DEMO_PARAM = 'demo'
 
 export function demoHandoffHref(id: DemoHandoffId): string {
-  return `/contact?${DEMO_PARAM}=${encodeURIComponent(id)}`
+  const query = new URLSearchParams({ [DEMO_PARAM]: id })
+  const project = demoHandoffs[id].project
+  if (project) query.set('project', project)
+  return `/contact?${query}`
 }
 
 /** Null for a missing or unknown id, so a stale or hand-edited link falls

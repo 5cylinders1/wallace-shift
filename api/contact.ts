@@ -38,6 +38,10 @@ const DEMO_SOURCES: Record<string, { line: string; tag: string }> = {
     line: 'Deer Creek Plumbing website demo (/demo/deercreek)',
     tag: 'Deer Creek demo',
   },
+  deercreekplumbing: {
+    line: 'Deer Creek Plumbing website demo (/demo/deercreekplumbing)',
+    tag: 'Deer Creek Plumbing demo',
+  },
 }
 
 function demoSource(value: unknown): { line: string; tag: string } | null {
@@ -111,6 +115,7 @@ export default async function handler(request: Request): Promise<Response> {
   const packageChoice = optionalField(body.package, MAX_CHOICE)
   const budget = optionalField(body.budget, MAX_CHOICE)
   const source = demoSource(body.source)
+  const project = body.project === 'website' ? 'Website project' : ''
 
   if (!name || !email || !message) {
     return json({ ok: false, error: 'invalid' }, 400)
@@ -141,6 +146,7 @@ export default async function handler(request: Request): Promise<Response> {
           `Name: ${name}`,
           `Email: ${email}`,
           ...(source ? [`Source: ${source.line}`] : []),
+          ...(project ? [`Project: ${project}`] : []),
           ...(website ? [`Website: ${website}`] : []),
           ...(service ? [`Service: ${service}`] : []),
           ...(packageChoice ? [`Package: ${packageChoice}`] : []),

@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from 'react'
 import { href, services } from './data'
+import { applyLinkContext, choiceFromValue, choiceValue, clearSavedDraft, emptyDraft, issues, loadDraft, saveDraft, serviceName, type ContactMethod, type Draft } from './issues'
 
 const phone = '(913) 440-9102'
 const phoneHref = 'tel:+19134409102'
@@ -36,22 +37,49 @@ export function AreaChecker() {
   </div>
 }
 
-type ContactMethod = 'email' | 'call' | 'text'
-type Draft = { service: string; details: string; zip: string; day: string; time: string; name: string; contact: ContactMethod; email: string; phone: string; preferences: string }
 type Errors = Partial<Record<keyof Draft, string>>
-const empty: Draft = { service: '', details: '', zip: '', day: '', time: 'Any time', name: '', contact: 'email', email: '', phone: '', preferences: '' }
 function todayInOlathe() { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()) }
 const subscribe = () => () => {}
+
+function ChoiceOptions() {
+  return <>
+    <optgroup label="What’s happening?">{issues.map(issue => <option key={issue.id} value={issue.id}>{issue.label} · {serviceName(issue.service)}</option>)}</optgroup>
+    <optgroup label="Choose a service">{services.map(service => <option key={service.slug} value={`service:${service.slug}`}>{service.name}</option>)}</optgroup>
+    <option value="unsure">I’m not sure yet</option>
+  </>
+}
+
+/** Native GET fallback remains usable without JavaScript; issue context maps to a service on the form. */
+export function QuickServiceSelector() {
+  const id = useId()
+  const hydrated = useSyncExternalStore(subscribe, () => true, () => false)
+  const initial = useMemo(() => {
+    const saved = hydrated ? loadDraft() : emptyDraft
+    return saved.service ? saved : { ...saved, service: 'other' }
+  }, [hydrated])
+  const [changed, setChanged] = useState<Draft | null>(null)
+  const draft = changed ?? initial
+  function change(value: string) {
+    const next = { ...draft, ...(choiceFromValue(value) ?? { service: 'other', issue: '' }) }
+    setChanged(next)
+    saveDraft(next)
+  }
+  return <form action={href('schedule')} method="get" onSubmit={() => saveDraft(draft)}>
+    <label htmlFor={`${id}-issue`}>Choose an issue or service</label>
+    <select id={`${id}-issue`} name="issue" value={choiceValue(draft)} onChange={event => change(event.target.value)}><ChoiceOptions /></select>
+    <input type="hidden" name="service" value={draft.service} />
+    {draft.zip && <input type="hidden" name="zip" value={draft.zip} />}
+    <button className="dcp-button dcp-button-light" type="submit">Start a request <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" /></svg></button>
+  </form>
+}
 
 export function BookingForm() {
   const id = useId()
   const hydrated = useSyncExternalStore(subscribe, () => true, () => false)
   const initial = useMemo(() => {
-    if (!hydrated) return empty
-    const params = new URLSearchParams(window.location.search)
-    const service = params.get('service') ?? ''
-    const zip = params.get('zip') ?? ''
-    return { ...empty, service: services.some(item => item.slug === service) ? service : '', zip: /^\d{5}$/.test(zip) ? zip : '' }
+    if (!hydrated) return emptyDraft
+    const saved = loadDraft()
+    return window.history.state?.dcpDraftApplied ? saved : applyLinkContext(saved, window.location.search)
   }, [hydrated])
   const [changedDraft, setDraft] = useState<Draft | null>(null)
   const draft = changedDraft ?? initial
@@ -64,12 +92,49 @@ export function BookingForm() {
   const focusErrors = useRef(false)
   const focusForm = useRef(false)
 
+  useEffect(() => {
+    if (hydrated && saveDraft(draft)) {
+      // A browser Back/Forward visit restores the draft instead of replaying stale link prefills.
+      window.history.replaceState({ ...window.history.state, dcpDraftApplied: true }, '', window.location.href)
+    }
+  }, [draft, hydrated])
   useEffect(() => { if (focusErrors.current) { focusErrors.current = false; errorSummary.current?.focus() } }, [errors])
   useEffect(() => { if (reviewing) reviewHeading.current?.focus(); else if (focusForm.current) { focusForm.current = false; formHeading.current?.focus() } }, [reviewing])
 
   function update<K extends keyof Draft>(key: K, value: Draft[K]) {
-    setDraft(current => ({ ...(current ?? initial), [key]: value }))
+    const next = { ...draft, [key]: value }
+    setDraft(next)
+    saveDraft(next)
+    if (key === 'zip') {
+      // A location link supplies the initial ZIP, but later edits belong to
+      // the visitor. Remove the old prefill so reload cannot overwrite them.
+      const url = new URL(window.location.href)
+      url.searchParams.delete('zip')
+      window.history.replaceState(window.history.state, '', url)
+    }
     setErrors(current => { const next = { ...current }; delete next[key]; if (key === 'contact') { delete next.email; delete next.phone } return next })
+  }
+  function changeChoice(value: string) {
+    const choice = choiceFromValue(value)
+    const next = { ...draft, ...(choice ?? { service: '', issue: '' }) }
+    setDraft(next)
+    saveDraft(next)
+    setErrors(current => { const nextErrors = { ...current }; delete nextErrors.service; return nextErrors })
+    // Keep this history entry aligned with the revised choice for browser Back/Forward.
+    const url = new URL(window.location.href)
+    url.searchParams.delete('issue')
+    url.searchParams.delete('service')
+    if (choice) { url.searchParams.set('service', choice.service); if (choice.issue) url.searchParams.set('issue', choice.issue) }
+    window.history.replaceState(window.history.state, '', url)
+  }
+  function clearDetails() {
+    clearSavedDraft()
+    setDraft({ ...emptyDraft })
+    setErrors({})
+    const url = new URL(window.location.href)
+    for (const key of ['issue', 'service', 'zip']) url.searchParams.delete(key)
+    window.history.replaceState(window.history.state, '', url)
+    if (reviewing) { focusForm.current = true; setReviewing(false) } else formHeading.current?.focus()
   }
   function submit(event: FormEvent) {
     event.preventDefault()
@@ -91,12 +156,13 @@ export function BookingForm() {
   const error = (name: keyof Draft) => errors[name] ? <p className="dcp-field-error" id={`${inputId(name)}-error`}>{errors[name]}</p> : null
 
   if (reviewing) {
-    const selectedService = services.find(item => item.slug === draft.service)?.name || 'I’m not sure yet'
+    const selectedService = serviceName(draft.service) || 'I’m not sure yet'
     return <div className="dcp-booking-review">
       <h2 ref={reviewHeading} tabIndex={-1}>Your demo request is ready.</h2>
-      <p className="dcp-form-notice"><strong>Nothing was sent. No visit is booked.</strong> This preview keeps your details only in this page while it is open. Contact the office directly to arrange service.</p>
+      <p className="dcp-form-notice"><strong>Nothing was sent. No visit is booked.</strong> Sample details stay in this browser tab so you can return and revise them. Use “Clear demo details” to remove them. Contact the office directly to arrange service.</p>
       <dl className="dcp-request-summary">
         <div><dt>Service</dt><dd>{selectedService}</dd></div>
+        {draft.issue && <div><dt>Selected issue</dt><dd>{issues.find(issue => issue.id === draft.issue)?.label}</dd></div>}
         {draft.details.trim() && <div><dt>What’s happening</dt><dd>{draft.details}</dd></div>}
         <div><dt>Location</dt><dd>ZIP {draft.zip}. Coverage needs confirmation.</dd></div>
         <div><dt>Preferred visit</dt><dd>{draft.day ? new Date(`${draft.day}T12:00:00Z`).toLocaleDateString('en-US', { dateStyle: 'long', timeZone: 'UTC' }) : 'First suitable day'} · {draft.time}. A preference, not an available slot.</dd></div>
@@ -104,18 +170,21 @@ export function BookingForm() {
         {draft.preferences.trim() && <div><dt>Visit preferences</dt><dd>{draft.preferences}</dd></div>}
       </dl>
       <div className="dcp-form-actions"><a className="dcp-button" href={`mailto:${email}`}>Email the office</a><a className="dcp-text-link" href={phoneHref}>Call {phone}</a></div>
-      <button className="dcp-text-button" type="button" onClick={() => { focusForm.current = true; setReviewing(false) }}>Edit demo details</button>
+      <div className="dcp-form-actions dcp-review-edit-actions">
+        <button className="dcp-text-button" type="button" onClick={() => { focusForm.current = true; setReviewing(false) }}>Edit demo details</button>
+        <button className="dcp-text-button" type="button" onClick={clearDetails}>Clear demo details</button>
+      </div>
     </div>
   }
 
   return <form className="dcp-booking-form" onSubmit={submit} noValidate aria-labelledby={`${id}-title`}>
     <h2 id={`${id}-title`} ref={formHeading} tabIndex={-1}>Tell us what you need.</h2>
-    <p className="dcp-form-notice"><strong>Demo form.</strong> Nothing is sent to Deer Creek and no appointment is reserved. Use sample details to try it. Required fields are marked “required”.</p>
+    <p className="dcp-form-notice"><strong>Demo form.</strong> Nothing is sent to Deer Creek and no appointment is reserved. Use sample details to try it. Details stay in this browser tab so you can go back and revise them. Required fields are marked “required”.</p>
     <noscript><p>The interactive demo needs JavaScript. To arrange service, <a href={`mailto:${email}`}>email the office</a> or <a href={phoneHref}>call {phone}</a>.</p></noscript>
     {Object.keys(errors).length > 0 && <div ref={errorSummary} className="dcp-error-summary" role="alert" tabIndex={-1} aria-labelledby={`${id}-errors`}><h3 id={`${id}-errors`}>Please check your details</h3><ul>{Object.entries(errors).map(([name, message]) => <li key={name}><a href={`#${inputId(name as keyof Draft)}`} onClick={event => { event.preventDefault(); document.getElementById(inputId(name as keyof Draft))?.focus() }}>{message}</a></li>)}</ul></div>}
     <fieldset className="dcp-form-fields" disabled={!today} aria-label="Demo request details">
     <fieldset><legend>What can we help with?</legend><div className="dcp-form-grid">
-      <div className="dcp-field"><label htmlFor={inputId('service')}>Service (required)</label><select id={inputId('service')} name="service" value={draft.service} onChange={e => update('service', e.target.value)} required aria-invalid={Boolean(errors.service)} aria-describedby={described('service')}><option value="">Choose a service</option>{services.map(item => <option key={item.slug} value={item.slug}>{item.name}</option>)}<option value="other">I’m not sure yet</option></select>{error('service')}</div>
+      <div className="dcp-field"><label htmlFor={inputId('service')}>Issue or service (required)</label><select id={inputId('service')} name="issue" value={choiceValue(draft)} onChange={e => changeChoice(e.target.value)} required aria-invalid={Boolean(errors.service)} aria-describedby={described('service', `${id}-selection`)}><option value="">Choose an issue or service</option><ChoiceOptions /></select><input type="hidden" name="service" value={draft.service} />{error('service')}<p className="dcp-field-hint dcp-selection-summary" id={`${id}-selection`} role="status">{draft.service ? <><strong>{serviceName(draft.service)}</strong>{draft.issue ? `: ${issues.find(issue => issue.id === draft.issue)?.label}.` : '.'} You can change this choice without losing your other details.</> : 'Choose the problem you recognize, a service, or “I’m not sure yet”.'}</p>{issues.some(issue => issue.id === draft.issue && issue.urgent) && <p className="dcp-field-hint dcp-issue-guidance">If this needs urgent attention, <a href={phoneHref}>call {phone} for availability</a>. This demo form is not monitored.</p>}</div>
       <div className="dcp-field"><label htmlFor={inputId('zip')}>Service ZIP code (required)</label><input id={inputId('zip')} name="postal-code" inputMode="numeric" autoComplete="postal-code" maxLength={5} value={draft.zip} onChange={e => update('zip', e.target.value.replace(/\D/g, '').slice(0, 5))} required aria-invalid={Boolean(errors.zip)} aria-describedby={described('zip', `${id}-zip-hint`)} />{error('zip')}<p className="dcp-field-hint" id={`${id}-zip-hint`} role="status">{draft.zip.length === 5 ? locationMessage(draft.zip) : 'The office confirms coverage for your exact address.'}</p></div>
       <div className="dcp-field dcp-field-wide"><label htmlFor={inputId('details')}>What’s happening? (optional)</label><textarea id={inputId('details')} name="details" value={draft.details} onChange={e => update('details', e.target.value)} maxLength={1500} rows={3} /></div>
     </div></fieldset>
@@ -131,6 +200,7 @@ export function BookingForm() {
     </div></fieldset>
     <div className="dcp-field"><label htmlFor={inputId('preferences')}>Anything that would make the visit easier? (optional)</label><p className="dcp-field-hint" id={`${id}-preferences-hint`}>For example, email instead of a call, extra time to answer the door, or advance notice of noise. Share practical preferences, not diagnoses or medical details.</p><textarea id={inputId('preferences')} name="visit-preferences" value={draft.preferences} onChange={e => update('preferences', e.target.value)} maxLength={1000} rows={3} aria-describedby={`${id}-preferences-hint`} /></div>
     <div className="dcp-form-actions"><button className="dcp-button" type="submit">Review demo request</button><p className="dcp-field-hint">Review your details on this page. Nothing is sent.</p></div>
+    <button className="dcp-text-button" type="button" onClick={clearDetails}>Clear demo details</button>
     </fieldset>
   </form>
 }

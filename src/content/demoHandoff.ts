@@ -7,10 +7,12 @@
  * someone saw. `api/contact.ts` keeps its own allowlist of these ids and
  * ignores anything else.
  */
-export type DemoHandoffId = 'deercreek'
+export type DemoHandoffId = 'deercreek' | 'deercreekplumbing'
 
 export type DemoHandoff = {
   id: DemoHandoffId
+  /** Explicit project context for the website-focused entry path. */
+  project?: 'website'
   /** The concept the visitor was looking at. */
   name: string
   /** Where "Back to the demo" goes. */
@@ -27,6 +29,23 @@ export type DemoHandoff = {
 }
 
 export const demoHandoffs: Record<DemoHandoffId, DemoHandoff> = {
+  deercreekplumbing: {
+    id: 'deercreekplumbing',
+    project: 'website',
+    name: 'Deer Creek Plumbing website concept',
+    href: '/demo/deercreekplumbing',
+    eyebrow: 'Website enquiry',
+    headlineLines: ['Let’s discuss', 'your website.'],
+    headlineAccent: '',
+    supporting:
+      'Tell Matthew about your business and what customers need to understand or accomplish online.',
+    messageLabel: 'About your business and website',
+    messagePlaceholder:
+      'Tell us about your business, your current website if you have one, and what customers need to understand or do online.',
+    submitLabel: 'Send website details',
+    beforeYouWrite:
+      'Share what your business does, who you serve, and what customers need from your website. You can mention something from the demo that would help your own customers. You do not need a technical brief.',
+  },
   deercreek: {
     id: 'deercreek',
     name: 'Deer Creek Plumbing website concept',

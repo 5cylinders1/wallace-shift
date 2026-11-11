@@ -21,6 +21,8 @@ export type ContactPayload = {
   /** The demo the visitor came from, e.g. `deercreek`. The endpoint keeps
    *  its own allowlist and drops anything it does not recognise. */
   source?: string
+  /** Fixed project context carried from the demo's website invitation. */
+  project?: 'website'
   /** Honeypot. Always empty for a real person; see ContactForm. */
   company?: string
 }

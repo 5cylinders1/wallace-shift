@@ -23,7 +23,7 @@
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
   const surfaces = new Set(['home_hero', 'contact_form', 'roofing_offer'])
   // Demos whose "Discuss my website" link carries context to /contact.
-  const demoContexts = new Set(['deercreek'])
+  const demoContexts = new Set(['deercreek', 'deercreekplumbing'])
   const demos = new Set([
     'roofers', 'roofers-2', 'roofers-3', 'roofers-4', 'roofers-5', 'roofers-6',
     'foundation', 'cabinetry', 'cabinetry-2', 'pools', 'roofers-dashboard',

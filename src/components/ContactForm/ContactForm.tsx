@@ -37,6 +37,8 @@ type ContactFormProps = {
   /** The demo the visitor came from. Sent with the enquiry so the inbox says
    *  which concept they saw; it is never shown in or typed into the form. */
   source?: DemoHandoffId
+  /** Fixed context from an established demo handoff, never form text. */
+  project?: 'website'
   /** Contextual wording for the message field. The field itself, and the
    *  name / email / message structure, stay the same for every visitor. */
   messageLabel?: string
@@ -77,6 +79,7 @@ export function ContactForm({
   handoff,
   detailed = false,
   source,
+  project,
   messageLabel = enquiryCopy.messageLabel,
   messagePlaceholder = enquiryCopy.messagePlaceholder,
 }: ContactFormProps) {
@@ -103,6 +106,7 @@ export function ContactForm({
     const result = await submitContactRequest({
       name, email, message, company,
       ...(source ? { source } : {}),
+      ...(project ? { project } : {}),
       ...(detailed ? {
         website: noWebsite ? '' : website, noWebsite,
         service: labelFor(enquiryServices, service),
