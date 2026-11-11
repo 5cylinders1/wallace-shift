@@ -23,7 +23,9 @@
     "preview": "vite preview",
     "demo:invite": "node scripts/create-demo-invite.mjs",
     "blog:preview": "node scripts/preview-blog-post.mjs",
-    "test:deercreek": "node scripts/test-deercreek.mjs"
+    "test:deercreek": "node scripts/test-deercreek.mjs",
+    "test:deercreekplumbing": "node scripts/test-deercreekplumbing.mjs",
+    "test:deercreekplumbing-browser": "node scripts/test-deercreekplumbing-browser.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

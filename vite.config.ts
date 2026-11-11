@@ -13,6 +13,7 @@ import clientPortalHandler from './api/_lib/client-portal-handler.ts'
 import { blogPlugin } from './blog/vite-plugin.ts'
 import { bucyrusPlugin } from './bucyrus/vite-plugin.ts'
 import { deerCreekPlugin } from './deercreek/vite-plugin.ts'
+import { deerCreekPlumbingPlugin } from './deercreekplumbing/vite-plugin.ts'
 
 /**
  * Emits one real HTML file per route, plus `sitemap.xml` and `robots.txt`.
@@ -244,7 +245,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demo\/deercreekplumbing|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek|demos\/deercreekplumbing)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -278,7 +279,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/|deercreekplumbing\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -340,7 +341,7 @@ function roofingDemoRoutes(): Plugin {
 }
 
 export default defineConfig(({ mode }): UserConfig => ({
-  plugins: [react(), ...(mode === 'demos' ? [] : [prerenderRoutes(), publicDemoBoundary(), blogPlugin(), bucyrusPlugin(), deerCreekPlugin()]), demoAccessRoutes(), devApiRoutes(), roofingDemoRoutes()],
+  plugins: [react(), ...(mode === 'demos' ? [] : [prerenderRoutes(), publicDemoBoundary(), blogPlugin(), bucyrusPlugin(), deerCreekPlugin(), deerCreekPlumbingPlugin()]), demoAccessRoutes(), devApiRoutes(), roofingDemoRoutes()],
   // The public pass copies static media once. The second pass adds only the
   // demo documents and their fully isolated JS/CSS dependency graph.
   build: {
@@ -361,6 +362,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         waterRiffle: 'demos/water/index.html',
         otvOpenTelevision: 'demos/otv/index.html',
         deerCreekPlumbing: 'demos/deercreek/index.html',
+        deerCreekPlumbingSecondConcept: 'demos/deercreekplumbing/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',
