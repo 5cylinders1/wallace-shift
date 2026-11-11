@@ -1,39 +1,49 @@
 import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from 'react'
 import { href, services } from './data'
+import { lookupServiceArea, locationMessage } from './serviceArea'
 import { applyLinkContext, choiceFromValue, choiceValue, clearSavedDraft, emptyDraft, issues, loadDraft, saveDraft, serviceName, type ContactMethod, type Draft } from './issues'
 
 const phone = '(913) 440-9102'
 const phoneHref = 'tel:+19134409102'
 const email = 'deercreekplumbinginc@gmail.com'
 
-/** These are town/ZIP associations, not a geofence or a promise of coverage. */
-function locationMessage(value: string) {
-  const query = value.trim().toLowerCase().replace(/[,.’']/g, '').replace(/\s+(ks|kansas|mo|missouri)$/, '')
-  if (!query) return 'Enter a town or a five digit ZIP code to check.'
-  const named: Record<string, string> = { olathe: 'Olathe', '66061': 'Olathe', '66062': 'Olathe', paola: 'Paola', '66071': 'Paola', louisburg: 'Louisburg', '66053': 'Louisburg' }
-  if (named[query]) return `${named[query]} is named in Deer Creek’s advertised service area. The office still needs to confirm your exact address and availability.`
-  const metro = ['kansas city', 'overland park', 'lenexa', 'shawnee', 'leawood', 'gardner', 'spring hill', 'lees summit', 'independence', 'belton', 'raymore', 'mission', 'prairie village']
-  if (metro.includes(query)) return 'That town is in the Kansas City metro. Deer Creek advertises metro service, but the office must confirm coverage for your address.'
-  return 'This checker cannot confirm that location. Call or email the office with your town and address to ask about coverage. This is not a decision that your address is outside the service area.'
-}
-
 export function AreaChecker() {
   const id = useId()
+  const input = useRef<HTMLInputElement>(null)
+  const resultHeading = useRef<HTMLHeadingElement>(null)
+  const focusResult = useRef(false)
   const [query, setQuery] = useState('')
-  const [result, setResult] = useState('')
-  function check(event: FormEvent) { event.preventDefault(); setResult(locationMessage(query)) }
-  return <div className="dcp-checker">
-    <form onSubmit={check} aria-label="Service area checker">
+  const [result, setResult] = useState<ReturnType<typeof lookupServiceArea> | null>(null)
+  useEffect(() => { if (focusResult.current) { focusResult.current = false; resultHeading.current?.focus() } }, [result])
+  function lookUp(value: string, moveFocus = false) {
+    const next = lookupServiceArea(value)
+    focusResult.current = moveFocus
+    setQuery(value)
+    setResult(next)
+    if (next.kind === 'empty' || next.kind === 'invalid') input.current?.focus()
+  }
+  function check(event: FormEvent) { event.preventDefault(); lookUp(query) }
+  const invalid = result?.kind === 'empty' || result?.kind === 'invalid'
+  return <div className="dcp-checker" data-ui="location-checker">
+    <form onSubmit={check} aria-label="Service area checker" noValidate>
       <label htmlFor={`${id}-location`}>Your town or ZIP code</label>
-      <p className="dcp-field-hint" id={`${id}-hint`}>For example, Olathe or 66062. The office confirms all coverage.</p>
+      <p className="dcp-field-hint" id={`${id}-hint`}>Find your location, then tell us what needs fixing.</p>
       <div className="dcp-checker-row">
-        <input id={`${id}-location`} name="location" value={query} onChange={e => setQuery(e.target.value)} maxLength={80} autoComplete="postal-code" aria-describedby={`${id}-hint`} />
+        <input ref={input} id={`${id}-location`} name="location" value={query} onChange={event => { setQuery(event.target.value); setResult(null) }} placeholder="e.g. 66085 or Overland Park" maxLength={80} autoComplete="postal-code" aria-invalid={invalid} aria-describedby={`${id}-hint${result ? ` ${id}-result` : ''}`} />
         <button type="submit" className="dcp-button">Check location</button>
       </div>
     </form>
-    <div className="dcp-checker-result" role="status" aria-live="polite" aria-atomic="true">{result && <p>{result}</p>}</div>
-    <p className="dcp-field-hint">This uses town and ZIP matches, not your device’s location. No location is sent to Deer Creek.</p>
-    {result && <div className="dcp-inline-links"><a href={phoneHref}>Call {phone}</a><a href={`${href('schedule')}${/^\d{5}$/.test(query.trim()) ? `?zip=${query.trim()}` : ''}`}>Try the request demo</a></div>}
+    <div className="dcp-checker-result" id={`${id}-result`} data-status={result?.kind} role="status" aria-live="polite" aria-atomic="true">{result && <>
+      {result.kind === 'found' && <span className="dcp-location-match"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m5 12 4 4 10-10" /></svg>Location found</span>}
+      <h3 ref={resultHeading} tabIndex={-1}>{result.kind === 'choose' ? 'Which location?' : result.label}</h3>
+      <p>{result.kind === 'choose' ? 'Choose the town and state you mean.' : result.detail}</p>
+    </>}</div>
+    {result?.kind === 'choose' && <div className="dcp-location-options" aria-label="Matching locations">{result.options.map(option => <button className="dcp-location-option" type="button" key={option.value} onClick={() => lookUp(option.value, true)}>{option.label}<span aria-hidden="true">↗</span></button>)}</div>}
+    {result?.kind === 'found' && <div className="dcp-location-actions"><a className="dcp-button" href={`${href('schedule')}${result.zip ? `?zip=${result.zip}` : ''}`}>Request service <span aria-hidden="true">→</span></a><a className="dcp-text-link" href={phoneHref}>Or call {phone}</a></div>}
+    {result?.kind === 'unknown' && <div className="dcp-location-actions"><a className="dcp-button" href={phoneHref}>Call to check coverage</a><a className="dcp-text-link" href={`mailto:${email}`}>Email the office</a></div>}
+    {!result && <div className="dcp-location-examples"><p>Or choose a nearby town</p><div>{['Olathe', 'Overland Park', 'Lee’s Summit'].map(town => <button key={town} type="button" onClick={() => lookUp(town, true)}>{town}</button>)}</div></div>}
+    <p className="dcp-field-hint dcp-checker-note">The office confirms your address and appointment. This check runs in your browser.</p>
+    <noscript><p>For a location check without JavaScript, <a href={phoneHref}>call {phone}</a>.</p></noscript>
   </div>
 }
 

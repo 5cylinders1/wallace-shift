@@ -161,3 +161,19 @@ Commit message for this revision: `Refine Deer Creek Plumbing website handoff an
 The top Wallace Shift attribution strip and closing website invitation were both removed at Matthew’s request. The earlier design record above describes the superseded version. Site B now keeps its plumbing navigation and footer without those agency promotion sections. The existing contextual contact URL still works when shared directly.
 
 Commit message: `Remove top agency attribution from Deer Creek demo`.
+
+## Service area checker repair and visual refresh
+
+The previous six-ZIP lookup treated valid local entries such as 66085 as unknown. Site B now has its own public-domain Census Gazetteer snapshot covering 226 regional ZIP areas and 179 places. ZIP+4, punctuation, spacing, state names and common aliases are normalized. Ambiguous town names offer state-specific choices. Invalid input and an unmatched location have separate, actionable responses. Recognition is not a promised service boundary; the office still confirms the exact address and availability.
+
+66085 is labeled Overland Park / Stilwell, KS, supported by [Johnson County property information](https://taxbill.jocogov.org/Property-Detail?PropertyQuickRefID=R314113) and [Johnson County Park and Recreation's Stilwell Community Park listing](https://www.jcprd.com/facilities/facility/details/Stilwell-Community-Park-52). Regional geography comes from the [2024 Census Gazetteer](https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html). The source extraction distance is not used as a coverage rule. Other ZIPs are displayed as ZIPs without guessing a postal city from the nearest point.
+
+The homepage and service-area page use the original business truck photograph, a dark background, a white checker panel, nearby-town shortcuts and a clear request action. A recognized ZIP transfers into the request form. Edited input clears stale results. Live announcements, invalid-input focus and focus after choosing a town support keyboard and screen reader use. Lookup runs locally without geocoding requests.
+
+Site A remains unchanged. The removed agency promotion sections remain absent.
+
+Validation: production build and targeted ESLint passed; 14 Site B static tests, six lookup regressions and 25 Site A regressions passed. Production browser checks passed at 320, 390, 768 and 1440 pixels, including 66085/ZIP+4, request prefill, ambiguous-town selection, result focus, stale-result clearing, invalid/empty/unknown input, request drafts and reading preferences. Axe reported zero violations on all 13 Site B routes, four found-result states and four request-review states. Automated contrast checks still mark some states for manual review; this is not a full conformance claim.
+
+Visual review: the original screenshot had a large empty left column and a valid ZIP reported as unmatched. The final section gives that space a real business photograph and presents a useful, readable result. All eight final design captures and the focused checker captures were opened. Design/usability/content scores for this section: 8/9/8; creativity 7, reflecting a deliberately familiar form pattern. The design inspector reported no failures; its font-size-count warning reflects the existing responsive type scale, and no video was added because the original photograph suits this small section. Captures: `tmp/deercreekplumbing-area-design/` and `tmp/deercreekplumbing-area-browser/`.
+
+Commit message: `Fix Deer Creek location lookup and refresh service area section`.
