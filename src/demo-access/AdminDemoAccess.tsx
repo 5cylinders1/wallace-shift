@@ -1,20 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { adminDemos as demos } from './catalog'
 import './demo-access.css'
 import './demo-admin.css'
-
-const demos = [
-  { id: 'roofers', href: '/northvane', name: 'Northvane Roofing', detail: 'Website concept 01' },
-  { id: 'roofers-2', href: '/alder-stone', name: 'Alder & Stone', detail: 'Website concept 02' },
-  { id: 'roofers-3', href: '/contour', name: 'Contour Roofing', detail: 'Website concept 03' },
-  { id: 'roofers-4', href: '/halcyon', name: 'Halcyon Roofworks', detail: 'Website concept 04' },
-  { id: 'roofers-5', href: '/velar', name: 'Velar Roof Atelier', detail: 'Website concept 05' },
-  { id: 'roofers-6', href: '/stratum', name: 'Stratum Roofing Co.', detail: 'Website concept 06' },
-  { id: 'foundation', href: '/datum', name: 'Datum Foundation & Waterproofing', detail: 'Foundation repair concept 01' },
-  { id: 'cabinetry', href: '/tambour', name: 'Tambour Cabinetry, Kitchens & Baths', detail: 'Custom cabinetry concept 01' },
-  { id: 'cabinetry-2', href: '/mitre', name: 'Mitre & Rift Cabinetmakers', detail: 'Custom cabinetry concept 02' },
-  { id: 'pools', href: '/stillwater', name: 'Stillwater Pool Co.', detail: 'Pool contractor concept 01' },
-  { id: 'roofers-dashboard', href: '/roofing-dashboard', name: 'Roofing Dashboard', detail: 'Interactive operations concept' },
-] as const
 
 type Phase = 'checking' | 'sign-in' | 'code' | 'authenticated' | 'unavailable'
 type Action = 'send-code' | 'verify-code' | 'logout'
@@ -45,28 +32,51 @@ export function AdminDemoAccess() {
   const [isError, setIsError] = useState(false)
   const [cooldown, setCooldown] = useState(0)
   const busyRef = useRef(false)
+  const statusRequest = useRef<AbortController | null>(null)
   const codeInput = useRef<HTMLInputElement>(null)
   const cardHeading = useRef<HTMLHeadingElement>(null)
   const requestedDemo = new URLSearchParams(window.location.search).get('demo')
-  const selectedDemo = demos.find(demo => demo.id === requestedDemo || demo.href.slice(1) === requestedDemo)
+  const selectedDemo = demos.find(demo => demo.id === requestedDemo || demo.slug === requestedDemo || demo.href.replace(/^\/|\/$/g, '') === requestedDemo)
 
   useEffect(() => {
-    const controller = new AbortController()
-    void fetch('/api/demo-admin', { credentials: 'same-origin', cache: 'no-store', signal: controller.signal })
-      .then(async response => {
-        const result = await response.json() as ApiResult
-        if (!response.ok || result.ok !== true) throw new Error(result.error || 'unavailable')
-        if (!controller.signal.aborted) {
+    function refresh() {
+      if (busyRef.current) return
+      statusRequest.current?.abort()
+      const controller = new AbortController()
+      statusRequest.current = controller
+      const options = { credentials: 'same-origin', cache: 'no-store', signal: controller.signal } as const
+      void fetch('/api/demo-access?status=1', options)
+        .then(async response => {
+          const access = await response.json() as ApiResult
+          if (!response.ok || access.ok !== true) throw new Error(access.error || 'unavailable')
+          if (access.authenticated === true) return access
+          // Owner sign-in remains separate from an approved visitor session.
+          const adminResponse = await fetch('/api/demo-admin', options)
+          const admin = await adminResponse.json() as ApiResult
+          if (!adminResponse.ok || admin.ok !== true) throw new Error(admin.error || 'unavailable')
+          return admin
+        })
+        .then(result => {
+          if (controller.signal.aborted) return
           setPhase(result.authenticated === true ? 'authenticated' : result.pending === true ? 'code' : 'sign-in')
-        }
-      })
-      .catch((error: unknown) => {
-        if (controller.signal.aborted) return
-        setPhase('unavailable')
-        setIsError(true)
-        setMessage(errorMessage(error instanceof Error ? error.message : 'unavailable'))
-      })
-    return () => controller.abort()
+          setIsError(false)
+          setMessage('')
+        })
+        .catch((error: unknown) => {
+          if (controller.signal.aborted) return
+          setPhase('unavailable')
+          setIsError(true)
+          setMessage(errorMessage(error instanceof Error ? error.message : 'unavailable'))
+        })
+    }
+    refresh()
+    window.addEventListener('focus', refresh)
+    window.addEventListener('pageshow', refresh)
+    return () => {
+      statusRequest.current?.abort()
+      window.removeEventListener('focus', refresh)
+      window.removeEventListener('pageshow', refresh)
+    }
   }, [])
 
   const cooldownActive = cooldown > 0
@@ -83,6 +93,7 @@ export function AdminDemoAccess() {
 
   async function performAction(action: Action) {
     if (busyRef.current || (action === 'send-code' && cooldown > 0)) return
+    statusRequest.current?.abort()
     busyRef.current = true
     setBusy(action)
     setMessage('')
@@ -117,11 +128,11 @@ export function AdminDemoAccess() {
         if (result.authenticated !== true) throw new Error('unavailable')
         setPhase('authenticated')
         setCode('')
-        setMessage('You’re signed in. All six demos are ready to open.')
+        setMessage(`You’re signed in. All ${demos.length} demos are ready to open.`)
       } else {
         setPhase('sign-in')
         setCode('')
-        setMessage('You’ve signed out of admin demo access on this browser.')
+        setMessage('You’ve signed out of demo access on this browser.')
       }
     } catch {
       setIsError(true)
@@ -151,26 +162,26 @@ export function AdminDemoAccess() {
           <img src="/brand/wallace-shift-logo-white.svg" alt="" width="66" height="40" />
           <span>WALLACE SHIFT<span>Design. Technology. Momentum.</span></span>
         </a>
-        <a className="demo-access__back" href="/demos/roofers-offer/">View the collection <Arrow /></a>
+        <a className="demo-access__back" href="/demos/contractors/">View the collection <Arrow /></a>
       </header>
 
       <main className="demo-access__main">
         <section className="demo-access__intro" aria-labelledby="admin-heading">
-          <p className="demo-access__eyebrow"><span />Owner access</p>
+          <p className="demo-access__eyebrow"><span />{phase === 'authenticated' ? 'Demo collection' : 'Owner access'}</p>
           <h1 id="admin-heading">Your demos.<br /><em>On demand.</em></h1>
-          <p className="demo-access__description">Sign in with a code sent to your admin inbox, then open any demo in the collection.</p>
+          <p className="demo-access__description">{phase === 'authenticated' ? 'Your access is active. Open any demo website or explore the roofing dashboard below.' : 'An active visitor or owner session opens the full collection. Owners can sign in with a code sent to their admin inbox.'}</p>
           <div className="demo-access__concept">
             <div className="demo-access__concept-mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="12" y="21" width="24" height="19" rx="3" stroke="currentColor" strokeWidth="1.2" /><path d="M17 21v-7a7 7 0 0 1 14 0v7M24 28v5" stroke="currentColor" strokeWidth="1.2" /></svg></div>
-            <div><p className="demo-access__small-label">The Wallace Shift collection</p><h2>One sign-in. Every demo.</h2><p className="demo-access__concept-detail">Five websites & one roofing dashboard</p></div>
+            <div><p className="demo-access__small-label">The Wallace Shift collection</p><h2>One sign-in. Every demo.</h2><p className="demo-access__concept-detail">{demos.length} demos, including the roofing dashboard</p></div>
           </div>
-          <p className="demo-access__access-note">Admin access lasts up to 30 days on this browser. Sign out when you’re finished on a shared device.</p>
+          <p className="demo-access__access-note">Sign out when you’re finished on a shared device. Access applies to this browser and site.</p>
         </section>
 
         <section className="demo-access__card demo-admin__card" id="admin-access" aria-labelledby="admin-card-heading" aria-busy={phase === 'checking' || busy !== null}>
           <div className="demo-access__card-heading">
-            <span className="demo-access__card-index">STUDIO ADMIN</span>
+            <span className="demo-access__card-index">{phase === 'authenticated' ? 'DEMO COLLECTION' : 'STUDIO ADMIN'}</span>
             <h2 id="admin-card-heading" ref={cardHeading} tabIndex={-1}>{phase === 'authenticated' ? 'Your demo collection' : phase === 'code' ? 'Check your inbox' : 'Admin sign in'}</h2>
-            <p>{phase === 'authenticated' ? 'Your access is active. Choose a demo to explore.' : phase === 'code' ? 'Enter the six-digit code from your latest admin sign-in email.' : 'A one-time email code gives you access to all six demos.'}</p>
+            <p>{phase === 'authenticated' ? 'Your access is active. Choose a demo to explore.' : phase === 'code' ? 'Enter the six-digit code from your latest admin sign-in email.' : `A one-time owner sign-in code gives you access to all ${demos.length} demos.`}</p>
           </div>
 
           {phase === 'checking' && <p className="demo-admin__checking" role="status">Checking your access…</p>}
@@ -195,8 +206,8 @@ export function AdminDemoAccess() {
           {phase === 'authenticated' && (
             <>
               {selectedDemo && <a className="demo-access__submit demo-admin__primary" href={selectedDemo.href}><span>Open {selectedDemo.name}</span><Arrow /></a>}
-              <nav className="demo-admin__collection" aria-label="Admin demo collection">
-                {demos.map((demo, index) => <a key={demo.id} href={demo.href} className="demo-admin__demo"><span className="demo-admin__number">0{index + 1}</span><span><strong>{demo.name}</strong><small>{demo.detail}</small></span><Arrow /></a>)}
+              <nav className="demo-admin__collection" aria-label="Demo collection">
+                {demos.map((demo, index) => <a key={demo.id} href={demo.href} className="demo-admin__demo"><span className="demo-admin__number">{String(index + 1).padStart(2, '0')}</span><span><strong>{demo.name}</strong><small>{demo.detail}</small></span><Arrow /></a>)}
               </nav>
               <div className="demo-admin__session"><p>Signed in on this browser.</p><button className="demo-admin__text-button" type="button" disabled={busy !== null} onClick={() => void performAction('logout')}>{busy === 'logout' ? 'Signing out…' : 'Sign out'}</button></div>
             </>
