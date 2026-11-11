@@ -214,6 +214,14 @@ test('the OTV concept is a public demo: page, media and source need no access', 
   for (const path of ['/demos/otv-2/', '/demos/otvx/index.html', '/src/demos/otvx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
+test('the Deer Creek Plumbing concept is a public demo: pages, media and source need no access', async () => {
+  for (const path of ['/demo/deercreek', '/demo/deercreek/', '/demo/deercreek/services/water-heaters', '/demo/deercreek/schedule', '/demos/deercreek/', '/demos/deercreek/index.html', '/src/demos/deercreek/main.tsx', '/demos/deercreek/photos/truck-1600.webp', '/public/demos/deercreek/logo-white.png']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('deercreek'), 'roofers', 'Public demos have no access-request key')
+  for (const path of ['/demos/deercreek-2/', '/demos/deercreekx/index.html', '/src/demos/deercreekx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('session authorizes all demo resources on its origin only; invite cannot be a cookie', async () => {
   const token = session()
   for (const path of ['/northvane', '/velar', '/demo-assets/any.js', '/api/roof-suggest']) assert.equal(await access.gateDemoRequest(new Request(origin + path, { headers: { cookie: `${access.DEMO_COOKIE}=${token}` } })), null)

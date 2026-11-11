@@ -22,7 +22,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "demo:invite": "node scripts/create-demo-invite.mjs",
-    "blog:preview": "node scripts/preview-blog-post.mjs"
+    "blog:preview": "node scripts/preview-blog-post.mjs",
+    "test:deercreek": "node scripts/test-deercreek.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
