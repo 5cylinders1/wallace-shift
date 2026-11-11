@@ -95,6 +95,19 @@
       "port": 5187
     },
     {
+      "name": "dopps-demo-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5190",
+        "--strictPort"
+      ],
+      "port": 5190
+    },
+    {
       "name": "solara-demo-preview",
       "runtimeExecutable": "npm",
       "runtimeArgs": [

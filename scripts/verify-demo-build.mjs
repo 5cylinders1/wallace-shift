@@ -15,9 +15,9 @@ async function files(directory, prefix = '') {
   return nested.flat()
 }
 const output = await files(root)
-const privateHtml = output.filter(path => /^demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/|deercreekplumbing\/|solara\/).*\.html$/.test(path))
+const privateHtml = output.filter(path => /^demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/|deercreekplumbing\/|solara\/|dopps\/).*\.html$/.test(path))
 const sourceHtml = (await files(new URL('../demos/', import.meta.url)))
-  .filter(path => !/^(?:roofers-offer|contractors|bucyrus-auto|lawn|painting|water|otv|deercreek|deercreekplumbing|solara)\//.test(path) && path.endsWith('.html'))
+  .filter(path => !/^(?:roofers-offer|contractors|bucyrus-auto|lawn|painting|water|otv|deercreek|deercreekplumbing|solara|dopps)\//.test(path) && path.endsWith('.html'))
   .map(path => `demos/${path}`)
 assert.deepEqual(privateHtml.toSorted(), sourceHtml.toSorted(), 'Every private demo entry must be emitted exactly once')
 for (const path of privateHtml) {
@@ -26,7 +26,7 @@ for (const path of privateHtml) {
   assert.ok(bundles.length, `Missing compiled bundles: ${path}`)
   for (const bundle of bundles) assert.ok(bundle.startsWith('/demo-assets/'), `${path} exposes ${bundle}`)
 }
-for (const path of ['index.html', 'request-demo/index.html', 'demo-agreement/index.html', 'demo-admin/index.html', 'demos/roofers-offer/index.html', 'demos/contractors/index.html', 'demos/bucyrus-auto/index.html', 'demos/lawn/index.html', 'demos/painting/index.html', 'demos/water/index.html', 'demos/otv/index.html', 'demos/solara/index.html', 'demos/deercreek/index.html', 'demo/deercreek/index.html', 'demos/deercreekplumbing/index.html', 'demo/deercreekplumbing/index.html', 'demo/deercreekplumbing/services/water-heaters/index.html', 'demo/deercreek/services/water-heaters/index.html']) {
+for (const path of ['index.html', 'request-demo/index.html', 'demo-agreement/index.html', 'demo-admin/index.html', 'demos/roofers-offer/index.html', 'demos/contractors/index.html', 'demos/bucyrus-auto/index.html', 'demos/lawn/index.html', 'demos/painting/index.html', 'demos/water/index.html', 'demos/otv/index.html', 'demos/solara/index.html', 'demos/dopps/index.html', 'demos/deercreek/index.html', 'demo/deercreek/index.html', 'demos/deercreekplumbing/index.html', 'demo/deercreekplumbing/index.html', 'demo/deercreekplumbing/services/water-heaters/index.html', 'demo/deercreek/services/water-heaters/index.html']) {
   const html = await readFile(new URL(path, root), 'utf8')
   assert.ok(!html.includes('/demo-assets/'), `Public page depends on private bundles: ${path}`)
 }
