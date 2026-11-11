@@ -43,7 +43,6 @@ function Header({slug}:{slug:string}) {
   useEffect(()=> { if(!open)return; const close=(e:KeyboardEvent)=>{if(e.key==='Escape'){setOpen(false);menu.current?.focus()}};document.addEventListener('keydown',close);return()=>document.removeEventListener('keydown',close) },[open])
   return <>
     <a className="dcp-skip" href="#main">Skip to content</a>
-    <div className="dcp-demo">Website concept by Wallace Shift. Online requests are a demo and are not sent.</div>
     <header className="dcp-header dcp-wrap">
       <a href={href()} className="dcp-brand" aria-label="Deer Creek Plumbing home"><img src="/demos/deercreek/mark-ink.png" alt="" width="48" height="46" /><span>Deer Creek<br /><strong>Plumbing</strong></span></a>
       <button className="dcp-menu" ref={menu} aria-expanded={open} aria-controls="dcp-navigation" onClick={()=>setOpen(!open)}>{open?'Close menu':'Menu'}</button>
