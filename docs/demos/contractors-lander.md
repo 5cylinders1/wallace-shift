@@ -44,6 +44,12 @@ and `/demos/cabinetry/preview.jpg` are the only public Datum and Tambour files. 
 known origin for the request, agreement and admin APIs, so the whole access
 flow works on that host.
 
+The gallery checks `/api/demo-access?status=1` for a valid visitor or owner
+session on the current host. Signed-in visitors see **Open demo** in every
+film card and preview instead of the interactive access request; public demos
+remain directly accessible to everyone. The status check never changes cookies
+and refreshes when the gallery regains focus or is restored from browser history.
+
 Invitation emails still use `DEMO_ACCESS_ORIGIN` (the roofing host by default),
 so an approved foundation prospect currently lands on
 `roofers.wallaceshift.com/datum`. It works, but the hostname says roofing.

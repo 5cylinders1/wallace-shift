@@ -1,16 +1,26 @@
 # Demo requests, approval, and confidentiality
 
-The roofing collection is public. Visitors to all six interactive websites and
-the roofing dashboard require approval, email verification, and agreement acceptance.
+The roofing and contractor collections are public. Visitors to the ten protected
+interactive websites and the roofing dashboard require approval, email verification,
+and agreement acceptance. Public standalone demos remain accessible without sign-in.
 Submitting a request or opening an invitation never unlocks the demos by itself.
 
 ## Admin access
 
 Open `/demo-admin/` on the same site as the demos, or follow **Admin sign in**
-from the request page or collection footer. Select **Email me a sign-in code**, then enter
-the six-digit code sent to the configured owner inbox. There is no separate
-password, invitation, or visitor agreement for the owner. The admin page links
-to all six demos and the roofing dashboard.
+from the request page or collection footer. An existing approved visitor session
+or owner session opens the full directory immediately. Without an active demo
+session, the owner can select **Email me a sign-in code**, then enter the six-digit
+code sent to the configured owner inbox. There is no separate password,
+invitation, or visitor agreement for the owner.
+
+The directory currently links to all 19 demos, including the roofing dashboard:
+the 14 contractor gallery entries plus Bucyrus Auto, OTV, both Deer Creek Plumbing
+concepts, and Anthony PHCE. `src/demo-access/catalog.ts` derives the contractor
+entries from the shared gallery catalog and adds those standalone demos. A
+`?demo=foundation` parameter adds a selected-demo shortcut; it does not filter
+the full directory. Demo links stay on the current host, including the direct
+Bucyrus document route that avoids its public cross-host redirect.
 
 The only permitted admin mailbox is `DEMO_ADMIN_EMAIL`, or `CONTACT_TO_EMAIL`
 when `DEMO_ADMIN_EMAIL` is unset. Set `DEMO_ADMIN_EMAIL` to your personal owner
