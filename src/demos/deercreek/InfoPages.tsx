@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import AreaChecker from './AreaChecker'
 import { AREA, bandFor, milesFromShop } from './area'
 import { placePoints } from './areaData'
-import { agency, business, generalFaqs, href, promises, reviews, reviewStats, services, team, visitPreferences } from './content'
+import { business, generalFaqs, href, promises, reviews, reviewStats, services, team, visitPreferences } from './content'
 import { ArrowIcon, ClockIcon, PhoneIcon, ShieldIcon, Stars } from './Icons'
 import Scheduler from './Scheduler'
 import { CallBook, CheckList, Eyebrow, FaqList, PromiseList, ReviewBrowser, ReviewCard, Section } from './ui'
@@ -202,10 +202,8 @@ export function SchedulePage() {
         <h2 id="dc-book-title" className="dc-visually-hidden">Visit request</h2>
         <div className="dc-book-grid">
           <div className="dc-book-main">
-            {/* Wallace Shift's notice, styled like the bar above the header:
-                the form is real to use, but nothing it collects is sent. */}
+            {/* The form is real to use, but nothing it collects is sent. */}
             <div className="dc-demo-notice" role="note" aria-labelledby="dc-demo-notice-title">
-              <img className="dc-agency-logo" src={agency.logo} alt="" width="28" height="17" />
               <p><strong id="dc-demo-notice-title">Interactive demo</strong> Explore the booking experience. Requests entered here are not sent to Deer Creek.</p>
             </div>
             <noscript><p className="dc-callout">The online request form needs JavaScript. Please call <a href={business.phoneHref}>{business.phone}</a> or email <a href={`mailto:${business.email}`}>{business.email}</a>.</p></noscript>

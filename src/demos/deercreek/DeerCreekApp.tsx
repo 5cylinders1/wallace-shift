@@ -1,5 +1,5 @@
 import { pageBySlug, serviceBySlug, type Page } from './content'
-import { AgencyBar, Breadcrumbs, MobileActionBar, SiteFooter, SiteHeader } from './Chrome'
+import { Breadcrumbs, MobileActionBar, SiteFooter, SiteHeader } from './Chrome'
 import HomePage from './HomePage'
 import { AboutPage, AccessibilityPage, AreaPage, FaqPage, ReviewsPage, SchedulePage } from './InfoPages'
 import { ServicePage, ServicesHub } from './ServicePages'
@@ -25,7 +25,6 @@ export default function DeerCreekApp({ slug }: { slug: string }) {
   return (
     <div className="dc-site" data-page={page.kind}>
       <a className="dc-skip" href="#main">Skip to main content</a>
-      <AgencyBar />
       <SiteHeader current={page} />
       <main id="main" tabIndex={-1}>
         {page.kind !== 'home' && <Breadcrumbs page={page} />}

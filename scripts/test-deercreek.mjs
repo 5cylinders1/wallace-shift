@@ -29,9 +29,9 @@ async function compileModule(path) {
   return url
 }
 
-const { agency, pages, reviews, SITE } = await import(await compileModule('src/demos/deercreek/content.ts'))
+const { pages, reviews, SITE } = await import(await compileModule('src/demos/deercreek/content.ts'))
 const { prefillFrom } = await import(await compileModule('src/demos/deercreek/booking.ts'))
-const { demoHandoffHref, readDemoHandoff } = await import(await compileModule('src/lib/demoHandoff.ts'))
+const { readDemoHandoff } = await import(await compileModule('src/lib/demoHandoff.ts'))
 const { lookupArea } = await import(await compileModule('src/demos/deercreek/area.ts'))
 const paths = pages.map(page => (page.slug ? `${SITE.base}/${page.slug}` : SITE.base))
 const known = new Set(paths)
@@ -84,11 +84,9 @@ for (const path of paths) {
     for (const [, href] of body.matchAll(/href="(\/demo\/deercreek[^"#?]*)/g)) assert.ok(known.has(href.replace(/\/$/, '')), `internal link resolves: ${href}`)
     assert.doesNotMatch(body, /lorem ipsum|\bTODO\b|\bundefined\b|\bNaN\b/)
 
-    // Wallace Shift's bar sits above the plumbing header on every page and
-    // links to the contextual inquiry, not the agency home page.
-    const bar = body.indexOf('class="dc-agency"')
-    assert.ok(bar > -1 && bar < body.indexOf('class="dc-header"'), 'agency bar above the header')
-    assert.ok(body.includes(`href="${demoHandoffHref('deercreek')}"`), 'agency link carries the demo context')
+    // The concept carries Deer Creek's brand only. Demo disclaimers stay,
+    // but no agency bar, credit or logo.
+    assert.doesNotMatch(body, /Wallace Shift|wallace-shift-logo|dc-agency|\/contact\?demo=/)
     // The form collects a request for the office to confirm, so no action
     // may promise a booked visit, and no bio may lean on review counts.
     assert.doesNotMatch(body, /Book a visit|>Book<|Named in \d+/)
@@ -141,8 +139,7 @@ test('booking prefill: a valid choice is summarised, anything else opens the cat
   assert.equal(prefillFrom('?zip=6606').draft.zip, '')
 })
 
-test('agency handoff: the demo link opens website copy on /contact and nothing else does', () => {
-  assert.equal(agency.inquiry, demoHandoffHref('deercreek'))
+test('demo handoff: /contact?demo=deercreek opens website copy and nothing else does', () => {
   const demo = readDemoHandoff('?demo=deercreek')
   assert.equal(demo?.id, 'deercreek')
   assert.equal(demo?.supporting, 'Tell me what you do and what customers should be able to accomplish online.')
@@ -188,8 +185,8 @@ test('palette contrast', () => {
     ['#0f1a24', '#f7f4ee', 7], ['#34424f', '#f7f4ee', 7], ['#34424f', '#efe8dc', 7], ['#154c80', '#f7f4ee', 7], ['#154c80', '#ffffff', 7],
     ['#8a3d16', '#f7f4ee', 4.5], ['#ffffff', '#a6481b', 4.5], ['#ffffff', '#8a3a14', 4.5], ['#f4f1ea', '#0b1724', 7],
     ['#dbe3ea', '#0b1724', 7], ['#9ccaf2', '#0b1724', 7], ['#f2b48c', '#0b1724', 7], ['#a3221b', '#fbe5e2', 4.5], ['#1d6b3a', '#ffffff', 4.5],
-    // Wallace Shift's bar and notice, and the bar's hover state.
-    ['#060708', '#f1efe9', 7], ['#45494e', '#f1efe9', 7], ['#f1efe9', '#060708', 7], ['#c9d3dc', '#0b1724', 7],
+    // Demo notice on sand, and the office hours under the closing CTA.
+    ['#0f1a24', '#efe8dc', 7], ['#c9d3dc', '#0b1724', 7],
   ]
   for (const [fg, bg, min] of pairs) assert.ok(ratio(fg, bg) >= min, `${fg} on ${bg} is ${ratio(fg, bg).toFixed(2)}:1, needs ${min}:1`)
 })

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { agency, business, href, pageBySlug, services, type Page } from './content'
+import { business, href, pageBySlug, services, type Page } from './content'
 import DisplaySettings from './DisplaySettings'
-import { ArrowIcon, CalendarIcon, ChatIcon, ChevronIcon, MenuIcon, PhoneIcon } from './Icons'
+import { CalendarIcon, ChatIcon, MenuIcon, PhoneIcon } from './Icons'
 import OpenStatus from './OpenStatus'
 
 const primaryNav = ['services', 'service-area', 'reviews', 'about', 'faq']
@@ -21,34 +21,6 @@ export function Brand({ tone = 'ink' }: { tone?: 'ink' | 'white' }) {
         <span className="dc-brand-place">Olathe, KS · Since 2017</span>
       </span>
     </a>
-  )
-}
-
-/** Wallace Shift's layer, above and visually apart from the plumbing brand.
- * It scrolls away with the page, so it never stacks with the fixed Call /
- * Text / Request bar on phones. Like the mobile menu, the panel is visible
- * without JavaScript and becomes a disclosure once the page hydrates. */
-export function AgencyBar() {
-  const [open, setOpen] = useState(false)
-  return (
-    <aside className="dc-agency" aria-label={`About this concept by ${agency.name}`}>
-      <div className="dc-wrap">
-        <div className="dc-agency-row">
-          <button type="button" className="dc-agency-toggle" aria-expanded={open} aria-controls="dc-agency-panel" onClick={() => setOpen(value => !value)}>
-            <img className="dc-agency-logo" src={agency.logo} alt="" width="28" height="17" />
-            <span className="dc-agency-text"><span className="dc-agency-long">A website and booking-flow </span><span className="dc-agency-concept">concept</span> by {agency.name}</span>{' '}
-            <span className="dc-agency-more"><span className="dc-agency-more-word">What it shows</span><ChevronIcon /></span>
-          </button>
-          <a className="dc-agency-cta" href={agency.inquiry}>Discuss my website <ArrowIcon size={16} /></a>
-        </div>
-        <div id="dc-agency-panel" className="dc-agency-panel" data-open={open}>
-          <ul className="dc-agency-list">
-            {agency.capabilities.map(item => <li key={item.title}><strong>{item.title}.</strong> {item.text}</li>)}
-          </ul>
-          <p className="dc-agency-note">A working preview: requests entered on this site are not sent to Deer Creek.</p>
-        </div>
-      </div>
-    </aside>
   )
 }
 
@@ -158,7 +130,7 @@ export function SiteFooter() {
       </div>
       <div className="dc-wrap dc-footer-base">
         <p>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Deer Creek Plumbing, Inc. All services backed by a 1-year parts and labor warranty.</p>
-        <p className="dc-concept-note">Website concept by <a href={agency.inquiry}>{agency.name}</a>. Online requests on this preview are not sent; call {business.phone} to book.</p>
+        <p className="dc-concept-note">Online requests on this preview are not sent; call {business.phone} to book.</p>
       </div>
     </footer>
   )

@@ -15,23 +15,6 @@ export const SITE = {
   robots: 'noindex, nofollow',
 } as const
 
-/** Wallace Shift's layer over the concept: the bar above the header and the
- * footer credit. The inquiry link carries `?demo=deercreek` so the contact
- * page opens on website copy and the enquiry says where it came from
- * (src/lib/demoHandoff.ts). Remove both when the site moves to Deer Creek's
- * own domain. */
-export const agency = {
-  name: 'Wallace Shift',
-  inquiry: '/contact?demo=deercreek',
-  logo: '/brand/wallace-shift-logo-black.svg',
-  /** Only what the demo actually does. Nothing here is sent anywhere. */
-  capabilities: [
-    { title: 'Problem finder', text: 'Visitors pick what’s happening and get safety steps before anyone arrives.' },
-    { title: 'Carried-over booking details', text: 'That choice fills in the service, the urgency and the problem on the request form.' },
-    { title: 'Accommodation preferences', text: 'A household can note a mobility aid, extra time to reach the door, sensitivity to noise, or text instead of calls.' },
-  ],
-} as const
-
 export const href = (slug = '') => `${SITE.base}${slug ? `/${slug}` : ''}`
 export const absolute = (slug = '') => `${SITE.origin}${href(slug)}`
 
