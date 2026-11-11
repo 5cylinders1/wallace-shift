@@ -348,6 +348,71 @@ test('redeeming invitation starts agreement with host-only pending cookie and cl
   assert.equal((await access.gateDemoRequest(new Request(origin + '/demo-assets/private.js', { headers: { cookie } }))).status, 403)
 })
 
+test('read-only access status recognizes visitor and admin sessions on their own host', async () => {
+  const visitorGrant = access.verifyDemoGrant(session(), origin, 'session')
+  for (const host of ['roofers.wallaceshift.com', 'contractors.wallaceshift.com']) {
+    const currentOrigin = `https://${host}`
+    const visitor = access.signDemoGrant({ ...visitorGrant, origin: currentOrigin })
+    const admin = access.createDemoAdminGrant('admin-session', currentOrigin)
+    for (const cookie of [`${access.DEMO_COOKIE}=${visitor}`, `${access.DEMO_ADMIN_COOKIE}=${admin}`]) {
+      const result = await invoke(inviteHandler, undefined, { method: 'GET', url: '/api/demo-access?status=1', headers: { host, cookie } })
+      assert.equal(result.statusCode, 200)
+      assert.deepEqual(result.body, { ok: true, authenticated: true })
+      assert.equal(result.headers['set-cookie'], undefined)
+      assert.equal(result.headers.location, undefined)
+      assert.match(result.headers['cache-control'], /private, no-store/)
+      assert.equal(result.headers['cdn-cache-control'], 'no-store')
+      assert.equal(result.headers['vercel-cdn-cache-control'], 'no-store')
+    }
+  }
+  assert.equal(sends.length, 0)
+  assert.equal(store.calls.length, 0)
+})
+
+test('access status rejects anonymous, invalid, expired, cross-host and unaccepted grants without changing cookies', async () => {
+  const visitor = session()
+  const grant = access.verifyDemoGrant(visitor, origin, 'session')
+  const expired = access.signDemoGrant({ ...grant, iat: grant.iat - access.DEMO_ACCESS_SECONDS, exp: grant.iat - 1 })
+  const wrongOrigin = access.signDemoGrant({ ...grant, origin: 'https://contractors.wallaceshift.com' })
+  const invite = access.createDemoInvite('roofers-4', email)
+  const pendingAdmin = access.createDemoAdminGrant('admin-pending', origin)
+  const expiredAdmin = access.createDemoAdminGrant('admin-session', origin, Math.floor(Date.now() / 1000) - access.DEMO_ADMIN_SECONDS)
+  const wrongOriginAdmin = access.createDemoAdminGrant('admin-session', 'https://contractors.wallaceshift.com')
+  const staleAgreement = access.signDemoGrant({ ...grant, agreementVersion: 'stale' })
+  for (const cookie of [
+    '', `${access.DEMO_COOKIE}=invalid`, `${access.DEMO_ADMIN_COOKIE}=invalid`,
+    `${access.DEMO_COOKIE}=${expired}`, `${access.DEMO_ADMIN_COOKIE}=${expiredAdmin}`,
+    `${access.DEMO_COOKIE}=${wrongOrigin}`, `${access.DEMO_ADMIN_COOKIE}=${wrongOriginAdmin}`,
+    `${access.DEMO_PENDING_COOKIE}=${invite}`, `${access.DEMO_COOKIE}=${invite}`,
+    `${access.DEMO_ADMIN_COOKIE}=${pendingAdmin}`, `${access.DEMO_COOKIE}=${staleAgreement}`,
+    `${access.DEMO_COOKIE}=${visitor}; ${access.DEMO_COOKIE}=${visitor}`,
+  ]) {
+    const result = await invoke(inviteHandler, undefined, { method: 'GET', url: '/api/demo-access?status=1', headers: { cookie } })
+    assert.equal(result.statusCode, 200)
+    assert.deepEqual(result.body, { ok: true, authenticated: false })
+    assert.equal(result.headers['set-cookie'], undefined)
+    assert.equal(result.headers.location, undefined)
+  }
+  assert.equal(sends.length, 0)
+  assert.equal(store.calls.length, 0)
+})
+
+test('access status fails closed without a signing secret and preserves explicit invitation handling', async () => {
+  const token = access.createDemoInvite('roofers-4', email)
+  const invitation = await invoke(inviteHandler, undefined, { method: 'GET', url: `/api/demo-access?status=1&token=${token}` })
+  assert.equal(invitation.statusCode, 303)
+  assert.equal(invitation.headers.location, '/demo-agreement/')
+  assert.ok(invitation.headers['set-cookie'].some(cookie => cookie.startsWith(`${access.DEMO_PENDING_COOKIE}=${token};`)))
+  const emptyInvitation = await invoke(inviteHandler, undefined, { method: 'GET', url: '/api/demo-access?status=1&token=' })
+  assert.equal(emptyInvitation.statusCode, 303)
+  assert.equal(emptyInvitation.headers.location, '/request-demo/?access=expired')
+  delete process.env.DEMO_ACCESS_SECRET
+  const unavailable = await invoke(inviteHandler, undefined, { method: 'GET', url: '/api/demo-access?status=1' })
+  assert.equal(unavailable.statusCode, 503)
+  assert.deepEqual(unavailable.body, { ok: false, error: 'not_configured' })
+  assert.equal(unavailable.headers['set-cookie'], undefined)
+})
+
 test('invalid, expired, duplicate-token and cross-host invitations clear all access cookies', async () => {
   const token = access.createDemoInvite('roofers-4', email, Math.floor(Date.now() / 1000) - access.DEMO_ACCESS_SECONDS)
   for (const url of ['/api/demo-access?token=invalid', `/api/demo-access?token=${token}`, `/api/demo-access?token=${token}&token=second`]) {
