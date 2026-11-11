@@ -295,54 +295,6 @@ body.dc-body { margin: 0; background: var(--dc-paper); color: var(--dc-ink); }
 .dc-more-link { margin-top: 2rem; font-weight: 700; }
 .dc-more-link a, .dc-team a, .dc-access a, .dc-faq-layout a { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 700; min-height: 44px; }
 
-/* Wallace Shift's layer: the agency's bone and ink rather than the plumbing
-   brand's navy and copper, so it never reads as part of Deer Creek's site.
-   Shared by the bar above the header and the demo notice on the form. */
-.dc-site { --ws-bone: #f1efe9; --ws-ink: #060708; --ws-muted: #45494e; --ws-rule: #cdc8bc; }
-.dc-agency { background: var(--ws-bone); color: var(--ws-ink); border-bottom: 1px solid var(--ws-rule); font-size: 0.92rem; line-height: 1.35; }
-.dc-agency-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; min-height: 52px; padding-block: 0.25rem; }
-.dc-agency-toggle {
-  display: inline-flex; align-items: center; gap: 0.6rem; min-height: 44px; min-width: 0; padding: 0.25rem 0.35rem 0.25rem 0; margin-left: -0.1rem;
-  background: none; border: 0; border-radius: 4px; cursor: pointer; text-align: left; color: var(--ws-ink);
-}
-.dc-agency-logo { width: 28px; height: auto; flex: none; }
-.dc-agency-text { font-weight: 600; }
-.dc-agency-more { display: inline-flex; align-items: center; gap: 0.25rem; color: var(--ws-muted); white-space: nowrap; }
-.dc-agency-more-word { text-decoration: underline; text-decoration-style: dotted; text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
-.dc-agency-toggle:hover .dc-agency-more { color: var(--ws-ink); }
-.dc-chevron { flex: none; transition: transform 0.25s var(--dc-ease); }
-.dc-agency-toggle[aria-expanded='true'] .dc-chevron { transform: rotate(180deg); }
-.dc-agency-cta {
-  flex: none; display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0.35rem 0.95rem;
-  border: 1.5px solid var(--ws-ink); border-radius: 4px; color: var(--ws-ink) !important; font-weight: 700; text-decoration: none; white-space: nowrap;
-  transition: background-color 0.2s, color 0.2s;
-}
-.dc-agency-cta:hover { background: var(--ws-ink); color: var(--ws-bone) !important; }
-.dc-agency-cta:hover .dc-arrow { transform: translateX(3px); }
-.dc-agency-cta .dc-arrow { transition: transform 0.25s var(--dc-ease); }
-.dc-agency-panel { padding: 0.25rem 0 1rem; }
-.dc-js .dc-agency-panel[data-open='false'] { display: none; }
-.dc-agency-panel[data-open='true'] { animation: dc-drop 0.25s var(--dc-ease); }
-.dc-agency-list { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem 1.75rem; }
-.dc-agency-list li { border-top: 1px solid var(--ws-rule); padding-top: 0.55rem; }
-.dc-agency-list strong { color: var(--ws-ink); }
-.dc-site .dc-agency-note { margin: 0.8rem 0 0; color: var(--ws-muted); font-size: 0.88rem; max-width: none; }
-@media (max-width: 860px) { .dc-agency-list { grid-template-columns: 1fr; } }
-/* Shorter visible wording where the full sentence would wrap; the hidden
-   words stay in the button's accessible name. */
-@media (max-width: 900px) {
-  .dc-agency-long { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .dc-agency-concept { text-transform: capitalize; }
-}
-@media (max-width: 640px) {
-  .dc-agency { font-size: 0.86rem; }
-  .dc-agency-row { gap: 0.5rem; }
-  .dc-agency-more-word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .dc-agency-toggle { gap: 0.45rem; }
-  .dc-agency-logo { width: 24px; }
-  .dc-agency-cta { padding: 0.3rem 0.7rem; }
-}
-
 /* Hero */
 .dc-hero { position: relative; background: var(--dc-night); color: #f4f1ea; padding-top: clamp(2.5rem, 5vw, 4.5rem); padding-bottom: clamp(5rem, 9vw, 8rem); isolation: isolate; overflow: hidden; }
 .dc-hero::before {
@@ -591,8 +543,7 @@ body.dc-body { margin: 0; background: var(--dc-paper); color: var(--dc-ink); }
 .dc-site .dc-chosen-k { margin: 0; font-family: var(--dc-mono); font-size: 0.85rem; color: var(--dc-ink-2); }
 .dc-site .dc-chosen-name { margin: 0; font-weight: 800; font-size: 1.3rem; line-height: 1.2; }
 .dc-site .dc-chosen-sub { margin: 0.2rem 0 0; color: var(--dc-ink-2); }
-.dc-demo-notice { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.25rem; padding: 0.9rem 1.1rem; background: var(--ws-bone); color: var(--ws-ink); border: 1px solid var(--ws-rule); border-left: 4px solid var(--ws-ink); border-radius: var(--dc-radius); }
-.dc-demo-notice .dc-agency-logo { margin-top: 0.3rem; }
+.dc-demo-notice { margin-bottom: 1.25rem; padding: 0.9rem 1.1rem; background: var(--dc-sand); color: var(--dc-ink); border: 1px solid var(--dc-line); border-left: 4px solid var(--dc-ink); border-radius: var(--dc-radius); }
 .dc-site .dc-demo-notice p { margin: 0; }
 .dc-demo-notice strong { display: block; }
 .dc-option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0.75rem; }
@@ -863,6 +814,6 @@ html[data-dc-motion] .dc-ring { stroke-dashoffset: 0; }
 }
 
 @media print {
-  .dc-agency, .dc-utility, .dc-actionbar, .dc-creek, .dc-menu-toggle, .dc-display { display: none !important; }
+  .dc-utility, .dc-actionbar, .dc-creek, .dc-menu-toggle, .dc-display { display: none !important; }
   .dc-hero, .dc-tone-night, .dc-footer { background: #ffffff !important; color: #000000 !important; }
 }

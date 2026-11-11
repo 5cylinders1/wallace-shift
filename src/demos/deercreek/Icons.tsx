@@ -40,9 +40,6 @@ export const ChatIcon = ({ size = 20 }: { size?: number }) => (
 export const ArrowIcon = ({ size = 20 }: { size?: number }) => (
   <Svg size={size} className="dc-arrow"><path d="M6 16h20M19 9l7 7-7 7" /></Svg>
 )
-export const ChevronIcon = ({ size = 16 }: { size?: number }) => (
-  <Svg size={size} className="dc-chevron"><path d="m9 12 7 7 7-7" /></Svg>
-)
 export const CheckIcon = ({ size = 20 }: { size?: number }) => (
   <Svg size={size}><path d="m6 16.5 6.5 6.5L26 9" /></Svg>
 )

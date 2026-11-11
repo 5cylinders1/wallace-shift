@@ -7,14 +7,11 @@ A full website concept for a **real** prospect: Deer Creek Plumbing Inc, a famil
 - Template `demos/deercreek/index.html` (public build pass), code `src/demos/deercreek/`, plugin `deercreek/vite-plugin.ts`, media `public/demos/deercreek/`. `deercreek` is in `PUBLIC_DEMO_DIRS`; no gate key, no API, no serverless function.
 - Tests: `npm run test:deercreek` (after a build) checks every built page's metadata, JSON-LD, heading order, alt text, internal links, palette contrast and the area lookup, plus the booking prefill rules, the agency handoff and the contact endpoint's demo source (with a mocked send). The demo access, preview and build verifiers cover it too.
 
-## Wallace Shift handoff (added 2026-11-10)
+## Wallace Shift branding and the contact handoff (2026-11-10)
 
-The demo's first job is to sell Wallace Shift's work, so the agency has its own layer, styled in Wallace Shift's bone and ink rather than Deer Creek's navy and copper:
+The concept carries Deer Creek's brand only: no agency bar, footer credit or Wallace Shift logo (Matthew's call, 2026-11-10; the build test enforces it). Demo disclaimers stay: the "Interactive demo" notice above the request form and the footer line saying online requests are not sent.
 
-- **Agency bar** above the Deer Creek header on every page: "A website and booking-flow concept by Wallace Shift" (shortened to "Concept by Wallace Shift" on phones), a **What it shows** disclosure (problem finder, carried-over booking details, accommodation preferences, and that nothing is sent), and **Discuss my website**. It scrolls away with the page, so it never stacks with the fixed Call / Text / Request bar on phones.
-- **Discuss my website** and the footer credit link to `/contact?demo=deercreek` (`src/lib/demoHandoff.ts`, copy in `src/content/demoHandoff.ts`). The contact page then opens on "Let’s plan a website for your business." with website-specific message wording, a note naming the demo and a link back. Other visitors see the page unchanged.
-- The enquiry carries `source: "deercreek"`. `api/contact.ts` keeps its own allowlist, adds `Source: Deer Creek Plumbing website demo` to the email and "(Deer Creek demo)" to the subject, and drops any unknown value.
-- **Analytics** (existing GA4 bootstrap, consent rules unchanged): `demo_handoff_viewed` with `demo_id: deercreek` when someone lands on /contact from the demo, and `demo_id` on the `generate_lead` / `enquiry_failed` events for those enquiries. The demo pages themselves still load no analytics, so the bar's click is measured by the arrival.
+The contact page still understands `/contact?demo=deercreek` for a link Matthew shares himself (an email, a proposal). It opens on "Let’s plan a website for your business." with website-specific message wording and a note naming the demo; other visitors see the page unchanged. The enquiry carries `source: "deercreek"`, which `api/contact.ts` allowlists (a Source line and "(Deer Creek demo)" in the subject; unknown values are dropped). GA4, through the existing consent-gated bootstrap, records `demo_handoff_viewed` on arrival and `demo_id` on the enquiry events.
 
 ## Pages (18, each server-rendered with its own title, description, canonical and JSON-LD)
 
