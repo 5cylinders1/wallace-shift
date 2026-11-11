@@ -548,14 +548,31 @@ body.dc-body { margin: 0; background: var(--dc-paper); color: var(--dc-ink); }
 .dc-demo-notice strong { display: block; }
 .dc-option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0.75rem; }
 .dc-option-list { display: grid; gap: 0.75rem; }
-.dc-option { position: relative; display: block; cursor: pointer; }
-.dc-option input { position: absolute; top: 1rem; left: 1rem; width: 22px; height: 22px; margin: 0; accent-color: var(--dc-ink); }
+/* The card lifts as one piece (radio included), and the radio is drawn in CSS so its
+   dot can ease in. Lifting only .dc-option-body put the card above the radio on hover. */
+.dc-option { position: relative; display: block; cursor: pointer; transition: transform 0.2s var(--dc-ease); }
+.dc-option input {
+  -webkit-appearance: none; appearance: none;
+  position: absolute; z-index: 1; top: 1rem; left: 1rem; display: grid; place-content: center;
+  width: 22px; height: 22px; margin: 0; border: 2px solid var(--dc-line-strong); border-radius: 50%;
+  background: var(--dc-white); cursor: pointer; transition: border-color 0.2s;
+}
+.dc-option input::before {
+  content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--dc-ink);
+  transform: scale(0); transition: transform 0.2s var(--dc-ease);
+}
+.dc-option input:checked { border-color: var(--dc-ink); }
+.dc-option input:checked::before { transform: scale(1); }
+.dc-site .dc-option input[aria-invalid='true'] { border-width: 2px; }
 .dc-option-body {
   display: grid; gap: 0.25rem; height: 100%; padding: 1rem 1rem 1rem 3.1rem; border: 2px solid var(--dc-line); border-radius: var(--dc-radius);
-  background: var(--dc-white); transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s var(--dc-ease);
+  background: var(--dc-white); transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
 .dc-option .dc-service-icon { color: var(--dc-creek); margin-bottom: 0.15rem; }
-.dc-option:hover .dc-option-body { border-color: var(--dc-ink); transform: translateY(-1px); }
+@media (hover: hover) {
+  .dc-option:hover { transform: translateY(-1px); }
+  .dc-option:hover input, .dc-option:hover .dc-option-body { border-color: var(--dc-ink); }
+}
 .dc-option input:checked + .dc-option-body { border-color: var(--dc-ink); box-shadow: inset 0 0 0 1px var(--dc-ink), 0 10px 22px -16px rgba(15, 26, 36, 0.6); background: var(--dc-creek-wash); }
 .dc-option input:focus-visible + .dc-option-body { outline: 3px solid var(--dc-ink); outline-offset: 2px; box-shadow: 0 0 0 7px var(--dc-focus); }
 .dc-option input:focus-visible { outline: none; box-shadow: none; }
@@ -811,6 +828,8 @@ html[data-dc-motion] .dc-ring { stroke-dashoffset: 0; }
 @media (forced-colors: active) {
   .dc-button, .dc-chip, .dc-pill span, .dc-day > span, .dc-option-body { border: 2px solid ButtonText; }
   .dc-chip[aria-pressed='true'], .dc-pill input:checked + span, .dc-day input:checked + span { outline: 3px solid Highlight; }
+  .dc-option input { -webkit-appearance: auto; appearance: auto; }
+  .dc-option input::before { display: none; }
 }
 
 @media print {
