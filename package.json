@@ -10,6 +10,8 @@
     "test:seo": "node scripts/test-seo-runtime.mjs && node scripts/verify-seo-build.mjs",
     "test:blog": "node scripts/test-blog.mjs && node scripts/test-blog-preview.mjs",
     "test:portal": "node scripts/test-client-portal.mjs",
+    "test:mail": "node scripts/test-mail.mjs",
+    "test:mail-browser": "node scripts/test-mail-browser.mjs",
     "test:analytics": "node scripts/test-analytics.mjs",
     "test:ai-offer": "node scripts/test-ai-opportunity.mjs && node scripts/test-ai-opportunity-client.mjs",
     "test:ai-booking": "node scripts/test-ai-booking.mjs && node scripts/test-ai-quiz-notification.mjs",
@@ -30,11 +32,16 @@
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@react-three/fiber": "^9.7.0",
+    "@tiptap/pm": "^3.33.1",
+    "@tiptap/react": "^3.33.1",
+    "@tiptap/starter-kit": "^3.33.1",
     "@vercel/functions": "^3.9.11",
+    "dompurify": "^3.4.17",
     "gsap": "^3.15.0",
     "leaflet": "^1.9.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "sanitize-html": "^2.17.5",
     "three": "^0.185.1"
   },
   "devDependencies": {
@@ -43,6 +50,7 @@
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "@types/sanitize-html": "^2.16.2",
     "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "^6.1.0",
     "eslint": "^10.9.1",

@@ -57,6 +57,7 @@ const experiments: Record<string, ComponentType> = {
 }
 
 const ClientPortal = lazy(() => import('./client-portal/ClientPortal').then(module => ({ default: module.ClientPortal })))
+const MailApp = lazy(() => import('./mail/MailApp').then(module => ({ default: module.MailApp })))
 
 function App() {
   const path = useRoutePath()
@@ -79,6 +80,7 @@ function App() {
   }, [path])
 
   const Experiment = experiments[path]
+  if (path === '/mail') return <Suspense fallback={<p role="status">Loading Wallace Shift Mail…</p>}><MailApp /></Suspense>
   if (path === AI_OFFER_PATH) return <AiOfferPage />
   if (path === '/client-portal') return <Suspense fallback={<p role="status">Loading client portal…</p>}><ClientPortal /></Suspense>
   if (Experiment) {

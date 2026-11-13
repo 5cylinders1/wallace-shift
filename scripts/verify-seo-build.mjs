@@ -122,7 +122,7 @@ await test('sitemap and robots expose only canonical public documents', async ()
     assert.equal(parsed.search, '')
     assert.equal(parsed.hash, '')
     assert.ok(parsed.pathname === '/' || !parsed.pathname.endsWith('/'), 'one canonical slash style')
-    assert.ok(!/^\/(?:demos|experiments|api|client-portal)(?:\/|$)/.test(parsed.pathname), 'samples and private routes are excluded')
+    assert.ok(!/^\/(?:demos|experiments|api|client-portal|mail)(?:\/|$)/.test(parsed.pathname), 'samples and private routes are excluded')
     await access(join(root, 'dist', parsed.pathname.slice(1), 'index.html'))
   }
   const robots = await read('dist/robots.txt')

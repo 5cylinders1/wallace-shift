@@ -92,7 +92,7 @@ test('loads only on production hosts and explicitly public routes after consent'
 })
 
 test('never loads for private, admin, agreement, demo, experimental, or unknown paths', () => {
-  for (const path of ['/client-portal?engagement=private#access=secret', '/client-portal/', '/demo-admin/', '/demo-agreement/', '/demos/roofers', '/roofing-dashboard', '/northvane', '/experiments/water-hero', '/anything', '/blog/someone@example.com', '/blog/%70rivate', '/blog/private/record', '/api/contact']) {
+  for (const path of ['/mail', '/mail/', '/mail?subject=private', '/client-portal?engagement=private#access=secret', '/client-portal/', '/demo-admin/', '/demo-agreement/', '/demos/roofers', '/roofing-dashboard', '/northvane', '/experiments/water-hero', '/anything', '/blog/someone@example.com', '/blog/%70rivate', '/blog/private/record', '/api/contact']) {
     const app = browser({ href: `https://wallaceshift.com${path}`, savedConsent: 'granted' })
     assert.equal(app.scripts.length, 0, path)
     assert.equal(app.banner(), undefined)
