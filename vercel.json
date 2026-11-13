@@ -14,6 +14,7 @@
   "headers": [
     { "source": "/offers/ai-business-integration", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
     { "source": "/client-portal", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Referrer-Policy", "value": "no-referrer" }, { "key": "Cache-Control", "value": "private, no-store" }] },
+    { "source": "/mail", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Referrer-Policy", "value": "no-referrer" }, { "key": "Cache-Control", "value": "private, no-store" }] },
     {
       "source": "/bucyrus-auto/:path*",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
@@ -125,6 +126,7 @@
     { "source": "/api/ai-booking", "destination": "/api/demo-admin?offer=booking" },
     { "source": "/api/ai-checkout", "destination": "/api/demo-admin?offer=checkout" },
     { "source": "/api/client-portal", "destination": "/api/demo-admin?portal=client" },
+    { "source": "/api/mail", "destination": "/api/demo-admin?mail=team" },
     {
       "source": "/api/lawn-suggest",
       "destination": "/api/lawn?action=suggest"

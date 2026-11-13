@@ -60,6 +60,7 @@ export const WHAT_NOW_PATH = '/what-now'
 
 export const routeMeta: RouteMeta[] = [
   { path: '/client-portal', title: 'Client Portal | Wallace Shift', description: 'Review agreements, invoices, and payments with Wallace Shift.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
+  { path: '/mail', title: 'Mail | Wallace Shift', description: 'Private email workspace for the Wallace Shift team.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
   {
     path: '/',
     title: 'AI Integration & Custom CRM Development | Wallace Shift',

@@ -45,6 +45,12 @@ async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> 
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const route = new URL(req.url ?? '/', 'http://local.invalid')
   const path = route.pathname.replace(/\/$/, '')
+  const mailRoutes = route.searchParams.getAll('mail')
+  const mailRoute = mailRoutes.length === 1 ? mailRoutes[0] : mailRoutes.length === 0 ? (req as IncomingMessage & { query?: Record<string, unknown> }).query?.mail : undefined
+  if (path === '/api/mail' || (path === '/api/demo-admin' && mailRoute === 'team')) {
+    const { default: mailHandler } = await import('./_lib/mail-handler.js')
+    return mailHandler(req, res)
+  }
   const offers = route.searchParams.getAll('offer')
   const offer = offers.length === 1 ? offers[0] : offers.length === 0 ? (req as IncomingMessage & { query?: Record<string, unknown> }).query?.offer : undefined
   // Preserve the public alias even when Vercel supplies the original path.
