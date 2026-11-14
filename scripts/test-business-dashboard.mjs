@@ -31,7 +31,7 @@ const ownerToken = 'a'.repeat(64), clientToken = 'b'.repeat(64), purchaseToken =
 const ownerEmail = 'owner@example.test', mailboxEmail = 'matthew@wallaceshift.com'
 const origin = 'http://localhost:5176'
 const now = new Date('2026-11-13T16:00:00Z'), range = dashboardRange(7, now)
-let values, requests, googleMode, ledgerFailure, rate, mailMessages
+let values, requests, googleMode, realtimeReportOverride, ledgerFailure, rate, mailMessages
 const gaRow = (values, dimensions = []) => ({ metricValues: values.map(value => ({ value: String(value) })), dimensionValues: dimensions.map(value => ({ value })) })
 const report = (names, rows) => ({ metricHeaders: names.map(name => ({ name })), rows, metadata: { timeZone: 'America/Chicago' }, rowCount: rows.length })
 const searchReport = rows => ({ rows, responseAggregationType: 'byProperty' })
@@ -42,7 +42,7 @@ beforeEach(() => {
   for (const key of Object.keys(process.env)) if (key.startsWith('DASHBOARD_')) delete process.env[key]
   Object.assign(process.env, { NODE_ENV: 'test', VERCEL_ENV: 'development', DEMO_AUDIT_REDIS_URL: 'https://dashboard-redis.example.test', DEMO_AUDIT_REDIS_TOKEN: 'secret-store-token', PORTAL_ADMIN_EMAIL: ownerEmail })
   delete process.env.VERCEL
-  values = new Map(); requests = []; googleMode = 'okay'; ledgerFailure = false; rate = 0; mailMessages = []
+  values = new Map(); requests = []; googleMode = 'okay'; realtimeReportOverride = undefined; ledgerFailure = false; rate = 0; mailMessages = []
   values.set(`portal:session:${hash(ownerToken)}`, JSON.stringify({ email: ownerEmail }))
   values.set(`portal:session:${hash(clientToken)}`, JSON.stringify({ email: 'client@example.test' }))
   values.set(`portal:session:${hash(purchaseToken)}`, JSON.stringify({ email: ownerEmail, engagementId: 'purchase' }))
@@ -73,6 +73,7 @@ beforeEach(() => {
         assert.deepEqual(body.minuteRanges, [{ startMinutesAgo: 29, endMinutesAgo: 0 }])
         assert.equal(body.dateRanges, undefined)
         if (googleMode === 'realtime-error') return Response.json({ error: 'secret-access-value' }, { status: 429 })
+        if (realtimeReportOverride !== undefined) return Response.json(realtimeReportOverride)
         return Response.json(report(['activeUsers'], [gaRow([3])]))
       }
       if (googleMode === 'empty') return Response.json(report(body.metrics.map(item => item.name), []))
@@ -173,6 +174,37 @@ test('a failed realtime report preserves verified historical data without a fabr
   assert.equal(ga.status, 'connected')
   assert.ok(!ga.metrics.some(metric => metric.id === 'realtimeUsers'))
   assert.match(ga.statusDetail, /unavailable: live visitor count/)
+})
+test('Google kind-only empty realtime reports show zero without losing historical metrics', async () => {
+  configureGoogle(); realtimeReportOverride = { kind: 'analyticsData#runRealtimeReport' }
+  const [ga] = await loadBusinessDashboardGoogle(range, now)
+  assert.equal(ga.status, 'connected')
+  assert.equal(ga.metrics.find(metric => metric.id === 'realtimeUsers').value, 0)
+  assert.equal(ga.metrics.find(metric => metric.id === 'sessions').value, 24)
+  assert.doesNotMatch(ga.statusDetail, /unavailable/)
+})
+test('malformed realtime successes remain unavailable instead of becoming zero', async () => {
+  configureGoogle()
+  const kind = 'analyticsData#runRealtimeReport'
+  for (const response of [
+    {},
+    { kind: 'analyticsData#runReport' },
+    { ...report(['activeUsers'], [gaRow([3])]), kind: 'analyticsData#runReport' },
+    { kind, rowCount: 3 },
+    { kind, rows: [gaRow([3])] },
+    { kind, metricHeaders: {}, rows: [] },
+    { kind, metricHeaders: [], rows: [] },
+    { kind, metricHeaders: [{ name: 123 }], rows: [] },
+    { kind, metricHeaders: [{ name: 'activeUsers' }], rows: {} },
+    { kind, metricHeaders: [{ name: 'activeUsers' }], rows: [gaRow(['invalid'])] },
+  ]) {
+    realtimeReportOverride = response
+    const [ga] = await loadBusinessDashboardGoogle(range, now)
+    assert.equal(ga.status, 'connected')
+    assert.equal(ga.metrics.find(metric => metric.id === 'sessions').value, 24)
+    assert.ok(!ga.metrics.some(metric => metric.id === 'realtimeUsers'), JSON.stringify(response))
+    assert.match(ga.statusDetail, /unavailable: live visitor count/)
+  }
 })
 test('valid empty provider reports return zero totals; malformed successes are unavailable', async () => {
   configureGoogle(); googleMode = 'empty'

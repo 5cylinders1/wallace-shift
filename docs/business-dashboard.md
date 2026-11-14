@@ -31,9 +31,11 @@ Use a dedicated Google OAuth client and a refresh token granted the required rep
 | `DASHBOARD_GOOGLE_CLIENT_SECRET` | Matching client secret. |
 | `DASHBOARD_GOOGLE_REFRESH_TOKEN` | Offline authorization for the reporting account. |
 | `DASHBOARD_GA4_PROPERTY_ID` | Numeric GA4 property ID. The recorded Wallace Shift property is `561794453`; verify access before use. |
-| `DASHBOARD_SEARCH_CONSOLE_SITE_URL` | Exact verified property identifier, such as `sc-domain:wallaceshift.com`. |
+| `DASHBOARD_SEARCH_CONSOLE_SITE_URL` | `https://wallaceshift.com/` — the URL-prefix property verified on 2026-11-13. Preserve the trailing slash and do not add `www`. |
 
 Enable the Google Analytics Data API and Search Console API in the corresponding Cloud project. Grant `https://www.googleapis.com/auth/analytics.readonly` and `https://www.googleapis.com/auth/webmasters.readonly`. The authorizing account must have access to the selected properties. Keep tokens on the server.
+
+The Google account that authorized the refresh token needs at least the **Viewer** role on GA4 property `561794453`. Grant it in Google Analytics under **Admin → Property access management**. Owning the Google Cloud project does not grant access to the Analytics property. [Google Analytics access management](https://support.google.com/analytics/answer/9305587)
 
 GA4 core reporting and its limited realtime report are different datasets. The realtime active-user window does not make historical page, campaign, or conversion metrics realtime. Search Console reports search queries and average position; it is not a fixed-location keyword rank tracker and does not return every query. A dedicated rank-tracking provider would be a separate integration.
 

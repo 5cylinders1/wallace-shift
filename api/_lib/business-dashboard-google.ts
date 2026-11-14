@@ -1,7 +1,7 @@
 import type { DashboardSource, DashboardSnapshot } from '../../src/business-dashboard/model.js'
 
 type Row = { dimensionValues?: { value?: string }[]; metricValues?: { value?: string }[] }
-type Report = { rows?: Row[]; metricHeaders?: { name?: string }[]; metadata?: { timeZone?: string } }
+type Report = { kind?: string; rows?: Row[]; metricHeaders?: { name?: string }[]; metadata?: { timeZone?: string } }
 type SearchRow = { keys?: string[]; clicks: number; impressions: number; ctr: number; position: number }
 type SearchReport = { rows?: SearchRow[]; responseAggregationType?: string }
 type Range = DashboardSnapshot['range']
@@ -39,6 +39,14 @@ function metrics(row: Row | undefined, count: number): number[] {
 function rows(report: Report): Row[] {
   if (!report || typeof report !== 'object' || !Array.isArray(report.metricHeaders) || !report.metricHeaders.length || report.metricHeaders.some(header => typeof header.name !== 'string') || (report.rows !== undefined && !Array.isArray(report.rows))) throw new Error('invalid_provider_response')
   return report.rows ?? []
+}
+function realtimeRows(report: Report): Row[] {
+  const kind = 'analyticsData#runRealtimeReport'
+  if (report?.kind !== undefined && report.kind !== kind) throw new Error('invalid_provider_response')
+  // Google can omit every default-valued field for an empty realtime report.
+  // Accept only the observed kind-only response; other shapes stay strict.
+  if (report?.kind === kind && Object.keys(report).length === 1) return []
+  return rows(report)
 }
 function dimension(row: Row, index = 0): string {
   const value = row.dimensionValues?.[index]?.value
@@ -79,7 +87,7 @@ async function analytics(source: DashboardSource, range: Range, token: string, n
     catch { unavailable.push('top pages') }
   } else unavailable.push('top pages')
   if (realtime.status === 'fulfilled') {
-    try { result.metrics.push({ id: 'realtimeUsers', label: 'Visitors in last 30 min', value: metrics(rows(realtime.value)[0], 1)[0], format: 'number', note: `GA4 Realtime checked at ${now}; separate from the selected date range.` }) }
+    try { result.metrics.push({ id: 'realtimeUsers', label: 'Visitors in last 30 min', value: metrics(realtimeRows(realtime.value)[0], 1)[0], format: 'number', note: `GA4 Realtime checked at ${now}; separate from the selected date range.` }) }
     catch { unavailable.push('live visitor count') }
   } else unavailable.push('live visitor count')
   if (unavailable.length) result.statusDetail += ` Currently unavailable: ${unavailable.join(', ')}.`
