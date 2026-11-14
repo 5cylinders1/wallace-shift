@@ -126,6 +126,7 @@
     { "source": "/api/ai-booking", "destination": "/api/demo-admin?offer=booking" },
     { "source": "/api/ai-checkout", "destination": "/api/demo-admin?offer=checkout" },
     { "source": "/api/client-portal", "destination": "/api/demo-admin?portal=client" },
+    { "source": "/api/business-dashboard", "destination": "/api/demo-admin?dashboard=business" },
     { "source": "/api/mail", "destination": "/api/demo-admin?mail=team" },
     {
       "source": "/api/lawn-suggest",

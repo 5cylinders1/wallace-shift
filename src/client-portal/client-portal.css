@@ -46,6 +46,8 @@
 .cp-sidebar { padding: 36px 22px; border-right: 1px solid #c7d1d7; }
 .cp-sidebar h2 { font-size: 15px; }
 .cp-account { color: #52616b; font-size: 11px; overflow-wrap: anywhere; margin-top: 5px !important; }
+.cp-dashboard-link { margin-top: 22px; width: 100%; }
+.cp-dashboard-loading { padding: 48px; }
 .cp-list-filters { display: inline-flex; gap: 4px; padding: 3px; margin-top: 22px; border: 1px solid #bdcbd4; border-radius: 7px; }
 .cp-list-filters button { min-height: 40px; padding: 6px 12px; border: 0; border-radius: 4px; background: transparent; color: #445965; }
 .cp-list-filters button[aria-pressed="true"] { background: #dbe8f2; color: #163e60; font-weight: 650; }
