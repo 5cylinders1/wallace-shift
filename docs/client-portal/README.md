@@ -1,5 +1,7 @@
 # Wallace Shift client portal
 
+The owner workspace also includes the [business dashboard](../business-dashboard.md) at `/client-portal?view=business`, with direct reporting integrations and read-only agent snapshots. This does not add an external CRM or replace Wallace Shift Mail.
+
 Implemented at `/client-portal`. New invoice emails include a private link that signs the client in and opens the specific agreement. Email-code sign in remains available for owners and for client recovery. By default the owner is the existing demo admin (`DEMO_ADMIN_EMAIL`, falling back to `CONTACT_TO_EMAIL`); an optional `PORTAL_ADMIN_EMAIL` overrides it. Portal and demo sessions remain separate. No production configuration, payment, or deployment is performed by this change.
 
 ## Existing custom engagement workflow

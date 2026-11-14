@@ -229,7 +229,7 @@ function demoAccessRoutes(): Plugin {
   const install = (server: import('vite').ViteDevServer | import('vite').PreviewServer) => {
     const env = loadEnv(server.config.mode, server.config.root, '')
     for (const [key, value] of Object.entries(env)) {
-      if (/^(DEMO_|PORTAL_|MAIL_|STRIPE_|CRON_SECRET$|RESEND_API_KEY$|CONTACT_|RATE_LIMIT_|KV_REST_API_|UPSTASH_REDIS_REST_)/.test(key) && !process.env[key]) process.env[key] = value
+      if (/^(DEMO_|PORTAL_|MAIL_|STRIPE_|DASHBOARD_|CRON_SECRET$|RESEND_API_KEY$|CONTACT_|RATE_LIMIT_|KV_REST_API_|UPSTASH_REDIS_REST_)/.test(key) && !process.env[key]) process.env[key] = value
     }
     server.middlewares.use(async (req, res, next) => {
       try {
@@ -254,6 +254,7 @@ function demoAccessRoutes(): Plugin {
         if (url.pathname === '/api/demo-access') return await demoAccessHandler(req, res)
         if (url.pathname === '/api/demo-agreement') return await demoAgreementHandler(req, res)
         if (url.pathname === '/api/demo-admin') return await demoAdminHandler(req, res)
+        if (url.pathname === '/api/business-dashboard') return await demoAdminHandler(req, res)
         if (url.pathname === '/api/client-portal') return await clientPortalHandler(req, res)
         if (url.pathname === '/api/mail') return await mailHandler(req, res)
         next()

@@ -13,6 +13,8 @@
     "test:mail": "node scripts/test-mail.mjs",
     "test:mail-browser": "node scripts/test-mail-browser.mjs",
     "test:analytics": "node scripts/test-analytics.mjs",
+    "test:dashboard": "node scripts/test-business-dashboard.mjs && node scripts/test-business-dashboard-channels.mjs",
+    "test:dashboard-browser": "node scripts/test-business-dashboard-browser.mjs",
     "test:ai-offer": "node scripts/test-ai-opportunity.mjs && node scripts/test-ai-opportunity-client.mjs",
     "test:ai-booking": "node scripts/test-ai-booking.mjs && node scripts/test-ai-quiz-notification.mjs",
     "test:ai-consultation-browser": "node scripts/test-ai-consultation-browser.mjs",

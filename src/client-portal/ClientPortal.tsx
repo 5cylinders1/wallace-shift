@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { SIGNATURE_CONSENT, automaticInvoice, firstUnsettledInvoice, cadenceLabel, money, paymentConsent, scheduleConsent, type Engagement, type Invoice, type OfflineMethod } from './model'
 import './client-portal.css'
 import { aiQualificationFacts } from '../lib/aiQualificationSummary'
@@ -6,6 +6,8 @@ import { useRouteMeta } from '../hooks/useDocumentMeta'
 import { GoogleCalendarConnection } from './GoogleCalendarConnection'
 import { AiSubscriptionPanel } from './AiSubscriptionPanel'
 import { subscriptionPreview, subscriptionView } from './ai-subscription'
+
+const BusinessDashboard = lazy(() => import('../business-dashboard/BusinessDashboard').then(module => ({ default: module.BusinessDashboard })))
 
 type ClientEngagement = Engagement & { hasCard?: boolean; subscriptionPreview?: ReturnType<typeof subscriptionPreview>; subscriptionView?: ReturnType<typeof subscriptionView> }
 function nextClientInvoice(e: Engagement): Invoice | undefined {
@@ -81,6 +83,7 @@ function Status({ children }: { children: ReactNode }) { return <span className=
 export function ClientPortal() {
   useRouteMeta('/client-portal')
   const [session, setSession] = useState<Session | null>(null)
+  const [ownerView, setOwnerView] = useState<'agreements' | 'business'>(new URLSearchParams(location.search).get('view') === 'business' ? 'business' : 'agreements')
   const [selected, setSelected] = useState(new URLSearchParams(location.search).get('engagement') ?? '')
   const [tab, setTab] = useState<'invoices' | 'agreement' | 'activity'>('invoices')
   const [busy, setBusy] = useState(false)
@@ -196,6 +199,14 @@ export function ClientPortal() {
   }
   function choose(id: string) { setSelected(id); setCreating(false); setQuote(null); setCanceling(false); setArchivingId(''); setMessage(''); setPaymentChoice('stripe'); setTab(!session?.admin && !entries.find(v => v.id === id)?.signature ? 'agreement' : 'invoices') }
   function selectList(showArchive: boolean) { choose(''); setShowArchived(showArchive) }
+  function changeOwnerView(view: 'agreements' | 'business') {
+    setOwnerView(view)
+    setMessage('')
+    const url = new URL(location.href)
+    if (view === 'business') url.searchParams.set('view', 'business')
+    else url.searchParams.delete('view')
+    history.replaceState(null, '', url.pathname + url.search)
+  }
   async function changeArchive(id: string, restore: boolean) {
     const result = await perform({ action: restore ? 'restore' : 'archive', id }, restore ? 'Agreement restored to Current.' : 'Agreement moved to Archived.')
     if (result) {
@@ -220,7 +231,7 @@ export function ClientPortal() {
   useEffect(() => { if (error && message) document.querySelector('.cp-notice')?.scrollIntoView({ block: 'start' }) }, [error, message])
   const setup = new URLSearchParams(location.search).get('setup')
   return <div className="client-portal">
-    <header className="cp-header"><a className="cp-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="32" height="22" alt="" /><span>WALLACE SHIFT</span></a><span className="cp-header-label">Client portal</span>{session?.authenticated && <button className="cp-text-button" disabled={busy} onClick={() => void perform({ action: 'logout' }, 'Signed out.')}>Sign out</button>}</header>
+    <header className="cp-header"><a className="cp-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="32" height="22" alt="" /><span>WALLACE SHIFT</span></a><span className="cp-header-label">{session?.admin ? 'Owner workspace' : 'Client portal'}</span>{session?.authenticated && <button className="cp-text-button" disabled={busy} onClick={() => void perform({ action: 'logout' }, 'Signed out.')}>Sign out</button>}</header>
     <div className={`cp-notice ${error ? 'cp-notice-error' : ''}`} role={error ? 'alert' : 'status'} aria-live="polite">{message}</div>
     {!session ? <main className="cp-login"><h1>Opening your workspace…</h1></main> : !session.authenticated ? <main className="cp-login">
       <section><h1>Your work.<br />All in one place.</h1><p>Review your agreement, manage payments, and keep a record of every invoice.</p><div className="cp-login-note"><strong>A clear next step, every time.</strong><p>Sign your agreement first. Then choose how to pay a one-time invoice, or authorize automatic payments for recurring service.</p></div></section>
@@ -232,8 +243,9 @@ export function ClientPortal() {
         {codeSent && <button type="button" className="cp-text-button" disabled={busy} onClick={() => setCodeSent(false)}>Use another email or request a new code</button>}
         <small>No password to remember. Only your verified email can open your client records.</small>
       </form>
-    </main> : <div className={`cp-workspace ${!session.admin ? 'cp-client-flow' : ''}`}>
+    </main> : session.admin && ownerView === 'business' ? <main id="business-workspace"><Suspense fallback={<p className="cp-dashboard-loading" role="status">Opening your business dashboard…</p>}><BusinessDashboard onOpenAgreements={() => changeOwnerView('agreements')} /></Suspense></main> : <div className={`cp-workspace ${!session.admin ? 'cp-client-flow' : ''}`}>
       {session.admin && <aside className="cp-sidebar"><h2>Client workspace</h2><p className="cp-account">{session.email}</p>
+        <button className="cp-secondary cp-dashboard-link" onClick={() => changeOwnerView('business')}>Business dashboard</button>
         <div className="cp-list-filters" role="group" aria-label="Agreement list">
           <button aria-pressed={!archived} disabled={busy} onClick={() => selectList(false)}>Current</button>
           <button aria-pressed={archived} disabled={busy} onClick={() => selectList(true)}>Archived</button>
