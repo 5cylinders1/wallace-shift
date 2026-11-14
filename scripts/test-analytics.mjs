@@ -231,6 +231,83 @@ test('private SPA transitions disable Google and all event handlers until a publ
   assert.equal(app.events().length, 2)
 })
 
+test('a direct unconfirmed booking URL initializes listeners without loading Google or sending events', () => {
+  const app = browser({ href: 'https://wallaceshift.com/offers/ai-business-integration/confirmation', savedConsent: 'granted' })
+  assert.equal(app.window.__wsAnalyticsInitialized, true)
+  for (const value of [undefined, false, 'true', 1, {}]) {
+    app.window.__wsAiBookingConfirmed = value
+    app.fire('ws:routechange')
+    app.dispatch({ name: 'quiz_completed' })
+    app.click('mailto:private@example.com')
+  }
+  assert.equal(app.scripts.length, 0)
+  assert.deepEqual(app.commands(), [])
+  assert.equal(app.window[`ga-disable-${testId}`], true)
+  app.navigate('/offers/ai-business-integration')
+  assert.equal(app.scripts.length, 1, 'redirecting to the quiz still enables consented analytics')
+  assert.deepEqual(app.events('page_view').map(event => event[2].page_location), ['https://wallaceshift.com/offers/ai-business-integration'])
+})
+
+test('a validated booking transition records its distinct confirmation page once', () => {
+  const app = browser({ href: 'https://wallaceshift.com/offers/ai-business-integration', savedConsent: 'granted' })
+  app.window.__wsAiBookingConfirmed = true
+  app.navigate('/offers/ai-business-integration/confirmation')
+  app.fire('ws:routechange')
+  assert.equal(app.scripts.length, 1)
+  assert.deepEqual(app.events('page_view').map(event => event[2].page_location), [
+    'https://wallaceshift.com/offers/ai-business-integration',
+    'https://wallaceshift.com/offers/ai-business-integration/confirmation',
+  ])
+  app.window.__wsAiBookingConfirmed = false
+  app.fire('ws:routechange')
+  assert.equal(app.window[`ga-disable-${testId}`], true)
+  app.dispatch({ name: 'quiz_completed' })
+  assert.equal(app.events().length, 2)
+})
+
+test('restoring a confirmed booking then dispatching routechange sends only a sanitized confirmation URL', () => {
+  const app = browser({
+    href: 'https://wallaceshift.com/offers/ai-business-integration/confirmation/?utm_source=Google&utm_campaign=ai_consultation&email=private%40example.com&gclid=private-click&booking=private-id#token=private-token',
+    referrer: 'https://calendly.com/private-person/consultation?invitee=private@example.com',
+    savedConsent: 'granted',
+  })
+  assert.equal(app.scripts.length, 0)
+  app.window.__wsAiBookingConfirmed = true
+  app.fire('ws:routechange')
+  app.fire('ws:routechange')
+  assert.equal(app.scripts.length, 1)
+  assert.equal(app.events('page_view').length, 1)
+  assert.deepEqual(app.events('page_view')[0][2], {
+    send_to: testId,
+    page_location: 'https://wallaceshift.com/offers/ai-business-integration/confirmation?utm_source=google&utm_campaign=ai_consultation',
+    page_referrer: 'https://calendly.com',
+    page_title: '/offers/ai-business-integration/confirmation',
+  })
+  assert.doesNotMatch(JSON.stringify(app.commands()), /private|gclid|invitee|booking|token/)
+})
+
+test('booking confirmation never overrides analytics consent or browser privacy preferences', () => {
+  for (const options of [
+    {},
+    { savedConsent: 'denied' },
+    { savedConsent: 'granted', navigator: { globalPrivacyControl: true } },
+    { savedConsent: 'granted', navigator: { doNotTrack: '1' } },
+  ]) {
+    const app = browser({ href: 'https://wallaceshift.com/offers/ai-business-integration/confirmation', ...options })
+    app.window.__wsAiBookingConfirmed = true
+    app.fire('ws:routechange')
+    assert.equal(app.scripts.length, 0)
+    assert.deepEqual(app.commands(), [])
+    assert.equal(app.window[`ga-disable-${testId}`], true)
+  }
+  const app = browser({ href: 'https://wallaceshift.com/offers/ai-business-integration/confirmation' })
+  app.choose('granted')
+  assert.equal(app.scripts.length, 0, 'consent alone does not confirm a booking')
+  app.window.__wsAiBookingConfirmed = true
+  app.fire('ws:routechange')
+  assert.equal(app.events('page_view').length, 1)
+})
+
 test('withdrawal disables pending collection, clears only GA cookies, and stops events', () => {
   const app = browser({ savedConsent: 'granted', cookies: '_ga=visitor; _ga_TEST12345=session; essential_session=keep' })
   app.preferences().click()

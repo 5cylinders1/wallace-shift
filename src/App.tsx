@@ -15,7 +15,7 @@ import { AiOfferPage } from './pages/AiOfferPage'
 import { WhatNowPage } from './pages/WhatNowPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { scrollToRouteTarget, useRoutePath } from './lib/router'
-import { AI_OFFER_PATH, PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH, WHAT_NOW_PATH } from './content/routeMeta'
+import { AI_OFFER_CONFIRMATION_PATH, AI_OFFER_PATH, PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH, WHAT_NOW_PATH } from './content/routeMeta'
 
 const pages: Record<string, () => ReactElement> = {
   ...Object.fromEntries(serviceLandingPages.map(service => [service.path, () => <ServiceLandingPage service={service} />])),
@@ -27,6 +27,7 @@ const pages: Record<string, () => ReactElement> = {
   '/contact': ContactPage,
   '/privacy': PrivacyPage,
   [AI_OFFER_PATH]: AiOfferPage,
+  [AI_OFFER_CONFIRMATION_PATH]: AiOfferPage,
   [WHAT_NOW_PATH]: WhatNowPage,
   '/404': NotFoundPage,
 }
@@ -81,7 +82,7 @@ function App() {
 
   const Experiment = experiments[path]
   if (path === '/mail') return <Suspense fallback={<p role="status">Loading Wallace Shift Mail…</p>}><MailApp /></Suspense>
-  if (path === AI_OFFER_PATH) return <AiOfferPage />
+  if (path === AI_OFFER_PATH || path === AI_OFFER_CONFIRMATION_PATH) return <AiOfferPage />
   if (path === '/client-portal') return <Suspense fallback={<p role="status">Loading client portal…</p>}><ClientPortal /></Suspense>
   if (Experiment) {
     return (

@@ -15,9 +15,10 @@
   const paths = new Set([
     '/', '/services', '/pricing', '/about', '/approach', '/contact', '/privacy',
     '/request-demo', '/demos/contractors', '/demos/roofers-offer', '/blog',
-    '/offers/ai-business-integration', '/what-now',
+    '/offers/ai-business-integration', '/offers/ai-business-integration/confirmation', '/what-now',
   ])
   const offerPath = '/offers/ai-business-integration'
+  const offerConfirmationPath = `${offerPath}/confirmation`
   const offerSteps = new Set(['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'context', 'readiness', 'contact'])
   const offerRecommendations = new Set(['package', 'consultation', 'resource'])
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
@@ -98,7 +99,11 @@
   const denied = { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' }
 
   function canTrack() {
-    const allowed = consent === 'granted' && !optedOut() && publicUrl(window.location.href) !== null
+    const url = publicUrl(window.location.href)
+    // The funnel sets this only after a validated booking or session restore.
+    // Keep bootstrap active on this route so a later confirmation can be tracked.
+    const confirmed = url?.pathname !== offerConfirmationPath || window.__wsAiBookingConfirmed === true
+    const allowed = consent === 'granted' && !optedOut() && url !== null && confirmed
     window[disableKey] = !allowed
     return allowed
   }

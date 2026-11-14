@@ -111,19 +111,22 @@ function isPrivateDocument(pathname: string): boolean {
   return Boolean(route?.noindex && !route.publicDraft)
 }
 
-export function navigate(href: string) {
+export function navigate(href: string, options: { replace?: boolean } = {}) {
   const url = new URL(href, window.location.origin)
   // A tracker already loaded in the public document must not survive entry
   // into the portal or an experiment. Leaving those documents also needs a
   // fresh load because their HTML deliberately omits the public bootstrap.
   if (isPrivateDocument(url.pathname) || isPrivateDocument(window.location.pathname)) {
-    window.location.assign(url.href)
+    if (options.replace) window.location.replace(url.href)
+    else window.location.assign(url.href)
     return
   }
   const changedPage =
     normalizePath(url.pathname) !== normalizePath(window.location.pathname)
 
-  window.history.pushState(null, '', `${url.pathname}${url.search}${url.hash}`)
+  const destination = `${url.pathname}${url.search}${url.hash}`
+  if (options.replace) window.history.replaceState(null, '', destination)
+  else window.history.pushState(null, '', destination)
 
   if (changedPage) {
     // The incoming page owns this scroll: its anchor does not exist until

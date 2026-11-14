@@ -17,6 +17,9 @@ const payload = {
   invitee: { uri: 'https://api.calendly.com/api/v2/scheduled_events/local-booking/invitees/local-visitor' },
 }
 const scheduled = { event: 'calendly.event_scheduled', payload }
+const offerPath = '/offers/ai-business-integration'
+const confirmationPath = `${offerPath}/confirmation`
+const confirmationStorageKey = 'ws:ai-booking-confirmation:v1'
 function testServer(eventUrlOverride) {
   return createServer({
     configFile: false, plugins: [react()], logLevel: 'error',
@@ -46,13 +49,20 @@ async function finishQuiz(page) {
   await page.getByRole('button', { name: 'Send answers and see times' }).click()
 }
 
-async function check(browser, server, viewport, reducedMotion, directFallback = false) {
+async function check(browser, server, viewport, reducedMotion, directFallback = false, blockedStorage = false) {
   const page = await browser.newPage({ viewport, reducedMotion, serviceWorkers: 'block' })
   const origin = server.resolvedUrls.local[0]
   const errors = []
   let summaries = 0
+  let submittedAnswers
   const setupRequests = []
   page.on('pageerror', err => errors.push(err.message))
+  if (blockedStorage) await page.addInitScript(() => {
+    Object.defineProperty(window, 'sessionStorage', {
+      configurable: true,
+      get() { throw new DOMException('Storage is blocked for this test.', 'SecurityError') },
+    })
+  })
   // Provider and API traffic stays in this test, even if real credentials exist in .env.local.
   await page.route('**/*', async route => {
     const target = new URL(route.request().url())
@@ -60,7 +70,9 @@ async function check(browser, server, viewport, reducedMotion, directFallback = 
     if (target.origin === 'https://calendly.com') return route.fulfill({ contentType: 'text/html', body: '<title>Local booking simulation</title><p>Consultation scheduler</p>' })
     if (target.origin !== new URL(origin).origin) return route.abort()
     if (target.pathname === '/api/ai-booking') {
-      assert.equal(route.request().postDataJSON().action, 'quiz-summary')
+      const request = route.request().postDataJSON()
+      assert.equal(request.action, 'quiz-summary')
+      submittedAnswers = request.answers
       summaries++
       return route.fulfill({ json: { ok: true, notification: 'sent' } })
     }
@@ -76,7 +88,7 @@ async function check(browser, server, viewport, reducedMotion, directFallback = 
   })
 
   try {
-    await page.goto(new URL('/offers/ai-business-integration', origin).href)
+    await page.goto(new URL(offerPath, origin).href)
     await finishQuiz(page)
     if (directFallback) {
       const link = page.getByRole('link', { name: /Open calendar in a new tab/ })
@@ -111,17 +123,51 @@ async function check(browser, server, viewport, reducedMotion, directFallback = 
     }, scheduled)
     await page.getByRole('heading', { name: 'Book your free consultation.' }).waitFor()
     assert.equal(await page.locator('video, .qf-walkthrough-offers').count(), 0)
+    assert.equal(new URL(page.url()).pathname, offerPath, 'Invalid booking messages must not visit the conversion URL.')
     assert.equal(summaries, 1)
 
     await post(scheduled)
     const player = page.locator('.qf-walkthrough-player video')
     await player.waitFor()
+    await page.waitForURL(url => url.pathname === confirmationPath)
     await page.waitForFunction(() => {
       const rect = document.querySelector('video').getBoundingClientRect()
       return document.activeElement?.id === 'qf-walkthrough-title' && rect.top >= 0 && rect.bottom <= innerHeight + 1
     })
     assert.equal(await page.locator('.qf-booking-frame, .qf-walkthrough-offers').count(), 0)
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
+    if (blockedStorage) {
+      await page.reload()
+      await page.waitForURL(url => url.pathname === offerPath)
+      await page.getByText('We struggle to respond to inquiries quickly', { exact: true }).waitFor()
+      assert.equal(await page.locator('video, .qf-walkthrough-offers').count(), 0)
+      assert.equal(summaries, 1)
+      assert.deepEqual(errors, [])
+      console.log('Passed confirmed booking with blocked session storage and safe refresh fallback.')
+      return
+    }
+    const savedConfirmation = await page.evaluate(key => JSON.parse(sessionStorage.getItem(key)), confirmationStorageKey)
+    assert.deepEqual(Object.keys(savedConfirmation).sort(), ['answers', 'savedAt', 'version'])
+    assert.equal(savedConfirmation.version, 1)
+    assert.equal(typeof savedConfirmation.savedAt, 'number')
+    assert.ok(Math.abs(Date.now() - savedConfirmation.savedAt) < 60000)
+    assert.deepEqual(savedConfirmation.answers, submittedAnswers, 'Only the submitted quiz answers belong in the confirmation session.')
+    assert.equal(JSON.stringify(savedConfirmation).includes('api.calendly.com'), false, 'Calendly event and invitee URLs must not be persisted.')
+
+    await page.goBack()
+    await page.waitForURL(url => url.pathname === offerPath)
+    await page.getByRole('heading', { name: 'Book your free consultation.' }).waitFor()
+    assert.equal(await page.locator('video, .qf-walkthrough-offers').count(), 0)
+    await page.goForward()
+    await page.waitForURL(url => url.pathname === confirmationPath)
+    await player.waitFor()
+    assert.equal(summaries, 1, 'History navigation must not send the quiz summary again.')
+
+    await page.reload()
+    await page.waitForURL(url => url.pathname === confirmationPath)
+    await player.waitFor()
+    assert.equal(summaries, 1, 'Restoring a confirmed session must not resend the quiz summary.')
+    assert.equal(await page.locator('.qf-booking-frame, .qf-walkthrough-offers').count(), 0)
     if (process.env.CONSULTATION_TEST_SCREENSHOTS) {
       await mkdir(process.env.CONSULTATION_TEST_SCREENSHOTS, { recursive: true })
       await page.screenshot({ path: `${process.env.CONSULTATION_TEST_SCREENSHOTS}/confirmed-film-${viewport.width}.png` })
@@ -158,6 +204,7 @@ async function check(browser, server, viewport, reducedMotion, directFallback = 
     assert.equal(setupRequests.length, 1)
     assert.equal(setupRequests[0].packageId, 'assistant')
     assert.equal(setupRequests[0].interval, 'six_months')
+    assert.deepEqual(setupRequests[0].answers, submittedAnswers, 'Checkout must retain the qualification answers after a confirmation reload.')
     assert.equal(Object.hasOwn(setupRequests[0], 'amount'), false, 'The server determines the recurring amount.')
     await page.getByRole('radio', { name: /\$7,200 every twelve months/ }).check()
     assert.equal(await page.getByLabel('Verification code').count(), 0, 'Changing the interval invalidates the old verification step.')
@@ -167,15 +214,60 @@ async function check(browser, server, viewport, reducedMotion, directFallback = 
     assert.equal(setupRequests.length, 2)
     assert.equal(setupRequests[1].interval, 'yearly')
     assert.notEqual(setupRequests[1].submissionId, setupRequests[0].submissionId)
+    await page.getByLabel('Verification code').fill('123456')
+    assert.deepEqual(await page.evaluate(key => JSON.parse(sessionStorage.getItem(key)), confirmationStorageKey), savedConfirmation,
+      'Checkout contact details and verification codes must not enter the persisted confirmation.')
     if (process.env.CONSULTATION_TEST_SCREENSHOTS) await page.screenshot({ path: `${process.env.CONSULTATION_TEST_SCREENSHOTS}/subscription-request-${viewport.width}.png`, fullPage: true })
     await page.getByRole('button', { name: 'Back to offer' }).click()
     await page.getByRole('button', { name: 'Request free month', exact: true }).waitFor()
     assert.equal(await page.getByRole('radio', { name: /\$7,200 every twelve months/ }).isChecked(), true)
     assert.equal(await page.locator('.qf-booking-frame').count(), 0)
     assert.deepEqual(errors, [])
-    console.log(`Passed ${viewport.width}px booking, single bundle, prepaid intervals, verification reset, and checkout return.`)
+    console.log(`Passed ${viewport.width}px confirmation URL, history, reload, single bundle, prepaid intervals, verification reset, and checkout return.`)
+    return savedConfirmation
   } finally {
     await page.close()
+  }
+}
+
+async function checkDirectConfirmation(browser, server, savedConfirmation) {
+  const origin = new URL(server.resolvedUrls.local[0]).origin
+  const cases = [
+    ['missing', null],
+    ['malformed', '{not valid JSON'],
+    ['expired', JSON.stringify({ ...savedConfirmation, savedAt: Date.now() - 4 * 60 * 60 * 1000 - 1000 })],
+    ['wrong version', JSON.stringify({ ...savedConfirmation, version: 2 })],
+    ['invalid answers', JSON.stringify({ ...savedConfirmation, answers: {} })],
+  ]
+  for (const [label, storedValue] of cases) {
+    const page = await browser.newPage({ serviceWorkers: 'block' })
+    const errors = []
+    const apiRequests = []
+    page.on('pageerror', error => errors.push(error.message))
+    await page.addInitScript(({ key, value }) => {
+      if (value !== null) sessionStorage.setItem(key, value)
+    }, { key: confirmationStorageKey, value: storedValue })
+    await page.route('**/*', async route => {
+      const target = new URL(route.request().url())
+      if (target.origin !== origin) return route.abort()
+      if (target.pathname.startsWith('/api/')) {
+        apiRequests.push(target.pathname)
+        return route.abort()
+      }
+      return route.continue()
+    })
+    try {
+      await page.goto(`${origin}${confirmationPath}`)
+      await page.waitForURL(url => url.pathname === offerPath)
+      await page.getByText('We struggle to respond to inquiries quickly', { exact: true }).waitFor()
+      assert.equal(await page.locator('video, .qf-walkthrough-offers, .qf-booking-frame').count(), 0)
+      assert.equal(await page.evaluate(() => history.length), 2, 'The invalid confirmation entry must be replaced, not add a second app history entry.')
+      assert.deepEqual(apiRequests, [], 'An invalid confirmation must not send a booking or checkout request.')
+      assert.deepEqual(errors, [])
+      console.log(`Passed direct confirmation fallback with ${label} session.`)
+    } finally {
+      await page.close()
+    }
   }
 }
 
@@ -270,8 +362,10 @@ try {
     try {
       await server.listen()
       if (eventUrlOverride === undefined) {
-        await check(browser, server, { width: 1280, height: 900 }, 'no-preference')
+        const savedConfirmation = await check(browser, server, { width: 1280, height: 900 }, 'no-preference')
         await check(browser, server, { width: 390, height: 844 }, 'reduce')
+        await checkDirectConfirmation(browser, server, savedConfirmation)
+        await check(browser, server, { width: 390, height: 844 }, 'reduce', false, true)
         for (const failure of ['script', 'slow-retry', 'slow-recovery']) await checkCalendarRecovery(browser, server, failure)
       } else {
         await check(browser, server, { width: 390, height: 844 }, 'reduce', true)

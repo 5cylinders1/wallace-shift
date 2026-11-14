@@ -54,6 +54,9 @@ export const PIT_STOP_EXPERIMENT_PATH = '/experiments/pit-stop'
 /** Unlisted offer draft. Commercial terms still require review before launch. */
 export const AI_OFFER_PATH = '/offers/ai-business-integration'
 
+/** Reached after a successful consultation booking. */
+export const AI_OFFER_CONFIRMATION_PATH = `${AI_OFFER_PATH}/confirmation`
+
 /** Where both enquiry forms land after a confirmed send. Linked from nowhere
  *  else: it explains what happens next, so it belongs after the form. */
 export const WHAT_NOW_PATH = '/what-now'
@@ -128,6 +131,16 @@ export const routeMeta: RouteMeta[] = [
     title: 'Find Your First AI Project | Wallace Shift',
     description:
       'Answer a few questions about your business, bottleneck, and readiness for AI. See a practical recommendation before sharing contact details.',
+    priority: 0,
+    noindex: true,
+    publicDraft: true,
+    robots: 'noindex, nofollow',
+  },
+  {
+    path: AI_OFFER_CONFIRMATION_PATH,
+    title: 'Consultation Confirmation | Wallace Shift',
+    description:
+      'Review the next steps for your Wallace Shift consultation and watch the AI business integration walkthrough.',
     priority: 0,
     noindex: true,
     publicDraft: true,

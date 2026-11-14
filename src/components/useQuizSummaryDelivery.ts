@@ -1,18 +1,9 @@
 import { useRef, useState } from 'react'
-import type { AiQualificationInput } from '../content/aiOffer'
 import type { AiOpportunityFormValues } from '../lib/aiOpportunityAdapter'
+import { quizAnswers } from '../lib/aiQualificationAnswers'
 
 export type SummaryStatus = 'idle' | 'sending' | 'sent' | 'failed'
 type Submission = { fingerprint: string; payload: string; status: SummaryStatus }
-
-// Only the quiz answers belong in this notification. Contact details belong to
-// the separate Google booking or phone request.
-function quizAnswers(values: AiOpportunityFormValues): AiQualificationInput {
-  const { businessType, workflows, workflowDetails, currentTools, weeklyHours, impacts, impactDetails,
-    role, approverAvailability, revenue, aiExperience, aiBarriers, budget, timing } = values
-  return { businessType, workflows, workflowDetails, currentTools, weeklyHours, impacts, impactDetails,
-    role, approverAvailability, revenue, aiExperience, aiBarriers, budget, timing }
-}
 
 export function useQuizSummaryDelivery() {
   const current = useRef<Submission | null>(null)
