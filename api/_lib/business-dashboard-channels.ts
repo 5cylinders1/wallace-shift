@@ -8,8 +8,8 @@ type SourceResult = Pick<DashboardSource, 'metrics' | 'statusDetail'> & Partial<
 // All endpoints are fixed provider origins. Credentials never enter URLs or responses.
 // These adapters only read reporting data; the Google POSTs are OAuth/report queries.
 class ChannelError extends Error {
-  readonly kind: 'setup' | 'auth' | 'provider' | 'incomplete'
-  constructor(kind: 'setup' | 'auth' | 'provider' | 'incomplete') { super(kind); this.kind = kind }
+  readonly kind: 'setup' | 'account-not-enabled' | 'auth' | 'provider' | 'incomplete'
+  constructor(kind: 'setup' | 'account-not-enabled' | 'auth' | 'provider' | 'incomplete') { super(kind); this.kind = kind }
 }
 
 const definitions: Record<ChannelId, Omit<DashboardSource, 'status' | 'statusDetail' | 'checkedAt' | 'dataThrough' | 'metrics'>> = {
@@ -109,10 +109,25 @@ function validRange(range: Range): void {
   if (days < 1 || days > 90 || ![7, 30, 90].includes(range.days)) throw new ChannelError('setup')
 }
 
-async function request(url: string | URL, init: RequestInit = {}): Promise<unknown> {
+async function googleAdsAccountNotEnabled(response: Response): Promise<boolean> {
+  try {
+    const text = await response.text()
+    if (text.length > 2_000_000) return false
+    const details = list(object(object(JSON.parse(text)).error).details)
+    return details.some(detail => list(detail.errors).some(error => object(error.errorCode).authorizationError === 'CUSTOMER_NOT_ENABLED'))
+  } catch {
+    return false
+  }
+}
+
+async function request(url: string | URL, init: RequestInit = {}, provider?: 'google-ads'): Promise<unknown> {
   const response = await fetch(url, { ...init, redirect: 'error', signal: AbortSignal.timeout(8000) })
-  // Discard upstream error bodies: they can contain tokens, account identifiers or request details.
-  if (!response.ok) throw new ChannelError(response.status === 401 || response.status === 403 ? 'auth' : 'provider')
+  if (!response.ok) {
+    // Inspect only this structured Google Ads enum. Never propagate upstream
+    // messages, which can contain tokens, account identifiers or request details.
+    if (provider === 'google-ads' && response.status === 403 && await googleAdsAccountNotEnabled(response)) throw new ChannelError('account-not-enabled')
+    throw new ChannelError(response.status === 401 || response.status === 403 ? 'auth' : 'provider')
+  }
   const text = await response.text()
   if (text.length > 2_000_000) throw new ChannelError('incomplete')
   const value: unknown = JSON.parse(text)
@@ -145,7 +160,7 @@ async function googleAds(range: Range): Promise<SourceResult> {
     for (let page = 0; page < 5; page++) {
       const result = object(await request(`https://googleads.googleapis.com/${apiVersion}/customers/${customerId}/googleAds:search`, {
         method: 'POST', headers, body: JSON.stringify({ query, ...(pageToken ? { pageToken } : {}) }),
-      }))
+      }, 'google-ads'))
       if (!Array.isArray(result.results) && result.results !== undefined) throw new ChannelError('provider')
       rows.push(...list(result.results))
       pageToken = typeof result.nextPageToken === 'string' ? result.nextPageToken : ''
@@ -248,7 +263,8 @@ async function instagram(range: Range): Promise<SourceResult> {
   const id = required('DASHBOARD_INSTAGRAM_ACCOUNT_ID', /^\d+$/)
   const token = required('DASHBOARD_INSTAGRAM_ACCESS_TOKEN')
   const login = env('DASHBOARD_INSTAGRAM_LOGIN_TYPE') || 'instagram'
-  if (!['instagram', 'facebook'].includes(login)) throw new ChannelError('setup')
+  if (!['instagram', 'facebook', 'unified'].includes(login)) throw new ChannelError('setup')
+  const host = login === 'instagram' ? 'instagram' : 'facebook'
   const start = Math.floor(Date.parse(`${range.startDate}T00:00:00Z`) / 1000)
   const end = Math.floor(Date.parse(`${range.endDate}T00:00:00Z`) / 1000) + 86400 - 1
   const ranges: { start: number; end: number }[] = []
@@ -257,7 +273,7 @@ async function instagram(range: Range): Promise<SourceResult> {
   const batches = await Promise.all(ranges.map(async chunk => {
     const response = await graph(graphUrl(`${id}/insights`, {
       metric: 'views,total_interactions', metric_type: 'total_value', period: 'day', since: String(chunk.start), until: String(chunk.end),
-    }, login as 'facebook' | 'instagram'), token)
+    }, host), token)
     if (!Array.isArray(response.data)) throw new ChannelError('provider')
     return list(response.data)
   }))
@@ -318,12 +334,13 @@ export async function loadBusinessDashboardChannels(range: Range, now = new Date
     } catch (error) {
       const kind = error instanceof ChannelError ? error.kind : 'provider'
       return {
-        ...source, status: kind === 'setup' ? 'needs-setup' : kind === 'auth' ? 'needs-sign-in' : 'error',
+        ...source, status: kind === 'setup' || kind === 'account-not-enabled' ? 'needs-setup' : kind === 'auth' ? 'needs-sign-in' : 'error',
         checkedAt: kind === 'setup' ? null : now.toISOString(),
         statusDetail: kind === 'setup' ? 'Complete the server connection settings to load this source.'
-          : kind === 'auth' ? 'Reconnect this account and verify the app’s reporting permissions.'
-            : kind === 'incomplete' ? 'The provider returned more data than this report can safely include. No partial total is shown.'
-              : 'The provider could not complete this report. Check its connection settings and retry.',
+          : kind === 'account-not-enabled' ? 'Google Ads reports that this account is not enabled. Complete account signup in Google Ads, or reactivate the account if it was deactivated, then refresh.'
+            : kind === 'auth' ? 'Reconnect this account and verify the app’s reporting permissions.'
+              : kind === 'incomplete' ? 'The provider returned more data than this report can safely include. No partial total is shown.'
+                : 'The provider could not complete this report. Check its connection settings and retry.',
       }
     }
   }))

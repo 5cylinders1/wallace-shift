@@ -74,6 +74,54 @@ test('Google Ads refresh flow stays server-side and reports missing fields as un
   assert.equal(calls.length, 3)
 })
 
+test('Google Ads disabled accounts show setup guidance without leaking credentials or provider details', async () => {
+  Object.assign(process.env, { DASHBOARD_GOOGLE_ADS_CLIENT_ID: 'private-client', DASHBOARD_GOOGLE_ADS_CLIENT_SECRET: 'private-secret', DASHBOARD_GOOGLE_ADS_REFRESH_TOKEN: 'private-refresh', DASHBOARD_GOOGLE_ADS_CUSTOMER_ID: '1234567890' })
+  globalThis.fetch = async (url, init) => {
+    calls.push({ url: String(url), init })
+    if (String(url) === 'https://oauth2.googleapis.com/token') return response({ access_token: 'private-access' })
+    assert.equal(init.headers.authorization, 'Bearer private-access')
+    if (!JSON.parse(init.body).query.includes('currency_code')) return response({ results: [] })
+    return new Response(JSON.stringify({ error: {
+      code: 403, message: 'private-client private-secret private-refresh private-access account 1234567890',
+      details: [{
+        '@type': 'type.googleapis.com/google.ads.googleads.v26.errors.GoogleAdsFailure',
+        requestId: 'private-request-id',
+        errors: [{ errorCode: { authorizationError: 'CUSTOMER_NOT_ENABLED' }, message: 'private-provider-message', trigger: { stringValue: 'private-trigger' } }],
+      }],
+    } }), { status: 403 })
+  }
+  const results = await loadBusinessDashboardChannels(range, now)
+  const result = find(results, 'google-ads')
+  assert.equal(result.status, 'needs-setup')
+  assert.equal(result.checkedAt, now.toISOString())
+  assert.equal(result.dataThrough, null)
+  assert.deepEqual(result.metrics, [])
+  assert.equal(result.statusDetail, 'Google Ads reports that this account is not enabled. Complete account signup in Google Ads, or reactivate the account if it was deactivated, then refresh.')
+  assert.equal(results.filter(item => item.checkedAt !== null).length, 1)
+  assert.equal(calls.length, 3)
+  const serialized = JSON.stringify(results)
+  for (const value of ['private-client', 'private-secret', 'private-refresh', 'private-access', '1234567890', 'private-request-id', 'private-provider-message', 'private-trigger', 'CUSTOMER_NOT_ENABLED']) {
+    assert.equal(serialized.includes(value), false)
+  }
+})
+
+test('Google Ads only classifies the structured disabled-account enum and retains generic auth failures', async () => {
+  Object.assign(process.env, { DASHBOARD_GOOGLE_ADS_ACCESS_TOKEN: 'private-access', DASHBOARD_GOOGLE_ADS_CUSTOMER_ID: '1234567890' })
+  const bodies = [
+    JSON.stringify({ error: { message: 'CUSTOMER_NOT_ENABLED private-access', details: [{ errors: [{ errorCode: { authorizationError: 'USER_PERMISSION_DENIED' } }] }] } }),
+    JSON.stringify({ error: { details: [{ errors: [{ message: 'CUSTOMER_NOT_ENABLED private-access' }] }] } }),
+    'malformed private-access CUSTOMER_NOT_ENABLED',
+  ]
+  for (const body of bodies) {
+    globalThis.fetch = async () => new Response(body, { status: 403 })
+    const result = find(await loadBusinessDashboardChannels(range, now), 'google-ads')
+    assert.equal(result.status, 'needs-sign-in')
+    assert.equal(result.statusDetail, 'Reconnect this account and verify the app’s reporting permissions.')
+    assert.deepEqual(result.metrics, [])
+    assert.equal(JSON.stringify(result).includes('private-access'), false)
+  }
+})
+
 test('Meta ads has account-level totals without conflating link clicks and leads', async () => {
   Object.assign(process.env, { DASHBOARD_META_AD_ACCOUNT_ID: 'act_123', DASHBOARD_META_ADS_ACCESS_TOKEN: 'secret-meta' })
   globalThis.fetch = async (url, init) => {
@@ -121,6 +169,29 @@ test('Instagram unavailable metrics stay absent even if other chunks return valu
   const result = find(await loadBusinessDashboardChannels({ ...range, days: 90, startDate: '2026-08-15' }, now), 'instagram')
   assert.equal(result.status, 'connected')
   assert.deepEqual(result.metrics, [])
+})
+
+test('Instagram Unified Login and legacy Facebook Login use Facebook Graph with bearer tokens', async () => {
+  Object.assign(process.env, { DASHBOARD_INSTAGRAM_ACCOUNT_ID: '123', DASHBOARD_INSTAGRAM_ACCESS_TOKEN: 'secret-bisu' })
+  globalThis.fetch = async (url, init) => {
+    calls.push({ url: String(url), init })
+    const parsed = new URL(url)
+    assert.equal(parsed.origin, 'https://graph.facebook.com')
+    assert.equal(parsed.pathname, '/v27.0/123/insights')
+    assert.equal(parsed.searchParams.get('metric'), 'views,total_interactions')
+    assert.equal(parsed.searchParams.get('metric_type'), 'total_value')
+    assert.equal(parsed.searchParams.has('access_token'), false)
+    assert.equal(init.headers.authorization, 'Bearer secret-bisu')
+    return response({ data: [{ name: 'views', total_value: { value: 10 } }, { name: 'total_interactions', total_value: { value: 2 } }] })
+  }
+  for (const login of ['unified', 'facebook']) {
+    process.env.DASHBOARD_INSTAGRAM_LOGIN_TYPE = login
+    const result = find(await loadBusinessDashboardChannels(range, now), 'instagram')
+    assert.equal(result.status, 'connected')
+    assert.deepEqual(result.metrics.map(item => item.value), [10, 2])
+    assert.equal(JSON.stringify(result).includes('secret-bisu'), false)
+  }
+  assert.equal(calls.length, 2)
 })
 
 test('Facebook includes the last Pacific reporting day ending at 08:00Z the next day', async () => {
