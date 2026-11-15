@@ -45,6 +45,12 @@ async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> 
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const route = new URL(req.url ?? '/', 'http://local.invalid')
   const path = route.pathname.replace(/\/$/, '')
+  const publishingRoutes = route.searchParams.getAll('publishing')
+  const publishingRoute = publishingRoutes.length === 1 ? publishingRoutes[0] : publishingRoutes.length === 0 ? (req as IncomingMessage & { query?: Record<string, unknown> }).query?.publishing : undefined
+  if (path === '/api/business-publishing' || (path === '/api/demo-admin' && publishingRoute === 'linkedin')) {
+    const { default: linkedInPublishingHandler } = await import('./_lib/linkedin-publishing-handler.js')
+    return linkedInPublishingHandler(req, res)
+  }
   const dashboardRoutes = route.searchParams.getAll('dashboard')
   const dashboardRoute = dashboardRoutes.length === 1 ? dashboardRoutes[0] : dashboardRoutes.length === 0 ? (req as IncomingMessage & { query?: Record<string, unknown> }).query?.dashboard : undefined
   if (path === '/api/business-dashboard' || (path === '/api/demo-admin' && dashboardRoute === 'business')) {

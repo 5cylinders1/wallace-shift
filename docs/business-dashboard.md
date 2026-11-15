@@ -10,6 +10,7 @@ Open `/client-portal?view=business` and sign in with the portal owner email. The
 - Reads configured external reporting APIs and keeps individual source failures isolated. A configured account identifier alone does not count as a connection.
 - Presents metric definitions, source status, reporting dates, and freshness limitations alongside the data. Missing values are not converted into successful zero reports.
 - Generates a deterministic business briefing and exports the same normalized JSON snapshot for agent context. No language model runs in this version, and no autonomous actions execute.
+- Provides a separate owner operated LinkedIn publishing view with text, image or video preview and an explicit Publish action. Reporting refreshes and snapshot exports never publish content.
 
 The reporting range covers complete calendar days ending yesterday in America/Chicago. Source notes identify different account timezones or current-state metrics. Retrieval time is not the time every underlying event became available. Provider reports may be delayed, preliminary, thresholded, or subject to later attribution changes.
 
@@ -43,7 +44,7 @@ References: [GA4 realtime reporting](https://developers.google.com/analytics/dev
 
 ## Social and advertising accounts
 
-These are direct API adapters, not connections through an external CRM. They return account-level reporting for one configured account per provider. Campaign drilldowns, creative management, posting, and ad mutations are not implemented. All settings are server-only.
+These are direct API adapters, not connections through an external CRM. They return account-level reporting for one configured account per provider. Campaign drilldowns, creative management and ad mutations are not implemented. LinkedIn company Page publishing is a separate capability described below. All settings are server-only.
 
 | Provider | Required settings | Current report |
 | --- | --- | --- |
@@ -68,17 +69,35 @@ A successful token exchange does not prove the advertiser account is ready. Goog
 
 Spend stays in each provider account's currency. Non-USD amounts are labeled with their currency and are never added to USD portal totals. Click and conversion definitions differ across platforms. Do not sum platform-attributed conversions as unique business leads. Facebook and Instagram daily insights can be delayed; the latest returned bucket is not proof that the requested period is complete.
 
+## LinkedIn company Page publishing
+
+Open **LinkedIn publishing** in the business dashboard. The target is fixed on the server to the verified Wallace Shift company Page, ID `143962288`, at `https://www.linkedin.com/company/wallace-shift/`. The browser cannot choose another author or supply an arbitrary media URL or LinkedIn asset. The existing advertising account ID is not the company Page ID.
+
+The publisher uses the existing `DASHBOARD_LINKEDIN_ACCESS_TOKEN` and optional `DASHBOARD_LINKEDIN_API_VERSION`. Authorize `w_organization_social` to publish and `r_organization_admin` for Page access checks. Retain `r_ads` and `r_ads_reporting` for the reporting adapter. `r_organization_social` is optional for future retrieval of Page post history; the history shown here records attempts made through this application. A successful Page role lookup confirms member access, not that the token has every write permission. LinkedIn validates publishing permission when handling the write.
+
+The current version supports up to 3,000 characters of plain text, with one JPEG or PNG image up to 4 MiB, or one MP4 video up to 200 MiB. These are application limits. LinkedIn also validates media dimensions, duration and encoding. Images and videos retain their original bytes. Multiple image posts, document attachments, scheduling, personal profile posting, post editing and post deletion are not included.
+
+Choosing a file previews it locally. **Review post** saves an immutable draft and uploads selected media to LinkedIn; it does not create a public post. The server relays binary upload parts of at most 4 MiB to fit the existing function request limit. Provider upload URLs and access tokens stay on the server. Videos are finalized with their ordered upload part identifiers, and media must reach `AVAILABLE` before publishing. The owner reviews the prepared content and selects **Publish to LinkedIn** to create the public company Page post. Editing requires a new review.
+
+`/api/business-publishing` shares the existing `api/demo-admin.ts` function and uses the portal owner session. Mutations require the exact same origin, reject cross site requests, and use the existing Redis connection with separate environment namespaces. Drafts and upload sessions are bound to their owner. Publishing reserves the draft atomically before contacting LinkedIn, so repeated requests for the same draft cannot create additional posts. Attempts and outcomes are retained for review. If LinkedIn may have accepted a request but the result is uncertain, the draft needs review and is not automatically resubmitted. Check the company Page before deliberately preparing another post.
+
+Saving credentials in Vercel and building this feature do not verify the deployed workflow. This feature does not add token renewal. Replace the token before its recorded expiry. No public test post is created by automated checks.
+
+References: [Posts API](https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api?view=li-lms-2026-10), [Images API](https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/images-api?view=li-lms-2026-10), [Videos API](https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/videos-api?view=li-lms-2026-10), [Page roles](https://learn.microsoft.com/en-us/linkedin/marketing/community-management/organizations/organization-access-control-by-role?view=li-lms-2026-10).
+
 ## Agent boundary
 
 The snapshot includes source IDs, range, timestamps, metric definitions, and `agentPolicy`. The briefing is identified as rules-based observations. Downloading the snapshot supplies context to an agent; it does not schedule an agent or give one authority to act.
 
-This endpoint accepts reporting requests only. An agent cannot send email, publish content, edit CRM records, or alter advertising budgets through it. Such capabilities should be implemented as separate authenticated tools with narrow scopes, explicit action details, idempotency, and durable audit logs. Third-party text must remain untrusted data when supplied to a model.
+The snapshot endpoint accepts reporting requests only. An agent cannot send email, publish content, edit CRM records, or alter advertising budgets through it. The separate LinkedIn publisher is an owner operated workflow and does not grant agents autonomous execution. Third-party text must remain untrusted data when supplied to a model.
 
 Further work for unattended operation includes secure OAuth onboarding and revocation, durable scheduled ingestion, provider-aware retry/backoff, quota controls, webhook reconciliation, historical storage, freshness alerts, and a model/tool runner with auditable approval policies. Current optional browser refresh works only while the dashboard is open; it is not a background sync service.
 
 ## Verification
 
 Run `npm run test:dashboard`, `npm run test:dashboard-browser` with the local server on port 5184 (or set `DASHBOARD_TEST_URL`), and `npm run build`. Owner snapshot reads are limited to 12 per minute before provider calls; automatic UI refresh is optional and runs once per minute only while the tab is visible.
+
+For publishing changes, also run `npm run test:linkedin-publishing` and `npm run test:linkedin-publishing-browser`. These tests use mocked LinkedIn/Redis responses and intercepted browser uploads. They exercise authorization, preview, media readiness, duplicate prevention, uncertain outcomes and responsive behavior without writing to LinkedIn.
 
 API and browser tests use intercepted provider responses and clearly labeled test fixtures. They do not prove access to real accounts. Live verification requires configured credentials, owner login, and comparison against the corresponding provider report using the same period, timezone, attribution setting, and currency.
 
