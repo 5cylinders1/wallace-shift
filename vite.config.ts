@@ -255,6 +255,7 @@ function demoAccessRoutes(): Plugin {
         if (url.pathname === '/api/demo-agreement') return await demoAgreementHandler(req, res)
         if (url.pathname === '/api/demo-admin') return await demoAdminHandler(req, res)
         if (url.pathname === '/api/business-dashboard') return await demoAdminHandler(req, res)
+        if (url.pathname === '/api/business-publishing') return await demoAdminHandler(req, res)
         if (url.pathname === '/api/client-portal') return await clientPortalHandler(req, res)
         if (url.pathname === '/api/mail') return await mailHandler(req, res)
         next()

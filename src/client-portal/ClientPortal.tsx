@@ -87,6 +87,7 @@ export function ClientPortal() {
   const [selected, setSelected] = useState(new URLSearchParams(location.search).get('engagement') ?? '')
   const [tab, setTab] = useState<'invoices' | 'agreement' | 'activity'>('invoices')
   const [busy, setBusy] = useState(false)
+  const [publishingBusy, setPublishingBusy] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState(false)
   const [codeSent, setCodeSent] = useState(false)
@@ -231,7 +232,7 @@ export function ClientPortal() {
   useEffect(() => { if (error && message) document.querySelector('.cp-notice')?.scrollIntoView({ block: 'start' }) }, [error, message])
   const setup = new URLSearchParams(location.search).get('setup')
   return <div className="client-portal">
-    <header className="cp-header"><a className="cp-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="32" height="22" alt="" /><span>WALLACE SHIFT</span></a><span className="cp-header-label">{session?.admin ? 'Owner workspace' : 'Client portal'}</span>{session?.authenticated && <button className="cp-text-button" disabled={busy} onClick={() => void perform({ action: 'logout' }, 'Signed out.')}>Sign out</button>}</header>
+    <header className="cp-header"><a className="cp-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="32" height="22" alt="" /><span>WALLACE SHIFT</span></a><span className="cp-header-label">{session?.admin ? 'Owner workspace' : 'Client portal'}</span>{session?.authenticated && <button className="cp-text-button" disabled={busy || publishingBusy} onClick={() => void perform({ action: 'logout' }, 'Signed out.')}>Sign out</button>}</header>
     <div className={`cp-notice ${error ? 'cp-notice-error' : ''}`} role={error ? 'alert' : 'status'} aria-live="polite">{message}</div>
     {!session ? <main className="cp-login"><h1>Opening your workspace…</h1></main> : !session.authenticated ? <main className="cp-login">
       <section><h1>Your work.<br />All in one place.</h1><p>Review your agreement, manage payments, and keep a record of every invoice.</p><div className="cp-login-note"><strong>A clear next step, every time.</strong><p>Sign your agreement first. Then choose how to pay a one-time invoice, or authorize automatic payments for recurring service.</p></div></section>
@@ -243,7 +244,7 @@ export function ClientPortal() {
         {codeSent && <button type="button" className="cp-text-button" disabled={busy} onClick={() => setCodeSent(false)}>Use another email or request a new code</button>}
         <small>No password to remember. Only your verified email can open your client records.</small>
       </form>
-    </main> : session.admin && ownerView === 'business' ? <main id="business-workspace"><Suspense fallback={<p className="cp-dashboard-loading" role="status">Opening your business dashboard…</p>}><BusinessDashboard onOpenAgreements={() => changeOwnerView('agreements')} /></Suspense></main> : <div className={`cp-workspace ${!session.admin ? 'cp-client-flow' : ''}`}>
+    </main> : session.admin && ownerView === 'business' ? <main id="business-workspace"><Suspense fallback={<p className="cp-dashboard-loading" role="status">Opening your business dashboard…</p>}><BusinessDashboard onOpenAgreements={() => changeOwnerView('agreements')} onPublishingBusyChange={setPublishingBusy} /></Suspense></main> : <div className={`cp-workspace ${!session.admin ? 'cp-client-flow' : ''}`}>
       {session.admin && <aside className="cp-sidebar"><h2>Client workspace</h2><p className="cp-account">{session.email}</p>
         <button className="cp-secondary cp-dashboard-link" onClick={() => changeOwnerView('business')}>Business dashboard</button>
         <div className="cp-list-filters" role="group" aria-label="Agreement list">

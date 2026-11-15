@@ -1,23 +1,26 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { DashboardDays, DashboardFormat, DashboardResponse, DashboardSnapshot, DashboardSource, DashboardStatus } from './model'
+import { LinkedInPublisher } from './LinkedInPublisher'
 import './business-dashboard.css'
 
-type View = 'overview' | 'web' | 'email' | 'social' | 'connections' | 'brief'
+type View = 'overview' | 'web' | 'email' | 'social' | 'publishing' | 'connections' | 'brief'
 const navigation: { id: View; label: string; icon: string }[] = [
   { id: 'overview', label: 'Overview', icon: 'overview' },
   { id: 'web', label: 'Website & SEO', icon: 'web' },
   { id: 'email', label: 'Email & clients', icon: 'email' },
   { id: 'social', label: 'Social & advertising', icon: 'social' },
+  { id: 'publishing', label: 'LinkedIn publishing', icon: 'publishing' },
   { id: 'brief', label: 'Agent briefing', icon: 'brief' },
   { id: 'connections', label: 'Connections', icon: 'connections' },
 ]
 const statusLabels: Record<DashboardStatus, string> = { connected: 'Connected', 'needs-setup': 'Setup needed', 'needs-sign-in': 'Sign in needed', planned: 'Not built yet', error: 'Needs attention' }
-const titles: Record<View, string> = { overview: 'Business overview', web: 'Website & SEO', email: 'Email & clients', social: 'Social & advertising', connections: 'Your connections', brief: 'Agent briefing' }
+const titles: Record<View, string> = { overview: 'Business overview', web: 'Website & SEO', email: 'Email & clients', social: 'Social & advertising', publishing: 'LinkedIn publishing', connections: 'Your connections', brief: 'Agent briefing' }
 const descriptions: Record<View, string> = {
   overview: 'A shared view of your business, grounded in the data you have connected.',
   web: 'See how people find your site, what they visit, and which searches bring them in.',
   email: 'Keep communication and client activity close to the rest of your business.',
   social: 'Bring organic activity and paid campaign results into the same workspace.',
+  publishing: 'Write, review, and publish a post to the Wallace Shift company Page.',
   connections: 'See what is available, what needs access, and what still needs to be built.',
   brief: 'A factual handoff for you and your agents, with the evidence attached.',
 }
@@ -28,6 +31,7 @@ function Icon({ name }: { name: string }) {
     web: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z" /></>,
     email: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 6 9 7 9-7" /></>,
     social: <><path d="M4 20V9m8 11V4m8 16v-7M2 20h20" /></>,
+    publishing: <><path d="M12 20H4V4h10M15 3l6 6-9 9H6v-6L15 3Zm-3 3 6 6" /></>,
     brief: <><path d="M8 3H5a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-3" /><rect x="8" y="2" width="8" height="4" rx="1" /><path d="M8 11h8m-8 5h6" /></>,
     connections: <><path d="m8 15-2 2a4 4 0 0 1-5-5l4-4a4 4 0 0 1 5 0m4 1 2-2a4 4 0 0 1 5 5l-4 4a4 4 0 0 1-5 0m-4-1 8-8" transform="translate(1 1)" /></>,
     refresh: <><path d="M20 7v5h-5M4 17v-5h5" /><path d="M6 6a8 8 0 0 1 13 3M5 15a8 8 0 0 0 13 3" /></>,
@@ -100,7 +104,7 @@ function SourceReport({ source, onConnections }: { source: DashboardSource; onCo
   </section>
 }
 
-export function BusinessDashboard({ onOpenAgreements }: { onOpenAgreements: () => void }) {
+export function BusinessDashboard({ onOpenAgreements, onPublishingBusyChange }: { onOpenAgreements: () => void; onPublishingBusyChange?: (busy: boolean) => void }) {
   const [view, setView] = useState<View>('overview')
   const [days, setDays] = useState<DashboardDays>(30)
   const [autoRefresh, setAutoRefresh] = useState(false)
@@ -109,7 +113,11 @@ export function BusinessDashboard({ onOpenAgreements }: { onOpenAgreements: () =
   const [busy, setBusy] = useState(true)
   const [error, setError] = useState('')
   const [accessExpired, setAccessExpired] = useState(false)
+  const [publishingVisited, setPublishingVisited] = useState(false)
+  const [publishingBusy, setPublishingBusy] = useState(false)
   const heading = useRef<HTMLHeadingElement>(null)
+  const publishingBusyChanged = useCallback((next: boolean) => { setPublishingBusy(next); onPublishingBusyChange?.(next) }, [onPublishingBusyChange])
+  useEffect(() => () => onPublishingBusyChange?.(false), [onPublishingBusyChange])
   const refresh = useCallback(() => { setBusy(true); setError(''); setAccessExpired(false); setRevision(value => value + 1) }, [])
   useEffect(() => {
     const controller = new AbortController()
@@ -131,7 +139,11 @@ export function BusinessDashboard({ onOpenAgreements }: { onOpenAgreements: () =
     const timer = window.setInterval(() => { if (document.visibilityState === 'visible') refresh() }, 60_000)
     return () => window.clearInterval(timer)
   }, [autoRefresh, accessExpired, refresh])
-  function navigate(next: View) { setView(next); requestAnimationFrame(() => heading.current?.focus({ preventScroll: true })) }
+  function navigate(next: View) {
+    if (publishingBusy) return
+    if (next === 'publishing') setPublishingVisited(true)
+    setView(next); requestAnimationFrame(() => heading.current?.focus({ preventScroll: true }))
+  }
   function download() {
     if (!snapshot) return
     const url = URL.createObjectURL(new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' }))
@@ -144,16 +156,19 @@ export function BusinessDashboard({ onOpenAgreements }: { onOpenAgreements: () =
   const filtered = sources.filter(source => view === 'web' ? ['website', 'seo'].includes(source.category) : view === 'email' ? ['email', 'operations'].includes(source.category) : ['social', 'advertising'].includes(source.category))
 
   return <section className="business-dashboard" aria-label="Wallace Shift business dashboard">
-    <aside className="bd-sidebar"><div className="bd-workspace-name"><strong>Wallace Shift</strong><span>Business workspace</span></div><nav aria-label="Business dashboard">{navigation.map(item => <button key={item.id} type="button" aria-current={view === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><Icon name={item.icon} /><span>{item.label}</span>{item.id === 'connections' && sources.some(source => source.status === 'error') && <span className="bd-nav-attention" aria-label="Connection needs attention" />}</button>)}</nav>
-      <div className="bd-workspace-links"><button type="button" onClick={onOpenAgreements}>Agreements & billing <Icon name="arrow" /></button><a href="/mail">Wallace Shift Mail <Icon name="arrow" /></a></div>
+    <aside className="bd-sidebar"><div className="bd-workspace-name"><strong>Wallace Shift</strong><span>Business workspace</span></div><nav aria-label="Business dashboard">{navigation.map(item => <button key={item.id} type="button" disabled={publishingBusy} aria-current={view === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><Icon name={item.icon} /><span>{item.label}</span>{item.id === 'connections' && sources.some(source => source.status === 'error') && <span className="bd-nav-attention" aria-label="Connection needs attention" />}</button>)}</nav>
+      <div className="bd-workspace-links"><button type="button" onClick={onOpenAgreements} disabled={publishingBusy}>Agreements & billing <Icon name="arrow" /></button><a href="/mail" aria-disabled={publishingBusy || undefined} onClick={event => { if (publishingBusy) event.preventDefault() }}>Wallace Shift Mail <Icon name="arrow" /></a></div>
       <div className="bd-sidebar-note"><strong>One source of context.</strong><p>Metrics keep their source, reporting period, and availability so decisions stay grounded.</p></div>
     </aside>
-    <div className="bd-content"><header className="bd-heading"><div><h1 ref={heading} tabIndex={-1}>{titles[view]}</h1><p>{descriptions[view]}</p></div><button className="bd-button bd-refresh" onClick={refresh} disabled={busy || accessExpired}><Icon name="refresh" />{busy ? 'Refreshing…' : 'Refresh data'}</button></header>
-      <div className="bd-toolbar"><label className="bd-period">Reporting period <select value={days} onChange={event => { setDays(Number(event.target.value) as DashboardDays); setSnapshot(null); setBusy(true); setError(''); setAccessExpired(false) }}><option value={7}>Last 7 complete days</option><option value={30}>Last 30 complete days</option><option value={90}>Last 90 complete days</option></select></label><label className="bd-auto"><input type="checkbox" checked={autoRefresh} onChange={event => setAutoRefresh(event.target.checked)} disabled={accessExpired} />Refresh every minute</label>{snapshot && <span className="bd-updated">Snapshot: {timestamp(snapshot.generatedAt)}</span>}</div>
-      {snapshot && <p className="bd-range">{dateLabel(snapshot.range.startDate)} – {dateLabel(snapshot.range.endDate)} · {snapshot.range.timeZone}. Current balances and recent activity use the windows noted below.{snapshot.environment !== 'production' && <strong> {snapshot.environment === 'development' ? 'Local development' : 'Preview'} environment.</strong>}</p>}
-      {error && <div className="bd-error" role="alert"><p>{error}{snapshot && <> Showing the previous snapshot from {timestamp(snapshot.generatedAt)}.</>}</p>{accessExpired ? <a href="/client-portal?view=business">Sign in to the owner account</a> : <button className="bd-text-button" onClick={refresh} disabled={busy}>Try again</button>}</div>}
-      {!snapshot && busy && <div className="bd-loading" role="status"><span className="bd-loading-line" /><h2>Checking your business data</h2><p>Loading available reports and checking each connection.</p></div>}
-      {snapshot && <>
+    <div className="bd-content"><header className="bd-heading"><div><h1 ref={heading} tabIndex={-1}>{titles[view]}</h1><p>{descriptions[view]}</p></div>{view !== 'publishing' && <button className="bd-button bd-refresh" onClick={refresh} disabled={busy || accessExpired}><Icon name="refresh" />{busy ? 'Refreshing…' : 'Refresh data'}</button>}</header>
+      {view !== 'publishing' && <>
+        <div className="bd-toolbar"><label className="bd-period">Reporting period <select value={days} onChange={event => { setDays(Number(event.target.value) as DashboardDays); setSnapshot(null); setBusy(true); setError(''); setAccessExpired(false) }}><option value={7}>Last 7 complete days</option><option value={30}>Last 30 complete days</option><option value={90}>Last 90 complete days</option></select></label><label className="bd-auto"><input type="checkbox" checked={autoRefresh} onChange={event => setAutoRefresh(event.target.checked)} disabled={accessExpired} />Refresh every minute</label>{snapshot && <span className="bd-updated">Snapshot: {timestamp(snapshot.generatedAt)}</span>}</div>
+        {snapshot && <p className="bd-range">{dateLabel(snapshot.range.startDate)} – {dateLabel(snapshot.range.endDate)} · {snapshot.range.timeZone}. Current balances and recent activity use the windows noted below.{snapshot.environment !== 'production' && <strong> {snapshot.environment === 'development' ? 'Local development' : 'Preview'} environment.</strong>}</p>}
+        {error && <div className="bd-error" role="alert"><p>{error}{snapshot && <> Showing the previous snapshot from {timestamp(snapshot.generatedAt)}.</>}</p>{accessExpired ? <a href="/client-portal?view=business">Sign in to the owner account</a> : <button className="bd-text-button" onClick={refresh} disabled={busy}>Try again</button>}</div>}
+        {!snapshot && busy && <div className="bd-loading" role="status"><span className="bd-loading-line" /><h2>Checking your business data</h2><p>Loading available reports and checking each connection.</p></div>}
+      </>}
+      {publishingVisited && <div hidden={view !== 'publishing'}><LinkedInPublisher active={view === 'publishing'} onBusyChange={publishingBusyChanged} /></div>}
+      {view !== 'publishing' && snapshot && <>
         {view === 'overview' && <>
           <div className="bd-coverage"><div><strong>{connected.length} of {sources.length} sources reporting</strong><p>{connected.length < sources.length ? 'Your view will grow as more accounts are connected. Unavailable data is never counted as zero.' : 'All configured sources returned data. Each provider has its own reporting delay.'}</p></div><button className="bd-button" onClick={() => navigate('connections')}>Manage connections <Icon name="arrow" /></button></div>
           {portal && <section className="bd-report bd-business-summary"><div className="bd-section-heading"><div><h2>Business activity</h2><p>{portal.name} · {portal.status === 'connected' ? 'Recorded in your Wallace Shift client workspace' : portal.statusDetail}</p></div><button className="bd-text-button" onClick={onOpenAgreements}>View agreements <Icon name="arrow" /></button></div>{portal.metrics.length > 0 && <Metrics source={portal} compact />}<SourceFootnote source={portal} /></section>}
