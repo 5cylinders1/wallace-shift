@@ -297,11 +297,14 @@ async function linkedInAds(range: Range): Promise<SourceResult> {
   const account = object(await request(`https://api.linkedin.com/rest/adAccounts/${id}`, { headers }))
   if (String(account.id) !== id) throw new ChannelError('auth')
   const restDate = (value: string) => { const [year, month, day] = value.split('-').map(Number); return `(year:${year},month:${month},day:${day})` }
-  const query = new URLSearchParams({
-    q: 'analytics', pivot: 'ACCOUNT', timeGranularity: 'ALL',
-    dateRange: `(start:${restDate(range.startDate)},end:${restDate(range.endDate)})`,
-    accounts: `List(urn:li:sponsoredAccount:${id})`, fields: 'impressions,clicks,costInLocalCurrency,externalWebsiteConversions,dateRange',
-  })
+  // Rest.li needs literal grouping/projection delimiters. Encode resource values
+  // only; URLSearchParams encodes the fields commas and LinkedIn rejects the query.
+  const query = [
+    'q=analytics', 'pivot=ACCOUNT', 'timeGranularity=ALL',
+    `dateRange=(start:${restDate(range.startDate)},end:${restDate(range.endDate)})`,
+    `accounts=List(${encodeURIComponent(`urn:li:sponsoredAccount:${id}`)})`,
+    'fields=impressions,clicks,costInLocalCurrency,externalWebsiteConversions,dateRange',
+  ].join('&')
   const response = object(await request(`https://api.linkedin.com/rest/adAnalytics?${query}`, { headers }))
   if (!Array.isArray(response.elements)) throw new ChannelError('provider')
   const rows = list(response.elements)
