@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { AiOpportunityForm } from '../components/AiOpportunityForm'
 import { PageLink } from '../components/PageLink/PageLink'
-import { aiOffer } from '../content/aiOffer'
+import { AI_OFFER_CONFIRMATION_PATH } from '../content/routeMeta'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
+import { useRoutePath } from '../lib/router'
 import './AiOfferPage.css'
 
 export function AiOfferPage() {
-  useRouteMeta(aiOffer.path)
+  const path = useRoutePath()
+  const isConfirmation = path === AI_OFFER_CONFIRMATION_PATH
+  useRouteMeta(path)
   const pageRef = useRef<HTMLDivElement>(null)
   const [phase, setPhase] = useState<'quiz' | 'result' | 'contact' | 'booking' | 'walkthrough' | 'checkout' | 'success'>('quiz')
   useEffect(() => {
@@ -22,13 +25,13 @@ export function AiOfferPage() {
   }, [])
   return (
     <div className="ao-page qf-page" ref={pageRef}>
-      <a className="qf-skip" href="#main">Skip to {phase === 'quiz' ? 'questions' : 'next steps'}</a>
+      <a className="qf-skip" href="#main">Skip to {phase === 'quiz' && !isConfirmation ? 'questions' : 'next steps'}</a>
       <header className="qf-header">
         <PageLink className="qf-brand" href="/" aria-label="Wallace Shift home">WALLACE SHIFT</PageLink>
         <PageLink href="/contact">Contact us</PageLink>
       </header>
       <main id="main">
-        {phase === 'quiz' && <div className="qf-introduction">
+        {phase === 'quiz' && !isConfirmation && <div className="qf-introduction">
           <h1>Find your first useful AI project.</h1>
           <p>Start with what is holding your business back. Your answers will help identify a practical next step.</p>
         </div>}

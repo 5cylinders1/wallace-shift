@@ -19,6 +19,10 @@ import { aiQualificationFacts } from '../lib/aiQualificationSummary'
 import { aiConsultation } from '../content/aiConsultation'
 import { useQuizSummaryDelivery } from './useQuizSummaryDelivery'
 import type { AiSubscriptionInterval } from '../content/aiSubscriptionOffer'
+import { AI_OFFER_PATH, AI_OFFER_CONFIRMATION_PATH } from '../content/routeMeta'
+import { navigate, useRoutePath } from '../lib/router'
+import { clearAiBookingConfirmation, restoreAiBookingConfirmation, saveAiBookingConfirmation } from '../lib/aiBookingConfirmation'
+import { quizAnswers } from '../lib/aiQualificationAnswers'
 
 type ChoiceField = 'role' | 'revenue' | 'weeklyHours' | 'aiExperience' | 'budget' | 'timing'
 type MultipleField = 'workflows' | 'impacts' | 'aiBarriers'
@@ -81,6 +85,9 @@ function Field({ name, label, error, children, hideLabel = false }: {
 export function AiOpportunityForm({ onPhaseChange }: {
   onPhaseChange: (phase: Phase | 'success') => void
 }) {
+  const isConfirmation = useRoutePath() === AI_OFFER_CONFIRMATION_PATH
+  const [confirmationReady, setConfirmationReady] = useState(false)
+  const bookedValues = useRef<AiOpportunityFormValues | null>(null)
   const [stepIndex, setStepIndex] = useState(0)
   const [phase, setPhase] = useState<Phase>('quiz')
   const [partIndex, setPartIndex] = useState(0)
@@ -122,6 +129,28 @@ export function AiOpportunityForm({ onPhaseChange }: {
   const recommendation = recommendAiOpportunity(values)
   useEffect(() => { onPhaseChange(success ? 'success' : phase) }, [phase, success, onPhaseChange])
 
+  useEffect(() => {
+    if (!isConfirmation) {
+      window.__wsAiBookingConfirmed = false
+      setConfirmationReady(false)
+      setPhase(previous => previous === 'walkthrough' || previous === 'checkout' ? 'booking' : previous)
+      return
+    }
+    const restored = bookedValues.current ?? restoreAiBookingConfirmation()
+    if (!restored) {
+      window.__wsAiBookingConfirmed = false
+      navigate(AI_OFFER_PATH, { replace: true })
+      return
+    }
+    bookedValues.current = restored
+    setValues(restored)
+    setPhase('walkthrough')
+    setConfirmationReady(true)
+    window.__wsAiBookingConfirmed = true
+    window.dispatchEvent(new Event('ws:routechange'))
+  }, [isConfirmation])
+  useEffect(() => () => { window.__wsAiBookingConfirmed = false }, [])
+
   useLayoutEffect(() => {
     if (lastFocusedStep.current === questionKey) return
     lastFocusedStep.current = questionKey
@@ -144,6 +173,10 @@ export function AiOpportunityForm({ onPhaseChange }: {
 
   function update<K extends keyof AiOpportunityFormValues>(key: K, value: AiOpportunityFormValues[K]) {
     if (isLocked()) return
+    if (phase === 'quiz') {
+      bookedValues.current = null
+      clearAiBookingConfirmation()
+    }
     if (phase === 'quiz' || key === 'email' || key === 'businessType') {
       setCheckoutDrafts({}); setCheckoutDraft(undefined)
       setCompletedVideoSrc(null)
@@ -192,6 +225,8 @@ export function AiOpportunityForm({ onPhaseChange }: {
   function moveTo(index: number, part = 0, immediate = false) {
     const direction = index < stepIndex || (index === stepIndex && part < currentPart) ? -1 : 1
     transition(() => {
+      bookedValues.current = null
+      clearAiBookingConfirmation()
       setErrors({})
       setFailure(null)
       setPhase('quiz')
@@ -350,6 +385,10 @@ export function AiOpportunityForm({ onPhaseChange }: {
     </fieldset>
   }
 
+  if (isConfirmation && !confirmationReady) return <section className="qf-introduction" role="status">
+    <h1>Opening your confirmation.</h1>
+  </section>
+
   if (phase === 'checkout' && values.packageId) return <AiPackageCheckout packageId={values.packageId} initialInterval={checkoutInterval} values={values} onBack={() => setPhase('walkthrough')} draft={checkoutDraft} onDraftChange={saveCheckoutDraft} />
 
   if (phase === 'walkthrough') return <AiConsultationWalkthrough
@@ -361,7 +400,15 @@ export function AiOpportunityForm({ onPhaseChange }: {
   if (phase === 'booking' && isAiBookingQualified(values)) return <AiConsultationBooking
       summaryStatus={quizSummary.status}
       onRetrySummary={quizSummary.retry}
-      onScheduled={() => setPhase('walkthrough')}
+      onScheduled={() => {
+        const confirmed = normalizeAiOpportunity({ ...initialAiOpportunityValues, ...quizAnswers(values) })
+        bookedValues.current = confirmed
+        saveAiBookingConfirmation(confirmed)
+        window.__wsAiBookingConfirmed = true
+        setConfirmationReady(true)
+        setPhase('walkthrough')
+        navigate(AI_OFFER_CONFIRMATION_PATH)
+      }}
       onBack={() => moveTo(qualificationSteps.length - 1, 1)}
       onRequestPhone={() => showContact({ nextStep: 'consultation', packageId: '', contactMethod: 'call' })}
     />

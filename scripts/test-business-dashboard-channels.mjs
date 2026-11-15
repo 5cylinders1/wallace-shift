@@ -244,7 +244,14 @@ test('LinkedIn validates account access, preserves API version and uses UTC repo
     const parsed = new URL(url)
     assert.equal(parsed.origin, 'https://api.linkedin.com')
     assert.equal(init.headers['LinkedIn-Version'], '202610')
+    assert.equal(init.headers['X-Restli-Protocol-Version'], '2.0.0')
     if (parsed.pathname.endsWith('/123')) return response({ id: 123, currency: 'GBP' })
+    assert.equal(parsed.pathname, '/rest/adAnalytics')
+    // Rest.li parses these separators before URL decoding; decoded searchParams
+    // assertions alone miss the HTTP 400 caused by encoding the whole value.
+    assert.match(parsed.search, /[?&]fields=impressions,clicks,costInLocalCurrency,externalWebsiteConversions,dateRange(?:&|$)/)
+    assert.match(parsed.search, /[?&]dateRange=\(start:\(year:2026,month:11,day:6\),end:\(year:2026,month:11,day:12\)\)(?:&|$)/)
+    assert.match(parsed.search, /[?&]accounts=List\(urn%3Ali%3AsponsoredAccount%3A123\)(?:&|$)/)
     assert.equal(parsed.searchParams.get('accounts'), 'List(urn:li:sponsoredAccount:123)')
     return response({ elements: [{ impressions: 100, clicks: 10, costInLocalCurrency: '9.25', externalWebsiteConversions: 2, dateRange: { end: { year: 2026, month: 11, day: 12 } } }] })
   }

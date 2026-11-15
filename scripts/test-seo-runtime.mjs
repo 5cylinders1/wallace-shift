@@ -54,7 +54,7 @@ await test('navigation replaces page metadata and schema without carrying privat
   document.head.querySelector = selector => document.querySelector(selector)
   Object.assign(globalThis, { document, HTMLMetaElement: Meta, HTMLLinkElement: Link })
   try {
-    for (const path of ['/services', '/offers/ai-business-integration', '/contact', '/client-portal', '/services', '/about', '/']) {
+    for (const path of ['/services', '/offers/ai-business-integration', '/offers/ai-business-integration/confirmation', '/contact', '/client-portal', '/services', '/about', '/']) {
       useRouteMeta(path)
       const url = `https://wallaceshift.com${path}`
       assert.equal(document.querySelector('link[rel="canonical"]').href, url)
@@ -62,7 +62,7 @@ await test('navigation replaces page metadata and schema without carrying privat
       assert.equal(document.querySelector('meta[property="og:title"]').content, document.title)
       assert.equal(document.querySelector('meta[name="twitter:title"]').content, document.title)
       const robots = document.querySelector('meta[name="robots"]').content
-      const noindex = ['/client-portal', '/offers/ai-business-integration'].includes(path)
+      const noindex = ['/client-portal', '/offers/ai-business-integration', '/offers/ai-business-integration/confirmation'].includes(path)
       assert.equal(robots, noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large')
       const scripts = nodes.filter(node => node.id === 'page-structured-data')
       assert.equal(scripts.length, 1, 'navigating replaces the graph instead of appending another')
