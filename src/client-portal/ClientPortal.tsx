@@ -244,7 +244,7 @@ export function ClientPortal() {
         {codeSent && <button type="button" className="cp-text-button" disabled={busy} onClick={() => setCodeSent(false)}>Use another email or request a new code</button>}
         <small>No password to remember. Only your verified email can open your client records.</small>
       </form>
-    </main> : session.admin && ownerView === 'business' ? <main id="business-workspace"><Suspense fallback={<p className="cp-dashboard-loading" role="status">Opening your business dashboard…</p>}><BusinessDashboard onOpenAgreements={() => changeOwnerView('agreements')} onPublishingBusyChange={setPublishingBusy} /></Suspense></main> : <div className={`cp-workspace ${!session.admin ? 'cp-client-flow' : ''}`}>
+    </main> : session.admin && ownerView === 'business' ? <main id="business-workspace"><Suspense fallback={<p className="cp-dashboard-loading" role="status">Opening your business dashboard…</p>}><BusinessDashboard engagements={agreements} onOpenClient={id => { const client = agreements.find(item => item.id === id); if (!client) return; setShowArchived(Boolean(client.archivedAt)); choose(id); changeOwnerView('agreements') }} onOpenAgreements={() => changeOwnerView('agreements')} onPublishingBusyChange={setPublishingBusy} /></Suspense></main> : <div className={`cp-workspace ${!session.admin ? 'cp-client-flow' : ''}`}>
       {session.admin && <aside className="cp-sidebar"><h2>Client workspace</h2><p className="cp-account">{session.email}</p>
         <button className="cp-secondary cp-dashboard-link" onClick={() => changeOwnerView('business')}>Business dashboard</button>
         <div className="cp-list-filters" role="group" aria-label="Agreement list">

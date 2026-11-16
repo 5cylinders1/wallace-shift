@@ -12,6 +12,8 @@ import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { AiOfferPage } from './pages/AiOfferPage'
+import { ContractorOfferPage } from './pages/ContractorOfferPage'
+import { contractorOfferForPath } from './content/contractorOffers'
 import { WhatNowPage } from './pages/WhatNowPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { scrollToRouteTarget, useRoutePath } from './lib/router'
@@ -81,6 +83,8 @@ function App() {
   }, [path])
 
   const Experiment = experiments[path]
+  const contractorOffer = contractorOfferForPath(path)
+  if (contractorOffer) return <ContractorOfferPage key={contractorOffer.id} offerId={contractorOffer.id} />
   if (path === '/mail') return <Suspense fallback={<p role="status">Loading Wallace Shift Mail…</p>}><MailApp /></Suspense>
   if (path === AI_OFFER_PATH || path === AI_OFFER_CONFIRMATION_PATH) return <AiOfferPage />
   if (path === '/client-portal') return <Suspense fallback={<p role="status">Loading client portal…</p>}><ClientPortal /></Suspense>

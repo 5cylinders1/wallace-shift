@@ -34,19 +34,35 @@ export function portalDashboardSource(entries: Engagement[], range: DashboardSna
   const open = invoices.filter(invoice => invoice.status === 'open' || invoice.status === 'processing')
   const overdue = open.filter(invoice => invoice.due < today)
   const paid = invoices.filter(invoice => invoice.status === 'paid' && inRange(invoice.paidAt, range))
-  const collected = paid.reduce((sum, invoice) => sum + Math.max(0, invoice.amount + invoice.fee - (invoice.refunded ?? 0)), 0) / 100
+  const netRecorded = (invoice: typeof paid[number]) => Math.max(0, invoice.amount + invoice.fee - (invoice.refunded ?? 0))
+  const collected = paid.reduce((sum, invoice) => sum + netRecorded(invoice), 0) / 100
+  const dailyCents = new Map<string, number>()
+  for (const invoice of paid) {
+    const day = businessDate(new Date(invoice.paidAt!))
+    dailyCents.set(day, (dailyCents.get(day) ?? 0) + netRecorded(invoice))
+  }
+  // This is the complete available ledger, so zero means no recorded payments on that day.
+  const points = Array.from({ length: range.days }, (_, index) => {
+    const date = new Date(`${range.startDate}T12:00:00Z`)
+    date.setUTCDate(date.getUTCDate() + index)
+    const day = date.toISOString().slice(0, 10)
+    return { date: day, value: (dailyCents.get(day) ?? 0) / 100 }
+  })
+  const paymentSeries = { id: 'collected', label: 'Recorded payments', format: 'currency' as const, currency: 'USD', points }
   const outstanding = open.reduce((sum, invoice) => sum + invoice.amount, 0) / 100
   const source: DashboardSource = {
     ...sourceBase('portal', 'Wallace Shift client portal', 'operations', 'Agreements, outstanding invoices and recorded payments.'), status: 'connected', checkedAt: now.toISOString(), dataThrough: now.toISOString(), timeZone: TIME_ZONE,
     statusDetail: 'Read directly from this environment’s portal ledger. Includes archived payment records; excludes draft invoices.',
     freshness: 'Current ledger snapshot. Payment records depend on Stripe updates or recorded offline payments; this is not a bank balance.',
     metrics: [
-      { id: 'collected', label: 'Recorded payments', value: collected, format: 'currency', note: `Paid during ${range.startDate} through ${range.endDate}, including recorded fees and less currently recorded refunds. Disputes and settlement timing are not reconciled.` },
-      { id: 'outstanding', label: 'Outstanding invoices', value: outstanding, format: 'currency', note: 'Current open and processing invoice principal, across all dates. Excludes possible future card fees.' },
+      { id: 'collected', label: 'Recorded payments', value: collected, format: 'currency', currency: 'USD', note: `Paid during ${range.startDate} through ${range.endDate}, including recorded fees and less currently recorded refunds. Disputes and settlement timing are not reconciled.` },
+      { id: 'outstanding', label: 'Outstanding invoices', value: outstanding, format: 'currency', currency: 'USD', note: 'Current open and processing invoice principal, across all dates. Excludes possible future card fees.' },
       { id: 'activeEngagements', label: 'Active agreements', value: entries.filter(entry => !entry.archivedAt && entry.state === 'issued').length, format: 'number', note: 'Current issued agreements; includes agreements awaiting a signature.' },
       { id: 'openInvoices', label: 'Open invoices', value: open.length, format: 'number', note: 'Current open or processing invoices, across all dates.' },
       { id: 'overdueInvoices', label: 'Past due invoices', value: overdue.length, format: 'number', note: 'Open or processing invoices with a due date before today in Chicago.' },
     ],
+    series: paymentSeries,
+    seriesList: [paymentSeries],
     setup: { steps: ['Manage agreements and payment records in the client portal.'], href: '/client-portal' },
   }
   return source

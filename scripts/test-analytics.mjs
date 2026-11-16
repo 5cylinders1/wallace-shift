@@ -77,7 +77,7 @@ test('an unconfigured identifier loads neither analytics nor a consent interface
 
 test('loads only on production hosts and explicitly public routes after consent', () => {
   for (const host of ['wallaceshift.com', 'www.wallaceshift.com', 'contractors.wallaceshift.com', 'roofers.wallaceshift.com']) {
-    for (const path of ['/', '/services', '/pricing/', '/about', '/approach', '/contact', '/privacy', '/request-demo/', '/demos/contractors/', '/demos/roofers-offer', '/blog', '/blog/a-useful-crm-guide', '/offers/ai-business-integration', '/what-now']) {
+    for (const path of ['/', '/services', '/pricing/', '/about', '/approach', '/contact', '/privacy', '/request-demo/', '/demos/contractors/', '/demos/roofers-offer', '/blog', '/blog/a-useful-crm-guide', '/offers/ai-business-integration', '/offers/contractor-websites', '/offers/lead-page-follow-up', '/what-now']) {
       const app = browser({ href: `https://${host}${path}`, savedConsent: 'granted' })
       assert.equal(app.scripts.length, 1, `${host}${path}`)
       assert.equal(app.scripts[0].src, `https://www.googletagmanager.com/gtag/js?id=${testId}`)
@@ -453,6 +453,104 @@ test('AI offer events honor consent, privacy signals, and private-route transiti
   app.dispatch({ name: 'offer_application_submit' })
   assert.equal(app.window[`ga-disable-${testId}`], true)
   assert.equal(app.events('offer_application_submit').length, 0)
+})
+
+test('contractor offer views begin on first consent and share page view navigation deduplication', () => {
+  const app = browser({ href: 'https://wallaceshift.com/offers/contractor-websites?email=private%40example.com#demo' })
+  assert.equal(app.events().length, 0)
+  app.dispatch({ name: 'contractor_offer_viewed', value: 'website' })
+  assert.equal(app.events().length, 0, 'mounting before consent does not transmit data')
+  app.choose('granted')
+  assert.equal(app.events('page_view').length, 1)
+  assert.equal(app.events('contractor_offer_viewed').length, 1, 'first consent records the already visible offer')
+  assert.equal(app.events('contractor_offer_viewed')[0][2].offer_id, 'website')
+  assert.equal(app.events('contractor_offer_viewed')[0][2].page_location, 'https://wallaceshift.com/offers/contractor-websites')
+  app.fire('ws:routechange')
+  app.navigate('/offers/contractor-websites#pricing')
+  app.navigate('/offers/contractor-websites?message=private')
+  app.dispatch({ name: 'contractor_offer_viewed', value: 'website' })
+  app.choose('granted')
+  assert.equal(app.events('contractor_offer_viewed').length, 1, 'hashes, private query data, repeated consent, and custom events cannot duplicate the view')
+  app.navigate('/offers/lead-page-follow-up')
+  app.fire('ws:routechange')
+  assert.deepEqual(app.events('contractor_offer_viewed').map(event => event[2].offer_id), ['website', 'lead-follow-up'])
+  app.navigate('/contact')
+  app.dispatch({ name: 'contractor_offer_viewed', value: 'website' })
+  assert.equal(app.events('contractor_offer_viewed').length, 2)
+  app.navigate('/offers/contractor-websites', 'popstate')
+  assert.deepEqual(app.events('contractor_offer_viewed').map(event => event[2].offer_id), ['website', 'lead-follow-up', 'website'])
+  assert.equal(app.events('page_view').length, 4, 'one matching offer event per corresponding deduplicated public page view')
+  assert.doesNotMatch(JSON.stringify(app.events()), /private/)
+})
+
+test('contractor offers measure demonstrations and inquiries with only fixed labels on the matching route', () => {
+  const offers = [
+    ['website', '/offers/contractor-websites'],
+    ['lead-follow-up', '/offers/lead-page-follow-up'],
+  ]
+  const interactions = ['contractor_offer_demo', 'contractor_offer_form_started', 'contractor_offer_failed']
+  for (const [value, path] of offers) {
+    const app = browser({
+      href: `https://wallaceshift.com${path}/?utm_source=google&utm_campaign=contractor_offer&email=private%40example.com&gclid=private-click#private`,
+      savedConsent: 'granted',
+    })
+    assert.equal(app.events('contractor_offer_viewed').length, 1)
+    assert.equal(app.events('contractor_offer_viewed')[0][2].offer_id, value)
+    for (const name of interactions) {
+      app.dispatch({ name, value, email: 'private@example.com', readiness: 'private-answer', message: 'Private client question' })
+      assert.equal(app.events(name).length, 1)
+      assert.equal(app.events(name)[0][2].offer_id, value)
+      assert.equal('inquiry_intent' in app.events(name)[0][2], false)
+    }
+    assert.equal(app.events('generate_lead').length, 0, 'browsing, starting, and failed sends never count as leads')
+    for (const readiness of ['ready', 'questions', 'planning']) {
+      app.dispatch({ name: 'contractor_offer_submitted', value, readiness, nameOfPerson: 'Private Name', phone: '5555555555', decisionRole: 'private-role', timing: 'private-timing', businessName: 'Private Business' })
+    }
+    assert.deepEqual(app.events('generate_lead').map(event => event[2].inquiry_intent), ['ready', 'questions', 'planning'], 'information requests and later plans count as inquiries too')
+    assert.equal(app.events('contractor_offer_submitted').length, 0, 'success maps to one conversion event only')
+    for (const event of app.events('generate_lead')) {
+      assert.equal(event[2].lead_type, 'contractor_offer')
+      assert.equal(event[2].form_surface, 'contractor_offer')
+      assert.equal(event[2].offer_id, value)
+      assert.equal(event[2].page_location, `https://wallaceshift.com${path}?utm_source=google&utm_campaign=contractor_offer`)
+    }
+    for (const readiness of [undefined, null, 1, {}, 'private@example.com']) {
+      app.dispatch({ name: 'contractor_offer_submitted', value, readiness })
+      assert.equal('inquiry_intent' in app.events('generate_lead').at(-1)[2], false, 'unknown optional intent is dropped')
+    }
+    const count = app.events().length
+    for (const name of [...interactions, 'contractor_offer_submitted']) {
+      for (const unknown of [undefined, null, {}, 'private@example.com', offers.find(([offer]) => offer !== value)[0]]) {
+        app.dispatch({ name, value: unknown, readiness: 'ready' })
+      }
+    }
+    app.dispatch({ name: 'contractor_offer_unknown', value })
+    assert.equal(app.events().length, count, 'unknown or mismatched offer events are rejected')
+    assert.doesNotMatch(JSON.stringify(app.events()), /private|Private|5555555555|gclid/)
+    app.navigate('/contact')
+    app.dispatch({ name: 'contractor_offer_submitted', value, readiness: 'ready' })
+    assert.equal(app.events('generate_lead').length, 8, 'other public routes cannot emit this offer lead')
+  }
+})
+
+test('contractor offer events respect consent, privacy signals, withdrawal, and private route transitions', () => {
+  const href = 'https://wallaceshift.com/offers/contractor-websites'
+  const names = ['contractor_offer_viewed', 'contractor_offer_demo', 'contractor_offer_form_started', 'contractor_offer_submitted', 'contractor_offer_failed']
+  for (const settings of [{}, { savedConsent: 'denied' }, { savedConsent: 'granted', navigator: { doNotTrack: '1' } }, { savedConsent: 'granted', navigator: { globalPrivacyControl: true } }]) {
+    const app = browser({ href, ...settings })
+    for (const name of names) app.dispatch({ name, value: 'website', readiness: 'questions' })
+    assert.equal(app.events().length, 0)
+    assert.equal(app.scripts.length, 0)
+  }
+  const app = browser({ href, savedConsent: 'granted' })
+  app.choose('denied')
+  for (const name of names) app.dispatch({ name, value: 'website', readiness: 'questions' })
+  assert.equal(app.events('generate_lead').length, 0)
+  app.choose('granted')
+  app.navigate('/client-portal?engagement=private')
+  for (const name of names) app.dispatch({ name, value: 'website', readiness: 'questions' })
+  assert.equal(app.window[`ga-disable-${testId}`], true)
+  assert.equal(app.events('generate_lead').length, 0)
 })
 
 test('click events exclude addresses, link text, query strings, and unknown downloads', () => {

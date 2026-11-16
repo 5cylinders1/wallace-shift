@@ -13,6 +13,7 @@
     "test:mail": "node scripts/test-mail.mjs",
     "test:mail-browser": "node scripts/test-mail-browser.mjs",
     "test:analytics": "node scripts/test-analytics.mjs",
+    "test:contractor-offers": "node scripts/test-contractor-offers.mjs && node scripts/test-offer-contact.mjs",
     "test:dashboard": "node scripts/test-business-dashboard.mjs && node scripts/test-business-dashboard-channels.mjs",
     "test:dashboard-browser": "node scripts/test-business-dashboard-browser.mjs",
     "test:linkedin-publishing": "node scripts/test-linkedin-publishing.mjs",

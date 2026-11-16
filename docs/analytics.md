@@ -22,10 +22,11 @@ Setup references: [GA4 setup](https://support.google.com/analytics/answer/141834
 - Google tracking loads only after the visitor allows analytics. Reject and accept options have equal prominence. Analytics preferences can reopen the choice. Do Not Track and Global Privacy Control override a saved allowance.
 - The consent preference is stored locally under `ws:analytics-consent:v1`. This preference is separate from private demo and portal authentication.
 - Public studio pages, blog, contractor gallery, roofing offer, and demo request page are included. The unlisted `/offers/ai-business-integration` review page is an explicit public draft: it remains `noindex` and absent from navigation and sitemaps while retaining consent-based analytics. This code change does not publish the draft.
+- The separate website and lead page offers at `/offers/contractor-websites` and `/offers/lead-page-follow-up` also use the shared consent controls. Each offer has its own fixed identifier, so visits, demos, form starts, and acknowledged inquiries can be compared.
 - Only `wallaceshift.com`, `www.wallaceshift.com`, `contractors.wallaceshift.com`, and `roofers.wallaceshift.com` collect data. Localhost and Vercel preview hosts do not load Google tracking.
 - Client portal, admin, agreement, experimental, and private demo pages are excluded. Navigation between the public SPA and private routes uses a new document so the loaded Google tag cannot follow into the client portal.
 - URL fragments and arbitrary query parameters are removed. Only filtered campaign labels remain. Referrers are reduced to their origin. Never put names, email addresses, invitation codes, or other personal information in campaign labels.
-- No advertising tags, session recordings, or form values are collected. Missing or blocked analytics never prevents forms, videos, or navigation from working.
+- No advertising tags, session recordings, or freeform form values are collected. Contractor offer inquiries may include only the fixed intent category `ready`, `questions`, or `planning`. Missing or blocked analytics never prevents forms, videos, or navigation from working.
 
 Static blog documents include the same bootstrap separately from the React app. Public SPA navigation sends a manual, sanitized page view; hash-only navigation is not another page view.
 
@@ -44,12 +45,20 @@ Static blog documents include the same bootstrap separately from the React app. 
 | `offer_application_step` | A validated quiz screen is completed or the optional contact screen opens; `form_step` is only `bottleneck`, `authority`, `business`, `impact`, `experience`, `tools`, `readiness`, or `contact`. |
 | `offer_recommendation_view` | The browser shows a local result; `recommendation_type` is only `package`, `consultation`, or `resource`. This is not a saved lead, confirmed fit, booking, or purchase. |
 | `offer_application_submit` | The AI opportunity API confirms durable receipt. This is not human qualification, a booking, or a sale, and is not also emitted as `generate_lead`. |
+| `contractor_offer_viewed` | One of the two contractor offer pages is shown with analytics consent. The bootstrap emits this alongside its deduplicated `page_view`, including when consent is first granted after the page has loaded. Carries only its fixed `offer_id`. |
+| `contractor_offer_demo` | A visitor starts the website preview or interacts with the lead workflow demonstration. Carries only `offer_id`; this is not a lead. |
+| `contractor_offer_form_started` | The visitor first interacts with the contractor offer inquiry form. Carries only `offer_id`. |
+| `contractor_offer_failed` | The offer inquiry encounters a submission/service failure. Carries only `offer_id`, never an error message or entered data. |
 | `email_clicked` / `phone_clicked` | A visitor clicked an email or phone link. This does not prove a message or call occurred. |
 | `resource_download_clicked` | A visitor clicked an approved PDF or spreadsheet resource link. This does not prove a download completed. |
 
 Event labels and demo IDs come from fixed allowlists. Freeform answers, names, email addresses, error messages, and form contents do not enter event parameters. The configured event-scoped custom dimensions `lead_type`, `form_surface`, and `demo_id` support reporting by enquiry type, form, and demo. Do not create user-scoped identifiers. Google may also send its standard session and engagement events after consent; the manual controls above apply to page views and the listed interactions.
 
 AI opportunity events are accepted only on the exact offer route. They carry the fixed `offer_id` value `ai_business_integration` and, for step events, one allowed screen name. They never carry business answers, budgets, email addresses, lead IDs, or advertising click IDs. No new Google account settings, key events, custom dimensions, advertising tags, or offline conversions are configured by this local implementation.
+
+Contractor offer events are accepted only when their fixed `offer_id` matches the current route: `website` for `/offers/contractor-websites`, or `lead-follow-up` for `/offers/lead-page-follow-up`. The frontend dispatches `contractor_offer_submitted` only after the contact API acknowledges the inquiry. The bootstrap maps that event to **one `generate_lead`**, with `lead_type: contractor_offer`, `form_surface: contractor_offer`, and `offer_id`. It does not send an additional success event. An optional allowlisted `inquiry_intent` distinguishes `ready`, `questions`, and `planning`; requests for information remain inquiries, not rejected or lesser conversions. An unknown intent is omitted, and an unknown or mismatched offer is rejected. No business names, timing answers, decision roles, messages, contact information, or lead identifiers are sent. This records an acknowledged inquiry, not a qualified opportunity, inbox delivery, or a sale.
+
+To compare these offers in GA4 reports after deployment, register **event scoped** custom dimensions for `offer_id` and `inquiry_intent` if they are not already present. The code does not change account settings. Keep `generate_lead` as the only conversion event for these submissions, and assess qualification and sales separately. A high inquiry count alone does not establish a winning offer.
 
 ## Using the reports
 

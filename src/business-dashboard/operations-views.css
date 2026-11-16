@@ -1,0 +1,86 @@
+.bdo-view { color: var(--bd-ink); min-width: 0; }
+.bdo-view [hidden], .bdo-view[hidden] { display: none !important; }
+.bdo-section { padding: 26px 0; border-top: 1px solid var(--bd-line); }
+.bdo-section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+.client-portal .bdo-view h2 { font-size: 19px; line-height: 1.4; letter-spacing: -.02em; font-weight: 650; }
+.client-portal .bdo-view h3 { font-size: 14px; line-height: 1.5; font-weight: 650; letter-spacing: -.01em; }
+.bdo-section-heading p, .bdo-view .bdo-source-note, .bdo-workspace-note { color: var(--bd-muted); font-size: 12px; line-height: 1.75; max-width: 75ch; }
+.bdo-section-heading p { margin-top: 5px; }
+.bdo-view .bdo-workspace-note { margin-top: -8px; margin-bottom: 23px; }
+.bdo-view .bdo-source-note { margin-top: 18px; }
+.bdo-view button:disabled { opacity: .55; cursor: not-allowed; }
+.bdo-mail-activity { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin: 25px 0; }
+.bdo-mail-activity dt { font-size: 13px; font-weight: 600; color: #3c5464; }
+.bdo-mail-activity dd { margin: 4px 0 12px; font-size: 27px; line-height: 1.5; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.bdo-mail-activity dd span { display: block; color: var(--bd-muted); font-size: 11px; line-height: 1.7; letter-spacing: normal; margin-top: 6px; max-width: 58ch; }
+.bdo-bar-track { height: 9px; background: #dce5eb; border-radius: 3px; overflow: hidden; }
+.bdo-bar-track span { height: 100%; display: block; background: var(--bd-azure); border-radius: inherit; }
+.bdo-bar-attention span { background: #956329; }
+.bdo-empty { padding: 22px 24px; background: #e4ecef; border-radius: 8px; }
+.bdo-empty p, .bdo-setup-explanation p { margin-top: 7px; color: #405868; font-size: 12px; line-height: 1.8; max-width: 75ch; }
+.bdo-provenance { font-size: 11px; color: var(--bd-muted); line-height: 1.8; margin-top: 20px; max-width: 95ch; }
+.bdo-provenance p + p { margin-top: 4px; }
+.bdo-capabilities { margin: 18px 0 0; }
+.bdo-capabilities > div { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 24px; padding: 17px 0; border-bottom: 1px solid var(--bd-line); }
+.bdo-capabilities > div:last-child { border: 0; }
+.bdo-capabilities dt { font-size: 13px; font-weight: 650; }
+.bdo-capabilities dd { margin: 0; max-width: 75ch; color: var(--bd-muted); font-size: 12px; line-height: 1.75; }
+.bdo-client-tools { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 18px 24px; margin: 24px 0 18px; }
+.bdo-search { display: grid; gap: 7px; width: min(370px, 100%); font-size: 12px; font-weight: 600; }
+.bdo-search input { min-width: 0; width: 100%; min-height: 44px; border: 1px solid #a7b9c5; border-radius: 6px; background: #f8fafb; padding: 10px 12px; color: var(--bd-ink); font-size: 13px; caret-color: var(--bd-azure); }
+.bdo-search input::placeholder { color: #5b6a75; }
+.bdo-checkbox { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 12px; color: var(--bd-muted); cursor: pointer; }
+.bdo-checkbox input { width: 17px; height: 17px; margin: 0; accent-color: var(--bd-azure); }
+.bdo-list-count { font-size: 11px; color: var(--bd-muted); margin-bottom: 10px; line-height: 1.7; }
+.bdo-clients { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--bd-line); }
+.bdo-clients > li { display: grid; grid-template-columns: minmax(160px, .8fr) minmax(0, 1.8fr); gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--bd-line); }
+.bdo-client-identity { display: grid; align-content: start; gap: 6px; overflow-wrap: anywhere; }
+.bdo-client-identity strong { font-size: 14px; line-height: 1.5; font-weight: 650; }
+.bdo-client-identity > span { font-size: 12px; line-height: 1.6; color: var(--bd-muted); }
+.bdo-client-identity small { font-size: 11px; color: var(--bd-muted); margin-top: 3px; }
+.bdo-client-agreements { min-width: 0; }
+.bdo-agreement { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 0 14px; margin-bottom: 14px; border-bottom: 1px solid var(--bd-line); }
+.bdo-agreement:last-child { padding-bottom: 0; margin-bottom: 0; border: 0; }
+.bdo-agreement > div { min-width: 0; }
+.bdo-agreement > div > span { display: block; color: var(--bd-muted); font-size: 11px; font-variant-numeric: tabular-nums; line-height: 1.8; }
+.bdo-record-link { display: block; border: 0; background: transparent; min-height: 44px; margin-top: -8px; padding: 8px 0; text-align: left; font-size: 13px !important; font-weight: 650 !important; color: var(--bd-azure); overflow-wrap: anywhere; }
+.bdo-record-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.bdo-record-state { flex-shrink: 0; font-size: 11px; color: #516470; line-height: 1.7; }
+.bdo-record-issued { color: #236044; }
+.bdo-record-draft { color: #82511f; }
+.bdo-setup-explanation { padding: 21px 24px; margin: 6px 0 26px; background: #e3ebf1; border-radius: 8px; }
+.bdo-publishing-account { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px 0; border-top: 1px solid var(--bd-line); border-bottom: 1px solid var(--bd-line); }
+.bdo-account-identity { display: flex; align-items: flex-start; gap: 16px; min-width: 0; }
+.bdo-account-identity > img { width: 44px; height: 44px; object-fit: contain; margin-top: 2px; }
+.bdo-account-identity p { margin-top: 3px; font-size: 12px; color: var(--bd-muted); }
+.bdo-connection-state { display: block; font-size: 11px; color: #82511f; margin-top: 10px; }
+.bdo-connection-confirmed { color: #236044; }
+.bdo-account-action { display: grid; justify-items: end; gap: 8px; }
+.bdo-account-action span { color: var(--bd-muted); font-size: 11px; }
+.bdo-account-detail { padding: 17px 0 0; }
+.bdo-account-detail > p { font-size: 12px; color: #405868; line-height: 1.8; max-width: 75ch; }
+.bdo-account-detail > p[role="alert"] { color: #973e2e; }
+.bdo-account-detail > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.bdo-account-detail > div > span { font-size: 11px; color: var(--bd-muted); }
+.bdo-posting-navigation { padding: 0 0 24px; }
+.bdo-posting-navigation h2 { margin-top: 12px; }
+.bdo-posting-navigation p { font-size: 12px; line-height: 1.7; color: var(--bd-muted); margin-top: 7px; max-width: 75ch; }
+.bdo-view h2:focus { outline: none; }
+@media (max-width: 850px) {
+  .bdo-clients > li { grid-template-columns: 1fr; gap: 16px; }
+  .bdo-client-identity { grid-template-columns: 1fr auto; gap: 4px 16px; }
+  .bdo-client-identity > span { grid-column: 1; }
+  .bdo-client-identity small { grid-row: 1; grid-column: 2; }
+}
+@media (max-width: 600px) {
+  .bdo-section-heading, .bdo-publishing-account { flex-direction: column; align-items: flex-start; }
+  .bdo-section-heading { gap: 14px; }
+  .bdo-mail-activity { grid-template-columns: 1fr; gap: 27px; }
+  .bdo-capabilities > div { grid-template-columns: 1fr; gap: 6px; }
+  .bdo-empty, .bdo-setup-explanation { padding: 18px; }
+  .bdo-account-action { justify-items: start; }
+  .bdo-agreement { flex-direction: column; gap: 6px; }
+  .bdo-client-identity { grid-template-columns: 1fr; }
+  .bdo-client-identity small { grid-row: auto; grid-column: 1; }
+  .bdo-account-detail > div { flex-wrap: wrap; gap: 3px 16px; }
+}

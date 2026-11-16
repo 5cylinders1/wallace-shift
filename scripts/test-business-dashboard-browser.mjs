@@ -30,11 +30,22 @@ function snapshot(days) {
     { id: 'outstanding', label: 'Outstanding invoices', value: 500, format: 'currency', note: 'Sample current balance.' },
     { id: 'activeEngagements', label: 'Active agreements', value: 2, format: 'number', note: 'Sample agreement count.' },
   ]
-  sources[1].metrics = [{ id: 'sessions', label: 'Sessions', value: 42, format: 'number', note: 'Sample selected-period traffic.' }]
-  sources[1].series = { label: 'Sessions', points: [{ date: '2026-11-10', value: 1 }, { date: '2026-11-12', value: 42 }] }
+  sources[1].metrics = [
+    { id: 'sessions', label: 'Sessions', value: 43, format: 'number', note: 'Sample selected-period traffic.' },
+    { id: 'activeUsers', label: 'Active users', value: 35, format: 'number', note: 'Sample active users for the selected period.' },
+    { id: 'sessionKeyEventRate', label: 'Session key event rate', value: 7, format: 'percent', note: 'Sample percentage of sessions containing a key event.' },
+  ]
+  sources[1].series = { id: 'sessions', label: 'Sessions', format: 'number', points: [{ date: '2026-11-10', value: 1 }, { date: '2026-11-12', value: 42 }] }
   sources[1].table = { title: 'Top pages', columns: [{ key: 'page', label: 'Page' }, { key: 'views', label: 'Views', format: 'number' }], rows: [{ page: '/sample-page', views: 42 }] }
-  sources[2].metrics = [{ id: 'clicks', label: 'Search clicks', value: 12, format: 'number', note: 'Sample search report.' }]
+  sources[2].metrics = [
+    { id: 'clicks', label: 'Search clicks', value: 12, format: 'number', note: 'Sample search report.' },
+    { id: 'position', label: 'Average position', value: 8.5, format: 'decimal', note: 'Sample impression weighted position, not a live keyword rank.' },
+  ]
   sources[2].table = { title: 'Top search queries', columns: [{ key: 'query', label: 'Search query' }, { key: 'position', label: 'Avg. position', format: 'decimal' }], rows: [{ query: 'sample search query', position: 8.5 }] }
+  Object.assign(sources.find(source => source.id === 'facebook'), {
+    statusDetail: 'DASHBOARD_FACEBOOK_PAGE_ACCESS_TOKEN is missing or empty. Update the server environment, then restart or redeploy.',
+    checkedAt: null, dataThrough: null, timeZone: undefined,
+  })
   return {
     schemaVersion: 1, generatedAt: time, environment: 'development',
     range: { days, startDate: days === 7 ? '2026-11-06' : days === 90 ? '2026-08-15' : '2026-10-14', endDate: '2026-11-12', timeZone: 'America/Chicago' },
@@ -57,61 +68,105 @@ await page.route('**/*', async route => {
     if (responseMode === 'expired') return route.fulfill({ status: 401, json: { ok: false, error: 'access_required' } })
     return route.fulfill({ json: { ok: true, snapshot: snapshot(Number(url.searchParams.get('days'))) } })
   }
+  if (url.pathname === '/api/business-publishing') {
+    assert.equal(request.method(), 'GET', 'Browser verification must not upload or publish posts')
+    return route.fulfill({ json: { ok: true, snapshot: {
+      page: { id: '143962288', name: 'Wallace Shift', url: 'https://www.linkedin.com/company/wallace-shift/' },
+      connection: { status: 'ready', detail: 'Sample Page access for browser verification only. No provider account is connected.' },
+      limits: { text: 3000, imageBytes: 4 * 1024 * 1024, videoBytes: 200 * 1024 * 1024 }, history: [],
+    } } })
+  }
   if (url.pathname === '/api/ai-booking') return route.fulfill({ json: { ok: true, configured: false, connected: false } })
   if (url.pathname.startsWith('/api/')) throw new Error(`Unexpected API request: ${url.pathname}`)
   return route.continue()
 })
 try {
   await page.goto(`${base}/client-portal?view=business`)
-  await page.getByRole('heading', { name: 'Business overview', exact: true }).waitFor()
+  await page.getByRole('heading', { name: 'Dashboard', exact: true }).waitFor()
   await page.getByText('3 of 9 sources reporting').waitFor()
   assert.equal(await page.locator('main').count(), 1)
+  await page.getByText('Refresh options', { exact: true }).click()
   assert.equal(await page.getByLabel('Refresh every minute').isChecked(), false)
+  await page.getByText('Refresh options', { exact: true }).click()
   await page.screenshot({ path: `${output}/overview-desktop.png`, fullPage: true })
-  await page.getByRole('button', { name: 'Website & SEO', exact: true }).click()
+  await page.getByRole('button', { name: 'Website Analytics', exact: true }).click()
   await page.getByRole('cell', { name: '/sample-page' }).waitFor()
-  await page.getByRole('cell', { name: 'sample search query' }).waitFor()
-  await page.getByRole('heading', { name: 'Sessions by day' }).waitFor()
+  assert.equal(await page.getByRole('cell', { name: 'sample search query' }).count(), 0, 'Website and SEO reports have separate pages')
+  await page.getByRole('heading', { name: 'Sessions over time' }).waitFor()
   await page.getByText('View daily data', { exact: true }).click()
   await page.getByRole('cell', { name: 'Nov 10, 2026' }).waitFor()
   await page.screenshot({ path: `${output}/website-desktop.png`, fullPage: true })
   await page.getByText('Sample reporting retrieved. Currently unavailable: live visitor count.', { exact: true }).waitFor()
   await page.getByLabel('Reporting period').selectOption('7')
-  await page.getByText(/Nov 6, 2026 – Nov 12, 2026/).waitFor()
+  await page.getByText(/Nov 6, 2026 to Nov 12, 2026/).waitFor()
   assert.equal(requests.at(-1), '7')
+  await page.getByRole('button', { name: 'SEO Analytics', exact: true }).click()
+  await page.getByRole('cell', { name: 'sample search query' }).waitFor()
+  await page.getByText('No daily trend is available from this report.', { exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Email', exact: true }).click()
+  assert.equal(await page.getByRole('link', { name: 'Open mail composer', exact: true }).getAttribute('href'), '/mail')
+  await page.getByRole('heading', { name: 'Connect your mail session', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Clients', exact: true }).click()
+  await page.getByRole('heading', { name: 'No client records to show', exact: true }).waitFor()
+  assert.equal(await page.getByLabel('Reporting period').count(), 0, 'Client records are not reporting-period filtered')
+  await page.getByRole('button', { name: 'Paid Ads', exact: true }).click()
+  await page.getByRole('button', { name: 'Google Ads', exact: true }).click()
+  await page.getByRole('heading', { name: 'Google Ads', exact: true }).waitFor()
+  assert.equal(new URL(page.url()).searchParams.get('account'), 'google-ads')
+  await page.getByRole('button', { name: 'Back to Paid Ads', exact: true }).click()
+  await page.getByRole('heading', { name: 'Advertising accounts', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Social Media Posting', exact: true }).click()
+  await page.getByRole('button', { name: 'Add account', exact: true }).click()
+  await page.getByRole('heading', { name: 'Additional publishing accounts need separate setup', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Open posting workspace', exact: true }).click()
+  const draftText = 'Browser verification draft only. Do not publish.'
+  await page.getByLabel('Post text', { exact: true }).fill(draftText)
+  await page.getByRole('button', { name: 'Website Analytics', exact: true }).click()
+  await page.getByRole('button', { name: 'Social Media Posting', exact: true }).click()
+  assert.equal(await page.getByLabel('Post text', { exact: true }).inputValue(), draftText, 'Navigating dashboard pages must preserve the draft')
+  await page.getByRole('button', { name: 'Back to publishing accounts', exact: true }).click()
+  await page.getByRole('button', { name: 'Open posting workspace', exact: true }).click()
+  assert.equal(await page.getByLabel('Post text', { exact: true }).inputValue(), draftText, 'Returning to account overview must preserve the draft')
+  await page.getByLabel('Post text', { exact: true }).fill('')
+  await page.getByRole('button', { name: 'Back to publishing accounts', exact: true }).click()
   await page.getByRole('button', { name: 'Connections', exact: true }).click()
   for (const name of ['Google Ads', 'Meta Ads', 'LinkedIn Ads', 'Instagram', 'Facebook']) {
     const details = page.locator('details').filter({ has: page.locator('summary strong', { hasText: new RegExp(`^${name}$`) }) })
     await details.locator('summary').click()
     await details.getByText('Sample setup instruction. Do not enter real credentials in this test.').waitFor({ state: 'visible' })
+    if (name === 'Facebook') {
+      await details.getByText(/DASHBOARD_FACEBOOK_PAGE_ACCESS_TOKEN is missing or empty/).waitFor()
+      assert.equal(await details.locator('.bd-provenance span').textContent(), 'Not checked')
+    }
   }
   assert.equal(await page.getByText('Gmail / Google Workspace', { exact: true }).count(), 0)
   assert.equal(await page.getByText('Additional CRM', { exact: true }).count(), 0)
   await page.screenshot({ path: `${output}/connections-desktop.png`, fullPage: true })
-  await page.getByRole('button', { name: 'Agent briefing', exact: true }).click()
+  await page.getByRole('button', { name: 'Business briefing', exact: true }).click()
   const downloaded = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Download data snapshot' }).click()
+  await page.getByRole('button', { name: 'Download source snapshot' }).click()
   const artifact = await downloaded
   const exported = JSON.parse(await readFile(await artifact.path(), 'utf8'))
   assert.equal(exported.range.days, 7)
   assert.equal(exported.agentPolicy.executionEnabled, false)
   assert.equal(exported.sources.length, 9)
   await page.setViewportSize({ width: 390, height: 844 })
-  for (const label of ['Overview', 'Website & SEO', 'Social & advertising', 'Agent briefing', 'Connections']) {
-    await page.getByRole('button', { name: label, exact: true }).click()
+  for (const label of ['Dashboard', 'Website Analytics', 'SEO Analytics', 'Email', 'Clients', 'Paid Ads', 'Social Media', 'Social Media Posting', 'Business briefing', 'Connections']) {
+    await page.getByLabel('Page', { exact: true }).selectOption({ label })
+    await page.getByRole('heading', { level: 1, name: label, exact: true }).waitFor()
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${label} must fit mobile viewport`)
   }
-  await page.getByRole('button', { name: 'Overview', exact: true }).click()
+  await page.getByLabel('Page', { exact: true }).selectOption({ label: 'Dashboard' })
   await page.screenshot({ path: `${output}/overview-mobile.png`, fullPage: true })
   responseMode = 'error'
-  await page.getByRole('button', { name: 'Refresh data', exact: true }).click()
+  await page.getByRole('button', { name: 'Refresh reports', exact: true }).click()
   await page.getByRole('alert').getByText(/Showing the previous snapshot/).waitFor()
   assert.equal(await page.getByText('3 of 9 sources reporting').count(), 1)
   responseMode = 'ok'
   await page.getByRole('button', { name: 'Try again', exact: true }).click()
   await page.getByRole('alert').waitFor({ state: 'detached' })
   responseMode = 'expired'
-  await page.getByRole('button', { name: 'Refresh data', exact: true }).click()
+  await page.getByRole('button', { name: 'Refresh reports', exact: true }).click()
   await page.getByRole('link', { name: 'Sign in to the owner account' }).waitFor()
   assert.equal(await page.getByText('3 of 9 sources reporting').count(), 0, 'Expired session must clear business data')
   owner = false; responseMode = 'ok'
@@ -120,9 +175,10 @@ try {
   await page.getByRole('heading', { name: 'Your workspace is ready.' }).waitFor()
   assert.equal(requests.length, before, 'Client account must never request owner reports')
   owner = true
+  await page.setViewportSize({ width: 1440, height: 1080 })
   await page.goto(`${base}/client-portal`)
   await page.getByRole('button', { name: 'Business dashboard', exact: true }).click()
-  await page.getByRole('heading', { name: 'Business overview', exact: true }).waitFor()
+  await page.getByRole('heading', { name: 'Dashboard', exact: true }).waitFor()
   await page.getByRole('button', { name: 'Agreements & billing', exact: true }).click()
   await page.getByRole('heading', { name: 'No current agreements.' }).waitFor()
   assert.equal(new URL(page.url()).searchParams.has('view'), false)
