@@ -16,11 +16,18 @@
     '/', '/services', '/pricing', '/about', '/approach', '/contact', '/privacy',
     '/request-demo', '/demos/contractors', '/demos/roofers-offer', '/blog',
     '/offers/ai-business-integration', '/offers/ai-business-integration/confirmation', '/what-now',
+    '/offers/contractor-websites', '/offers/lead-page-follow-up',
   ])
   const offerPath = '/offers/ai-business-integration'
   const offerConfirmationPath = `${offerPath}/confirmation`
   const offerSteps = new Set(['bottleneck', 'authority', 'business', 'impact', 'experience', 'tools', 'context', 'readiness', 'contact'])
   const offerRecommendations = new Set(['package', 'consultation', 'resource'])
+  const contractorOffers = new Map([
+    ['website', '/offers/contractor-websites'],
+    ['lead-follow-up', '/offers/lead-page-follow-up'],
+  ])
+  const contractorOfferEvents = new Set(['contractor_offer_demo', 'contractor_offer_form_started', 'contractor_offer_submitted', 'contractor_offer_failed'])
+  const inquiryIntents = new Set(['ready', 'questions', 'planning'])
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
   const surfaces = new Set(['home_hero', 'contact_form', 'roofing_offer'])
   // Demos whose "Discuss my website" link carries context to /contact.
@@ -176,6 +183,10 @@
     // URL as our manual events, never the raw address bar or document title.
     command('set', parameters(url))
     send('page_view')
+    // Views belong to consented navigation, not a React mount that may happen
+    // before the visitor opts in. Share page_view's sanitized URL deduplication.
+    const contractorOffer = [...contractorOffers].find(([, path]) => path === url.pathname)
+    if (contractorOffer) send('contractor_offer_viewed', { offer_id: contractorOffer[0] })
   }
 
   function showPreferences() {
@@ -293,6 +304,18 @@
       send(name, { demo_id: value })
     } else if ((name === 'quiz_started' || name === 'quiz_completed') && value === undefined) {
       send(name)
+    } else if (contractorOfferEvents.has(name) && contractorOffers.has(value) && contractorOffers.get(value) === publicUrl(window.location.href)?.pathname) {
+      // The page dispatches success only after API acknowledgement. Convert it
+      // to one lead event, not a second conversion alongside a success event.
+      // Only the fixed offer and optional intent category may reach analytics.
+      if (name === 'contractor_offer_submitted') {
+        send('generate_lead', {
+          lead_type: 'contractor_offer', form_surface: 'contractor_offer', offer_id: value,
+          ...(inquiryIntents.has(detail.readiness) ? { inquiry_intent: detail.readiness } : {}),
+        })
+      } else {
+        send(name, { offer_id: value })
+      }
     } else if (publicUrl(window.location.href)?.pathname === offerPath) {
       // Only a fixed offer ID and screen names are collected. Ignore extra
       // detail properties, including answers, contact data, and lead IDs.

@@ -79,7 +79,12 @@ beforeEach(() => {
       if (googleMode === 'empty') return Response.json(report(body.metrics.map(item => item.name), []))
       if (body.dimensions?.[0]?.name === 'date') return Response.json(report(['sessions'], [gaRow([11], ['20261112']), gaRow([9], ['20261110'])]))
       if (body.dimensions?.[0]?.name === 'pagePath') return Response.json(report(['screenPageViews'], [gaRow([17], ['/services'])]))
-      return Response.json(report(['activeUsers', 'sessions', 'screenPageViews', 'keyEvents'], [gaRow([20, 24, 35, 2])]))
+      if (googleMode === 'unsupported-rate' && body.metrics.some(metric => metric.name === 'sessionKeyEventRate')) return Response.json({ error: { status: 'INVALID_ARGUMENT', message: 'sessionKeyEventRate is not a valid metric. private upstream detail' } }, { status: 400 })
+      if (googleMode === 'summary-auth-error') return Response.json({ error: { status: 'PERMISSION_DENIED', message: 'sessionKeyEventRate private upstream detail' } }, { status: 403 })
+      if (googleMode === 'summary-other-error') return Response.json({ error: { status: 'INVALID_ARGUMENT', message: 'Invalid date range. private upstream detail' } }, { status: 400 })
+      const baseNames = ['activeUsers', 'sessions', 'screenPageViews', 'keyEvents']
+      if (googleMode === 'missing-rate' || !body.metrics.some(metric => metric.name === 'sessionKeyEventRate')) return Response.json(report(baseNames, [gaRow([20, 24, 35, 2])]))
+      return Response.json(report([...baseNames, 'sessionKeyEventRate'], [gaRow([20, 24, 35, 2, googleMode === 'invalid-rate' ? 5 : 1 / 24])]))
     }
     if (String(url).includes('googleapis.com/webmasters/')) {
       assert.ok(String(url).includes('sc-domain%3Awallaceshift.com'))
@@ -149,6 +154,10 @@ test('portal summaries exclude draft invoices, retain archived receipts, and dis
   assert.equal(metric('outstanding'), 70)
   assert.equal(metric('overdueInvoices'), 1)
   assert.equal(metric('activeEngagements'), 1)
+  assert.equal(source.series.currency, 'USD')
+  assert.equal(source.series.points.length, 7)
+  assert.deepEqual(source.series.points.filter(point => point.value), [{ date: '2026-11-10', value: 103 }])
+  assert.equal(source.series.points.reduce((total, point) => total + point.value, 0), metric('collected'))
   assert.equal(dashboardBrief([source])[0].id, 'past-due')
   assert.ok(!JSON.stringify(source).includes('paidAt'))
 })
@@ -158,6 +167,9 @@ test('Google reporting parses totals, page/query tables and an independent last-
   assert.equal(ga.status, 'connected'); assert.equal(search.status, 'connected')
   assert.equal(ga.metrics.find(metric => metric.id === 'sessions').value, 24)
   assert.equal(ga.metrics.find(metric => metric.id === 'realtimeUsers').value, 3)
+  assert.ok(Math.abs(ga.metrics.find(metric => metric.id === 'sessionKeyEventRate').value - 100 / 24) < 1e-12)
+  assert.equal(ga.account.id, '561794453')
+  assert.deepEqual(ga.seriesList.map(series => series.id), ['sessions'])
   assert.equal(ga.dataThrough, '2026-11-12')
   assert.deepEqual(ga.series.points.map(point => point.date), ['2026-11-10', '2026-11-12'])
   assert.equal(ga.table.rows[0].page, '/services')
@@ -165,8 +177,39 @@ test('Google reporting parses totals, page/query tables and an independent last-
   assert.equal(search.metrics.find(metric => metric.id === 'position').value, 12.7)
   assert.equal(search.timeZone, 'America/Los_Angeles')
   assert.equal(search.table.rows[0].query, 'business systems kansas city')
+  assert.equal(search.table.rows[0].ctr, 4)
+  assert.deepEqual(search.seriesList.map(series => [series.id, series.points[0].value]), [['clicks', 8], ['impressions', 200], ['ctr', 4], ['position', 12.7]])
   assert.equal(requests.filter(request => request.url === 'https://oauth2.googleapis.com/token').length, 1)
   assert.ok(!JSON.stringify([ga, search]).includes('secret-'))
+})
+test('missing or invalid session rate never becomes key events divided by sessions', async () => {
+  configureGoogle()
+  for (const mode of ['missing-rate', 'invalid-rate']) {
+    googleMode = mode
+    const [ga] = await loadBusinessDashboardGoogle(range, now)
+    assert.equal(ga.status, 'connected')
+    assert.equal(ga.metrics.find(metric => metric.id === 'sessions').value, 24)
+    assert.ok(!ga.metrics.some(metric => metric.id === 'sessionKeyEventRate'))
+    assert.match(ga.statusDetail, /unavailable: session key event rate/)
+  }
+})
+test('only a named unsupported optional rate retries the summary without it', async () => {
+  configureGoogle(); googleMode = 'unsupported-rate'
+  const [ga] = await loadBusinessDashboardGoogle(range, now)
+  const summaries = () => requests.filter(request => request.url.includes('analyticsdata.googleapis.com') && request.url.endsWith(':runReport') && !JSON.parse(request.init.body).dimensions)
+  assert.equal(ga.status, 'connected')
+  assert.equal(ga.metrics.find(metric => metric.id === 'sessions').value, 24)
+  assert.ok(!ga.metrics.some(metric => metric.id === 'sessionKeyEventRate'))
+  assert.equal(summaries().length, 2)
+  assert.equal(JSON.parse(summaries()[1].init.body).metrics.some(metric => metric.name === 'sessionKeyEventRate'), false)
+  assert.ok(!JSON.stringify(ga).includes('private upstream detail'))
+  for (const mode of ['summary-auth-error', 'summary-other-error']) {
+    googleMode = mode; requests.length = 0
+    const [failed] = await loadBusinessDashboardGoogle(range, now)
+    assert.equal(failed.status, 'error')
+    assert.equal(summaries().length, 1)
+    assert.ok(!JSON.stringify(failed).includes('private upstream detail'))
+  }
 })
 test('a failed realtime report preserves verified historical data without a fabricated zero live count', async () => {
   configureGoogle(); googleMode = 'realtime-error'
@@ -213,6 +256,8 @@ test('valid empty provider reports return zero totals; malformed successes are u
   assert.equal(ga.metrics.find(metric => metric.id === 'sessions').value, 0)
   assert.equal(search.metrics.find(metric => metric.id === 'clicks').value, 0)
   assert.ok(!search.metrics.some(metric => metric.id === 'position'))
+  assert.ok(!search.metrics.some(metric => metric.id === 'ctr'))
+  assert.ok(!ga.metrics.some(metric => metric.id === 'sessionKeyEventRate'))
   googleMode = 'malformed-ga'; [ga, search] = await loadBusinessDashboardGoogle(range, now)
   assert.equal(ga.status, 'error'); assert.deepEqual(ga.metrics, []); assert.equal(search.status, 'connected')
   googleMode = 'malformed-search'; [ga, search] = await loadBusinessDashboardGoogle(range, now)

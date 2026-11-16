@@ -22,6 +22,8 @@ The production alias routes through the existing `api/demo-admin.ts` function to
 
 All reporting credentials are server-only variables beginning `DASHBOARD_`. Never prefix them `VITE_`, paste them into source files, or expose them in browser storage. Configure them in the deployment environment or ignored `.env.local`; restart the local server after changing them. This initial connection flow is operator-configured. It does not provide browser OAuth onboarding, account discovery, or automatic token renewal for every provider.
 
+Social and advertising connection errors identify the first missing, empty, or malformed environment variable without displaying its value. A source marked `Not checked` has not reached its provider. For Facebook, use only the numeric Page ID in `DASHBOARD_FACEBOOK_PAGE_ID` and a Page token in `DASHBOARD_FACEBOOK_PAGE_ACCESS_TOKEN`. After correcting production variables, create a new production deployment and refresh the dashboard.
+
 ## Google Analytics and Search Console
 
 Use a dedicated Google OAuth client and a refresh token granted the required reporting scopes. Existing Google Calendar authorization does not grant analytics access.

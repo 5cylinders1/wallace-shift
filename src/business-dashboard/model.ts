@@ -5,10 +5,19 @@ export type DashboardFormat = 'number' | 'currency' | 'percent' | 'decimal'
 export type DashboardMetric = {
   id: string
   label: string
-  /** Currency values are USD major units; percent values are 0–100. */
+  /** Currency values are major units in currency (USD for legacy portal metrics); percent values are 0–100. */
   value: number
   format: DashboardFormat
+  currency?: string
   note: string
+}
+export type DashboardSeries = {
+  id?: string
+  label: string
+  format?: DashboardFormat
+  currency?: string
+  /** Only observed dates, except complete ledger days with no recorded payments. */
+  points: { date: string; value: number }[]
 }
 export type DashboardSource = {
   id: string
@@ -22,9 +31,12 @@ export type DashboardSource = {
   checkedAt: string | null
   dataThrough: string | null
   timeZone?: string
+  /** Verified reporting asset identifier; never an access token or credential. */
+  account?: { id: string; label: string }
   metrics: DashboardMetric[]
   table?: { title: string; columns: { key: string; label: string; format?: DashboardFormat }[]; rows: Record<string, string | number>[] }
-  series?: { label: string; points: { date: string; value: number }[] }
+  series?: DashboardSeries
+  seriesList?: DashboardSeries[]
   setup: { steps: string[]; docsUrl?: string; href?: string }
 }
 export type DashboardInsight = {

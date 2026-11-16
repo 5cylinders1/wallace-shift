@@ -14,6 +14,7 @@
  */
 
 import { serviceLandingPages } from './serviceLandingPages.ts'
+import { contractorOffers } from './contractorOffers.ts'
 
 /** Production origin. Used for canonical URLs, OG tags, and the sitemap. */
 export const SITE_ORIGIN = 'https://wallaceshift.com'
@@ -62,6 +63,14 @@ export const AI_OFFER_CONFIRMATION_PATH = `${AI_OFFER_PATH}/confirmation`
 export const WHAT_NOW_PATH = '/what-now'
 
 export const routeMeta: RouteMeta[] = [
+  ...Object.values(contractorOffers).map(offer => ({
+    path: offer.path,
+    title: offer.title,
+    description: offer.description,
+    breadcrumbLabel: offer.name,
+    serviceType: offer.name,
+    priority: 0.8,
+  })),
   { path: '/client-portal', title: 'Client Portal | Wallace Shift', description: 'Review agreements, invoices, and payments with Wallace Shift.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
   { path: '/mail', title: 'Mail | Wallace Shift', description: 'Private email workspace for the Wallace Shift team.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
   {

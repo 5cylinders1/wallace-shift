@@ -4,6 +4,7 @@ type EnquirySurface = 'home_hero' | 'contact_form' | 'roofing_offer'
 
 /** Demos whose "Discuss my website" link carries context to /contact. */
 type DemoContext = DemoHandoffId
+type ContractorOffer = 'website' | 'lead-follow-up'
 
 type SiteAnalyticsEvent =
   | { name: 'enquiry_submitted' | 'enquiry_failed'; value: EnquirySurface; demo?: DemoContext }
@@ -14,6 +15,8 @@ type SiteAnalyticsEvent =
   | { name: 'offer_application_start' | 'offer_application_submit' }
   | { name: 'offer_application_step'; value: 'bottleneck' | 'authority' | 'business' | 'impact' | 'experience' | 'tools' | 'context' | 'readiness' | 'contact' }
   | { name: 'offer_recommendation_view'; value: 'package' | 'consultation' | 'resource' }
+  | { name: 'contractor_offer_demo' | 'contractor_offer_form_started' | 'contractor_offer_failed'; value: ContractorOffer }
+  | { name: 'contractor_offer_submitted'; value: ContractorOffer; readiness?: 'ready' | 'questions' | 'planning' }
 
 /** Only fixed event labels and catalog IDs belong here, never form values.
  * The shared public bootstrap applies its route and value allowlists before

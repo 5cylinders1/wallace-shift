@@ -1,15 +1,29 @@
-import type { DashboardMetric, DashboardSnapshot, DashboardSource } from '../../src/business-dashboard/model.js'
+import type { DashboardMetric, DashboardSnapshot, DashboardSource, DashboardSeries } from '../../src/business-dashboard/model.js'
 
 type Range = DashboardSnapshot['range']
 type Json = Record<string, unknown>
 type ChannelId = 'google-ads' | 'meta-ads' | 'facebook' | 'instagram' | 'linkedin-ads'
-type SourceResult = Pick<DashboardSource, 'metrics' | 'statusDetail'> & Partial<Pick<DashboardSource, 'dataThrough' | 'timeZone' | 'series' | 'table'>>
+type SourceResult = Pick<DashboardSource, 'metrics' | 'statusDetail'> & Partial<Pick<DashboardSource, 'dataThrough' | 'timeZone' | 'series' | 'seriesList' | 'table' | 'account'>>
 
 // All endpoints are fixed provider origins. Credentials never enter URLs or responses.
 // These adapters only read reporting data; the Google POSTs are OAuth/report queries.
 class ChannelError extends Error {
   readonly kind: 'setup' | 'account-not-enabled' | 'auth' | 'provider' | 'incomplete'
   constructor(kind: 'setup' | 'account-not-enabled' | 'auth' | 'provider' | 'incomplete') { super(kind); this.kind = kind }
+}
+
+class ChannelSettingError extends ChannelError {
+  readonly setting: `DASHBOARD_${string}`
+  readonly issue: 'missing' | 'invalid'
+  constructor(setting: `DASHBOARD_${string}`, issue: 'missing' | 'invalid') { super('setup'); this.setting = setting; this.issue = issue }
+}
+
+function setupDetail(error: unknown): string {
+  if (!(error instanceof ChannelSettingError)) return 'Complete the server connection settings to load this source.'
+  // Only names supplied by our adapters are exposed, never configured values or upstream messages.
+  const issue = error.issue === 'missing' ? 'is missing or empty' : 'has an invalid format'
+  const hint = error.setting === 'DASHBOARD_FACEBOOK_PAGE_ID' ? ' Use only the numeric Facebook Page ID.' : ''
+  return `${error.setting} ${issue}.${hint} Update the server environment, then restart or redeploy.`
 }
 
 const definitions: Record<ChannelId, Omit<DashboardSource, 'status' | 'statusDetail' | 'checkedAt' | 'dataThrough' | 'metrics'>> = {
@@ -46,14 +60,15 @@ const definitions: Record<ChannelId, Omit<DashboardSource, 'status' | 'statusDet
 }
 
 function env(name: string): string { return process.env[name]?.trim() ?? '' }
-function required(name: string, pattern?: RegExp): string {
+function required(name: `DASHBOARD_${string}`, pattern?: RegExp): string {
   const value = env(name)
-  if (!value || (pattern && !pattern.test(value))) throw new ChannelError('setup')
+  if (!value) throw new ChannelSettingError(name, 'missing')
+  if (pattern && !pattern.test(value)) throw new ChannelSettingError(name, 'invalid')
   return value
 }
-function version(name: string, fallback: string, pattern: RegExp): string {
+function version(name: `DASHBOARD_${string}`, fallback: string, pattern: RegExp): string {
   const value = env(name) || fallback
-  if (!pattern.test(value)) throw new ChannelError('setup')
+  if (!pattern.test(value)) throw new ChannelSettingError(name, 'invalid')
   return value
 }
 function object(value: unknown): Json { return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Json : {} }
@@ -73,7 +88,7 @@ function metric(id: string, label: string, value: number | null, note: string, f
 }
 function money(value: number | null, currency: unknown): DashboardMetric[] {
   if (typeof currency !== 'string' || !/^[A-Z]{3}$/.test(currency)) return []
-  return metric('spend', `Ad spend (${currency})`, value, `Account currency: ${currency}. No currency conversion applied.`, currency === 'USD' ? 'currency' : 'decimal')
+  return metric('spend', `Ad spend (${currency})`, value, `Account currency: ${currency}. No currency conversion applied.`, currency === 'USD' ? 'currency' : 'decimal').map(item => ({ ...item, currency }))
 }
 function validDate(value: unknown): value is string { return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(`${value}T00:00:00Z`)) }
 function latestDate(values: unknown[]): string | null { return values.filter(validDate).sort().at(-1) ?? null }
@@ -150,7 +165,7 @@ async function googleAds(range: Range): Promise<SourceResult> {
   const customerId = required('DASHBOARD_GOOGLE_ADS_CUSTOMER_ID', /^\d{10}$/)
   const apiVersion = version('DASHBOARD_GOOGLE_ADS_API_VERSION', 'v26', /^v\d{2}$/)
   const managerId = env('DASHBOARD_GOOGLE_ADS_LOGIN_CUSTOMER_ID')
-  if (managerId && !/^\d{10}$/.test(managerId)) throw new ChannelError('setup')
+  if (managerId && !/^\d{10}$/.test(managerId)) throw new ChannelSettingError('DASHBOARD_GOOGLE_ADS_LOGIN_CUSTOMER_ID', 'invalid')
   const token = await googleAdsToken()
   const headers: Record<string, string> = { authorization: `Bearer ${token}`, 'content-type': 'application/json' }
   if (managerId) headers['login-customer-id'] = managerId
@@ -177,11 +192,17 @@ async function googleAds(range: Range): Promise<SourceResult> {
   const zone = typeof account.timeZone === 'string' ? account.timeZone : 'the ad account timezone'
   const values = rows.map(row => object(row.metrics))
   const cost = sum(values, 'costMicros')
-  const points = rows.flatMap(row => {
+  const dailyDefinitions: (Omit<DashboardSeries, 'points'> & { key: string; divisor: number })[] = [
+    { id: 'clicks', label: 'Google Ads clicks', format: 'number', key: 'clicks', divisor: 1 },
+    { id: 'impressions', label: 'Google Ads impressions', format: 'number', key: 'impressions', divisor: 1 },
+    { id: 'conversions', label: 'Attributed conversions', format: 'decimal', key: 'conversions', divisor: 1 },
+    ...money(cost, account.currencyCode).map(item => ({ id: 'spend', label: item.label, format: item.format, currency: item.currency, key: 'costMicros', divisor: 1_000_000 })),
+  ]
+  const seriesList: DashboardSeries[] = dailyDefinitions.map(({ key, divisor, ...series }) => ({ ...series, points: rows.flatMap(row => {
     const date = object(row.segments).date
-    const value = numeric(object(row.metrics).clicks)
-    return validDate(date) && value !== null ? [{ date, value }] : []
-  })
+    const value = numeric(object(row.metrics)[key])
+    return validDate(date) && date >= range.startDate && date <= range.endDate && value !== null ? [{ date, value: value / divisor }] : []
+  }).sort((a, b) => a.date.localeCompare(b.date)) })).filter(series => series.points.length > 0)
   return {
     metrics: [
       ...money(cost === null ? null : cost / 1_000_000, account.currencyCode),
@@ -189,9 +210,11 @@ async function googleAds(range: Range): Promise<SourceResult> {
       ...metric('clicks', 'Clicks', sum(values, 'clicks'), 'Google Ads account clicks.'),
       ...metric('conversions', 'Attributed conversions', sum(values, 'conversions'), 'Google Ads conversion-action attribution; may be fractional and is not a count of unique CRM leads.', 'decimal'),
     ],
+    account: { id: customerId, label: `Google Ads account ${customerId}` },
     dataThrough: latestDate(rows.map(row => object(row.segments).date)), timeZone: zone,
     statusDetail: `${reportNote(range, zone)} ${rows.length ? 'Account reporting retrieved.' : 'No reporting rows returned for this period.'}`,
-    ...(points.length ? { series: { label: 'Google Ads clicks', points } } : {}),
+    seriesList,
+    ...(seriesList.find(series => series.id === 'clicks') ? { series: seriesList.find(series => series.id === 'clicks') } : {}),
   }
 }
 
@@ -227,6 +250,7 @@ async function metaAds(range: Range): Promise<SourceResult> {
       ...metric('clicks', 'All clicks', sum(rows, 'clicks'), 'All Meta ad clicks, including interactions that are not website visits.'),
       ...metric('link-clicks', 'Link clicks', sum(rows, 'inline_link_clicks'), 'Meta reported link clicks; these are not unique visitors or CRM leads.'),
     ],
+    account: { id: `act_${id}`, label: `Meta ad account ${id}` },
     timeZone: zone, dataThrough: latestDate(rows.map(row => row.date_stop)),
     statusDetail: `${reportNote(range, zone)} ${rows.length ? 'Account totals retrieved.' : 'No reporting rows returned.'} Conversion totals are not combined across ad platforms.`,
   }
@@ -244,16 +268,23 @@ async function facebook(range: Range): Promise<SourceResult> {
   if (!Array.isArray(response.data)) throw new ChannelError('provider')
   const rows = list(response.data)
   const metrics: DashboardMetric[] = []
+  const seriesList: DashboardSeries[] = []
   const ending: string[] = []
   for (const [key, label] of [['page_media_view', 'Content views'], ['page_post_engagements', 'Post engagements']]) {
     const values = list(rows.find(row => row.name === key)?.values)
       .filter(value => { const date = facebookBucketDate(value.end_time); return date !== null && date >= range.startDate && date <= range.endDate })
     const total = sum(values, 'value')
     metrics.push(...metric(key, label, total, 'Sum of returned Pacific calendar-day Page insights, which may include paid content. Missing days are not assumed to be zero.'))
+    const points = values.flatMap(value => {
+      const date = facebookBucketDate(value.end_time), amount = numeric(value.value)
+      return date && amount !== null ? [{ date, value: amount }] : []
+    }).sort((a, b) => a.date.localeCompare(b.date))
+    if (points.length) seriesList.push({ id: key, label, format: 'number', points })
     ending.push(...values.flatMap(value => { const date = facebookBucketDate(value.end_time); return date ? [date] : [] }))
   }
   return {
-    metrics, timeZone: facebookTimeZone,
+    metrics, timeZone: facebookTimeZone, account: { id, label: `Facebook Page ${id}` }, seriesList,
+    ...(seriesList[0] ? { series: seriesList[0] } : {}),
     dataThrough: ending.sort().at(-1) ?? null,
     statusDetail: `${reportNote(range, facebookTimeZone)} ${metrics.length ? 'Daily Page totals retrieved using Pacific reporting dates.' : 'No eligible insights returned. Page size and metric permissions can affect availability.'}`,
   }
@@ -263,7 +294,7 @@ async function instagram(range: Range): Promise<SourceResult> {
   const id = required('DASHBOARD_INSTAGRAM_ACCOUNT_ID', /^\d+$/)
   const token = required('DASHBOARD_INSTAGRAM_ACCESS_TOKEN')
   const login = env('DASHBOARD_INSTAGRAM_LOGIN_TYPE') || 'instagram'
-  if (!['instagram', 'facebook', 'unified'].includes(login)) throw new ChannelError('setup')
+  if (!['instagram', 'facebook', 'unified'].includes(login)) throw new ChannelSettingError('DASHBOARD_INSTAGRAM_LOGIN_TYPE', 'invalid')
   const host = login === 'instagram' ? 'instagram' : 'facebook'
   const start = Math.floor(Date.parse(`${range.startDate}T00:00:00Z`) / 1000)
   const end = Math.floor(Date.parse(`${range.endDate}T00:00:00Z`) / 1000) + 86400 - 1
@@ -283,7 +314,7 @@ async function instagram(range: Range): Promise<SourceResult> {
     metrics.push(...metric(key, label, sum(values, 'value'), 'Sum of Instagram Insights totals over nonoverlapping date ranges. Interactions can include boosted content.'))
   }
   return {
-    metrics, timeZone: 'UTC', dataThrough: null,
+    metrics, timeZone: 'UTC', dataThrough: null, account: { id, label: `Instagram account ${id}` },
     statusDetail: `${reportNote(range, 'UTC')} ${metrics.length ? 'Insights retrieved. Meta does not provide a completeness timestamp for these totals.' : 'No eligible totals returned. Unavailable data is not zero.'}`,
   }
 }
@@ -319,6 +350,7 @@ async function linkedInAds(range: Range): Promise<SourceResult> {
       ...metric('clicks', 'Chargeable clicks', sum(rows, 'clicks'), 'LinkedIn chargeable click definition; may differ from landing page visits.'),
       ...metric('conversions', 'Website conversions', sum(rows, 'externalWebsiteConversions'), 'LinkedIn attributed website conversions using campaign conversion settings. Not unique CRM leads.', 'decimal'),
     ],
+    account: { id, label: `LinkedIn ad account ${id}` },
     timeZone: 'UTC', dataThrough: validDate(dataThrough) ? dataThrough : null,
     statusDetail: `${reportNote(range, 'UTC')} ${rows.length ? 'Account reporting retrieved.' : 'Account access verified; no reporting rows returned.'}`,
   }
@@ -339,7 +371,7 @@ export async function loadBusinessDashboardChannels(range: Range, now = new Date
       return {
         ...source, status: kind === 'setup' || kind === 'account-not-enabled' ? 'needs-setup' : kind === 'auth' ? 'needs-sign-in' : 'error',
         checkedAt: kind === 'setup' ? null : now.toISOString(),
-        statusDetail: kind === 'setup' ? 'Complete the server connection settings to load this source.'
+        statusDetail: kind === 'setup' ? setupDetail(error)
           : kind === 'account-not-enabled' ? 'Google Ads reports that this account is not enabled. Complete account signup in Google Ads, or reactivate the account if it was deactivated, then refresh.'
             : kind === 'auth' ? 'Reconnect this account and verify the app’s reporting permissions.'
               : kind === 'incomplete' ? 'The provider returned more data than this report can safely include. No partial total is shown.'

@@ -30,6 +30,48 @@ test('unconfigured channels make no calls and never invent metrics', async () =>
   assert.equal(calls.length, 0)
 })
 
+test('Facebook identifies missing and malformed settings without exposing values or contacting Meta', async () => {
+  const cases = [
+    { setting: 'DASHBOARD_FACEBOOK_PAGE_ID', value: undefined, issue: 'is missing or empty' },
+    { setting: 'DASHBOARD_FACEBOOK_PAGE_ID', value: 'https://facebook.com/private-page', issue: 'has an invalid format' },
+    { setting: 'DASHBOARD_FACEBOOK_PAGE_ACCESS_TOKEN', value: ' \n ', issue: 'is missing or empty' },
+    { setting: 'DASHBOARD_META_API_VERSION', value: 'private-invalid-version', issue: 'has an invalid format' },
+  ]
+  for (const { setting, value, issue } of cases) {
+    Object.assign(process.env, { DASHBOARD_FACEBOOK_PAGE_ID: '987654321', DASHBOARD_FACEBOOK_PAGE_ACCESS_TOKEN: 'private-page-token' })
+    delete process.env.DASHBOARD_META_API_VERSION
+    if (value === undefined) delete process.env[setting]
+    else process.env[setting] = value
+    const result = find(await loadBusinessDashboardChannels(range, now), 'facebook')
+    assert.equal(result.status, 'needs-setup')
+    assert.equal(result.checkedAt, null)
+    assert.deepEqual(result.metrics, [])
+    assert.ok(result.statusDetail.startsWith(`${setting} ${issue}.`))
+    if (setting === 'DASHBOARD_FACEBOOK_PAGE_ID') assert.match(result.statusDetail, /numeric Facebook Page ID/)
+    for (const privateValue of ['987654321', 'private-page-token', 'https://facebook.com/private-page', 'private-invalid-version']) {
+      assert.equal(JSON.stringify(result).includes(privateValue), false)
+    }
+    assert.equal(calls.length, 0)
+  }
+})
+
+test('Google Ads identifies its missing credentials even when general Google credentials exist', async () => {
+  Object.assign(process.env, {
+    DASHBOARD_GOOGLE_ADS_CUSTOMER_ID: '1234567890',
+    DASHBOARD_GOOGLE_CLIENT_ID: 'private-general-client', DASHBOARD_GOOGLE_CLIENT_SECRET: 'private-general-secret',
+    DASHBOARD_GOOGLE_REFRESH_TOKEN: 'private-general-refresh',
+  })
+  for (const setting of ['DASHBOARD_GOOGLE_ADS_CLIENT_ID', 'DASHBOARD_GOOGLE_ADS_CLIENT_SECRET', 'DASHBOARD_GOOGLE_ADS_REFRESH_TOKEN']) {
+    const result = find(await loadBusinessDashboardChannels(range, now), 'google-ads')
+    assert.equal(result.status, 'needs-setup')
+    assert.equal(result.checkedAt, null)
+    assert.ok(result.statusDetail.startsWith(`${setting} is missing or empty.`))
+    assert.equal(JSON.stringify(result).includes('private-'), false)
+    assert.equal(calls.length, 0)
+    process.env[setting] = 'private-ads-credential'
+  }
+})
+
 test('Google Ads reporting uses fixed read endpoints, correct account currency and daily values', async () => {
   Object.assign(process.env, { DASHBOARD_GOOGLE_ADS_ACCESS_TOKEN: 'secret-google', DASHBOARD_GOOGLE_ADS_CUSTOMER_ID: '1234567890' })
   globalThis.fetch = async (url, init) => {
@@ -52,6 +94,11 @@ test('Google Ads reporting uses fixed read endpoints, correct account currency a
   assert.deepEqual(result.metrics.map(item => item.value), [5, 300, 15, 3.5])
   assert.equal(result.metrics[0].format, 'decimal')
   assert.match(result.metrics[0].label, /EUR/)
+  assert.equal(result.metrics[0].currency, 'EUR')
+  assert.deepEqual(result.account, { id: '1234567890', label: 'Google Ads account 1234567890' })
+  assert.deepEqual(result.seriesList.find(series => series.id === 'spend').points.map(point => point.value), [2, 3])
+  assert.equal(result.seriesList.find(series => series.id === 'spend').currency, 'EUR')
+  for (const item of result.metrics) assert.equal(result.seriesList.find(series => series.id === item.id).points.reduce((total, point) => total + point.value, 0), item.value)
   assert.equal(result.series.points.length, 2)
   assert.equal(JSON.stringify(result).includes('secret-google'), false)
 })
@@ -71,6 +118,7 @@ test('Google Ads refresh flow stays server-side and reports missing fields as un
   }
   const result = find(await loadBusinessDashboardChannels(range, now), 'google-ads')
   assert.deepEqual(result.metrics.map(item => [item.id, item.value]), [['clicks', 0]])
+  assert.deepEqual(result.seriesList.map(series => series.id), ['clicks'])
   assert.equal(calls.length, 3)
 })
 
@@ -211,6 +259,9 @@ test('Facebook includes the last Pacific reporting day ending at 08:00Z the next
   assert.equal(result.dataThrough, '2026-11-12')
   assert.equal(result.timeZone, 'America/Los_Angeles')
   assert.match(result.metrics[0].note, /Missing days/)
+  assert.deepEqual(result.seriesList[0].points, [{ date: '2026-11-06', value: 10 }, { date: '2026-11-12', value: 20 }])
+  assert.equal(result.seriesList.length, 1)
+  assert.equal(result.seriesList[0].id, 'page_media_view')
 })
 
 test('Facebook Pacific date selection survives DST fall-back without shifting or losing a day', async () => {
@@ -282,6 +333,7 @@ test('configuration and query injection attempts do not reach a provider', async
   assert.equal(calls.length, 0)
   const invalidRange = await loadBusinessDashboardChannels({ ...range, startDate: "2026-01-01' OR 1=1" }, now)
   assert.ok(invalidRange.every(item => item.status === 'needs-setup'))
+  assert.ok(invalidRange.every(item => item.statusDetail === 'Complete the server connection settings to load this source.'))
   assert.equal(calls.length, 0)
 })
 

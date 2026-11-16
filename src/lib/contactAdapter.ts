@@ -7,6 +7,11 @@
  */
 export const CONTACT_ENDPOINT: string | null = '/api/contact'
 
+export type ContactOffer = 'website' | 'lead-follow-up'
+export type ContactReadiness = 'ready' | 'questions' | 'planning'
+export type ContactTiming = 'soon' | 'later' | 'exploring'
+export type ContactDecisionRole = 'owner' | 'shared' | 'researching'
+
 export type ContactPayload = {
   name: string
   email: string
@@ -18,6 +23,13 @@ export type ContactPayload = {
   service?: string
   package?: string
   budget?: string
+  /** The endpoint supplies the offer's canonical name, price and page.
+   *  These optional answers provide context; none is an eligibility gate. */
+  offer?: ContactOffer
+  businessName?: string
+  readiness?: ContactReadiness
+  timing?: ContactTiming
+  decisionRole?: ContactDecisionRole
   /** The demo the visitor came from, e.g. `deercreek`. The endpoint keeps
    *  its own allowlist and drops anything it does not recognise. */
   source?: string
