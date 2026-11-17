@@ -1,0 +1,91 @@
+{
+  "checkedAt": "2026-11-17",
+  "method": "CUA browser interaction and read-only DOM inspection",
+  "environment": "Local Vite development preview at http://127.0.0.1:5194/demo/sues-tailor",
+  "viewports": [
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "noHorizontalOverflow": true,
+      "allThreeDressImagesLoaded": true
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "noHorizontalOverflow": true,
+      "allThreeDressImagesLoaded": true
+    },
+    {
+      "width": 768,
+      "scrollWidth": 768,
+      "noHorizontalOverflow": true,
+      "allThreeDressImagesLoaded": true
+    },
+    {
+      "width": 1024,
+      "scrollWidth": 1024,
+      "noHorizontalOverflow": true,
+      "allThreeDressImagesLoaded": true
+    },
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "noHorizontalOverflow": true,
+      "allThreeDressImagesLoaded": true
+    },
+    {
+      "width": 1920,
+      "scrollWidth": 1920,
+      "noHorizontalOverflow": true,
+      "allThreeDressImagesLoaded": true
+    }
+  ],
+  "interactions": {
+    "dressStagesKeyboard": true,
+    "mobileMenuEscapeReturnsFocus": true,
+    "reviewNavigation": true,
+    "requiredFieldErrorsAndFocus": true,
+    "phoneReview": true,
+    "emailReview": true,
+    "pointerEmailSelection": true,
+    "pastEventDateRejected": true,
+    "weekendFittingDateRejected": true,
+    "fittingAfterEventRejected": true,
+    "validEventAndFittingDatesInSummary": true,
+    "editPreservesDetailsAndFocus": true,
+    "clearResetsDetailsAndFocus": true,
+    "explicitNoSendNoBookNotice": true
+  },
+  "runtimeErrors": [],
+  "transmission": "Component inspected: React state only, no fetch, storage, upload or backend calls. No test messages or bookings sent.",
+  "accessibility": "Keyboard and focus checks performed. Automated axe suite not rerun. Reduced-motion rules inspected in source; current browser media setting was not changed.",
+  "screenshots": "Desktop hero, mobile hero, and mobile review state inspected inline in CUA. No new screenshot files saved.",
+  "media": {
+    "provider": "Higgsfield",
+    "model": "GPT Image 2",
+    "generations": 1,
+    "quotedCredits": 6.5,
+    "estimatedCreditValueUsd": 0.39,
+    "newPurchases": 0,
+    "originalDimensions": [
+      1920,
+      1086
+    ],
+    "panelDimensions": [
+      640,
+      1086
+    ]
+  },
+  "build": {
+    "command": "npm run build",
+    "passed": true,
+    "log": "/private/tmp/sues-tailor-bridal-final-build.log"
+  },
+  "httpIntegration": {
+    "command": "node scripts/test-demo-preview.mjs",
+    "passed": true,
+    "responses": 735,
+    "externalNetwork": false,
+    "log": "/private/tmp/sues-tailor-bridal-http.log"
+  }
+}

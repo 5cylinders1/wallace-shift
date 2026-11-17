@@ -67,7 +67,7 @@ function near(actual, expected, message) {
 }
 
 async function positions(page) {
-  return page.evaluate(() => Object.fromEntries(['.site-header', '.r-hero h1', '.r-hero .contact-choice', '.r-screen'].map(selector => {
+  return page.evaluate(() => Object.fromEntries(['.site-header', '.r-hero h1', '.r-hero-actions .m-button', '.r-screen'].map(selector => {
     const { x, y, width, height } = document.querySelector(selector).getBoundingClientRect()
     return [selector, { x, y, width, height }]
   })))
@@ -157,13 +157,8 @@ async function runScenario(viewport, reducedMotion) {
     const directCall = page.locator('.r-hero').getByRole('link', { name: 'Call directly: (913) 347-5479', exact: true })
     const bookMeeting = page.locator('.r-hero').getByRole('button', { name: /^Book a Google Meet(?: |$)/ })
     assert.equal(await directCall.getAttribute('href'), 'tel:+19133475479')
-    assert.equal(await page.locator('.r-hero .contact-choice').count(), 3, `${key}: all three prominent contact choices are present`)
-    if (viewport.width === 390 && viewport.height === 844) {
-      for (const action of [heroAction, bookMeeting, directCall]) {
-        const box = await action.boundingBox()
-        assert.ok(box && box.y >= 0 && box.y + box.height <= viewport.height && box.height >= 44, `${key}: each contact option fits the initial viewport with a usable target`)
-      }
-    }
+    assert.equal(await page.locator('.r-hero .contact-choice').count(), 0, `${key}: prominent contact choices are confined to the dialog`)
+    assert.ok(await bookMeeting.isVisible(), `${key}: original secondary booking action remains available`)
     const actionBounds = await heroAction.boundingBox()
     assert.ok(actionBounds && actionBounds.y >= 0 && actionBounds.y + actionBounds.height <= viewport.height, `${key}: primary action visible in initial viewport`)
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${key}: no horizontal page overflow`)
@@ -176,6 +171,7 @@ async function runScenario(viewport, reducedMotion) {
     await heroAction.click()
     const dialog = page.getByRole('dialog', { name: /^Request\s+a call\.?$/ })
     await dialog.waitFor({ state: 'visible' })
+    assert.equal(await dialog.locator('.contact-choice').count(), 3, `${key}: dialog contains all three prominent contact choices`)
     assert.equal(await dialog.getByRole('link', { name: 'Call directly: (913) 347-5479' }).getAttribute('href'), 'tel:+19133475479')
     unchanged(before, await positions(page), `${key} opening`)
     await settle(dialog)
@@ -418,6 +414,7 @@ async function runBookingScenario(viewport, blocked = false) {
     await bookAction.click()
     const bookingDialog = page.getByRole('dialog', { name: /^Book a\s+Google Meet\.?$/ })
     await bookingDialog.waitFor()
+    assert.equal(await bookingDialog.locator('.contact-choice').count(), 3, `${key}: booking dialog contains all three prominent contact choices`)
     await settle(bookingDialog)
     unchanged(before, await positions(page), `${key}: booking overlay leaves underlying layout still`)
     assert.match(await bookingDialog.innerText(), /20 minute video call/, `${key}: correct meeting duration`)
@@ -483,10 +480,12 @@ async function runPrerenderCheck() {
     assert.equal(response.status(), 200, 'production homepage serves HTTP 200')
     assert.equal(await page.locator('#root').getAttribute('data-route-path'), '/', 'production HTML identifies the server-rendered route')
     assert.match(await page.locator('.r-hero h1').innerText(), /Websites.*lead pages/s, 'hero exists before JavaScript hydration')
-    assert.equal(await page.locator('.r-hero .contact-choice').count(), 3, 'all contact choices exist in prerendered HTML')
+    assert.equal(await page.locator('.r-hero .contact-choice').count(), 0, 'prerendered hero preserves its original contact treatment')
+    assert.equal(await page.locator('.r-hero').getByRole('button', { name: /^Request a call(?: |$)/ }).count(), 1, 'callback button exists before hydration')
+    assert.equal(await page.locator('.r-hero').getByRole('button', { name: /^Book a Google Meet(?: |$)/ }).count(), 1, 'secondary booking button exists before hydration')
     assert.equal(await page.locator('.r-hero').getByRole('link', { name: 'Call directly: (913) 347-5479', exact: true }).getAttribute('href'), 'tel:+19133475479')
-    summaries.push({ productionHTML: 'hero and all three contact choices rendered without JavaScript' })
-    console.log('PASS production prerender: homepage hero, three contact options and direct phone link exist without JavaScript.')
+    summaries.push({ productionHTML: 'original hero buttons and direct phone link rendered without JavaScript' })
+    console.log('PASS production prerender: original homepage hero buttons and direct phone link exist without JavaScript.')
   } finally { await page.close() }
 }
 
@@ -523,7 +522,7 @@ async function runNavigationScenario(viewport) {
   await localDocumentsOnly(page)
   try {
     await page.goto(new URL(routePath, origin).href, { waitUntil: 'networkidle' })
-    await page.locator('.r-hero .contact-choice').first().waitFor()
+    await page.locator('.r-hero-actions .m-button').waitFor()
     await assertHeaderClearance(page, key)
     for (const [label, path] of navigationRoutes) {
       console.log(`CHECK ${key}: ${label} navigation and return home`)
@@ -545,7 +544,7 @@ async function runNavigationScenario(viewport) {
         : page.locator('.site-header__brand')
       await homeLink.click()
       await page.waitForURL(url => url.pathname === '/' && !url.hash)
-      await page.locator('.r-hero .contact-choice').first().waitFor()
+      await page.locator('.r-hero-actions .m-button').waitFor()
       await assertHeaderClearance(page, `${key} return from ${label}`)
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${key}: no horizontal overflow after ${label}`)
       if (viewport.width <= 760) assert.equal(await page.locator('.site-header__menu-toggle').getAttribute('aria-expanded'), 'false', `${key}: menu closes after route navigation`)

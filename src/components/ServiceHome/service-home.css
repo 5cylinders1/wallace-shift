@@ -1,24 +1,10 @@
 /* Reserve the expanded header's space so its scroll transition cannot move
    the homepage content. Docked controls use its live measured height. */
 .service-home { padding-top: clamp(82px, calc(6vw + 48px), 104px); }
-.service-home .r-hero { padding-top: 28px; }
-.service-home .r-hero-grid { align-items: center; }
 .service-home :is(section[id], article[id], div[id]) { scroll-margin-top: calc(var(--site-header-height) + 24px); }
 .service-home .p-package[id] { scroll-margin-top: var(--package-scroll-offset, calc(var(--site-header-height) + 112px)); }
 .service-home .p-starting-point.is-docked {
   top: calc(var(--site-header-height) + 8px);
   left: calc((100% - var(--modal-scrollbar-width, 0px)) / 2);
   width: min(860px, calc(100% - 40px - var(--modal-scrollbar-width, 0px)));
-}
-.home-contact-options { margin-top: 24px; }
-.home-contact-label { margin-bottom: 10px; color: #c3d0d8; font-size: 12px; font-weight: 600; }
-.service-home .r-opening-prices { margin-top: 22px; }
-.service-home .r-hero-foot { margin-top: 32px; }
-
-@media (max-width: 760px) {
-  .service-home .r-hero { padding-top: 20px; }
-  .service-home .r-hero-copy > p { margin-top: 16px; }
-  .home-contact-options { margin-top: 20px; }
-  .service-home .r-hero-copy > .p-call-next-step { margin-top: 10px; }
-  .service-home .r-hero-copy > .p-opening-note { margin-top: 10px; }
 }

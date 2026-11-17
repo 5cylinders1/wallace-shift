@@ -246,7 +246,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demo\/deercreekplumbing|demo\/solara|demo\/dopps|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek|demos\/deercreekplumbing|demos\/solara|demos\/dopps)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demo\/deercreekplumbing|demo\/solara|demo\/dopps|demo\/best-tailor|demo\/sues-tailor|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek|demos\/deercreekplumbing|demos\/solara|demos\/dopps|demos\/best-tailor)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -283,7 +283,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/|deercreekplumbing\/|solara\/|dopps\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/|deercreekplumbing\/|solara\/|dopps\/|best-tailor\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -315,6 +315,8 @@ function roofingDemoRoutes(): Plugin {
         '/demo/otv': '/demos/otv/index.html',
         '/demo/solara': '/demos/solara/index.html',
         '/demo/dopps': '/demos/dopps/index.html',
+        '/demo/best-tailor': '/demos/best-tailor/index.html',
+        '/demo/sues-tailor': '/demos/best-tailor/index.html',
         '/mitre': '/demos/cabinetry-2/index.html',
         '/bucyrus-auto': '/demos/bucyrus-auto/index.html',
         // A static copy of a prospect's live site, served from public/.
@@ -334,7 +336,7 @@ function roofingDemoRoutes(): Plugin {
         req.url = `/demos/cabinetry/index.html${url.search}`
         return next()
       }
-      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|painting|water|otv|solara|dopps|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
+      if (!/^\/demos\/(?:roofers(?:\/(?:insurance|prices|warranty|faq))?|roofers-dashboard|roofers-offer|roofers-2(?:\/(?:process|insurance|cost|estimate))?|roofers-3|roofers-4|roofers-5|roofers-6|foundation|cabinetry|cabinetry-2|pools|lawn|painting|water|otv|solara|dopps|best-tailor|contractors|bucyrus-auto)$/.test(url.pathname)) return next()
       res.statusCode = 302
       res.setHeader('Location', `${url.pathname}/${url.search}`)
       res.end()
@@ -371,6 +373,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         deerCreekPlumbingSecondConcept: 'demos/deercreekplumbing/index.html',
         solaraSalon: 'demos/solara/index.html',
         doppsChiropractic: 'demos/dopps/index.html',
+        bestTailor: 'demos/best-tailor/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',

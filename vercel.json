@@ -85,6 +85,26 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
+      "source": "/demo/best-tailor",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demo/sues-tailor",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demo/sues-tailor/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demo/best-tailor/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/best-tailor/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
       "source": "/demo/deercreekplumbing",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
@@ -271,6 +291,14 @@
     {
       "source": "/demo/dopps",
       "destination": "/demos/dopps"
+    },
+    {
+      "source": "/demo/best-tailor",
+      "destination": "/demos/best-tailor"
+    },
+    {
+      "source": "/demo/sues-tailor",
+      "destination": "/demos/best-tailor"
     }
   ]
 }

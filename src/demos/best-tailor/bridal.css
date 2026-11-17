@@ -1,0 +1,39 @@
+.bt-header{height:96px}
+@media(min-width:851px){.bt-header{position:sticky;top:0}}
+.bt-header-call{background:var(--bt-burgundy);color:var(--bt-cream);border-color:var(--bt-burgundy)}
+.bt-header-call:hover{background:#6a3640}
+.bt-header-call:focus-visible{outline-color:#a35839}
+.bt-bridal-hero{display:grid;grid-template-columns:1fr 1fr;gap:7%;padding-block:54px 64px;align-items:center}
+.bt-bridal-copy{padding-bottom:65px}
+.bt-bridal-copy h1{font-family:var(--bt-serif);font-size:clamp(60px,6.5vw,96px);line-height:.99;font-weight:400;letter-spacing:-.025em;color:var(--bt-burgundy)}
+.bt-bridal-copy h1 em{color:#8b5c4b}
+.bt-bridal-copy>p{margin-top:29px;max-width:370px;font-size:14px;line-height:1.85;color:var(--bt-muted)}
+.bt-bridal-copy>.bt-button{margin-top:29px;min-height:56px;gap:42px;font-size:13px}
+.bt-bridal-call{display:flex;width:fit-content;align-items:center;gap:9px;font-size:12px;margin-top:21px;text-decoration:underline;text-decoration-color:#b8a49b}
+.bt-bridal-call>.bt-icon{width:15px;height:15px}
+.bt-bridal-copy>.bt-appointment-note{font-size:10px;margin-top:26px;color:#705c56}
+.bt-dress-story{min-width:0}
+.bt-dress-frame{position:relative;overflow:hidden;aspect-ratio:640/1086;width:min(100%,330px);margin-inline:auto;background:#e8d6c1}
+.bt-dress-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.015);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.bt-dress-image.is-active{opacity:1;transform:scale(1)}
+.bt-dress-frame figcaption{position:absolute;bottom:0;left:0;right:0;color:#4b242b;background:#f7f3ebe8;padding:9px 16px;font-size:9px;text-align:center}
+.bt-dress-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid #cab4a6;margin-top:20px}
+.bt-dress-controls button{position:relative;min-height:65px;background:none;border:0;text-align:left;font-size:11px;line-height:1.45;padding:7px 8px 13px;color:#79625a}
+.bt-dress-controls button>span{display:block;font-family:var(--bt-serif);font-size:17px;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.bt-dress-controls button::after{content:'';position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--bt-burgundy);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.bt-dress-controls button[aria-pressed=true]{color:var(--bt-burgundy)}
+.bt-dress-controls button[aria-pressed=true]::after{transform:scaleX(1)}
+.bt-dress-controls button:hover{color:var(--bt-burgundy);background:#eee5dc}
+.bt-dress-controls button:focus-visible{outline-offset:-3px}
+.bt-dress-detail{padding-top:20px;min-height:112px}
+.bt-dress-detail h2{font-family:var(--bt-serif);font-weight:400;font-size:27px;line-height:1.1;letter-spacing:-.01em}
+.bt-dress-detail p{font-size:11px;line-height:1.8;color:var(--bt-muted);max-width:47ch;margin-top:9px}
+.bt-welcome-line{background:#eee3dd;padding-block:28px}
+.bt-welcome-line p{font-size:28px}
+.bt-process{background:#eee3dd}
+.bt-footer{background:#eee3dd}
+@media(min-width:1600px){.bt-bridal-hero{gap:9%;padding-block:70px 75px}.bt-dress-frame{width:min(100%,360px)}}
+@media(max-width:1100px){.bt-bridal-hero{gap:5%;padding-block:45px 48px}.bt-bridal-copy h1{font-size:clamp(58px,6.8vw,75px)}.bt-dress-controls button{font-size:10px}.bt-dress-detail{min-height:132px}.bt-bridal-copy>p{font-size:13px}.bt-bridal-copy{padding-bottom:75px}.bt-dress-frame{width:min(100%,310px)}}
+@media(max-width:850px){.bt-header{height:90px}.bt-header-call .bt-icon{display:block}.bt-bridal-hero{align-items:start;padding-top:40px;gap:5%}.bt-bridal-copy{padding-top:15px;padding-bottom:0}.bt-bridal-copy h1{font-size:clamp(48px,7vw,62px)}.bt-bridal-copy>.bt-button{gap:18px;padding-inline:18px;font-size:12px}.bt-dress-frame{width:100%}.bt-dress-frame figcaption{font-size:9px}.bt-dress-controls{margin-top:12px}.bt-dress-controls button{font-size:9px;padding-inline:4px}.bt-dress-detail h2{font-size:24px}.bt-dress-detail p{font-size:10px}.bt-welcome-line{gap:25px}.bt-welcome-line p{font-size:24px;max-width:400px}.bt-welcome-line a{flex-shrink:0}}
+@media(max-width:600px){.bt-header{height:84px}.bt-bridal-hero{display:flex;flex-direction:column;gap:37px;padding-block:35px 37px}.bt-bridal-copy{padding:0;width:100%}.bt-bridal-copy h1{font-size:clamp(56px,13.5vw,76px);line-height:.99}.bt-bridal-copy>p{margin-top:22px;font-size:13px;max-width:34ch}.bt-bridal-copy>.bt-button{margin-top:23px;min-height:53px;padding-inline:22px;gap:32px}.bt-bridal-call{margin-top:18px;font-size:12px}.bt-bridal-copy>.bt-appointment-note{margin-top:20px;font-size:10px}.bt-dress-story{width:100%}.bt-dress-frame{width:min(100%,320px)}.bt-dress-frame figcaption{font-size:9px;padding:9px 16px}.bt-dress-controls{margin-top:10px}.bt-dress-controls button{font-size:10px;min-height:65px;padding-inline:5px}.bt-dress-controls button>span{font-size:17px}.bt-dress-detail{min-height:110px;padding-top:20px}.bt-dress-detail h2{font-size:28px}.bt-dress-detail p{font-size:11px;max-width:45ch}.bt-welcome-line{padding-block:24px}.bt-welcome-line p{font-size:25px;max-width:320px}.bt-welcome-line a{font-size:10px}.bt-mobile-actions a:first-child{flex:1.35}}
+@media(prefers-reduced-motion:reduce){.bt-dress-image{animation:none}.bt-dress-controls button::after{transition:none}}

@@ -2,7 +2,7 @@
   "screenshots": "/tmp/wallace-shift-inquiry-review",
   "scenarios": [
     {
-      "productionHTML": "hero and all three contact choices rendered without JavaScript"
+      "productionHTML": "original hero buttons and direct phone link rendered without JavaScript"
     },
     {
       "viewport": {

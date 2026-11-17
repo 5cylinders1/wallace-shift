@@ -11,7 +11,7 @@ import Process from './Process'
 import PackageArtwork from './PackageArtwork'
 import Questions from './Questions'
 import CallRequestDialog, { type InquiryMode } from './CallRequestDialog'
-import ContactChoices from './ContactChoices'
+import { business } from '../../content/siteConfig'
 import './divider-free.css'
 import './service-home.css'
 
@@ -39,11 +39,12 @@ function Hero({ onRequestCall, onBookMeeting }: { onRequestCall: () => void; onB
       <div className="r-hero-copy">
         <h1>Websites &<br /><em>lead pages.</em></h1>
         <p>Get a business website with monthly care, or a focused lead page with automatic follow up.</p>
-        <div className="home-contact-options">
-          <p className="home-contact-label">Let’s talk about what you need</p>
-          <ContactChoices onRequestCall={onRequestCall} onBookMeeting={onBookMeeting} />
+        <div className="r-hero-actions">
+          <button type="button" className="m-button" onClick={onRequestCall} aria-haspopup="dialog">Request a call<Arrow /></button>
+          <button type="button" className="r-question-link" onClick={onBookMeeting} aria-haspopup="dialog">Book a Google Meet</button>
         </div>
-        <p className="p-call-next-step">No need to choose a package first.</p>
+        <p className="p-call-next-step">Leave your number for a callback, or book a 20 minute video call.<br />No need to choose a package first.</p>
+        <a className="p-direct-phone" href={`tel:${business.phone.number}`}>Call directly: {business.phone.display}</a>
         <div className="r-opening-prices">
           <a href="#website-package"><span>Website, hosting & care</span><strong>$250 <small>/month</small></strong></a>
           <a href="#lead-package"><span>Lead page & follow up</span><strong>$1,500 <small>once for setup</small></strong></a>

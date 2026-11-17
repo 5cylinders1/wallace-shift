@@ -1,20 +1,20 @@
 # Homepage promotion and contact choices
 
-Reviewed November 17, 2026. Implemented and validated locally against the production build. No deployment or Git commit was performed in this task.
+Reviewed November 17, 2026. The hero was subsequently restored to its prior layout at the user’s correction. The prominent three-option treatment is confined to the booking popup. Homepage routing and shared navigation remain in place. Changes are local; no deployment was performed.
 
 ## Result
 
 - `/` now renders the service lander through the real application entry and production prerender. Its title and description describe websites, lead pages and the immediate contact options.
 - The existing shared navigation retains Services, Pricing, Approach, About, Blog and Contact on desktop and mobile. The shared footer follows the lander.
 - The previous interactive homepage is preserved at `/showcase`, linked from the lander and kept out of the sitemap/search index. Its complete journey and footer remain together.
-- The hero and full viewport inquiry overlay both present three substantial controls: **Request a call**, **Book a Google Meet**, and **Call directly: (913) 347-5479**. Callback remains the primary action; each option explains its purpose. Both overlay modes show the selected option.
+- The full viewport inquiry overlay presents three substantial controls: **Request a call**, **Book a Google Meet**, and **Call directly: (913) 347-5479**. Each option explains its purpose. Both overlay modes show the selected option. The hero retains its original compact callback button, Google Meet text link, phone link, copy and spacing.
 - Callback requires name and phone, with optional email/note. The booking flow retains the existing 20 minute Google Meet event. No package selection is required. Prices and commercial disclosures are preserved.
 - Production components live in `src/components/ServiceHome`. The former preview URL imports the same implementation, preventing two versions of the inquiry flow.
 - Fixed navigation clearance, stable modal positioning, server rendering and package fragment navigation were adapted for the shared application shell. Scrollbar compensation also covers fixed navigation and the docked package selector.
 
 ## Evidence and limits
 
-The user's screenshot showed the three contact options as understated text links below explanatory copy. Source inspection confirmed the lander had its own preview header and browser-only render assumptions. Those are observed obstacles addressed here. The stronger controls are a design response to that evidence; increased conversion has not been measured. No new original visitor sessions, prospect conversations or research participants were available in this task. The [earlier inquiry review](homepage-call-request-review.md) records the preceding source audit and live calendar-duration change.
+The user's screenshot showed the three contact options as understated text links below explanatory copy. Source inspection confirmed the lander had its own preview header and browser-only render assumptions. Those are observed obstacles addressed here. The stronger popup controls are a design response to that evidence; increased conversion has not been measured. No new original visitor sessions, prospect conversations or research participants were available in this task. The [earlier inquiry review](homepage-call-request-review.md) records the preceding source audit and live calendar-duration change.
 
 ## Validation
 
@@ -40,4 +40,4 @@ All callback responses and calendar confirmation events in this run were simulat
 
 ## Commit message
 
-`Promote service lander to homepage and highlight contact options`
+`Restore the hero and keep prominent contact options in the booking popup`
