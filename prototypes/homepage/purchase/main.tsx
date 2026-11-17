@@ -1,6 +1,6 @@
 // Isolated preview entry. Components intentionally stay outside production routing.
 /* eslint-disable react-refresh/only-export-components */
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import '../../../src/index.css'
@@ -10,6 +10,10 @@ import './purchase.css'
 import InquiryJourney from './InquiryJourney'
 import Guarantee from './Guarantee'
 import Upgrades from './Upgrades'
+import Systems from './Systems'
+import Process from './Process'
+import PackageArtwork from './PackageArtwork'
+import './divider-free.css'
 
 const email = 'mailto:matthew@wallaceshift.com?subject=Question%20about%20my%20website'
 const offerPaths = { website: '/offers/contractor-websites', lead: '/offers/lead-page-follow-up' }
@@ -38,14 +42,6 @@ function Hero() {
   return <section className="r-hero" id="examples"><div className="r-wrap r-hero-grid"><div className="r-hero-copy"><h1>Make your work<br />easy to <em>choose.</em></h1><p>A business website with monthly care. Or a focused lead page that captures inquiries and follows up. Start with the work you need.</p><div className="r-opening-prices"><a href="#website-package"><span>Website, hosting & care</span><strong>$250 <small>/month</small></strong></a><a href="#lead-package"><span>Lead page & follow up</span><strong>$1,500 <small>once for setup</small></strong></a></div><div className="r-hero-actions"><a href="#packages" className="m-button">Find your starting point<Arrow /></a><a href="#questions" className="r-question-link">Just have a question?</a></div><p className="p-opening-note">Package details and any additional costs below.</p></div><WebsiteDemo /></div><div className="r-wrap r-hero-foot"><p>Built in Greater Kansas City. Available remotely.</p><a href="/services">Need a custom CRM or connected system?<Arrow diagonal /></a></div></section>
 }
 
-function tabKey(event: KeyboardEvent, index: number, count: number, choose: (index: number) => void, prefix: string) {
-  let next: number | undefined
-  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % count
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (index + count - 1) % count
-  if (event.key === 'Home') next = 0
-  if (event.key === 'End') next = count - 1
-  if (next !== undefined) { event.preventDefault(); choose(next); document.getElementById(`${prefix}-${next}`)?.focus() }
-}
 const comparisons = [
   ['Best fit', 'A new or improved business website', 'One service, offer or campaign'],
   ['What we build', 'Business website. Page count agreed in scope.', 'One focused lead page'],
@@ -138,7 +134,10 @@ function PackageCard({ kind, selected }: { kind: PackageId; selected: boolean })
   const item = packageContent[kind]
   return <article className={`p-package ${selected ? 'is-selected' : ''}`} id={`${kind}-package`} aria-labelledby={`${kind}-package-heading`}>
     <header className="p-package-heading">
-      <div className="p-package-purpose"><span className="p-package-icon"><PackageIcon kind={kind} /></span><div><h3 id={`${kind}-package-heading`}>{item.name}<br /><em>{item.accent}</em></h3><p>{item.fit}</p></div></div>
+      <div className="p-package-overview">
+        <div className="p-package-purpose"><span className="p-package-icon"><PackageIcon kind={kind} /></span><div><h3 id={`${kind}-package-heading`}>{item.name}<br /><em>{item.accent}</em></h3><p>{item.fit}</p></div></div>
+        <PackageArtwork kind={kind} />
+      </div>
       <div className="p-package-price"><div className="p-price">{item.price}<span>{item.cadence}</span></div><span className="p-package-selection">{selected ? <><Check />Your selected starting point</> : 'Also available'}</span></div>
     </header>
     <div className="p-package-body">
@@ -243,17 +242,6 @@ function Packages() {
   </section>
 }
 
-function PortalIllustration() {
-  const [tab, setTab] = useState(0)
-  return <div className="r-portal"><div className="r-portal-bar"><img src="/brand/wallace-shift-logo-white.svg" alt="" width="18" height="12" /><strong>Your project with Wallace Shift</strong></div><div className="r-portal-body"><div className="r-portal-title"><h3>Business website</h3><span className="r-sample-tag">Example records</span></div><div role="tablist" aria-label="Explore the client portal" className="r-portal-tabs">{['Agreement', 'Invoices'].map((label, i) => <button key={label} role="tab" id={`portal-${i}`} aria-selected={tab === i} aria-controls="portal-panel" tabIndex={tab === i ? 0 : -1} onClick={() => setTab(i)} onKeyDown={e => tabKey(e, i, 2, setTab, 'portal')}>{label}</button>)}</div><div id="portal-panel" role="tabpanel" tabIndex={0} aria-labelledby={`portal-${tab}`} className="r-portal-content">{tab === 0 ? <><h4>Your agreed scope</h4><p>Website design, hosting, technical maintenance and basic SEO.</p><dl><div><dt>Package</dt><dd>$250/month</dd></div><div><dt>Scope and terms</dt><dd>Confirmed before work begins</dd></div></dl><p className="r-portal-disclaimer">Illustrative summary, not a contract.</p></> : <><h4>Invoices & payments</h4><div className="r-invoice-row"><div><strong>Website hosting & care</strong><span>Example monthly invoice</span></div><strong>$250.00</strong></div><p>View the amount, payment status and the invoice associated with your project.</p><p className="r-portal-disclaimer">Fictional record. No payment can be made here.</p></>}</div></div><p className="r-portal-caption">Illustration of existing client portal functions. This manages your project with Wallace Shift, not your customers or advertising accounts.</p></div>
-}
-function Process() {
-  return <section className="r-section r-light" id="process"><div className="r-wrap r-process-grid"><div><h2>Know what you get.<br /><em>Know what happens next.</em></h2><ol>{[['Agree the work', 'We confirm the deliverables, costs, responsibilities and terms. Your questions help shape the scope.'], ['Review the working example', 'See the design and test the agreed inquiry path before launch.'], ['Launch with a clear handoff', 'Know where inquiries arrive, what the tools do and how to ask for support.']].map(([title, text], i) => <li key={title}><span>{i + 1}</span><div><h3>{title}</h3><p>{text}</p></div></li>)}</ol><p className="r-process-note">Your agreement and invoices stay together in your private client portal.</p></div><PortalIllustration /></div></section>
-}
-
-function Systems() {
-  return <section className="r-systems"><div className="r-wrap"><div><h2>When the work needs<br /><em>more than a website.</em></h2><p>Customer records, handoffs and tools that do not connect can need a different solution. We scope custom CRMs, AI integrations and connected workflows separately.</p></div><a className="m-text-link" href="/services">Explore custom systems<Arrow diagonal /></a></div></section>
-}
 const faqs = [
   ['Can text messaging start straight away?', 'If your workflow includes automated texts to US customers from a local 10 digit number, A2P 10DLC business and campaign registration must be approved before sending. Review can take several business days or longer, especially if information needs correcting. Toll free numbers use a separate verification process. We confirm the provider requirements, customer consent process, current review timing and any registration or carrier fees before setup. Approval timing is outside our control. Email follow up does not require A2P registration; changing an agreed SMS workflow to email would need an agreed scope change.'],
   ['Can I choose by monthly versus a single payment?', 'Start with the work you need. The website package covers a business website and ongoing technical care. The lead page package covers a focused page and one workflow setup. A single setup payment does not remove hosting, software, usage charges or the need to maintain your tools.'],

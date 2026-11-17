@@ -191,3 +191,35 @@ Validation for this revision:
 Current screenshots: [desktop delivery](./review/desktop-inquiry-scroll-delivered.jpg), [mobile lead](./review/mobile-inquiry-scroll-lead.jpg), [mobile delivery](./review/mobile-inquiry-scroll-delivered.jpg).
 
 Proposed commit message: `Refine scroll driven inquiry reveal and team delivery`
+
+## Divider removal and restored content
+
+Updated 17 November 2026. Removed the rejected workload questionnaire. Restored the existing package chooser immediately after the hero and the process/client portal section after the monthly services, with their original copy and navigation. Package illustrations from the separate artwork change are preserved.
+
+The remaining presentation change removes horizontal separator borders throughout this preview. Existing spacing and surfaces group the content; comparison rows use spacing, FAQ items use a quiet background, and portal tabs use a filled selected state. Keyboard focus outlines remain intact.
+
+Verified with Playwright at 320, 390, 768 and 1440 pixels: package selection and focus retention, comparison expansion, portal arrow/Home navigation, selected states, mobile navigation, no horizontal overflow and no computed horizontal separator borders. Axe reported zero WCAG A/AA violations in the tested states. Desktop and mobile screenshots were visually inspected. Targeted TypeScript, ESLint, whitespace checks and an isolated Vite build passed. No deployment was performed.
+
+Customer validation remains pending. The only firsthand prospect evidence supplied is the owner's account of a business already at capacity whose customers value speaking directly with the owner. This does not establish a general visitor need for a questionnaire. No observed browsing sessions or inquiry behavior were available.
+
+### Pending customer test
+
+Use the original page and this revision with prospective customers unfamiliar with Wallace Shift. Alternate version order and use equivalent scenarios to reduce learning effects: a business needing a whole website, an existing website needing a page for one campaign, and a business whose current website and inquiry process already work.
+
+Without coaching, ask each participant to choose an option or explain why neither fits, state the price and cadence, identify additional costs and unresolved terms, explain who handles replies and ongoing care, and reach the appropriate next step. Record complete/partial/failed tasks, specific misunderstandings, requests for help and completion time for each version. A completed task requires all of those answers to match the disclosed scope; reaching a contact link alone does not count. Report observations rather than claiming a conversion improvement from a small qualitative test.
+
+Commit message: `Remove homepage divider rules and preserve existing content and section order`
+
+## Useful process examples and section separation
+
+Updated 17 November 2026. The process stays after monthly services, with the same heading and three stages. Its former agreement/invoice mockup is replaced by an illustrative website project: choosing a stage shows what to settle in the scope, what to check in a working review, or who handles inquiries and website care after launch. The scope starts with decisions about content, inquiry delivery and terms; price is supporting information. This is an explanatory example, not a new client portal capability.
+
+The blue section surface and generous top/bottom spacing separate it from the light monthly services above and the ink custom systems section below. Desktop keeps the original two column premise; mobile puts compact step controls directly above the example. Selected steps use a filled surface, with no divider rules. Arrow keys, Home, End and Tab navigate the example.
+
+The scope and price come from `src/content/contractorOffers.ts`; working reviews and handoff are supported by `src/content/about.ts` and `src/content/servicesPage.ts`. No turnaround, ownership or unlimited care promise is added. The example review lists actions to perform, not completed customer tests.
+
+Verified all three stages at 320, 390, 768 and 1440 pixels with Playwright and axe: zero WCAG A/AA violations in the tested section states, no horizontal overflow or separator borders, distinct backgrounds on both sides, and working keyboard navigation through the steps, panel and example link. Visually inspected desktop/mobile renders and a 200 percent text simulation at 320 pixels; the step controls wrap when enlarged text needs room. This was a CSS text simulation, not a physical device test. Targeted TypeScript, ESLint and the isolated preview build passed. No deployment or customer testing was performed.
+
+Customer validation is pending. In the existing comparison protocol, also ask an unfamiliar visitor to identify what must be agreed, describe one prelaunch check, and explain who replies after launch. Record whether the visitor finds each answer without coaching and compare with the former portal illustration.
+
+Commit message: `Make homepage process examples useful and separate the section visually`
