@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
-import { submitContactRequest } from '../../../src/lib/contactAdapter'
-import { CalendlyScheduler } from '../../../src/components/CalendlyScheduler'
-import { aiConsultation } from '../../../src/content/aiConsultation'
-import { business } from '../../../src/content/siteConfig'
+import { submitContactRequest } from '../../lib/contactAdapter'
+import { CalendlyScheduler } from '../../components/CalendlyScheduler'
+import { aiConsultation } from '../../content/aiConsultation'
+import ContactChoices from './ContactChoices'
 import './call-request.css'
 
 export type InquiryMode = 'phone' | 'meeting'
@@ -59,6 +59,7 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
     const original = {
       position: body.style.position, top: body.style.top, left: body.style.left,
       width: body.style.width, paddingRight: body.style.paddingRight, overflow: root.style.overflow,
+      scrollbarWidth: root.style.getPropertyValue('--modal-scrollbar-width'),
     }
     const scrollbar = window.innerWidth - root.clientWidth
     const padding = Number.parseFloat(getComputedStyle(body).paddingRight) || 0
@@ -68,6 +69,9 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
       position: 'fixed', top: `${-scrollY}px`, left: `${-scrollX}px`,
       width: '100%', paddingRight: `${padding + scrollbar}px`,
     })
+    // Viewport-fixed navigation ignores body padding, so preserve its own
+    // containing width while the document scrollbar is removed as well.
+    root.style.setProperty('--modal-scrollbar-width', `${scrollbar}px`)
     root.style.overflow = 'hidden'
     const viewport = window.visualViewport
     const fitVisibleViewport = () => {
@@ -91,9 +95,11 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
       element.style.removeProperty('--call-visible-height')
       element.style.removeProperty('--call-visible-top')
       element.close()
-      const { overflow, ...bodyStyles } = original
+      const { overflow, scrollbarWidth, ...bodyStyles } = original
       Object.assign(body.style, bodyStyles)
       root.style.overflow = overflow
+      if (scrollbarWidth) root.style.setProperty('--modal-scrollbar-width', scrollbarWidth)
+      else root.style.removeProperty('--modal-scrollbar-width')
       window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' })
       opener?.focus({ preventScroll: true })
     }
@@ -145,6 +151,10 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
     }
   }
 
+  // A closed dialog renders identically during prerendering and hydration.
+  // Keep the component mounted so drafts and pending requests survive dismissal.
+  if (!open) return null
+
   return createPortal(
     <dialog ref={dialog} className="call-request-dialog" aria-labelledby="call-request-heading" aria-describedby="call-request-next-step" onCancel={event => { event.preventDefault(); dismiss() }} onKeyDown={event => {
       if (event.key !== 'Tab') return
@@ -171,12 +181,8 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
           <div className="call-request-intro">
             <h2 id="call-request-heading" ref={heading} tabIndex={-1}>{mode === 'phone' ? <>Request <em>a call.</em></> : <>Book a <em>Google Meet.</em></>}</h2>
             <p id="call-request-next-step">{mode === 'phone' ? 'Leave your number and Matthew will call you to talk about what you need.' : `Choose an available time for a ${aiConsultation.durationMinutes} minute video call. Calendly sends your invitation and Google Meet link.`}</p>
+            <ContactChoices context="dialog" compact selected={mode} onRequestCall={() => onModeChange('phone')} onBookMeeting={() => onModeChange('meeting')} />
             <p className="call-request-reassurance">You do not need to choose a package.<br /> No payment or commitment.</p>
-            <div className="call-request-modes" role="group" aria-label="How would you like to talk?">
-              <button type="button" aria-pressed={mode === 'phone'} onClick={() => onModeChange('phone')}>Request a call</button>
-              <button type="button" aria-pressed={mode === 'meeting'} onClick={() => onModeChange('meeting')}>Book a Google Meet</button>
-            </div>
-            <a className="call-request-direct-phone" href={`tel:${business.phone.number}`}>Call directly: {business.phone.display}</a>
           </div>
           {mode === 'meeting' ? <div className="call-request-calendar">
             {meetingBooked ? <div className="call-request-success" role="status"><h3 ref={success} tabIndex={-1}>Your Google Meet is booked.</h3><p>Check your email for the calendar invitation and Google Meet link. Use that invitation to reschedule or cancel.</p><button type="button" className="call-request-submit" onClick={dismiss}>Back to the website</button></div> : <>

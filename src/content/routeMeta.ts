@@ -36,8 +36,9 @@ export interface RouteMeta {
   noindex?: boolean
   /** A public page kept out of search: render its HTML and consent-based
    * analytics, and navigate to it client-side, even while noindex keeps it
-   * out of the index. Set for review drafts and for /what-now, which only
-   * makes sense after an enquiry. Never set for private pages. */
+   * out of the index. Set for review drafts, the unlisted showcase, and
+   * /what-now, which only makes sense after an enquiry. Never set for
+   * private pages. */
   publicDraft?: boolean
   /**
    * Overrides the robots directive emitted for a `noindex` route.
@@ -51,6 +52,9 @@ export const WATER_HERO_EXPERIMENT_PATH = '/experiments/water-hero'
 
 /** The preserved scroll-driven pit-stop scene, outside the production lander. */
 export const PIT_STOP_EXPERIMENT_PATH = '/experiments/pit-stop'
+
+/** The complete former homepage, accessible from the service homepage. */
+export const SHOWCASE_PATH = '/showcase'
 
 /** Unlisted offer draft. Commercial terms still require review before launch. */
 export const AI_OFFER_PATH = '/offers/ai-business-integration'
@@ -75,10 +79,19 @@ export const routeMeta: RouteMeta[] = [
   { path: '/mail', title: 'Mail | Wallace Shift', description: 'Private email workspace for the Wallace Shift team.', priority: 0, noindex: true, robots: 'noindex, nofollow' },
   {
     path: '/',
-    title: 'AI Integration & Custom CRM Development | Wallace Shift',
+    title: 'Websites & Lead Pages | Wallace Shift',
     description:
-      'AI integration, custom CRM development, and workflow automation for small businesses in Greater Kansas City and remotely. Build around the way your team works.',
+      'Business websites with monthly care and lead pages with follow up. Serving Greater Kansas City and remotely. Request a call or book a 20 minute Google Meet.',
     priority: 1.0,
+  },
+  {
+    path: SHOWCASE_PATH,
+    title: 'Interactive Design Showcase | Wallace Shift',
+    description:
+      'Explore the Wallace Shift interactive design experience, from the water hero to connected business systems and the way we work.',
+    priority: 0,
+    noindex: true,
+    publicDraft: true,
   },
   {
     path: '/services',

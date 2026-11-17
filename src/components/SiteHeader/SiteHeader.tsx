@@ -16,7 +16,12 @@ export function SiteHeader() {
   const toggleRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => {
+      // A modal fixes the body at its saved scroll offset. Keep the header's
+      // existing size while window.scrollY temporarily becomes zero.
+      if (document.body.style.position === 'fixed') return
+      setScrolled(window.scrollY > 24)
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)

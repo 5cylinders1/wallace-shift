@@ -1,4 +1,4 @@
-/* Remove separators only from this preview; retain control outlines and focus. */
+/* Remove separators only from this service page; retain control outlines and focus. */
 .p-page :is(
   .m-header,
   .m-header-contact,

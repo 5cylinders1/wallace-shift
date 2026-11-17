@@ -1,0 +1,113 @@
+{
+  "screenshots": "/tmp/wallace-shift-inquiry-review",
+  "scenarios": [
+    {
+      "productionHTML": "hero and all three contact choices rendered without JavaScript"
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": "no-preference",
+      "requests": 4,
+      "axeViolations": 0,
+      "axeManualItems": [
+        "color-contrast"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "reducedMotion": "no-preference",
+      "requests": 4,
+      "axeViolations": 0,
+      "axeManualItems": [
+        "color-contrast"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reducedMotion": "no-preference",
+      "requests": 4,
+      "axeViolations": 0,
+      "axeManualItems": [
+        "color-contrast"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "reducedMotion": "reduce",
+      "requests": 4,
+      "axeViolations": 0,
+      "axeManualItems": [
+        "color-contrast"
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "callback": "name and phone only, optional fields never opened",
+      "requests": 1
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "booking": "simulated provider confirmation",
+      "axeViolations": 0
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "booking": "simulated provider confirmation",
+      "axeViolations": 0
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "booking": "blocked calendar fallback",
+      "axeViolations": 0
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "productionNavigation": "all six routes away and home, direct and history lead-package links",
+      "runtimeErrors": 0
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "productionNavigation": "all six routes away and home, direct and history lead-package links",
+      "runtimeErrors": 0
+    },
+    {
+      "scrollbar": {
+        "nativeWidth": 0,
+        "styledWidth": 0
+      },
+      "pending": "This browser did not reserve a scrollbar gutter; non-overlay scrollbar geometry remains unverified."
+    }
+  ],
+  "simulated": "All callback responses and Calendly booking events; short viewport only simulates keyboard space.",
+  "pending": "Real inbox delivery and calendar booking, physical phone keyboard, VoiceOver and prospective-user observation."
+}

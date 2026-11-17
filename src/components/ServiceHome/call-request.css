@@ -30,15 +30,12 @@
 .call-request-brand { font-size: 12px; font-weight: 600; letter-spacing: .14em; }
 .call-request-close { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; padding: 10px 8px; font-size: 14px; }
 .call-request-close:hover { color: #175c99; }
-.call-request-content { width: min(100%, 1100px); margin: auto; padding-block: 64px; display: grid; grid-template-columns: .9fr 1.1fr; gap: 80px; align-items: start; }
-.call-request-intro h2 { font-size: clamp(40px, 4.2vw, 60px); font-weight: 500; line-height: 1.1; letter-spacing: -.035em; }
+.call-request-content { width: min(100%, 1100px); margin: auto; padding-block: 40px; display: grid; grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; }
+.call-request-intro h2 { font-size: clamp(36px, 3.5vw, 48px); font-weight: 500; line-height: 1.1; letter-spacing: -.035em; }
 .call-request-intro h2 em { display: block; font-family: var(--font-serif); font-weight: 400; }
-.call-request-intro > p { margin-top: 24px; max-width: 36ch; font-size: 16px; line-height: 1.7; color: #52616b; }
-.call-request-intro .call-request-reassurance { font-size: 14px; margin-top: 32px; }
-.call-request-modes { margin-top: 28px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.call-request-modes button { min-height: 44px; padding: 8px 0; font-size: 14px; text-align: left; text-decoration: underline; text-underline-offset: 5px; color: #175c99; }
-.call-request-modes button[aria-pressed="true"] { color: #080d12; font-weight: 700; text-decoration-thickness: 2px; }
-.call-request-direct-phone { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; font-size: 14px; }
+.call-request-intro > p { margin-top: 18px; max-width: 36ch; font-size: 15px; line-height: 1.65; color: #52616b; }
+.call-request-intro .contact-choices { margin-top: 22px; }
+.call-request-intro .call-request-reassurance { font-size: 12px; margin-top: 16px; }
 .call-request-content.is-booking { width: min(100%, 1240px); grid-template-columns: .65fr 1.35fr; gap: 48px; }
 .call-request-calendar { min-width: 0; }
 .call-request-calendar .qf-booking-load-status { font-size: 14px; color: #52616b; line-height: 1.6; margin-bottom: 12px; }
@@ -75,11 +72,11 @@
 @keyframes call-request-exit { to { transform: translateY(100%); } }
 @media (max-width: 760px) {
   .call-request-shell { padding-inline: max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-right)); padding-top: max(12px, env(safe-area-inset-top)); }
-  .call-request-content, .call-request-content.is-booking { grid-template-columns: 1fr; padding-block: 28px; gap: 28px; max-width: 520px; }
-  .call-request-modes { margin-top: 16px; flex-direction: row; flex-wrap: wrap; gap: 8px 20px; }
-  .call-request-intro h2 { font-size: 40px; }
+  .call-request-content, .call-request-content.is-booking { grid-template-columns: 1fr; padding-block: 20px; gap: 24px; max-width: 520px; }
+  .call-request-intro .contact-choices { margin-top: 16px; }
+  .call-request-intro h2 { font-size: 32px; }
   .call-request-intro h2 em { display: inline; }
-  .call-request-intro > p { font-size: 15px; margin-top: 16px; }
+  .call-request-intro > p { font-size: 14px; margin-top: 12px; }
   .call-request-intro .call-request-reassurance { margin-top: 12px; font-size: 12px; }
   .call-request-reassurance br { display: none; }
   .call-request-row { grid-template-columns: 1fr; gap: 0; }

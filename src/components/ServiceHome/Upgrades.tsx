@@ -1,6 +1,6 @@
-import { aiSubscriptionMoney, aiSubscriptionOffer, aiSubscriptionPlans } from '../../../src/content/aiSubscriptionOffer'
-import { engagementGroups } from '../../../src/content/pricing'
-import { shiftHandoffHref } from '../../../src/lib/quizHandoff'
+import { aiSubscriptionMoney, aiSubscriptionOffer, aiSubscriptionPlans } from '../../content/aiSubscriptionOffer'
+import { engagementGroups } from '../../content/pricing'
+import { shiftHandoffHref } from '../../lib/quizHandoff'
 import './upgrades.css'
 
 const managedAutomation = engagementGroups.find(group => group.id === 'automation')?.items.find(item => item.title === 'Managed automation')

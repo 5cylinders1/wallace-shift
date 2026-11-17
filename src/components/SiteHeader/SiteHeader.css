@@ -1,6 +1,7 @@
 .site-header {
   position: fixed;
   inset-inline: 0;
+  inset-inline-end: var(--modal-scrollbar-width, 0px);
   top: 0;
   z-index: 50;
   padding-block: clamp(18px, 3vw, 28px);

@@ -1,5 +1,5 @@
 import { useEffect, useState, type KeyboardEvent } from 'react'
-import { contractorOffers } from '../../../src/content/contractorOffers'
+import { contractorOffers } from '../../content/contractorOffers'
 import './process.css'
 
 const steps = [
@@ -10,10 +10,11 @@ const steps = [
 
 export default function Process() {
   const [stage, setStage] = useState(0)
-  const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 760px)').matches)
+  const [compact, setCompact] = useState(false)
   useEffect(() => {
     const query = window.matchMedia('(max-width: 760px)')
     const update = () => setCompact(query.matches)
+    update()
     query.addEventListener('change', update)
     return () => query.removeEventListener('change', update)
   }, [])

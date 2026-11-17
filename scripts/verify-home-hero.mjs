@@ -101,7 +101,7 @@ await test('archived video remains accessible while Studio uses the About still 
   }
 })
 
-await test('the homepage wrapper keeps the WebGL scene out of its static dependency graph', async () => {
+await test('the showcase hero keeps the WebGL scene out of its static dependency graph', async () => {
   const visited = new Set()
   async function walk(url) {
     if (visited.has(url.href)) return
@@ -128,7 +128,9 @@ await test('the homepage wrapper keeps the WebGL scene out of its static depende
   assert.match(wrapper, /lazy\(\(\) => import\('\.\.\/experiments\/water-hero\/WaterHeroExperiment'\)/)
   assert.ok([...visited].some(path => path.endsWith('/HeroMedia.tsx')))
   assert.ok([...visited].some(path => path.endsWith('/BrandStatement.tsx')))
-  const page = await readFile(new URL('../../pages/HomePage.tsx', base), 'utf8')
+  const page = await readFile(new URL('../../pages/ShowcasePage.tsx', base), 'utf8')
+  assert.match(page, /<HomeHero\s*\/>[\s\S]*<HomeJourney\s*\/>/,
+    'the showcase preserves the complete former homepage in its original order')
   assert.doesNotMatch(page, /import\s+\{\s*BrandStatement\s*\}|<BrandStatement\b/,
     'HomeHero owns the statement; rendering it after HomeHero would duplicate the desktop handoff')
 })
