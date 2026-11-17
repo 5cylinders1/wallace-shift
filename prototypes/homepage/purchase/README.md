@@ -1,6 +1,6 @@
 # Examples first: clearer choices
 
-Isolated local preview, reviewed 16 November 2026.
+Isolated local preview, reviewed 17 November 2026.
 
 [Open the preview](http://127.0.0.1:5184/prototypes/homepage/purchase/index.html) · [Previous version](../refined/index.html)
 
@@ -8,7 +8,7 @@ Isolated local preview, reviewed 16 November 2026.
 
 Lead with the job the customer needs done. The website package establishes or improves the business website and includes technical care. The lead page package creates one focused response path and hands over one agreed workflow. These can complement each other; they are not payment plans for the same product.
 
-Use separate service sections. Each has its intended use, deliverables, after launch responsibility, price, additional cost categories and next step. A distinct dark comparison section shows five key differences immediately, with the remaining details available through an explicit button. An optional question helps someone find a starting point, including both or unsure, without hiding either offer. Billing and support explain the commitment after the visitor understands the work.
+Use separate service sections with a common reading order: purpose, fit, price and cadence, included work, responsibility after delivery and next step. Choosing a package moves its complete section first and keeps the selector available while reading. The other package remains complete below. A distinct dark comparison section shows five key differences immediately, with remaining details available through an explicit button. Comparison and question routes stay open.
 
 This is a reasoned design recommendation, not a proven conversion winner. No actual conversion, refund or delivery cost dataset was available in the reviewed material.
 
@@ -24,10 +24,10 @@ The material limitation is unresolved terms, not just layout: included page coun
 ## What changed
 
 1. The hero retains the same logo, typography, ink background, blue controls and existing website videos. The two opening prices remain visible, with the project explicitly labelled once for setup.
-2. Package choice follows the hero. Two vertical service rows replace the long competing columns. Desktop uses purpose, included work and cost across each row; mobile groups those into one readable sequence.
-3. The optional need question offers website, focused offer, both and unsure. No choice is required and no answer is transmitted or stored. The question is about the job, not which billing schedule sounds cheaper.
+2. Package choice follows the hero. Two complete service cards replace the long competing columns. Each groups purpose and price first, then included work and responsibility beside a quiet cost area. Mobile uses one reading column. Repeated labels and explanations are consolidated without removing material conditions.
+3. The package introduction retains its layered composition, heading, explanation and comparison link. Its original choice labels now activate buttons that prioritize the corresponding package. The same buttons become a compact persistent selector within the package area, retain focus and expose their pressed state. Both packages remain visible, with document order matching visual order. Direct package links still work. No mandatory choice or qualification is required to read either offer.
 4. A separate dark comparison section replaces the nearly invisible disclosure and repeated rules. The two tinted columns show prices, billing cadence and five key differences by default. A labelled button expands all 13 points, including hosting, SEO, ownership, SMS and exclusions. The semantic table keeps both values together beneath each criterion on mobile, without horizontal scrolling. A separate blue assistance band gives “Need both?” its own heading and question route before the light inquiry demonstration begins.
-5. Northvane appears once as a website example. The next demonstration starts with sample inquiry details, moves to the inbox, and shows the optional automatic response and human handoff. Every state is labelled illustrative and sends nothing.
+5. Northvane appears once as a website example. The inquiry demonstration now shows a completed form on a phone held in an illustrated hand, follows the request through an automatic next step, then shows the conversation reaching the team. The same project details stay with it. Every state is labelled illustrative and sends nothing.
 6. A clearly marked draft 30 day satisfaction proposal names the eligible fees. Its proposed start is complete delivery plus written notice. The website billing schedule would need to match the review period. A timely refund request pauses future covered billing; a refund ends the service. It is not an active policy or a performance guarantee.
 7. Three bounded additions are available to discuss: extra pages, another compatible workflow and a defined monthly content allowance. Their existing inclusions remain intact. No unmeasured fixed upgrade price is invented.
 8. The agreement and invoice portal illustration, custom systems route, open question route and optional original animation showcase remain available. We removed the unsupported one business day response promise from this new preview.
@@ -41,8 +41,8 @@ These are scenario checks by the implementer, not recruited prospect tests.
 | First arrival | Offer names, both prices and cadence are accessible with no entrance sequence or qualification | Passed. Both opening prices end within the first 420 CSS pixels on a fresh 390 pixel viewport. |
 | New website | Find a website example, included care, additional cost categories and the dedicated offer | Passed. Website route leads to the existing $250 offer and an open inquiry form. |
 | Existing website, one campaign | Find the workflow example, $1,500 setup, possible recurring charges and handoff responsibility | Passed. Lead route leads to the existing offer, sample workflow and open inquiry. |
-| Needs both | Avoid an automatic combined charge and offer a scope conversation | Passed. Optional guide identifies overlap and routes to questions. |
-| Needs information | Reach an email or inquiry route without selecting a package or answering a mandatory quiz | Passed. Unsure state and direct question links remain open. No live messages submitted. |
+| Needs both | Avoid an automatic combined charge and offer a scope conversation | Passed. The starting panel and assistance band route to questions; the no automatic bundle price disclosure remains. |
+| Needs information | Reach an email or inquiry route without selecting a package or answering a mandatory quiz | Passed. The starting panel's question link and direct question links remain open. No live messages submitted. |
 | Workflow | Capture, routing, follow up, reply and reset work; the website image is not repeated | Passed. Three stages and reply/reset verified, with one Northvane poster in the page. |
 | Keyboard | Journey tabs support arrows, Home and End; comparison expands and collapses from its button | Passed. Earlier journey checks passed. Revised comparison opens with Enter and closes with Space; aria-expanded matches the visible state. |
 | Responsive | No page level horizontal overflow at 320, 390, 768, 1280 and 1440 pixels | Passed for the revised comparison. Both offer values fit without horizontal scrolling, including all 13 points at 320 pixels. |
@@ -53,7 +53,7 @@ These are scenario checks by the implementer, not recruited prospect tests.
 
 The ordinary application TypeScript config and production build do not include prototype entries. They were not used as misleading evidence that this preview compiled. The isolated build writes to `/private/tmp/wallace-homepage-purchase-build` and does not publish or replace `dist`.
 
-Screenshots: [revised desktop comparison](review/desktop-comparison.jpg), [revised mobile comparison](review/mobile-comparison.jpg), [desktop packages](review/desktop-packages.jpg), [mobile opening](review/mobile-opening.jpg), [mobile package](review/mobile-package.jpg).
+Screenshots: [revised desktop package introduction](review/desktop-package-intro.jpg), [revised mobile package introduction](review/mobile-package-intro.jpg), [revised desktop comparison](review/desktop-comparison.jpg), [revised mobile comparison](review/mobile-comparison.jpg), [desktop packages](review/desktop-packages.jpg), [mobile opening](review/mobile-opening.jpg), [mobile package](review/mobile-package.jpg).
 
 Not verified: physical devices, assistive technology sessions, actual customer understanding, production form delivery, payment changes, adopted refund terms, customer automation installation or sales improvement. The original showcase link and assets are preserved; its animation internals were not changed or retested.
 
@@ -107,3 +107,67 @@ Added 16 November 2026 after review of the package transition. The comparison no
 Verified desktop and mobile rendering, keyboard expansion, the full comparison, and the open question destination. Targeted TypeScript, ESLint and the design detector passed. These checks establish local presentation and functionality, not improved sales or prospect comprehension.
 
 Proposed commit message: `Make homepage package comparison prominent and separate section transitions`
+
+## Package introduction revision
+
+Added 16 November 2026 after the comparison revision. The heading and explanation now form one group beside a visible starting point panel. The old collapsed question and selection state are removed. Both service links navigate straight to the existing package details; comparison and question routes stay available. This changes presentation and navigation only, with existing scope, prices, disclosures and live routes preserved.
+
+Verified all four destinations, Enter activation, visible keyboard focus, and layouts at 320, 390, 768, 1024 and 1440 pixels. No page overflow was found; navigation targets are at least 44 pixels tall. TypeScript, ESLint and the design detector passed. Screenshots show the revised desktop and mobile introduction. No deployment or sales outcome is implied.
+
+Proposed commit message: `Refine package introduction with visible service navigation`
+
+## Introduction depth refinement
+
+The introduction now sits on a darker cool neutral background. A decorative white band spans the viewport and takes its height from the left copy with 24 pixels of vertical padding. The navigation panel extends above and below the band, with a soft downward shadow. Grid sizing stays intrinsic; no fixed content heights or viewport width breakout are used. Below 960 pixels, the white copy strip and navigation panel form a vertical stack.
+
+At 1440 pixels, the white band measured 299 pixels tall and the panel 399 pixels, with approximately 50 pixels of extension on each side. Checked 320, 390, 768, 960, 1024, 1440 and 1920 pixel widths with no horizontal overflow. Text contrast measured at least 5.47:1 and all introduction link targets are at least 44 pixels tall. All four destinations, keyboard activation and visible focus were checked. The decorative band has no pointer events.
+
+A temporary local CSS fixture doubled the introduction's computed text sizes at 320, 768, 1024 and 1440 pixels. The narrowest view exposed a long heading word; an overflow wrapping rule fixed it. The fixture was removed after verification. This is a text enlargement simulation, not a physical device or native browser zoom test. A clean page load produced no new console errors.
+
+Compared the package articles, comparison implementation and introduction copy against a snapshot from before this refinement. All were preserved. TypeScript, ESLint, whitespace checks and the design detector passed. Production files and deployment were not changed.
+
+Screenshots: [desktop composition](review/desktop-package-depth.jpg), [mobile composition](review/mobile-package-depth.jpg), [200 percent text check](review/package-depth-text-200.jpg).
+
+Proposed commit message: `Add layered depth to the homepage package introduction`
+
+## Package hierarchy and selection refinement
+
+Added 17 November 2026. This supersedes the earlier package row layout and native starting links described in the historical introduction review above. The introduction copy and decorative band remain intact. Changes are confined to the package content, its presentation and its selection controls.
+
+Both packages now use the same structure: a recognizable purpose icon, name and fit, price and cadence, included work, responsibility after delivery, cost conditions and action. The first workflow remains included in the lead package. SMS registration and possible launch delays remain visible in its cost area. Both guarantee links still say proposed. No pricing, terms or capabilities were invented.
+
+Spacing and surface contrast replace the repeated package rules. The selected package has a white surface and restrained shadow; the other is quieter but retains normal text contrast, full content and working actions. The selector does not use tabs or hide panels. Activating either button updates the actual article order and URL fragment, keeps focus on that button and positions the heading and price below the persistent controls. The full introduction panel returns when the visitor scrolls back up.
+
+### Verification for this revision
+
+- Checked both selection directions at 320, 390, 768, 1024, 1280 and 1440 pixel widths. Both cards remain present; document order matches the displayed order. No page overflow or targets below 44 pixels were found in the package area.
+- Tested Enter, Space and Tab. Focus remains on the activated control, selection is exposed through aria-pressed, and the next action belongs to the first package. Focus outlines remain visible.
+- Verified initial direct package links, repeat navigation to the same fragment and browser back navigation. Both dedicated offer destinations loaded locally. All package example, comparison, guarantee and question fragments resolve to existing targets.
+- Resized with the selector docked and returned to the introduction. The full panel and its placeholder heights match after returning; the composition has no horizontal overflow.
+- Simulated 200 percent text by doubling computed text sizes in a temporary local fixture at 320, 768 and 1440 pixels. A narrow price overflow was found and fixed. The final checks had no clipping or horizontal overflow. At enlarged text sizes, reading the whole package requires scrolling. The fixture was removed.
+- Measured text contrast conservatively at a minimum of 4.64:1 within the package section. No repeated top or bottom rules remain on package cards.
+- Targeted TypeScript and ESLint passed. An isolated Vite build passed with output in `/private/tmp/package-selection-build`. A fresh browser reload produced no new warnings or errors; earlier development reload warnings were not reproduced on the clean load.
+
+Screenshots: [desktop package selection](review/desktop-package-selection.jpg), [mobile package selection](review/mobile-package-selection.jpg).
+
+These are local visual and functional checks. They do not establish improved comprehension or sales. Physical devices, screen reader sessions, real form delivery and production behavior were not tested. No deployment was performed.
+
+Proposed commit message: `Refine package hierarchy and keep offer selection visible`
+
+## Visual inquiry story
+
+Added 17 November 2026. Replaced the text heavy inquiry panels with one connected visual scene: a hand holding the completed phone form, an inquiry card and a fictional roofing team member with an example inbox. All artwork is local SVG illustration. It is not a product screenshot, real customer record or testimonial.
+
+The steps now read capture, give the inquiry a next step, then put it in the right hands. The request icon travels along the visible route after an action. The example confirmation and customer reply keep the original roof repair details. The team already receives the request during the confirmation stage; the final step shows the human conversation, rather than implying that delivery must wait for the customer to reply. The website package bypasses automatic follow up, as stated next to the scene.
+
+The action is above the artwork so visitors can watch what happens. Step selection, sequential advance and replay are available without an automatic slideshow. On smaller screens, the active illustration is shown at a readable size with the same three step controls. The final inbox includes the sample customer reply. Motion runs only on advancement, has no loop and is disabled by the reduced motion media rule.
+
+Checked all three stages at 320, 390, 768, 1024 and 1440 pixel widths. No horizontal page overflow or controls below 44 pixels were found. Right arrow, End, Tab, Enter and replay were checked, with focus retained on the active control. A temporary fixture doubled explanatory and control text at 320, 768 and 1440 pixels; the scaled phone illustration retained its own proportions. Text wrapped without clipping. This was a CSS text simulation, not native browser zoom or a physical device test. The fixture was removed.
+
+Rendered text contrast measured at least 5.30:1. A clean preview reload produced no new console warnings or errors. Targeted TypeScript, ESLint and the isolated Vite build passed. Existing package selection, comparison, offer destinations, guarantee, upgrades and other sections were preserved. No production files or deployment changed, and no request or message was sent.
+
+Screenshots: [desktop inquiry story](review/desktop-inquiry-story.jpg), [mobile inquiry story](review/mobile-inquiry-story.jpg).
+
+These checks establish local presentation and behavior. Customer comprehension, usage and conversion remain unmeasured.
+
+Proposed commit message: `Turn the inquiry demo into a visual customer journey`

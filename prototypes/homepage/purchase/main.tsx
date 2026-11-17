@@ -1,11 +1,13 @@
 // Isolated preview entry. Components intentionally stay outside production routing.
 /* eslint-disable react-refresh/only-export-components */
-import { useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import '../../../src/index.css'
 import '../mockups.css'
 import '../refined/refined.css'
 import './purchase.css'
+import InquiryJourney from './InquiryJourney'
 
 const email = 'mailto:matthew@wallaceshift.com?subject=Question%20about%20my%20website'
 const offerPaths = { website: '/offers/contractor-websites', lead: '/offers/lead-page-follow-up' }
@@ -34,11 +36,6 @@ function Hero() {
   return <section className="r-hero" id="examples"><div className="r-wrap r-hero-grid"><div className="r-hero-copy"><h1>Make your work<br />easy to <em>choose.</em></h1><p>A business website with monthly care. Or a focused lead page that captures inquiries and follows up. Start with the work you need.</p><div className="r-opening-prices"><a href="#website-package"><span>Website, hosting & care</span><strong>$250 <small>/month</small></strong></a><a href="#lead-package"><span>Lead page & follow up</span><strong>$1,500 <small>once for setup</small></strong></a></div><div className="r-hero-actions"><a href="#packages" className="m-button">Find your starting point<Arrow /></a><a href="#questions" className="r-question-link">Just have a question?</a></div><p className="p-opening-note">Package details and any additional costs below.</p></div><WebsiteDemo /></div><div className="r-wrap r-hero-foot"><p>Built in Greater Kansas City. Available remotely.</p><a href="/services">Need a custom CRM or connected system?<Arrow diagonal /></a></div></section>
 }
 
-const journey = [
-  { title: 'Capture the request.', description: 'Give your customer a clear place to describe the job. Collect the details your team needs to start a conversation.', label: 'Inquiry form in both packages' },
-  { title: 'Put it in the right hands.', description: 'Route the request to the agreed inbox or compatible tool. Your team knows what the customer needs and how to reach them.', label: 'Agreed inquiry destination in both packages' },
-  { title: 'Give the inquiry a next step.', description: 'Acknowledge the request and follow up at agreed times. Define when the sequence stops and your team takes over.', label: 'One automatic workflow in the $1,500 package' },
-]
 function tabKey(event: KeyboardEvent, index: number, count: number, choose: (index: number) => void, prefix: string) {
   let next: number | undefined
   if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % count
@@ -47,28 +44,6 @@ function tabKey(event: KeyboardEvent, index: number, count: number, choose: (ind
   if (event.key === 'End') next = count - 1
   if (next !== undefined) { event.preventDefault(); choose(next); document.getElementById(`${prefix}-${next}`)?.focus() }
 }
-function Journey() {
-  const [stage, setStage] = useState(0)
-  const [replied, setReplied] = useState(false)
-  const choose = (next: number) => { setStage(next); setReplied(false); document.getElementById(`journey-${next}`)?.focus() }
-  return <section className="r-section r-light" id="work"><div className="r-wrap">
-    <div className="r-section-head"><h2>The website is the start.<br /><em>Here is what comes next.</em></h2><p>Follow one roof repair request. See what both packages do, and where automatic follow up adds another step.</p></div>
-    <div className="r-journey"><div className="r-stages" role="tablist" aria-label="Explore the inquiry journey" aria-orientation="vertical">{journey.map((item, i) => <button key={item.title} id={`journey-${i}`} role="tab" aria-selected={stage === i} aria-controls="journey-panel" tabIndex={stage === i ? 0 : -1} onClick={() => choose(i)} onKeyDown={e => tabKey(e, i, 3, choose, 'journey')}><span className="r-stage-number">{i + 1}</span><span><strong>{item.title}</strong><span className="r-stage-description">{item.description}</span><span className="r-stage-label">{item.label}</span></span><Arrow /></button>)}</div>
-    <div className="r-journey-panel" id="journey-panel" role="tabpanel" tabIndex={0} aria-labelledby={`journey-${stage}`}>
-      <div className="r-panel-label"><span>Illustrative customer journey</span><span>{stage + 1} of 3</span></div>
-      {stage === 0 && <div className="p-request"><h3>Tell us what needs attention.</h3><p>A sample inquiry from the roofing example.</p><dl><div><dt>What can we help with?</dt><dd>Water around a skylight</dd></div><div><dt>Where is the property?</dt><dd>Kansas City</dd></div><div><dt>How should we get in touch?</dt><dd>Email</dd></div></dl><button className="m-button" onClick={() => choose(1)}>Preview where it goes<Arrow /></button><p className="r-panel-fine">Illustrative form, not a real request. Nothing is collected or sent.</p></div>}
-      {stage === 1 && <div className="r-inquiry"><div className="r-inquiry-heading"><span>New roof repair inquiry</span><span className="r-sample-tag">Example inbox</span></div><dl><div><dt>Project</dt><dd>Water around a skylight</dd></div><div><dt>Location</dt><dd>Kansas City</dd></div><div><dt>Preferred contact</dt><dd>Email</dd></div></dl><div className="r-destination"><svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 6 9 7 9-7" /></svg><div><strong>Your team can respond from here.</strong><p>With the website package, your team handles the reply. The lead page package also includes one agreed automatic workflow.</p></div></div><button className="m-text-link" onClick={() => choose(2)}>Preview automatic follow up<Arrow /></button><p className="r-panel-fine">Illustrative delivery. This example does not send information or connect a CRM.</p></div>}
-      {stage === 2 && <div className="r-response"><div className="r-response-row"><span className="r-dot" /><div><span>After the inquiry</span><p>“Thanks for getting in touch. We have your roof repair request.”</p></div></div><div className="r-response-row"><span className="r-dot" /><div><span>At the agreed follow up time</span><p>“Are you still looking for help? Reply here and we can discuss the next step.”</p></div></div><div aria-live="polite" className={`r-reply ${replied ? 'is-replied' : ''}`}><strong>{replied ? 'Your team takes over.' : 'What happens when they reply?'}</strong><p>{replied ? 'In this example, the customer response stops the sequence and the conversation returns to your team.' : 'The response and stop conditions are defined before the workflow goes live.'}</p><button className="m-text-link" onClick={() => setReplied(!replied)}>{replied ? 'Reset the example' : 'Show a customer reply'}<Arrow /></button></div><p className="r-panel-fine">Illustration of a proposed setup in compatible tools. No messages are sent. Channels, timing and stop conditions depend on the agreed scope.</p></div>}
-    </div></div>
-  </div></section>
-}
-
-const choices = [
-  { label: 'I need a business website', title: 'Start with the website package.', text: 'A home for your services and work, with hosting and technical maintenance. Monthly care is part of this service.', href: '#website-package', action: 'See the website package' },
-  { label: 'I need a page for one offer', title: 'Start with the lead page package.', text: 'A focused page and one follow up workflow. Keep a website that already works. Setup is a single fee; running costs may continue.', href: '#lead-package', action: 'See the lead page package' },
-  { label: 'I may need both', title: 'Map the scope together first.', text: 'A business website and a campaign page can work together. We check for overlap before quoting so shared work is not priced twice.', href: '#questions', action: 'Ask about a combined scope' },
-  { label: 'I am not sure yet', title: 'You can start with a question.', text: 'Tell us what is working and what is missing. You can explore every example and price without choosing a package.', href: '#questions', action: 'Ask Matthew a question' },
-]
 const comparisons = [
   ['Best fit', 'A new or improved business website', 'One service, offer or campaign'],
   ['What we build', 'Business website. Page count agreed in scope.', 'One focused lead page'],
@@ -124,22 +99,146 @@ function PackageComparison() {
     </div></aside>
   </section>
 }
+type PackageId = 'website' | 'lead'
+const packageContent = {
+  website: {
+    name: 'Business website', accent: '& care',
+    fit: 'Show your services, work and service area in one place, with ongoing technical care.',
+    price: '$250', cadence: '/month',
+    included: ['Website build and inquiry form with agreed routing', 'Hosting and technical maintenance', 'Basic on page SEO'],
+    after: 'Your team handles replies. We maintain the website within the agreed care scope.',
+    costs: 'Domain registration and paid services may cost extra.',
+    terms: 'Page count, update allowance, minimum term, cancellation and ownership are agreed before payment.',
+    action: 'Explore website care', example: 'Explore website examples', exampleHref: '#examples',
+  },
+  lead: {
+    name: 'Lead page', accent: '& automatic follow up',
+    fit: 'Give one service or campaign its own inquiry and follow up path, alongside your existing website.',
+    price: '$1,500', cadence: 'once for setup',
+    included: ['One focused page with inquiry capture and routing', 'One agreed automatic follow up workflow', 'Workflow testing and handoff'],
+    after: 'Your team operates the agreed tools and handles replies. Ongoing workflow management is separate.',
+    costs: 'Hosting, software and message usage may add recurring costs.',
+    terms: 'Tools, access, ownership and running costs are agreed before payment. Advertising is separate.',
+    action: 'Explore lead page setup', example: 'Try the inquiry example', exampleHref: '#work',
+  },
+}
+function PackageIcon({ kind }: { kind: PackageId }) {
+  return <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {kind === 'website' ? <><rect x="3" y="5" width="26" height="22" rx="3" /><path d="M3 11h26M8 8h.1m3 0h.1M8 16h7v6H8zM20 16h4m-4 5h4" /></> : <><rect x="3" y="4" width="17" height="23" rx="3" /><path d="M8 10h7m-7 5h5m6 3h10m-4-4 4 4-4 4M8 22h4" /></>}
+  </svg>
+}
+function Check() { return <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="m4 10 4 4 8-8" /></svg> }
+function packageFromHash(): PackageId | undefined {
+  if (window.location.hash === '#website-package') return 'website'
+  if (window.location.hash === '#lead-package') return 'lead'
+}
+function PackageCard({ kind, selected }: { kind: PackageId; selected: boolean }) {
+  const item = packageContent[kind]
+  return <article className={`p-package ${selected ? 'is-selected' : ''}`} id={`${kind}-package`} aria-labelledby={`${kind}-package-heading`}>
+    <header className="p-package-heading">
+      <div className="p-package-purpose"><span className="p-package-icon"><PackageIcon kind={kind} /></span><div><h3 id={`${kind}-package-heading`}>{item.name}<br /><em>{item.accent}</em></h3><p>{item.fit}</p></div></div>
+      <div className="p-package-price"><div className="p-price">{item.price}<span>{item.cadence}</span></div><span className="p-package-selection">{selected ? <><Check />Your selected starting point</> : 'Also available'}</span></div>
+    </header>
+    <div className="p-package-body">
+      <div className="p-package-scope"><h4>What is included</h4><ul>{item.included.map(text => <li key={text}><Check /><span>{text}</span></li>)}</ul><div className="p-package-after"><h4>After delivery</h4><p>{item.after}</p></div></div>
+      <aside className="p-package-terms" aria-label={`${item.name} costs and commitment`}><h4>Costs & commitment</h4><p className="p-cost-note">{item.costs}</p><p>{item.terms}</p>{kind === 'lead' && <div className="p-sms-note"><h4>Using text messages?</h4><p>Automated texts to US customers from a local 10 digit number require A2P 10DLC registration before sending. Approval can take several business days or longer and may delay SMS launch.</p></div>}</aside>
+    </div>
+    <footer className="p-package-actions"><div><a className="m-button" href={offerPaths[kind]}>{item.action}<Arrow /></a><a href="#guarantee" className="p-policy-link">Proposed 30 day guarantee</a></div><a href={item.exampleHref} className="p-example-link">{item.example}<Arrow /></a></footer>
+  </article>
+}
 function Packages() {
-  const [choice, setChoice] = useState<number | null>(null)
-  return <section className="r-section r-light p-packages" id="packages"><div className="r-wrap">
-    <div className="r-section-head"><h2>Choose the work.<br /><em>Know the commitment.</em></h2><p>A website for your whole business, or a focused page for one offer. Each has its own scope and way of working.</p></div>
-    <details className="p-guide"><summary>Not sure where to start?<Plus /></summary><p>What do you need right now? This is optional. Both packages stay available below.</p><div className="p-choices" role="group" aria-label="What do you need right now?">{choices.map((item, i) => <button key={item.label} aria-pressed={choice === i} onClick={() => setChoice(i)}>{item.label}</button>)}</div><div aria-live="polite">{choice !== null && <div className="p-guidance"><h3>{choices[choice].title}</h3><p>{choices[choice].text}</p><a className="m-text-link" href={choices[choice].href}>{choices[choice].action}<Arrow /></a></div>}</div></details>
-    <article className="p-package" id="website-package">
-      <div className="p-package-purpose"><h3>A website for your<br /><em>whole business.</em></h3><p>Show your services, work and service area in one place. A good fit when you need a new website or a clearer one.</p><a href="#examples" className="m-text-link">Explore website examples<Arrow /></a></div>
-      <div className="p-package-scope"><h4>Website, hosting & care</h4><ul><li>Website build and inquiry form</li><li>Hosting and technical maintenance</li><li>Basic on page SEO</li><li>Agreed inquiry destination</li></ul><p><strong>After launch</strong>Your team replies to inquiries. We provide technical maintenance within the agreed care scope.</p></div>
-      <div className="p-package-buy"><div className="p-price">$250<span>/month</span></div><p>Website build included.</p><p className="p-cost-note">Domain registration and paid services may cost extra. Page count, update allowance, minimum term, cancellation and ownership are agreed before payment.</p><a className="m-button" href={offerPaths.website}>Explore website care<Arrow /></a><a href="#guarantee" className="p-policy-link">Proposed 30 day guarantee</a></div>
-    </article>
-    <article className="p-package" id="lead-package">
-      <div className="p-package-purpose"><h3>One offer.<br /><em>A clear next step.</em></h3><p>Give one service or campaign its own page and follow up path. Keep the business website that already works for you.</p><a href="#work" className="m-text-link">Try the inquiry example<Arrow /></a></div>
-      <div className="p-package-scope"><h4>Lead page & automatic follow up</h4><ul><li>One focused lead page</li><li>Inquiry capture and routing</li><li>One agreed follow up workflow</li><li>Workflow testing and handoff</li></ul><p><strong>After handoff</strong>Your team runs the agreed tools and handles replies. Ongoing workflow management is separate.</p></div>
-      <div className="p-package-buy"><div className="p-price">$1,500<span>once for setup</span></div><p>One page. One agreed workflow.</p><p className="p-cost-note">Hosting, software and message usage may add recurring costs. We confirm tools, access, ownership and running costs before payment. Advertising is separate.</p><p className="p-sms-note"><strong>Planning to use text messages?</strong>Automated texts to US customers from a local 10 digit number require A2P 10DLC registration before sending. Approval can take several business days or longer and may delay SMS launch.</p><a className="m-button" href={offerPaths.lead}>Explore lead page setup<Arrow /></a><a href="#guarantee" className="p-policy-link">Proposed 30 day guarantee</a></div>
-    </article>
-  </div></section>
+  const [selected, setSelected] = useState<PackageId>(() => packageFromHash() ?? 'website')
+  const [docked, setDocked] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+  const slotRef = useRef<HTMLDivElement>(null)
+  const selectorRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
+  const fullPanelHeight = useRef(0)
+  const scrollFrame = useRef(0)
+
+  // Keep one set of controls mounted so focus survives docking and package reordering.
+  useLayoutEffect(() => {
+    const slot = slotRef.current
+    const selector = selectorRef.current
+    if (!slot || !selector) return
+    slot.style.minHeight = docked ? `${fullPanelHeight.current}px` : ''
+    if (docked) {
+      const measureOffset = () => sectionRef.current?.style.setProperty('--package-scroll-offset', `${selector.getBoundingClientRect().bottom + 24}px`)
+      measureOffset()
+      const observer = new ResizeObserver(measureOffset)
+      observer.observe(selector)
+      return () => observer.disconnect()
+    }
+    const measure = () => { fullPanelHeight.current = selector.getBoundingClientRect().height }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(selector)
+    return () => observer.disconnect()
+  }, [docked])
+
+  useEffect(() => {
+    let frame = 0
+    const update = () => {
+      const slot = slotRef.current
+      const section = sectionRef.current
+      if (!slot || !section) return
+      const threshold = Math.min(180, window.innerHeight / 3)
+      setDocked(slot.getBoundingClientRect().bottom <= threshold && section.getBoundingClientRect().bottom > threshold + 80)
+    }
+    const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update) }
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule) }
+  }, [])
+
+  const choose = useCallback((kind: PackageId, updateHistory = true) => {
+    flushSync(() => { setSelected(kind); setDocked(true) })
+    const hash = `#${kind}-package`
+    if (updateHistory && window.location.hash !== hash) window.history.pushState(window.history.state, '', hash)
+    const firstPackage = listRef.current?.firstElementChild
+    if (!firstPackage || !selectorRef.current) return
+    const top = window.scrollY + firstPackage.getBoundingClientRect().top - selectorRef.current.getBoundingClientRect().bottom - 24
+    window.scrollTo({ top, behavior: 'instant' })
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    const followHash = () => {
+      const kind = packageFromHash()
+      if (kind) choose(kind, false)
+    }
+    // Fragment navigation can precede React mounting and web font layout.
+    void document.fonts.ready.then(() => {
+      if (cancelled) return
+      scrollFrame.current = requestAnimationFrame(() => {
+        if (packageFromHash()) followHash()
+        else if (window.location.hash === '#packages') sectionRef.current?.scrollIntoView()
+      })
+    })
+    window.addEventListener('hashchange', followHash)
+    return () => { cancelled = true; cancelAnimationFrame(scrollFrame.current); window.removeEventListener('hashchange', followHash) }
+  }, [choose])
+
+  const order: PackageId[] = selected === 'website' ? ['website', 'lead'] : ['lead', 'website']
+  return <section className="r-section r-light p-packages" id="packages" ref={sectionRef}>
+    <div className="p-package-intro">
+      <div className="p-package-intro-copy">
+        <h2>Choose the work.<br /><em>Know the commitment.</em></h2>
+        <p>A website for your whole business, or a focused page for one offer. Each has its own scope and way of working.</p>
+        <a className="m-text-link" href="#compare">Compare what is included<Arrow /></a>
+      </div>
+      <div className="p-starting-slot" ref={slotRef}><div className={`p-starting-point ${docked ? 'is-docked' : ''}`} ref={selectorRef}>
+        <h3 id="starting-point-heading">What do you need right now?</h3>
+        <p>Jump straight to the details that fit.</p>
+        <div className="p-starting-links" role="group" aria-label="Choose which package to read first">
+          {(['website', 'lead'] as const).map(kind => <button key={kind} id={`package-choice-${kind}`} type="button" aria-label={kind === 'website' ? 'I need a business website' : 'I need a page for one offer'} aria-pressed={selected === kind} aria-controls={`${kind}-package`} onClick={event => { event.currentTarget.focus({ preventScroll: true }); choose(kind) }}><span><strong>{kind === 'website' ? 'I need a business website' : 'I need a page for one offer'}</strong><span>{kind === 'website' ? 'A new or clearer site, with ongoing care.' : 'One focused page and a follow up workflow.'}</span></span><span className="p-route-arrow">{selected === kind ? <Check /> : <Arrow />}</span></button>)}
+        </div>
+        <div className="p-starting-help"><p>Need both, or not sure?</p><a href="#questions">Ask Matthew a question<Arrow diagonal /></a></div>
+      </div></div>
+    </div>
+    <div className="r-wrap p-package-list" ref={listRef}>{order.map(kind => <PackageCard key={kind} kind={kind} selected={selected === kind} />)}</div>
+    <span className="p-visually-hidden" role="status">{selected === 'website' ? 'Business website and care' : 'Lead page and automatic follow up'} shown first. Both packages remain available.</span>
+  </section>
 }
 
 function Guarantee() {
@@ -185,7 +284,7 @@ function Contact() {
   return <section className="r-section r-contact" id="questions"><div className="r-wrap"><div><h2>Start with<br /><em>a question.</em></h2><p>Tell Matthew what you want to improve, or what you want to understand. You do not need to know the solution.</p></div><div><a href={email} className="m-button">Ask Matthew a question<Arrow /></a><a className="m-text-link" href="/contact">Tell us about your project<Arrow /></a><p>Questions are welcome before you choose.</p></div></div></section>
 }
 function App() {
-  return <div className="m-page r-page p-page"><Header /><main id="main"><Hero /><Packages /><PackageComparison /><Journey /><Guarantee /><Upgrades /><Process /><Systems /><Questions /><Showcase /><Contact /></main><footer className="r-wrap r-footer"><a href="#main" className="m-brand"><img src="/brand/wallace-shift-logo-white.svg" width="20" height="14" alt="" />WALLACE SHIFT</a><a href="/pricing">All services & pricing</a><a href="/privacy">Privacy</a><a href="./README.md">Preview notes</a><a href="../refined/index.html">Previous preview</a></footer></div>
+  return <div className="m-page r-page p-page"><Header /><main id="main"><Hero /><Packages /><PackageComparison /><InquiryJourney /><Guarantee /><Upgrades /><Process /><Systems /><Questions /><Showcase /><Contact /></main><footer className="r-wrap r-footer"><a href="#main" className="m-brand"><img src="/brand/wallace-shift-logo-white.svg" width="20" height="14" alt="" />WALLACE SHIFT</a><a href="/pricing">All services & pricing</a><a href="/privacy">Privacy</a><a href="./README.md">Preview notes</a><a href="../refined/index.html">Previous preview</a></footer></div>
 }
 const root = createRoot(document.getElementById('root')!)
 root.render(<App />)
