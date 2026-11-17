@@ -83,7 +83,6 @@ export default function Upgrades() {
             <h3 id="monthly-crm-heading">Wallace Shift CRM</h3>
             <p className="monthly-services__need">For teams piecing together customer details from messages and notes.</p>
             <div className="monthly-services__price">
-              <strong className="monthly-services__status">In development</strong>
               <span>Monthly price and timing to be confirmed</span>
             </div>
             <div className="monthly-services__value">

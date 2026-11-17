@@ -12,7 +12,6 @@
 .monthly-services__price { padding-top: 8px; }
 .monthly-services__price > strong { display: block; font-size: 27px; line-height: 1.3; font-weight: 500; font-variant-numeric: tabular-nums; }
 .monthly-services__price > span { display: block; margin-top: 4px; font-size: 12px; line-height: 1.6; color: var(--tile-muted); }
-.monthly-services__price > .monthly-services__status { font-size: 23px; color: #614a25; line-height: 1.53; }
 .monthly-services__value { padding-top: 16px; border-top: 1px solid var(--tile-line); }
 .monthly-services .monthly-services__value h4 { font: 600 13px/1.5 var(--font-sans); margin: 0 0 6px; }
 .monthly-services__value > p { font-size: 14px; color: var(--tile-muted); }
@@ -51,7 +50,6 @@
   .monthly-services__tile { padding-inline: 18px; grid-template-rows: minmax(52px, auto) minmax(76px, auto) minmax(94px, auto) minmax(164px, auto) minmax(88px, auto) minmax(48px, auto) auto; }
   .monthly-services__intro { gap: 32px; }
   .monthly-services__intro > p { max-width: 37ch; }
-  .monthly-services__price > .monthly-services__status { font-size: 21px; }
 }
 @media (max-width: 759px) {
   .monthly-services { padding-block: 36px; }

@@ -1,0 +1,121 @@
+{
+  "responsive": [
+    {
+      "width": 320,
+      "height": 844,
+      "sectionHeight": 2046.484375,
+      "tilesFit": null,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "sectionHeight": 1870.328125,
+      "tilesFit": null,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 640,
+      "height": 900,
+      "sectionHeight": 1627.84375,
+      "tilesFit": null,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "sectionHeight": 864.84375,
+      "tilesFit": null,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 1024,
+      "height": 900,
+      "sectionHeight": 847.78125,
+      "tilesFit": null,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "sectionHeight": 757.46875,
+      "tilesFit": true,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "sectionHeight": 763.15625,
+      "tilesFit": true,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "sectionHeight": 768.03125,
+      "tilesFit": true,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "sectionHeight": 769.78125,
+      "tilesFit": true,
+      "overflow": false,
+      "axeViolations": 0
+    },
+    {
+      "width": 3292,
+      "height": 1860,
+      "sectionHeight": 769.78125,
+      "tilesFit": true,
+      "overflow": false,
+      "axeViolations": 0
+    }
+  ],
+  "disclosures": [
+    {
+      "index": 0,
+      "keyboard": true,
+      "axeViolations": 0,
+      "neighborsStayCompact": true
+    },
+    {
+      "index": 1,
+      "keyboard": true,
+      "axeViolations": 0,
+      "neighborsStayCompact": true
+    },
+    {
+      "index": 2,
+      "keyboard": true,
+      "axeViolations": 0,
+      "neighborsStayCompact": true
+    }
+  ],
+  "links": [
+    {
+      "name": "Discuss the agents",
+      "prefill": true
+    },
+    {
+      "name": "Discuss follow up",
+      "prefill": true
+    },
+    {
+      "name": "Discuss your CRM needs",
+      "prefill": true
+    }
+  ],
+  "questionLink": true,
+  "pageErrors": [],
+  "customerTest": "Pending"
+}
