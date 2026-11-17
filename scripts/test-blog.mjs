@@ -68,9 +68,11 @@ test('published article contains complete crawlable text and unique canonical me
   assert.equal((html.match(/name="description"/g) ?? []).length, 1)
   assert.equal((html.match(/<h1(?:\s|>)/g) ?? []).length, 1)
   const analyticsScript = '<script defer src="/site-analytics.js"></script>'
+  const chatScript = '<script src="https://www.reply365.app/chat/widget.js" data-widget="420f110fa3066a067b03d4cc8fcdb1ea" defer></script>'
   assert.equal(html.split(analyticsScript).length - 1, 1, 'includes exactly one approved analytics bootstrap')
-  assert.doesNotMatch(html.replace(analyticsScript, ''), /<script(?! type="application\/ld\+json")/,
-    'the article remains static HTML with no other executable scripts')
+  assert.equal(html.split(chatScript).length - 1, 1, 'includes exactly one Reply365 chat widget')
+  assert.doesNotMatch(html.replace(analyticsScript, '').replace(chatScript, ''), /<script(?! type="application\/ld\+json")/,
+    'the article remains static HTML with only the analytics and chat scripts')
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])
   const post = schema['@graph'].find(item => item['@type'] === 'BlogPosting')
   assert.equal(post.author['@type'], 'Person')

@@ -4,6 +4,7 @@ import { renderLines } from '../../lib/textLines'
 import { AmbientLoop } from '../AmbientLoop/AmbientLoop'
 import { ContactForm } from '../ContactForm/ContactForm'
 import { PageLink } from '../PageLink/PageLink'
+import { PhoneLink } from '../PhoneLink'
 import { Reveal } from '../Reveal/Reveal'
 import './ContactCta.css'
 
@@ -32,6 +33,7 @@ export function ContactCta({ sceneBackground = false }: { sceneBackground?: bool
           <Reveal delay={0.2} xPercent={sceneBackground ? -125 : undefined}>
             <div className="contact-cta__alternatives">
               <p className="eyebrow">{contactCta.alternatives.eyebrow}</p>
+              <PhoneLink />
               {business.email && (
                 <p className="contact-cta__email">
                   {contactCta.alternatives.emailLead}{' '}

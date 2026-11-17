@@ -13,8 +13,13 @@ export type ContactTiming = 'soon' | 'later' | 'exploring'
 export type ContactDecisionRole = 'owner' | 'shared' | 'researching'
 
 export type ContactPayload = {
+  /** Stable for retries of one inquiry. No personal data is encoded here. */
+  requestId?: string
   name: string
   email: string
+  /** Phone callbacks may leave email empty. All other requests require email. */
+  contactMethod?: 'phone' | 'email'
+  phone?: string
   message: string
   /** Structured context, all optional: an enquiry is still valid without
    *  any of it, and the endpoint only adds the ones that were answered. */
@@ -47,6 +52,7 @@ type ApiBody = { ok?: unknown; error?: unknown }
 
 export async function submitContactRequest(
   payload: ContactPayload,
+  options: { signal?: AbortSignal } = {},
 ): Promise<ContactResult> {
   if (!CONTACT_ENDPOINT) {
     return { ok: false, reason: 'not_configured' }
@@ -57,9 +63,11 @@ export async function submitContactRequest(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
+      signal: options.signal,
     })
 
     const body = (await response.json().catch(() => null)) as ApiBody | null
+    if (options.signal?.aborted) return { ok: false, reason: 'network_error' }
 
     // Anything that is not this API's own JSON is treated as "no inbox
     // wired up". The dev server has no serverless functions and answers
@@ -70,7 +78,7 @@ export async function submitContactRequest(
       return { ok: false, reason: 'not_configured' }
     }
 
-    if (body.ok) return { ok: true }
+    if (response.ok && body.ok) return { ok: true }
     if (body.error === 'not_configured') {
       return { ok: false, reason: 'not_configured' }
     }

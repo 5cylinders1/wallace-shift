@@ -3,6 +3,7 @@ import { PageHero } from '../components/PageHero/PageHero'
 import { ContactForm } from '../components/ContactForm/ContactForm'
 import { Reveal } from '../components/Reveal/Reveal'
 import { PageLink } from '../components/PageLink/PageLink'
+import { PhoneLink } from '../components/PhoneLink'
 import { business } from '../content/siteConfig'
 import { trackSiteEvent } from '../lib/analytics'
 import { readDemoHandoff } from '../lib/demoHandoff'
@@ -112,23 +113,21 @@ export function ContactPage() {
               </div>
             </Reveal>
 
-            {/* Renders only once a real mailbox exists. Until then the form
-                is the only channel offered, rather than an address that
-                would bounce. */}
-            {business.email && (
-              <Reveal delay={0.08}>
-                <div className="contact-page__block">
-                  <h2 className="service-block__label">Prefer email?</h2>
-                  <p className="contact-page__hint">Matthew Wallace · Designs and builds every project</p>
+            <Reveal delay={0.08}>
+              <div className="contact-page__block">
+                <h2 className="service-block__label">Call or email</h2>
+                <p className="contact-page__hint">Matthew Wallace · Designs and builds every project</p>
+                <PhoneLink />
+                {business.email && (
                   <a
                     className="contact-page__email"
                     href={`mailto:${business.email}`}
                   >
                     {business.email}
                   </a>
-                </div>
-              </Reveal>
-            )}
+                )}
+              </div>
+            </Reveal>
 
             {business.serviceArea && (
               <Reveal delay={0.12}>

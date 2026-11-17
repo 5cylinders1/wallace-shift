@@ -138,7 +138,7 @@ ol, ul { padding: 0; list-style: none; }
 .ct-footer { padding: 56px 0 40px; border-top: 1px solid #edf1f21f; }
 .ct-footer-inner { display: grid; grid-template-columns: auto 1fr auto; gap: 18px 32px; align-items: center; }
 .ct-footer-inner > p:first-of-type { color: var(--ct-muted-dark); }
-.ct-footer nav { display: flex; gap: 22px; font-size: 14px; color: var(--ct-silver); }
+.ct-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; font-size: 14px; color: var(--ct-silver); }
 .ct-footer nav a:hover { color: var(--ct-accent-hover); }
 .ct-copyright { grid-column: 1 / -1; font-size: 13px; color: var(--ct-muted-dark); }
 

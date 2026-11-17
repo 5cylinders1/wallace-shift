@@ -4,6 +4,7 @@ import { siteMeta } from '../../content/siteConfig'
 import { navRoutes } from '../../content/routeMeta'
 import { useRoutePath } from '../../lib/router'
 import { PageLink } from '../PageLink/PageLink'
+import { PhoneLink } from '../PhoneLink'
 import './SiteHeader.css'
 
 export function SiteHeader() {
@@ -151,12 +152,15 @@ export function SiteHeader() {
           </ul>
         </nav>
 
-        <PageLink href="/contact" className="site-header__cta">
-          Discuss your system
-          <span className="site-header__cta-arrow" aria-hidden="true">
-            &#8599;
-          </span>
-        </PageLink>
+        <div className="site-header__actions">
+          <PhoneLink className="site-header__phone ws-phone-link--compact" />
+          <PageLink href="/contact" className="site-header__cta">
+            Discuss your system
+            <span className="site-header__cta-arrow" aria-hidden="true">
+              &#8599;
+            </span>
+          </PageLink>
+        </div>
 
         <button
           ref={toggleRef}

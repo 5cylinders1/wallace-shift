@@ -1,6 +1,7 @@
 import { business, footer, serviceDirectory, siteMeta } from '../../content/siteConfig'
 import { navRoutes } from '../../content/routeMeta'
 import { PageLink } from '../PageLink/PageLink'
+import { PhoneLink } from '../PhoneLink'
 import './SiteFooter.css'
 
 export function SiteFooter() {
@@ -43,6 +44,7 @@ export function SiteFooter() {
                 </a>
               </>
             )}
+            <PhoneLink />
           </div>
 
           <div className="site-footer__links">

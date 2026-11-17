@@ -1,5 +1,5 @@
 import type { BlogPost } from './content.ts'
-import { footer as siteFooter } from '../src/content/siteConfig.ts'
+import { business, footer as siteFooter } from '../src/content/siteConfig.ts'
 
 const navigation = [
   ['/services', 'Services'],
@@ -70,13 +70,17 @@ function navLinks(): string {
   return navigation.map(([href, label]) => `<li><a href="${href}"${href === '/blog' ? ' aria-current="location"' : ''}>${label}</a></li>`).join('')
 }
 
+function phoneLink(compact = false): string {
+  return `<a class="ws-phone-link${compact ? ' ws-phone-link--compact' : ''}" href="tel:${escape(business.phone.number)}" aria-label="Call Wallace Shift at ${escape(business.phone.display)}"><span class="ws-phone-link__label">Call</span><span class="ws-phone-link__number">${escape(business.phone.display)}</span></a>`
+}
+
 function header(): string {
   return `<a class="blog-skip" href="#main">Skip to content</a>
 <header class="blog-header">
   <div class="blog-container blog-header__inner">
     <a class="blog-brand" href="/" aria-label="Wallace Shift home"><img src="/brand/wallace-shift-logo-white.svg" width="22" height="14" alt="" /><span>Wallace Shift</span></a>
     <nav class="blog-nav" aria-label="Primary"><ul>${navLinks()}</ul></nav>
-    <a class="blog-header__cta" href="/contact">Discuss your system <span aria-hidden="true">↗</span></a>
+    <div class="blog-header__actions">${phoneLink(true)}<a class="blog-header__cta" href="/contact">Discuss your system <span aria-hidden="true">↗</span></a></div>
     <details class="blog-menu">
       <summary><span class="blog-menu__closed">Menu <span aria-hidden="true">+</span></span><span class="blog-menu__opened">Close <span aria-hidden="true">−</span></span></summary>
       <nav aria-label="Mobile primary"><ul>${navLinks()}</ul><a class="blog-button" href="/contact">Discuss your system <span aria-hidden="true">↗</span></a></nav>
@@ -87,7 +91,7 @@ function header(): string {
 
 function footer(): string {
   return `<footer class="blog-footer"><div class="blog-container">
-    <div class="blog-footer__top"><div><a class="blog-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="22" height="14" alt="" /><span>Wallace Shift</span></a><p>Software. Workflows. Progress.</p></div><nav aria-label="Footer"><ul>${navLinks()}</ul></nav></div>
+    <div class="blog-footer__top"><div><a class="blog-brand" href="/"><img src="/brand/wallace-shift-logo-white.svg" width="22" height="14" alt="" /><span>Wallace Shift</span></a><p>Software. Workflows. Progress.</p><div class="blog-footer__phone">${phoneLink()}</div></div><nav aria-label="Footer"><ul>${navLinks()}</ul></nav></div>
     <div class="blog-footer__bottom">
       <p>© ${new Date().getFullYear()} Wallace Shift</p>
       <a class="blog-footer__preferred-source" href="${safeUrl(siteFooter.preferredSource.href)}" aria-label="${escape(siteFooter.preferredSource.label)}" target="_blank" rel="noopener noreferrer">

@@ -2,7 +2,7 @@ const bookingUrl = 'https://calendly.com/matthew-wallaceshift/consultation'
 const filmPath = '/media/ai-consultation/wallace-shift-put-ai-to-work'
 
 export const aiConsultation = {
-  durationMinutes: 30,
+  durationMinutes: 20,
   fallbackBookingUrl: bookingUrl,
   /** The short studio film plays here until the full consultation walkthrough is ready. */
   walkthrough: {

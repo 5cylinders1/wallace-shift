@@ -45,9 +45,11 @@ try {
     assert.ok(sitemap.includes(`https://wallaceshift.com/blog/${post.slug}</loc>`))
     assert.ok(rss.includes(`https://wallaceshift.com/blog/${post.slug}</link>`))
     const analyticsScript = '<script defer src="/site-analytics.js"></script>'
+    const chatScript = '<script src="https://www.reply365.app/chat/widget.js" data-widget="420f110fa3066a067b03d4cc8fcdb1ea" defer></script>'
     assert.equal(html.split(analyticsScript).length - 1, 1, 'includes exactly one approved analytics bootstrap')
-    assert.doesNotMatch(html.replace(analyticsScript, ''), /<script(?! type="application\/ld\+json")/,
-      'the article remains static HTML with no other executable scripts')
+    assert.equal(html.split(chatScript).length - 1, 1, 'includes exactly one Reply365 chat widget')
+    assert.doesNotMatch(html.replace(analyticsScript, '').replace(chatScript, ''), /<script(?! type="application\/ld\+json")/,
+      'the article remains static HTML with only the analytics and chat scripts')
   }
   console.log(`Blog build verified: hub, ${posts.length} published articles, CSS, RSS, canonical URLs, and sitemap.`)
 } finally { await cleanup() }

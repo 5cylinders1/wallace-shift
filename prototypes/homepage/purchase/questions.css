@@ -1,0 +1,138 @@
+.purchase-questions {
+  padding-block: clamp(56px, 6.1vw, 96px);
+  color-scheme: light;
+}
+
+.purchase-questions__intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 72px;
+  margin-bottom: 56px;
+}
+
+.p-page .purchase-questions__intro h2 {
+  font-size: clamp(48px, 4.7vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -.025em;
+}
+
+.purchase-questions__intro h2 em { color: var(--color-accent-deep); }
+
+.purchase-questions__preface {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding-inline: 24px;
+}
+
+.purchase-questions__drawing { width: 154px; height: auto; color: var(--color-accent-deep); }
+.purchase-questions__drawing-reply { fill: var(--color-pearl); }
+.purchase-questions__drawing-lines { stroke: var(--color-ink); }
+
+.purchase-questions__preface p {
+  max-width: 25ch;
+  color: var(--color-muted-on-bone);
+  font-size: 15px;
+}
+
+.purchase-questions__groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 72px;
+}
+
+.p-page .purchase-questions__group h3 {
+  margin: 0 24px 20px;
+  font: 400 30px/1.15 var(--font-serif);
+  letter-spacing: -.015em;
+}
+
+.purchase-questions__list { display: grid; gap: 8px; }
+
+.p-page .purchase-questions__item {
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+}
+
+.p-page .purchase-questions__item[open] { background: #fff; }
+
+.p-page .purchase-questions__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 76px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+
+.purchase-questions__item summary::marker { content: ''; }
+.purchase-questions__item summary::-webkit-details-marker { display: none; }
+.p-page .purchase-questions__item summary:hover { background: #e1e8ec; }
+.p-page .purchase-questions__item[open] summary:hover { background: transparent; color: var(--color-accent-deep); }
+.p-page .purchase-questions__item summary:focus-visible { outline: 2px solid var(--color-accent-deep); outline-offset: 3px; }
+
+.purchase-questions__toggle {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--color-accent-deep);
+  background: #e1e8ec;
+}
+
+.purchase-questions__item[open] .purchase-questions__toggle { background: var(--color-accent-deep); color: #fff; }
+.p-page .purchase-questions__item[open] summary svg { transform: none; }
+.purchase-questions__item[open] .purchase-questions__toggle-stem { display: none; }
+.purchase-questions__answer { padding: 0 24px 26px; }
+
+.p-page .purchase-questions__answer p {
+  max-width: 65ch;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--color-muted-on-bone);
+}
+
+.p-page .purchase-questions__answer p + p { margin-top: 16px; }
+.purchase-questions ::selection { background: var(--color-accent-deep); color: #fff; }
+
+@media (max-width: 1100px) {
+  .purchase-questions__intro, .purchase-questions__groups { column-gap: 32px; }
+  .purchase-questions__preface { gap: 20px; padding: 0; }
+  .purchase-questions__drawing { width: 112px; }
+}
+
+@media (max-width: 900px) {
+  .purchase-questions__intro { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-bottom: 40px; }
+  .purchase-questions__preface { justify-content: space-between; flex-direction: row-reverse; gap: 24px; }
+  .purchase-questions__preface p { max-width: 38ch; }
+  .purchase-questions__drawing { width: 104px; }
+  .purchase-questions__groups { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .p-page .purchase-questions__group h3 { margin-left: 20px; }
+  .p-page .purchase-questions__item summary { padding-inline: 20px; }
+  .purchase-questions__answer { padding-inline: 20px; }
+}
+
+@media (max-width: 480px) {
+  .p-page .purchase-questions__intro h2 { font-size: clamp(43px, 12vw, 54px); }
+  .purchase-questions__preface { gap: 20px; }
+  .purchase-questions__preface p { font-size: 14px; max-width: 24ch; }
+  .purchase-questions__drawing { width: 80px; }
+  .p-page .purchase-questions__group h3 { font-size: 27px; margin: 0 16px 14px; }
+  .p-page .purchase-questions__item summary { gap: 16px; padding: 18px 16px; font-size: 15px; min-height: 70px; }
+  .purchase-questions__answer { padding: 0 16px 22px; }
+  .purchase-questions__toggle { width: 26px; height: 26px; flex-basis: 26px; }
+}

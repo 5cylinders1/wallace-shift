@@ -3,7 +3,7 @@
  *
  * This describes what the site actually does today, verified against the
  * code: contact and demo forms, verified private demo access, public-page
- * visitor analytics, web fonts served by Google, and consultation scheduling.
+ * visitor analytics, Reply365 chat, web fonts served by Google, and consultation scheduling.
  *
  * If analytics settings, a booking embed, a chat widget, or another third-party
  * script changes, this file must be updated in the same change — a privacy
@@ -28,6 +28,7 @@ export const privacySections: PrivacySection[] = [
     heading: 'What we collect',
     paragraphs: [
       'When you contact us or request a demo, we collect the details you submit: your name, email address, business name where requested, and any website or message you provide.',
+      'If you use our Reply365 chat widget, Reply365 processes your messages and any contact details you choose to share so we can answer your questions and follow up. The widget loads from Reply365 and receives the site origin and browser connection information.',
       'We collect it so we can reply to you. We do not sell it, rent it, trade it, or add it to a marketing list you did not ask to join.',
       'The AI opportunity quiz uses predefined rules in your browser. When you submit a qualifying quiz, we email your answers and the submission time to Matthew at Wallace Shift. You can complete the quiz without providing your name or email address.',
       'If you submit that request, we collect your business type, annual revenue range, business challenges, estimated weekly team hours and impact, purchasing role, availability of another approver where relevant, previous AI experience, barriers to adoption, current tools, investment readiness, project timing, and any description you provide. We also collect your chosen next step, selected package where relevant, contact details, preferred consultation format, and phone number if you request a call. Email is optional for phone consultations. We store these answers with the recommendation and its reasons, submission time, offer version, acknowledgements, and notification status so we can review the fit and respond. Please leave passwords, customer records, and other sensitive information out of your description.',
@@ -50,7 +51,7 @@ export const privacySections: PrivacySection[] = [
   {
     heading: 'What we do not collect',
     paragraphs: [
-      'We do not run advertising pixels, session recording, or a chat widget. When you use electronic payments, Stripe processes payment and fraud prevention information through its hosted checkout and, when needed, its payment verification script. Card numbers and security codes are handled by Stripe rather than stored in our portal.',
+      'We do not run advertising pixels or session recording. When you use electronic payments, Stripe processes payment and fraud prevention information through its hosted checkout and, when needed, its payment verification script. Card numbers and security codes are handled by Stripe rather than stored in our portal.',
       'Private demos use essential cookies for your pending invitation, email verification, and approved access. These are not advertising cookies. Verification lasts up to ten minutes, and visitor invitation and access cookies last no longer than the invitation’s 72-hour window. The site owner can separately sign in with an emailed code; the admin access cookie lasts up to 30 days or until the owner signs out of that browser. We use temporary counters and hashed identifiers to limit repeated requests and verification attempts.',
     ],
   },
@@ -61,6 +62,7 @@ export const privacySections: PrivacySection[] = [
     ],
     bullets: [
       'Vercel, which hosts the site.',
+      'Reply365, which provides the chat widget and processes chat messages and contact details you choose to share.',
       'Google Analytics, which processes visitor and interaction statistics when you allow analytics. You can read more at policies.google.com/privacy.',
       'Google Fonts, which serves the two typefaces the site uses.',
       'Calendly, which displays consultation times and processes bookings. It may use cookies and browser information to operate its scheduling page. Its privacy notice is at calendly.com/legal/privacy-notice.',
@@ -99,4 +101,4 @@ export const privacySections: PrivacySection[] = [
  * string rather than a build timestamp so it reflects a real review of
  * the policy rather than the date of an unrelated deploy.
  */
-export const privacyLastUpdated = '9 November 2026'
+export const privacyLastUpdated = '17 November 2026'
