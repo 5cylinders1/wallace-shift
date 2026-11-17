@@ -1,0 +1,116 @@
+{
+  "method": "200% CSS page-zoom emulation and a separate 720 CSS-pixel reflow check. Native browser zoom was not exercised.",
+  "results": [
+    {
+      "name": "zoom-200-emulated",
+      "innerWidth": 1440,
+      "documentWidth": 1692,
+      "sectionWidth": 1440,
+      "zoom": "2",
+      "overflow": true,
+      "clipped": [],
+      "overflowSources": [
+        {
+          "tag": "DIV",
+          "class": "ij-team",
+          "section": "work",
+          "right": 1692
+        },
+        {
+          "tag": "DIV",
+          "class": "ij-team-portrait has-arrived",
+          "section": "work",
+          "right": 1661
+        },
+        {
+          "tag": "svg",
+          "class": null,
+          "section": "work",
+          "right": 1661
+        },
+        {
+          "tag": "circle",
+          "class": null,
+          "section": "work",
+          "right": 1656
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1611
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1515
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1538
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1563
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1540
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1556
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1515
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1527
+        },
+        {
+          "tag": "rect",
+          "class": "ij-portrait-envelope",
+          "section": "work",
+          "right": 1556
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1551
+        },
+        {
+          "tag": "path",
+          "class": null,
+          "section": "work",
+          "right": 1584
+        }
+      ]
+    },
+    {
+      "name": "reflow-720",
+      "innerWidth": 720,
+      "documentWidth": 720,
+      "sectionWidth": 720,
+      "zoom": "1",
+      "overflow": false,
+      "clipped": [],
+      "overflowSources": []
+    }
+  ]
+}

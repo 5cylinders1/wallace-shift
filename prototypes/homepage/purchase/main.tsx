@@ -13,6 +13,7 @@ import Upgrades from './Upgrades'
 import Systems from './Systems'
 import Process from './Process'
 import PackageArtwork from './PackageArtwork'
+import Questions from './Questions'
 import './divider-free.css'
 
 const email = 'mailto:matthew@wallaceshift.com?subject=Question%20about%20my%20website'
@@ -242,19 +243,6 @@ function Packages() {
   </section>
 }
 
-const faqs = [
-  ['Can text messaging start straight away?', 'If your workflow includes automated texts to US customers from a local 10 digit number, A2P 10DLC business and campaign registration must be approved before sending. Review can take several business days or longer, especially if information needs correcting. Toll free numbers use a separate verification process. We confirm the provider requirements, customer consent process, current review timing and any registration or carrier fees before setup. Approval timing is outside our control. Email follow up does not require A2P registration; changing an agreed SMS workflow to email would need an agreed scope change.'],
-  ['Can I choose by monthly versus a single payment?', 'Start with the work you need. The website package covers a business website and ongoing technical care. The lead page package covers a focused page and one workflow setup. A single setup payment does not remove hosting, software, usage charges or the need to maintain your tools.'],
-  ['What if I need neither package?', 'If your website and inquiry process already work, you may not need either. You can ask a question or discuss a separately scoped system without buying one of these packages.'],
-  ['Is a CRM included?', 'These packages include a private portal for your agreement and invoices with Wallace Shift. They do not include software to manage your own customers. We can review a compatible CRM you already use for a follow up setup; custom CRM work is scoped separately.'],
-  ['What does basic SEO cover?', 'Page titles, descriptions, headings and readable service information. Ongoing content, local SEO campaigns, link building and ranking guarantees are not part of the $250 package.'],
-  ['Can you connect my existing tools?', 'We review compatibility and account access before agreeing the work. One agreed follow up setup is included in the $1,500 package. Additional connections, advertising reports and campaign management require their own scope.'],
-  ['What will I pay beyond the package price?', 'For the website, we confirm any domain or paid service costs. For the lead page, hosting, software and email or SMS usage can be additional recurring costs. We identify these before you commit.'],
-  ['Can I ask questions before choosing?', 'Yes. You can compare the options, discuss an existing website or plan for later. You do not need to choose a package or be ready to purchase.'],
-]
-function Questions() {
-  return <section className="r-section r-light"><div className="r-wrap r-faq-grid"><h2>A few things<br /><em>worth knowing.</em></h2><div>{faqs.map(([question, answer]) => <details key={question}><summary>{question}<Plus /></summary><p>{answer}</p></details>)}</div></div></section>
-}
 function Showcase() {
   return <section className="r-showcase"><div className="r-wrap"><img src="/media/wallace-shift-hero-poster.webp" alt="Wallace Shift sculptural logo reflected in water" width="1916" height="1080" loading="lazy" /><div><h2>Explore our<br /><em>other dimension.</em></h2><p>Our interactive design experience is here when you want to explore it.</p><a href="/" target="_blank" rel="noreferrer" className="m-text-link">Open the interactive showcase<Arrow diagonal /></a></div></div></section>
 }

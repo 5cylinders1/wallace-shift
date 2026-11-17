@@ -1,0 +1,666 @@
+{
+  "contentPreserved": true,
+  "neighborsPreserved": true,
+  "widths": [
+    {
+      "width": 320,
+      "states": [
+        {
+          "state": "default",
+          "width": 320,
+          "height": 1312.59375,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 320,
+          "height": 3099.84375,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "states": [
+        {
+          "state": "default",
+          "width": 390,
+          "height": 1261.0625,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 390,
+          "height": 2785.8125,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "states": [
+        {
+          "state": "default",
+          "width": 768,
+          "height": 1241.609375,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 768,
+          "height": 2190.609375,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 900,
+      "states": [
+        {
+          "state": "default",
+          "width": 900,
+          "height": 1241.609375,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 900,
+          "height": 2190.609375,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 901,
+      "states": [
+        {
+          "state": "default",
+          "width": 901,
+          "height": 803.40625,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 901,
+          "height": 1478.90625,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 1024,
+      "states": [
+        {
+          "state": "default",
+          "width": 1024,
+          "height": 804.5625,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 1024,
+          "height": 1401.3125,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 1440,
+      "states": [
+        {
+          "state": "default",
+          "width": 1440,
+          "height": 856.96875,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 1440,
+          "height": 1334.46875,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 1920,
+      "states": [
+        {
+          "state": "default",
+          "width": 1920,
+          "height": 882.125,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        },
+        {
+          "state": "all-open",
+          "width": 1920,
+          "height": 1359.625,
+          "overflow": false,
+          "outside": [],
+          "motion": 0,
+          "axe": {
+            "violations": [],
+            "incomplete": []
+          }
+        }
+      ],
+      "pageErrors": []
+    }
+  ],
+  "keyboard": [
+    {
+      "question": "What will I pay beyond the package price?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    },
+    {
+      "question": "Can I choose by monthly versus a single payment?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    },
+    {
+      "question": "Is a CRM included?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    },
+    {
+      "question": "What does basic SEO cover?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    },
+    {
+      "question": "Can text messaging start straight away?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    },
+    {
+      "question": "Can you connect my existing tools?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    },
+    {
+      "question": "What if I need neither package?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    },
+    {
+      "question": "Can I ask questions before choosing?",
+      "focus": {
+        "style": "solid",
+        "width": "2px",
+        "color": "rgb(23, 92, 153)"
+      },
+      "enter": "opens",
+      "space": "closes",
+      "focusRetained": true
+    }
+  ],
+  "accessibility": [
+    {
+      "state": "all-open",
+      "nodes": [
+        {
+          "name": "What will I pay beyond the package price?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can I choose by monthly versus a single payment?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "Is a CRM included?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "What does basic SEO cover?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can text messaging start straight away?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can you connect my existing tools?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "What if I need neither package?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can I ask questions before choosing?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "focused",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state": "all-closed",
+      "nodes": [
+        {
+          "name": "What will I pay beyond the package price?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can I choose by monthly versus a single payment?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "Is a CRM included?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "What does basic SEO cover?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can text messaging start straight away?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can you connect my existing tools?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "What if I need neither package?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        },
+        {
+          "name": "Can I ask questions before choosing?",
+          "properties": [
+            {
+              "name": "focusable",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "focused",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": true
+              }
+            },
+            {
+              "name": "expanded",
+              "value": {
+                "type": "booleanOrUndefined",
+                "value": false
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
