@@ -24,6 +24,7 @@ const RESEND_ENDPOINT = 'https://api.resend.com/emails'
  *  the endpoint being used to relay bulk content. */
 const MAX_NAME = 120
 const MAX_EMAIL = 200
+const MAX_PHONE = 40
 const MAX_MESSAGE = 5000
 /** The structured fields are chosen from short lists, so anything longer
  *  than this did not come from the form and is dropped rather than relayed. */
@@ -148,8 +149,20 @@ export default async function handler(request: Request): Promise<Response> {
     return json({ ok: true }, 200)
   }
 
+  // Optional so existing contact forms keep working. Identical retries from
+  // the call dialog reuse this key; Resend deduplicates them for 24 hours.
+  let requestId: string | undefined
+  if (body.requestId !== undefined) {
+    if (typeof body.requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.requestId)) {
+      return json({ ok: false, error: 'invalid' }, 400)
+    }
+    requestId = body.requestId.toLowerCase()
+  }
+
   const name = cleanField(body.name, MAX_NAME)?.replace(/[\r\n]+/g, ' ')
   const email = cleanField(body.email, MAX_EMAIL)
+  const contactMethod = body.contactMethod === undefined ? 'email' : body.contactMethod
+  const phone = cleanField(body.phone, MAX_PHONE)?.replace(/\s+/g, ' ')
   const message = cleanField(body.message, MAX_MESSAGE)
   const website = body.noWebsite === true
     ? 'No website yet'
@@ -165,13 +178,20 @@ export default async function handler(request: Request): Promise<Response> {
   const timing = allowedValue(TIMING, body.timing)
   const decisionRole = allowedValue(DECISION_ROLES, body.decisionRole)
 
-  if (!name || !email || !message) {
+  if (!name || !message || (contactMethod !== 'phone' && contactMethod !== 'email')) {
     return json({ ok: false, error: 'invalid' }, 400)
   }
 
-  // Deliberately permissive: the real validation is the reply bouncing.
-  // This only rejects input that cannot be an address at all.
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  // Email remains required for existing forms. A phone callback can omit it,
+  // but an optional address must still be valid before it becomes reply-to.
+  const emailOmitted = body.email === undefined || (typeof body.email === 'string' && body.email.trim() === '')
+  if ((!emailOmitted || contactMethod === 'email') && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+    return json({ ok: false, error: 'invalid' }, 400)
+  }
+
+  const phoneOmitted = body.phone === undefined || (typeof body.phone === 'string' && body.phone.trim() === '')
+  const phoneDigits = phone?.replace(/\D/g, '').length ?? 0
+  if ((!phoneOmitted || contactMethod === 'phone') && (!phone || !/^\+?[\d(). -]+$/.test(phone) || phoneDigits < 7 || phoneDigits > 15)) {
     return json({ ok: false, error: 'invalid' }, 400)
   }
 
@@ -182,17 +202,19 @@ export default async function handler(request: Request): Promise<Response> {
       headers: {
         authorization: `Bearer ${apiKey}`,
         'content-type': 'application/json',
+        ...(requestId ? { 'Idempotency-Key': `contact/${requestId}` } : {}),
       },
       body: JSON.stringify({
         from,
         to: [to],
-        // So replying in the mail client answers the enquirer directly
-        // rather than the noreply sender.
-        reply_to: email,
+        // Never invent an email address for a phone-only callback.
+        ...(email ? { reply_to: email } : {}),
         subject: `New enquiry from ${name}${offer ? ` (${offer.tag})` : source ? ` (${source.tag})` : ''}`,
         text: [
           `Name: ${name}`,
-          `Email: ${email}`,
+          ...(email ? [`Email: ${email}`] : []),
+          ...(phone ? [`Phone: ${phone}`] : []),
+          ...(contactMethod === 'phone' ? ['Reply preference: Phone callback'] : []),
           ...(offer ? [
             `Offer: ${offer.name}`,
             `Advertised price: ${offer.price}`,

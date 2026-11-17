@@ -4,6 +4,8 @@ Isolated local preview, reviewed 17 November 2026.
 
 [Open the preview](http://127.0.0.1:5184/prototypes/homepage/purchase/index.html) · [Previous version](../refined/index.html)
 
+Latest hero revision: direct phone callbacks, 20 minute Google Meet booking and the business phone number now open or act from the first viewport. See the [current inquiry review and validation](../../../docs/homepage-call-request-review.md). The package review below records the earlier iteration; its first-arrival measurements predate this hero change. The website changes remain local; the existing Calendly event was changed live to 20 minutes on November 17.
+
 ## Recommendation
 
 Lead with the job the customer needs done. The website package establishes or improves the business website and includes technical care. The lead page package creates one focused response path and hands over one agreed workflow. These can complement each other; they are not payment plans for the same product.

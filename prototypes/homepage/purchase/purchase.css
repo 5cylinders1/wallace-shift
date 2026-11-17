@@ -6,6 +6,22 @@ html { scroll-behavior: auto; }
 .p-page .r-opening-prices span, .p-page .r-opening-prices small { font-size: 12px; }
 .p-page .r-hero-foot { font-size: 12px; }
 .p-page .m-header { min-height: 88px; }
+.p-page .r-hero { padding-top: 40px; }
+.p-page .r-hero-actions { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 16px 24px; }
+.p-page .r-hero-actions .m-button { min-height: 52px; font-size: 14px; padding: 15px 24px; }
+.p-page .r-question-link { min-height: 44px; font-size: 13px; max-width: none; }
+.p-page .r-hero-copy > .p-call-next-step { font-size: 12px; margin-top: 12px; }
+.p-page .p-direct-phone { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: #c3d0d8; text-decoration: underline; text-underline-offset: 4px; }
+.p-page .r-opening-prices { margin-top: 24px; padding-top: 0; }
+@media (max-width: 760px) {
+  .p-page .m-header { min-height: 76px; }
+  .p-page .r-hero { padding-top: 24px; }
+  .p-page .r-hero h1 { font-size: clamp(38px, 11vw, 48px); }
+  .p-page .r-hero-actions { gap: 8px 18px; }
+  .p-page .r-hero-actions .m-button { padding-inline: 20px; }
+  .p-page .r-opening-prices { gap: 16px; }
+  .p-page .r-opening-prices strong { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; }
+}
 .p-packages { padding-top: 0; padding-bottom: 68px; }
 .p-package-intro {
   --intro-gutter: 64px;

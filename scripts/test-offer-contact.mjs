@@ -26,13 +26,26 @@ async function withInbox(run) {
     CONTACT_TO_EMAIL: 'inbox@example.com',
     CONTACT_FROM_EMAIL: 'site@example.com',
   })
-  const inbox = { sent, fail: false, throw: false }
+  const accepted = new Map()
+  const inbox = { sent, keys: [], fail: false, throw: false, loseResponse: false }
   globalThis.fetch = async (url, init) => {
     if (url === '/api/contact') return handler(new Request('https://example.com/api/contact', init))
     assert.equal(url, 'https://api.resend.com/emails', 'No other network destination is allowed')
+    const key = new Headers(init.headers).get('idempotency-key')
+    inbox.keys.push(key)
     if (inbox.throw) throw new Error('Simulated network failure')
     if (inbox.fail) return new Response('{}', { status: 503 })
+    // Model the provider's documented contract, not actual delivery: the
+    // same key and payload reuse the result; changed payloads conflict.
+    if (key && accepted.has(key)) {
+      return new Response('{}', { status: accepted.get(key) === init.body ? 200 : 409 })
+    }
     sent.push(JSON.parse(init.body))
+    if (key) accepted.set(key, init.body)
+    if (inbox.loseResponse) {
+      inbox.loseResponse = false
+      throw new Error('Simulated response loss after provider acceptance')
+    }
     return new Response('{}', { status: 200 })
   }
   try {
@@ -155,5 +168,120 @@ test('delivery failures and missing configuration are honest client failures', a
     delete process.env.RESEND_API_KEY
     assert.deepEqual(await submitContactRequest({ ...base, offer: 'website' }), { ok: false, reason: 'not_configured' })
     assert.equal(inbox.sent.length, 0)
+  })
+})
+
+test('a phone-only callback reaches the configured destination without inventing a reply-to address', async () => {
+  await withInbox(async ({ sent, keys }) => {
+    const requestId = 'a8f99b59-340d-46e4-b8db-378d22004a17'
+    const payload = { name: base.name, email: '', phone: '+1 (816) 555-0100', contactMethod: 'phone', message: 'Please call me about Wallace Shift services.', service: 'Call request', requestId }
+    assert.deepEqual(await submitContactRequest(payload), { ok: true })
+    assert.deepEqual(sent[0].to, ['inbox@example.com'])
+    assert.equal(sent[0].from, 'site@example.com')
+    assert.equal(Object.hasOwn(sent[0], 'reply_to'), false)
+    assert.doesNotMatch(sent[0].text, /^Email:/m)
+    assert.match(sent[0].text, /^Phone: \+1 \(816\) 555-0100$/m)
+    assert.match(sent[0].text, /^Reply preference: Phone callback$/m)
+    assert.match(sent[0].text, /^Service: Call request$/m)
+    assert.ok(sent[0].text.includes(payload.message))
+    assert.doesNotMatch(sent[0].text, /Offer:|Package:|Budget:|Readiness:/)
+    assert.deepEqual(keys, [`contact/${requestId}`])
+    assert.ok(!sent[0].text.includes(requestId), 'The retry identifier is transport metadata, not email content')
+  })
+})
+
+test('callbacks accept omitted or optional valid email while legacy email inquiries still require an address', async () => {
+  await withInbox(async ({ sent }) => {
+    const callback = { name: base.name, phone: '816.555.0100', contactMethod: 'phone', message: base.message }
+    assert.equal((await handler(request(callback))).status, 200)
+    assert.equal(Object.hasOwn(sent[0], 'reply_to'), false)
+    assert.deepEqual(await submitContactRequest({ ...callback, email: base.email }), { ok: true })
+    assert.equal(sent[1].reply_to, base.email)
+    assert.match(sent[1].text, /^Email: pat@example.com$/m)
+    assert.match(sent[1].text, /^Phone: 816\.555\.0100$/m)
+    for (const contactMethod of [undefined, 'email']) {
+      assert.deepEqual(await submitContactRequest({ ...base, contactMethod, email: '', phone: callback.phone }), { ok: false, reason: 'invalid' })
+      assert.deepEqual(await submitContactRequest({ ...base, contactMethod }), { ok: true })
+      assert.equal(sent.at(-1).reply_to, base.email)
+      assert.doesNotMatch(sent.at(-1).text, /Reply preference: Phone callback/)
+    }
+  })
+})
+
+test('callback phone validation rejects unusable numbers and optional invalid email without sending', async () => {
+  await withInbox(async ({ sent }) => {
+    const callback = { name: base.name, email: '', phone: '+1 (816) 555-0100', contactMethod: 'phone', message: base.message }
+    for (const phone of [undefined, '', '   ', null, 8165550100, '123456', '1234567890123456', 'call-me-now', '8165550100 ext 5', '8165550100+', '8165550100\nInjected: line', '1'.padEnd(41, ' ')]) {
+      assert.deepEqual(await submitContactRequest({ ...callback, phone }), { ok: false, reason: 'invalid' })
+    }
+    for (const email of [null, 42, 'invalid', 'x'.repeat(201), 'pat@example.com\r\nInjected: value']) {
+      assert.deepEqual(await submitContactRequest({ ...callback, email }), { ok: false, reason: 'invalid' })
+    }
+    for (const contactMethod of [null, 'text', 42, {}]) {
+      assert.deepEqual(await submitContactRequest({ ...callback, contactMethod }), { ok: false, reason: 'invalid' })
+    }
+    assert.deepEqual(await submitContactRequest({ ...callback, name: '' }), { ok: false, reason: 'invalid' })
+    assert.deepEqual(await submitContactRequest({ ...callback, message: '' }), { ok: false, reason: 'invalid' })
+    assert.equal(sent.length, 0)
+    for (const phone of ['5550100', '+123456789012345', '  +1\t(816) 555-0100  ']) {
+      assert.deepEqual(await submitContactRequest({ ...callback, phone }), { ok: true })
+    }
+    assert.match(sent.at(-1).text, /^Phone: \+1 \(816\) 555-0100$/m)
+  })
+})
+
+test('an identical retry after a lost provider response sends only once under the provider idempotency contract', async () => {
+  await withInbox(async inbox => {
+    const requestId = 'a8f99b59-340d-46e4-b8db-378d22004a17'
+    const payload = { ...base, email: '', phone: '+1 (816) 555-0100', contactMethod: 'phone', service: 'Call request', requestId }
+    inbox.loseResponse = true
+    assert.deepEqual(await submitContactRequest(payload), { ok: false, reason: 'network_error' })
+    assert.equal(inbox.sent.length, 1, 'The provider accepted the first request before its response was lost')
+    assert.deepEqual(await submitContactRequest(payload), { ok: true })
+    assert.equal(inbox.sent.length, 1, 'The retry must reuse the accepted result')
+    assert.deepEqual(inbox.keys, [`contact/${requestId}`, `contact/${requestId}`])
+
+    assert.deepEqual(await submitContactRequest({ ...payload, message: 'A different request.' }), { ok: false, reason: 'network_error' })
+    assert.equal(inbox.sent.length, 1, 'Reusing a key with changed content must not send a second message')
+    assert.deepEqual(await submitContactRequest({ ...payload, message: 'A different request.', requestId: 'b8f99b59-340d-46e4-b8db-378d22004a17' }), { ok: true })
+    assert.equal(inbox.sent.length, 2, 'A new request may use a new key')
+  })
+})
+
+test('legacy inquiries omit idempotency while malformed request identifiers never reach the provider', async () => {
+  await withInbox(async ({ sent, keys }) => {
+    assert.deepEqual(await submitContactRequest(base), { ok: true })
+    assert.deepEqual(keys, [null])
+    for (const requestId of ['', null, 42, {}, 'not-a-uuid', 'a8f99b59-340d-16e4-b8db-378d22004a17', 'a8f99b59-340d-46e4-78db-378d22004a17', 'a8f99b59-340d-46e4-b8db-378d22004a17\r\nInjected: value']) {
+      const response = await handler(request({ ...base, requestId }))
+      assert.equal(response.status, 400)
+      assert.deepEqual(await response.json(), { ok: false, error: 'invalid' })
+    }
+    assert.equal(sent.length, 1)
+    assert.equal(keys.length, 1)
+  })
+})
+
+test('an HTTP failure cannot become success through an ok JSON flag', async () => {
+  await withInbox(async () => {
+    globalThis.fetch = async () => new Response(JSON.stringify({ ok: true }), { status: 503 })
+    assert.deepEqual(await submitContactRequest(base), { ok: false, reason: 'network_error' })
+  })
+})
+
+test('aborting while reading the response body is an unconfirmed request, not missing configuration', async () => {
+  await withInbox(async () => {
+    const controller = new AbortController()
+    globalThis.fetch = async (_url, init) => {
+      assert.equal(init.signal, controller.signal)
+      return {
+        ok: true,
+        async json() {
+          controller.abort()
+          throw new DOMException('Simulated timeout while reading the response', 'AbortError')
+        },
+      }
+    }
+    assert.deepEqual(await submitContactRequest(base, { signal: controller.signal }), { ok: false, reason: 'network_error' })
   })
 })

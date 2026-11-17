@@ -14,6 +14,8 @@ import Systems from './Systems'
 import Process from './Process'
 import PackageArtwork from './PackageArtwork'
 import Questions from './Questions'
+import CallRequestDialog, { type InquiryMode } from './CallRequestDialog'
+import { business } from '../../../src/content/siteConfig'
 import './divider-free.css'
 
 const email = 'mailto:matthew@wallaceshift.com?subject=Question%20about%20my%20website'
@@ -22,9 +24,9 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d={diagonal ? 'M6 18 18 6M6 6h12v12' : 'M4 12h16m-6-6 6 6-6 6'} /></svg>
 }
 function Plus() { return <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M9 3v12M3 9h12" /></svg> }
-function Header() {
+function Header({ onRequestCall }: { onRequestCall: () => void }) {
   const [open, setOpen] = useState(false)
-  return <header className="m-header"><a className="m-skip" href="#main">Skip to content</a><a href="#main" className="m-brand"><img src="/brand/wallace-shift-logo-white.svg" width="22" height="14" alt="" />WALLACE SHIFT</a><nav className={`m-nav ${open ? 'is-open' : ''}`} aria-label="Primary">{[['See the work', '#examples'], ['Packages', '#packages'], ['How it works', '#process']].map(([label, href]) => <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>)}</nav><a className="m-header-contact" href="#questions">Ask a question<Arrow diagonal /></a><button className="m-menu" aria-label={open ? 'Close navigation' : 'Open navigation'} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? 'Close' : 'Menu'}</button></header>
+  return <header className="m-header"><a className="m-skip" href="#main">Skip to content</a><a href="#main" className="m-brand"><img src="/brand/wallace-shift-logo-white.svg" width="22" height="14" alt="" />WALLACE SHIFT</a><nav className={`m-nav ${open ? 'is-open' : ''}`} aria-label="Primary">{[['See the work', '#examples'], ['Packages', '#packages'], ['How it works', '#process']].map(([label, href]) => <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>)}</nav><button type="button" className="m-header-contact" onClick={onRequestCall} aria-haspopup="dialog">Request a call<Arrow diagonal /></button><button className="m-menu" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? 'Close' : 'Menu'}</button></header>
 }
 
 function WebsiteDemo() {
@@ -33,14 +35,34 @@ function WebsiteDemo() {
   const names: Record<string, string> = { northvane: 'Roofing', tambour: 'Kitchens', stillwater: 'Pools' }
   return <div className="r-website-demo">
     <div className="r-example-top"><span>Website examples</span><div role="group" aria-label="Choose a website example">{Object.entries(names).map(([key, label]) => <button key={key} aria-pressed={demo === key} onClick={() => { setDemo(key); setPlay(false) }}>{label}</button>)}</div></div>
-    <div className="r-screen">{play ? <video controls autoPlay playsInline preload="none" key={demo} poster={`/media/demo-previews/${demo}.jpg`} aria-label={`${names[demo]} website walkthrough`}><source src={`/media/demo-previews/${demo}.mp4`} type="video/mp4" /><track kind="captions" src={`/media/demo-previews/${demo}.vtt`} srcLang="en" label="English" /></video> : <button className="m-watch" aria-label={`Watch ${names[demo].toLowerCase()} website walkthrough`} onClick={() => setPlay(true)}><img src={`/media/demo-previews/${demo}.jpg`} alt={`${names[demo]} website design concept by Wallace Shift`} width="1200" height="675" /><span><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m6 3 11 7-11 7Z" /></svg>Watch the walkthrough</span></button>}</div>
+    <div className="r-screen">{play ? <video controls autoPlay playsInline preload="none" key={demo} poster={`/media/demo-previews/${demo}.jpg`} aria-label={`${names[demo]} website walkthrough`}><source src={`/media/demo-previews/${demo}.mp4`} type="video/mp4" /><track kind="captions" src={`/media/demo-previews/${demo}.vtt`} srcLang="en" label="English" /></video> : <button className="m-watch" aria-label={`Watch the walkthrough: ${names[demo].toLowerCase()} website`} onClick={() => setPlay(true)}><img src={`/media/demo-previews/${demo}.jpg`} alt={`${names[demo]} website design concept by Wallace Shift`} width="1200" height="675" /><span><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m6 3 11 7-11 7Z" /></svg>Watch the walkthrough</span></button>}</div>
     <div className="r-example-caption"><p>Fictional demo brands. Advanced tools shown are scoped separately.</p><a href="#work">Follow the inquiry<Arrow /></a></div>
     {play && <p className="r-credit">Music: <a href="https://www.scottbuckley.com.au/library/a-kind-of-hope/">A Kind Of Hope by Scott Buckley</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Edited with narration.</p>}
   </div>
 }
 
-function Hero() {
-  return <section className="r-hero" id="examples"><div className="r-wrap r-hero-grid"><div className="r-hero-copy"><h1>Make your work<br />easy to <em>choose.</em></h1><p>A business website with monthly care. Or a focused lead page that captures inquiries and follows up. Start with the work you need.</p><div className="r-opening-prices"><a href="#website-package"><span>Website, hosting & care</span><strong>$250 <small>/month</small></strong></a><a href="#lead-package"><span>Lead page & follow up</span><strong>$1,500 <small>once for setup</small></strong></a></div><div className="r-hero-actions"><a href="#packages" className="m-button">Find your starting point<Arrow /></a><a href="#questions" className="r-question-link">Just have a question?</a></div><p className="p-opening-note">Package details and any additional costs below.</p></div><WebsiteDemo /></div><div className="r-wrap r-hero-foot"><p>Built in Greater Kansas City. Available remotely.</p><a href="/services">Need a custom CRM or connected system?<Arrow diagonal /></a></div></section>
+function Hero({ onRequestCall, onBookMeeting }: { onRequestCall: () => void; onBookMeeting: () => void }) {
+  return <section className="r-hero" id="examples">
+    <div className="r-wrap r-hero-grid">
+      <div className="r-hero-copy">
+        <h1>Websites &<br /><em>lead pages.</em></h1>
+        <p>Get a business website with monthly care, or a focused lead page with automatic follow up.</p>
+        <div className="r-hero-actions">
+          <button type="button" className="m-button" onClick={onRequestCall} aria-haspopup="dialog">Request a call<Arrow /></button>
+          <button type="button" className="r-question-link" onClick={onBookMeeting} aria-haspopup="dialog">Book a Google Meet</button>
+        </div>
+        <p className="p-call-next-step">Leave your number for a callback, or book a 20 minute video call.<br />No need to choose a package first.</p>
+        <a className="p-direct-phone" href={`tel:${business.phone.number}`}>Call directly: {business.phone.display}</a>
+        <div className="r-opening-prices">
+          <a href="#website-package"><span>Website, hosting & care</span><strong>$250 <small>/month</small></strong></a>
+          <a href="#lead-package"><span>Lead page & follow up</span><strong>$1,500 <small>once for setup</small></strong></a>
+        </div>
+        <p className="p-opening-note">Package details and any additional costs below.</p>
+      </div>
+      <WebsiteDemo />
+    </div>
+    <div className="r-wrap r-hero-foot"><p>Built in Greater Kansas City. Available remotely.</p><a href="/services">Need a custom CRM or connected system?<Arrow diagonal /></a></div>
+  </section>
 }
 
 const comparisons = [
@@ -250,7 +272,12 @@ function Contact() {
   return <section className="r-section r-contact" id="questions"><div className="r-wrap"><div><h2>Start with<br /><em>a question.</em></h2><p>Tell Matthew what you want to improve, or what you want to understand. You do not need to know the solution.</p></div><div><a href={email} className="m-button">Ask Matthew a question<Arrow /></a><a className="m-text-link" href="/contact">Tell us about your project<Arrow /></a><p>Questions are welcome before you choose.</p></div></div></section>
 }
 function App() {
-  return <div className="m-page r-page p-page"><Header /><main id="main"><Hero /><Packages /><PackageComparison /><InquiryJourney /><Guarantee /><Upgrades /><Process /><Systems /><Questions /><Showcase /><Contact /></main><footer className="r-wrap r-footer"><a href="#main" className="m-brand"><img src="/brand/wallace-shift-logo-white.svg" width="20" height="14" alt="" />WALLACE SHIFT</a><a href="/pricing">All services & pricing</a><a href="/privacy">Privacy</a><a href="./README.md">Preview notes</a><a href="../refined/index.html">Previous preview</a></footer></div>
+  const [requestOpen, setRequestOpen] = useState(false)
+  const [requestMode, setRequestMode] = useState<InquiryMode>('phone')
+  const openRequest = useCallback(() => { setRequestMode('phone'); setRequestOpen(true) }, [])
+  const openMeeting = useCallback(() => { setRequestMode('meeting'); setRequestOpen(true) }, [])
+  const closeRequest = useCallback(() => setRequestOpen(false), [])
+  return <div className="m-page r-page p-page"><Header onRequestCall={openRequest} /><main id="main"><Hero onRequestCall={openRequest} onBookMeeting={openMeeting} /><Packages /><PackageComparison /><InquiryJourney /><Guarantee /><Upgrades /><Process /><Systems /><Questions /><Showcase /><Contact /></main><footer className="r-wrap r-footer"><a href="#main" className="m-brand"><img src="/brand/wallace-shift-logo-white.svg" width="20" height="14" alt="" />WALLACE SHIFT</a><a href="/pricing">All services & pricing</a><a href="/privacy">Privacy</a><a href="./README.md">Preview notes</a><a href="../refined/index.html">Previous preview</a></footer><CallRequestDialog open={requestOpen} mode={requestMode} onModeChange={setRequestMode} onClose={closeRequest} /></div>
 }
 const root = createRoot(document.getElementById('root')!)
 root.render(<App />)
