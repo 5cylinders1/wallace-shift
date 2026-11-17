@@ -107,27 +107,7 @@ html { scroll-behavior: auto; }
 .p-both p { font-size: 14px; color: #edf1f2; }
 .p-both small { display: block; margin-top: 8px; font-size: 12px; color: #bdcedc; }
 .p-both a { white-space: nowrap; }
-.p-guarantee-grid, .p-upgrade-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 80px; }
-.p-guarantee-side { position: relative; padding-top: 4px; }
-.p-guarantee-mark { display: grid; place-items: center; width: 82px; height: 82px; margin-bottom: 34px; color: #78baff; position: relative; }
-.p-guarantee-mark svg { position: absolute; inset: 0; width: 100%; height: 100%; stroke: currentColor; stroke-width: 1.1; }
-.p-guarantee-mark span { color: #edf1f2; font-size: 11px; line-height: 1.05; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
-.p-eyebrow { margin: 0 0 16px; color: #78baff; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
-.p-guarantee-side h2 { margin: 0; }
-.p-guarantee-title { margin-top: 28px; font-size: 16px; }
-.p-draft { display: inline-block; margin-top: 10px; color: #adbac3; font-size: 12px; }
-.p-draft span { color: #78baff; padding-inline: 4px; }
-.p-guarantee-content { padding-top: 8px; }
-.p-guarantee-intro { max-width: 52ch; font-size: 17px; line-height: 1.65; color: #d2dde4; margin-bottom: 22px; }
-.p-guarantee-note { border-left: 1px solid #78baff; padding: 3px 0 4px 18px; margin-bottom: 26px; }
-.p-guarantee-note span { display: block; color: #78baff; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
-.p-guarantee-note strong { display: block; margin-top: 5px; color: #edf1f2; font-size: 18px; font-weight: 500; }
-.p-guarantee-note p { margin-top: 5px; color: #adbac3; font-size: 13px; }
-.p-page .p-guarantee details { border-color: #35424d; }
-.p-page .p-guarantee details p { color: #adbac3; font-size: 13px; }
-.p-page .p-guarantee summary { align-items: center; }
-.p-page .p-guarantee summary span { display: block; }
-.p-page .p-guarantee summary small { display: block; margin-top: 5px; color: #8fa2af; font-size: 11px; letter-spacing: .03em; }
+.p-upgrade-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 80px; }
 .p-upgrade-grid > div:first-child > p { font-size: 15px; color: #52616b; margin-top: 20px; max-width: 42ch; }
 .p-upgrade-grid .m-text-link { margin-top: 18px; }
 .p-upgrades details:first-child { border-top: 1px solid #bdc9d0; }
@@ -142,7 +122,7 @@ html { scroll-behavior: auto; }
   .p-starting-point { padding: 28px; }
   .p-page .p-package { padding: 32px; }
   .p-package-heading, .p-package-body { column-gap: 32px; }
-  .p-guarantee-grid, .p-upgrade-grid { gap: 40px; }
+  .p-upgrade-grid { gap: 40px; }
 }
 @media (max-width: 960px) {
   .p-package-intro { grid-template-columns: var(--intro-gutter) minmax(0, 1fr) var(--intro-gutter); grid-template-rows: auto auto; gap: 28px 0; padding-block: 40px; }
@@ -213,11 +193,7 @@ html { scroll-behavior: auto; }
   .p-both { padding-block: 32px; }
   .p-both-content { grid-template-columns: 1fr; gap: 14px; }
   .p-both a { margin-top: 8px; justify-content: space-between; }
-  .p-guarantee-grid, .p-upgrade-grid { grid-template-columns: 1fr; gap: 28px; }
-  .p-guarantee-mark { margin-bottom: 26px; }
-  .p-guarantee-title { margin-top: 20px; }
-  .p-guarantee-content { padding-top: 0; }
-  .p-guarantee-intro { font-size: 15px; }
+  .p-upgrade-grid { grid-template-columns: 1fr; gap: 28px; }
   .p-upgrades summary { font-size: 17px; }
   .p-page .r-footer .m-brand { flex-basis: 100%; }
 }
