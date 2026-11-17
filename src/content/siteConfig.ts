@@ -25,6 +25,7 @@ export const business = {
    * new enquiries himself, so no page sends prospects anywhere else.
    */
   email: 'matthew@wallaceshift.com' as string | null,
+  phone: { display: '(913) 347-5479', number: '+19133475479' },
 
   /**
    * Where the studio works from — region only, never a street address.
@@ -194,7 +195,7 @@ export const contactCta = {
 
 export const footer = {
   tagline: 'Software. Workflows. Progress.',
-  // Share Google's deeplink between the React site and script-free blog.
+  // Share Google's deeplink between the React site and static blog.
   // Always target the published domain, including in local previews.
   // https://developers.google.com/search/docs/appearance/preferred-sources
   preferredSource: {

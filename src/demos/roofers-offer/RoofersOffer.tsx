@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { submitContactRequest } from '../../lib/contactAdapter'
 import { trackSiteEvent } from '../../lib/analytics'
 import { useCollectionHostname } from '../../hooks/useCollectionHostname'
+import { PhoneLink } from '../../components/PhoneLink'
 import { automationGroups, featuredAutomations } from './automationMenu'
 import {
   roofingContactEmail,
@@ -238,6 +239,6 @@ export function RoofersOffer() {
         </div>
       </section>
     </main>
-    <footer className="ro-footer ro-wrap"><Wordmark /><p>Connected records. Clearer next steps.</p><div><a href="https://wallaceshift.com/">Explore Wallace Shift <Arrow diagonal /></a><a className="ro-admin-link" href="/demo-admin/">Admin sign in</a><span>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Wallace Shift</span></div></footer>
+    <footer className="ro-footer ro-wrap"><Wordmark /><p>Connected records. Clearer next steps.</p><div><PhoneLink /><a href="https://wallaceshift.com/">Explore Wallace Shift <Arrow diagonal /></a><a className="ro-admin-link" href="/demo-admin/">Admin sign in</a><span>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Wallace Shift</span></div></footer>
   </div>
 }

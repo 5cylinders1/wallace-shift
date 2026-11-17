@@ -9,6 +9,7 @@ import '../refined/refined.css'
 import './purchase.css'
 import InquiryJourney from './InquiryJourney'
 import Guarantee from './Guarantee'
+import Upgrades from './Upgrades'
 
 const email = 'mailto:matthew@wallaceshift.com?subject=Question%20about%20my%20website'
 const offerPaths = { website: '/offers/contractor-websites', lead: '/offers/lead-page-follow-up' }
@@ -240,15 +241,6 @@ function Packages() {
     <div className="r-wrap p-package-list" ref={listRef}>{order.map(kind => <PackageCard key={kind} kind={kind} selected={selected === kind} />)}</div>
     <span className="p-visually-hidden" role="status">{selected === 'website' ? 'Business website and care' : 'Lead page and automatic follow up'} shown first. Both packages remain available.</span>
   </section>
-}
-
-const upgrades = [
-  { title: 'More room for your services', kind: 'Project quote', text: 'Add agreed service or location pages when your business needs more detail. Includes a defined content brief, page build and review allowance.', boundary: 'Additional pages outside your included website scope. Original agreed pages stay included.', price: 'Quoted per approved page scope, including writing, images, build and review time.' },
-  { title: 'Another follow up workflow', kind: 'Project quote + tool costs', text: 'Add a separate inquiry path in compatible tools, with agreed messages, timing, stop conditions and a tested handoff.', boundary: 'For another use case. The first agreed workflow is already included in the $1,500 package.', price: 'Quoted after tool and access checks. Extra subscriptions, message usage and ongoing management are separate. SMS may require sender registration or verification, with provider fees and approval time before launch.' },
-  { title: 'Ongoing content updates', kind: 'Optional monthly scope', text: 'Keep service information and project examples current with a defined amount of content work each month.', boundary: 'Only work beyond the agreed included allowance. Technical maintenance stays in the $250 package.', price: 'Quoted by update volume, content responsibility and review time. No unlimited work promise.' },
-]
-function Upgrades() {
-  return <section className="r-section r-light p-upgrades" id="upgrades"><div className="r-wrap p-upgrade-grid"><div><h2>Start with what you need.<br /><em>Add only what helps.</em></h2><p>Your original package stands on its own. These are optional additions when the work grows.</p><a href="#questions" className="m-text-link">Ask about an addition<Arrow /></a></div><div>{upgrades.map(item => <details key={item.title}><summary><span>{item.title}<small>{item.kind}</small></span><Plus /></summary><p>{item.text}</p><p><strong>What stays included</strong><br />{item.boundary}</p><p><strong>How it is priced</strong><br />{item.price}</p></details>)}</div></div></section>
 }
 
 function PortalIllustration() {

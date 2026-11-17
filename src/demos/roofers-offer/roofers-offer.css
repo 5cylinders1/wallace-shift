@@ -246,6 +246,8 @@ img { display: block; width: 100%; }
 .ro-footer>div>a.ro-admin-link { color: var(--ro-muted-dark); font-size: 11px; }
 .ro-footer>div>a.ro-admin-link:hover { color: var(--ro-paper); }
 .ro-footer>div>a>span { font-size: 19px; line-height: 1; }
+.ro-footer>div>a.ws-phone-link { align-self: flex-end; gap: .45em; }
+.ro-footer>div>a.ws-phone-link>span { font-size: inherit; line-height: inherit; }
 .ro-footer>div>span { font-size: 11px; color: var(--ro-muted-dark); }
 
 @media (min-width: 1600px) {

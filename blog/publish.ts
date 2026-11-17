@@ -31,7 +31,9 @@ function documentHtml({ title, description, path, cssPath, body, noindex = false
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="strict-origin" />
   <link rel="stylesheet" href="/analytics-consent.css" />
+  <link rel="stylesheet" href="/phone-link.css" />
   <script defer src="/site-analytics.js"></script>
+  <script src="https://www.reply365.app/chat/widget.js" data-widget="420f110fa3066a067b03d4cc8fcdb1ea" defer></script>
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <meta name="theme-color" content="#080d12" />

@@ -14,9 +14,10 @@ export const organizationNode = {
   url: `${SITE_ORIGIN}/`,
   logo: `${SITE_ORIGIN}/brand/wallace-shift-logo-black.svg`,
   description: siteMeta.description,
+  telephone: business.phone.number,
   areaServed: { '@type': 'Place', name: business.serviceArea ?? 'Greater Kansas City' },
   ...(business.email ? {
-    contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: business.email },
+    contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: business.email, telephone: business.phone.number },
   } : {}),
 }
 

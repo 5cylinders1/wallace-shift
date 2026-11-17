@@ -1,0 +1,68 @@
+.monthly-services { --monthly-muted: #52616b; --monthly-line: #bdc9d0; --monthly-blue: #175c99; padding-block: 36px; border-bottom: 1px solid #bdc9d0; }
+.monthly-services ::selection { color: #edf1f2; background: #175c99; }
+.monthly-services__intro { display: flex; justify-content: space-between; align-items: end; gap: 48px; margin-bottom: 24px; }
+.monthly-services .monthly-services__intro h2 { font-size: clamp(34px, 3vw, 44px); }
+.monthly-services__intro > p { max-width: 46ch; font-size: 15px; color: var(--monthly-muted); }
+.monthly-services__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.monthly-services__tile { --tile-bg: #f8fafb; --tile-muted: #52616b; --tile-ink: #080d12; --tile-line: #c5d0d6; --tile-link: #175c99; display: grid; grid-template-rows: minmax(32px, auto) minmax(64px, auto) minmax(84px, auto) minmax(124px, auto) minmax(70px, auto) minmax(48px, auto) auto; min-width: 0; background: var(--tile-bg); color: var(--tile-ink); padding: 24px 24px 0; border-radius: 12px; }
+.monthly-services__tile--agents { --tile-bg: #172e40; --tile-muted: #b7d0e2; --tile-ink: #edf1f2; --tile-line: #476176; --tile-link: #a8d3ff; }
+.monthly-services__tile--crm { --tile-bg: #e7e5df; --tile-muted: #5e5a50; --tile-line: #c7c4ba; }
+.monthly-services .monthly-services__tile h3 { font: 500 clamp(18px, 1.65vw, 24px)/1.3 var(--font-sans); letter-spacing: -.025em; }
+.monthly-services__need { font-size: 14px; color: var(--tile-muted); padding-top: 6px; }
+.monthly-services__price { padding-top: 8px; }
+.monthly-services__price > strong { display: block; font-size: 27px; line-height: 1.3; font-weight: 500; font-variant-numeric: tabular-nums; }
+.monthly-services__price > span { display: block; margin-top: 4px; font-size: 12px; line-height: 1.6; color: var(--tile-muted); }
+.monthly-services__price > .monthly-services__status { font-size: 23px; color: #614a25; line-height: 1.53; }
+.monthly-services__value { padding-top: 16px; border-top: 1px solid var(--tile-line); }
+.monthly-services .monthly-services__value h4 { font: 600 13px/1.5 var(--font-sans); margin: 0 0 6px; }
+.monthly-services__value > p { font-size: 14px; color: var(--tile-muted); }
+.monthly-services__boundary { font-size: 12px; color: var(--tile-muted); padding-block: 12px; }
+.monthly-services__link { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; color: var(--tile-link, var(--monthly-blue)); font-size: 14px; font-weight: 600; text-decoration: none; }
+.monthly-services__link:hover { text-decoration: underline; text-underline-offset: 5px; }
+.monthly-services__link:active { opacity: .8; }
+.monthly-services :is(a, summary):focus-visible { outline: 2px solid var(--tile-link, var(--monthly-blue)); outline-offset: 3px; }
+.monthly-services .monthly-services__details { border-top: 1px solid var(--tile-line); border-bottom: 0; margin-top: 8px; }
+.monthly-services .monthly-services__details summary { color: var(--tile-muted); min-height: 52px; padding-block: 14px; font-size: 13px; font-weight: 500; }
+.monthly-services__details summary:hover { color: var(--tile-link); }
+.monthly-services .monthly-services__details[open] summary svg { transform: none; }
+.monthly-services__details[open] .monthly-services__plus { display: none; }
+.monthly-services__detail-body { padding-block: 4px 24px; }
+.monthly-services .monthly-services__detail-body p { color: var(--tile-muted); font-size: 13px; padding: 0; }
+.monthly-services__example { margin: 20px 0; padding-block: 18px; border-block: 1px solid var(--tile-line); }
+.monthly-services__example figcaption { font-size: 12px; line-height: 1.5; color: var(--tile-muted); margin-bottom: 16px; }
+.monthly-services__example blockquote { margin: 0 0 14px; font: 400 28px/1.15 var(--font-serif); }
+.monthly-services__sequence { list-style: none; margin: 0; padding: 0; }
+.monthly-services__sequence li { position: relative; padding: 0 0 18px 20px; border-left: 1px solid var(--tile-line); }
+.monthly-services__sequence li:last-child { border-color: transparent; padding-bottom: 0; }
+.monthly-services__sequence li::before { content: ''; position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--tile-link); left: -4px; top: 7px; }
+.monthly-services__sequence strong { display: block; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.monthly-services__sequence span { display: block; font-size: 13px; line-height: 1.65; color: var(--tile-muted); margin-top: 4px; }
+.monthly-services__record > strong { font-size: 20px; font-weight: 500; }
+.monthly-services .monthly-services__record > p { margin-top: 4px; }
+.monthly-services__record dl { margin: 16px 0 0; }
+.monthly-services__record dl > div { padding-top: 12px; }
+.monthly-services__record dt { font-size: 12px; color: var(--tile-muted); }
+.monthly-services__record dd { margin: 3px 0 0; font-size: 14px; line-height: 1.5; }
+.monthly-services__footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 8px 0 0; margin-top: 16px; border-top: 1px solid var(--monthly-line); }
+.monthly-services__footer p { font-size: 13px; color: var(--monthly-muted); max-width: 65ch; }
+.monthly-services__footer .monthly-services__link { flex-shrink: 0; }
+@media (min-width: 760px) and (max-width: 1199px) {
+  .monthly-services__grid { gap: 14px; }
+  .monthly-services__tile { padding-inline: 18px; grid-template-rows: minmax(52px, auto) minmax(76px, auto) minmax(94px, auto) minmax(164px, auto) minmax(88px, auto) minmax(48px, auto) auto; }
+  .monthly-services__intro { gap: 32px; }
+  .monthly-services__intro > p { max-width: 37ch; }
+  .monthly-services__price > .monthly-services__status { font-size: 21px; }
+}
+@media (max-width: 759px) {
+  .monthly-services { padding-block: 36px; }
+  .monthly-services__intro { display: block; margin-bottom: 24px; }
+  .monthly-services__intro > p { margin-top: 16px; font-size: 14px; }
+  .monthly-services__grid { grid-template-columns: 1fr; gap: 16px; }
+  .monthly-services__tile { padding: 22px 22px 0; grid-template-rows: auto; }
+  .monthly-services .monthly-services__tile h3 { font-size: 23px; }
+  .monthly-services__need { padding-top: 8px; }
+  .monthly-services__price { padding-block: 18px; }
+  .monthly-services__value { padding-top: 14px; }
+  .monthly-services__boundary { padding-block: 14px 8px; }
+  .monthly-services__footer { align-items: flex-start; flex-direction: column; gap: 4px; margin-top: 20px; padding-top: 16px; }
+}
