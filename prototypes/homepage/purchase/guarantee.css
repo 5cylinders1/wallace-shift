@@ -11,7 +11,20 @@
 .p-guarantee-promise { padding: clamp(28px, 2.5vw, 36px); background: var(--guarantee-surface); border-radius: 4px; }
 .p-guarantee-identity { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
 .p-guarantee-identity p { font-size: 16px; color: var(--guarantee-accent); }
-.p-guarantee-emblem { width: 92px; height: auto; flex: 0 0 92px; overflow: visible; }
+.p-guarantee-emblem-frame { position: relative; isolation: isolate; display: block; width: 92px; flex: 0 0 92px; aspect-ratio: 120 / 136; pointer-events: none; }
+.p-guarantee-emblem { display: block; width: 100%; height: auto; overflow: visible; }
+/* A fixed soft field is rasterized behind the crisp SVG. Only its transform
+   and opacity change with scroll; its gradient and dimensions stay constant. */
+.p-guarantee-emblem-glow {
+  position: absolute;
+  z-index: -1;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 48%, rgb(61 150 255 / .78) 0%, rgb(37 119 230 / .5) 28%, rgb(28 100 214 / .24) 48%, rgb(28 100 214 / 0) 72%);
+  transform: scale(.68);
+  opacity: .12;
+  pointer-events: none;
+}
 .p-guarantee-emblem-face { fill: #1a2c3a; stroke: var(--guarantee-accent); stroke-width: 1; }
 .p-guarantee-emblem-inset { stroke: #698aa2; stroke-width: .65; }
 .p-guarantee-emblem-number { fill: var(--guarantee-ink); font: 46px var(--font-serif); text-anchor: middle; }
@@ -53,7 +66,7 @@
 @media (max-width: 600px) {
   .p-guarantee-promise { display: block; padding: 26px; }
   .p-guarantee-identity { gap: 18px; margin-bottom: 24px; }
-  .p-guarantee-emblem { width: 72px; flex-basis: 72px; }
+  .p-guarantee-emblem-frame { width: 72px; flex-basis: 72px; }
   .p-guarantee-identity p { font-size: 14px; }
   .p-guarantee-lede { font-size: 15px; margin-top: 16px; }
   .p-guarantee-status { margin-top: 24px; }
@@ -64,6 +77,9 @@
 @media (max-width: 360px) {
   .p-guarantee-promise { padding: 22px; }
   .p-guarantee-identity { gap: 14px; }
-  .p-guarantee-emblem { width: 60px; flex-basis: 60px; }
+  .p-guarantee-emblem-frame { width: 60px; flex-basis: 60px; }
   .p-page .p-guarantee summary { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-guarantee-emblem-glow { transform: scale(.8); opacity: .2; }
 }

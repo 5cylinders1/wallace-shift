@@ -1,13 +1,72 @@
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import './guarantee.css'
 
+gsap.registerPlugin(ScrollTrigger, useGSAP)
+
 function ReviewEmblem() {
-  return <svg className="p-guarantee-emblem" viewBox="0 0 120 136" fill="none" aria-hidden="true" focusable="false">
-    <path className="p-guarantee-emblem-face" d="M60 5 106 23v40c0 28-20 50-46 65C34 113 14 91 14 63V23L60 5Z" />
-    <path className="p-guarantee-emblem-inset" d="m60 14 38 15v34c0 23-16 43-38 57-22-14-38-34-38-57V29l38-15Z" />
-    <text x="60" y="70" className="p-guarantee-emblem-number">30</text>
-    <text x="60" y="89" className="p-guarantee-emblem-unit">days</text>
-    <path className="p-guarantee-emblem-check" d="m54 101 4 4 8-9" />
-  </svg>
+  const frame = useRef<HTMLSpanElement>(null)
+
+  useGSAP(() => {
+    const host = frame.current!
+    const halo = host.querySelector<HTMLElement>('.p-guarantee-emblem-glow')!
+    const header = host.closest('.p-page')?.querySelector<HTMLElement>('.m-header')
+    const media = gsap.matchMedia()
+    // The current header scrolls away. Reserve its height only if it overlays
+    // the page; 40px also leaves room for the glow above the shield.
+    const topInset = () => {
+      if (!header) return 40
+      const style = getComputedStyle(header)
+      return ['fixed', 'sticky'].includes(style.position)
+        ? header.offsetHeight + Math.max(0, parseFloat(style.top) || 0) + 40
+        : 40
+    }
+
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      // Register initial styles with the context so reduced motion/unmount
+      // restores CSS. Write only when progress changes, including on refresh.
+      gsap.set(halo, { scale: .68, opacity: .12 })
+      let previous = -1
+      const paint = (self: ScrollTrigger) => {
+        const progress = gsap.utils.clamp(0, 1, self.progress)
+        if (progress === previous) return
+        previous = progress
+        halo.style.transform = `scale(${.68 + progress * .52})`
+        halo.style.opacity = `${.12 + progress * .73}`
+      }
+      const trigger = ScrollTrigger.create({
+        id: 'guarantee-shield-glow',
+        trigger: host,
+        start: 'clamp(top bottom)',
+        end: () => `clamp(top ${topInset()}px)`,
+        // The inquiry above can add its pin after this child mounts. Refresh
+        // this downstream range after that pin has established its spacing.
+        refreshPriority: -1,
+        onUpdate: paint,
+        onRefresh: paint,
+      })
+      paint(trigger)
+    })
+
+    // Font loading can move the shield after fragment navigation. Other page
+    // layout changes already refresh the shared ScrollTrigger measurements.
+    let disposed = false
+    void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh() })
+    return () => { disposed = true; media.revert() }
+  }, { scope: frame })
+
+  return <span className="p-guarantee-emblem-frame" ref={frame} aria-hidden="true">
+    <span className="p-guarantee-emblem-glow" />
+    <svg className="p-guarantee-emblem" viewBox="0 0 120 136" fill="none" focusable="false">
+      <path className="p-guarantee-emblem-face" d="M60 5 106 23v40c0 28-20 50-46 65C34 113 14 91 14 63V23L60 5Z" />
+      <path className="p-guarantee-emblem-inset" d="m60 14 38 15v34c0 23-16 43-38 57-22-14-38-34-38-57V29l38-15Z" />
+      <text x="60" y="70" className="p-guarantee-emblem-number">30</text>
+      <text x="60" y="89" className="p-guarantee-emblem-unit">days</text>
+      <path className="p-guarantee-emblem-check" d="m54 101 4 4 8-9" />
+    </svg>
+  </span>
 }
 
 function DisclosureIcon() {

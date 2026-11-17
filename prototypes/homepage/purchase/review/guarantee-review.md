@@ -28,3 +28,22 @@ Actual screen reader sessions and physical device testing were not performed. Th
 Confirm the billing schedule, refund processing deadline and payment treatment, pre delivery cancellation, transition period, export details and ownership/license language in the agreement. The section explicitly remains a proposal until that policy is adopted.
 
 Commit message: `Refine guarantee presentation and clarify proposed refund coverage`
+
+## Shield illumination
+
+Added 17 November 2026. Only the decorative shield treatment changes. The fixed radial blue field behind the SVG scales from 0.68 to 1.2 and changes opacity from 0.12 to 0.85. The shield itself stays crisp and stationary in its layout. ScrollTrigger maps progress from the shield's top entering the viewport bottom to its top reaching 40 pixels below the viewport top, adding the header height only for a fixed or sticky header. Progress is clamped and reversible. The downstream trigger refreshes after the preceding inquiry pin has established its spacing.
+
+The effect updates only transform and opacity when progress changes. It has no repeating animation, dynamic blur, animated dimensions or React state updates. The layer cannot intercept input and is hidden from assistive technology. Reduced motion creates no glow scroll trigger and uses a static 0.8 scale / 0.2 opacity treatment; switching preferences restores the appropriate state through scoped GSAP cleanup.
+
+Verified on the built prototype in Chrome:
+
+- Entry, midpoint and peak at 1440, 768, 390 and 320 pixel widths; scale and opacity match the scroll position.
+- Slow forward and reverse scrolling, fast jumps before and past both endpoints, direct `#guarantee` navigation, viewport resizing and a simulated fixed header.
+- Zero glow style writes during each stationary measurement. Section height stays constant, with no horizontal overflow; the visible soft edge fits within the panel and remains clear of the copy.
+- Runtime reduced-motion preference changes correctly restore the static appearance.
+- Desktop trace: zero Layout and Paint events during the measured forward/reverse scroll. Mobile viewport with 4× CPU throttling: zero Layout events; 12 Paint events totaling 13.96ms, maximum 1.9ms. Both traces recorded zero layout shift and a median frame interval of 16.7ms, with no intervals above 34ms in 242 sampled frames each.
+- Targeted TypeScript, ESLint and whitespace checks passed. No runtime page errors.
+
+These are desktop Chrome measurements, including a simulated mobile viewport and CPU throttling. A physical phone's GPU and memory performance remain unmeasured. Local evidence: `/private/tmp/glow-{1440,390}-{0,50,100}.png`, `/private/tmp/guarantee-glow-report.json`, and `/private/tmp/glow-trace-{1440,390}.json`.
+
+Commit message: `Add scroll driven blue glow to guarantee shield`
