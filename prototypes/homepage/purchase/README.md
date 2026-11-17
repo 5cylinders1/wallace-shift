@@ -171,3 +171,23 @@ Screenshots: [desktop inquiry story](review/desktop-inquiry-story.jpg), [mobile 
 These checks establish local presentation and behavior. Customer comprehension, usage and conversion remain unmeasured.
 
 Proposed commit message: `Turn the inquiry demo into a visual customer journey`
+
+## Scroll driven inquiry refinement
+
+Updated 17 November 2026. This supersedes the button controlled visual inquiry story above.
+
+The phone is now standalone. Stage and replay buttons have been removed. Scrolling carries the blue envelope to the middle station, reveals a fictional lead card, then carries an outgoing envelope from behind the expanded card into the recipient's hands. The card keeps its layout footprint throughout. The recipient gains color and a delivery indicator at arrival. The former inbox card is replaced with four scoped notification options: in app notification, SMS, email and phone call. These are options to agree during setup, not four automatically included integrations.
+
+Desktop holds the scene only when its full content fits the viewport. Smaller screens use a vertical document flow. Scroll progress is reversible, the envelope uses measured source and destination positions, and the section refreshes when preceding package or comparison content changes height. Reduced motion presents the full information without pinning or travel. A keyboard accessible skip link bypasses the demonstration.
+
+Validation for this revision:
+
+- Rendered the ordinary preview at 1440 × 900, 1440 × 1000, 768 × 1024 and 390 × 844. Checked forward and reverse progress, the collapsed lead, expanded lead, visible delivery, color change and no horizontal overflow.
+- Verified the envelope's final center matches the recipient's held envelope. The lead stays expanded during delivery. The phone hand, stage buttons, replay button and inbox card are absent.
+- Verified the 44 pixel skip link with Enter and confirmed arrival at the following section.
+- Used a disposable local fixture to simulate reduced motion and 200 percent text at 320 × 800. All three explanations remained available, no pin was created, and contact labels stacked without overlap. This was a simulation, not an operating system preference or physical device test. Removed the fixture afterward.
+- Targeted TypeScript, ESLint and the isolated Vite preview build passed. Development hot reload emitted the existing duplicate createRoot warning while other preview edits were being made; no change was made to the shared entry in this refinement.
+
+Current screenshots: [desktop delivery](./review/desktop-inquiry-scroll-delivered.jpg), [mobile lead](./review/mobile-inquiry-scroll-lead.jpg), [mobile delivery](./review/mobile-inquiry-scroll-delivered.jpg).
+
+Proposed commit message: `Refine scroll driven inquiry reveal and team delivery`
