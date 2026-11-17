@@ -6,7 +6,7 @@
 .monthly-services__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
 .monthly-services__tile { --tile-bg: #f8fafb; --tile-muted: #52616b; --tile-ink: #080d12; --tile-line: #c5d0d6; --tile-link: #175c99; display: grid; grid-template-rows: minmax(32px, auto) minmax(64px, auto) minmax(84px, auto) minmax(124px, auto) minmax(70px, auto) minmax(48px, auto) auto; min-width: 0; background: var(--tile-bg); color: var(--tile-ink); padding: 24px 24px 0; border-radius: 12px; }
 .monthly-services__tile--agents { --tile-bg: #172e40; --tile-muted: #b7d0e2; --tile-ink: #edf1f2; --tile-line: #476176; --tile-link: #a8d3ff; }
-.monthly-services__tile--crm { --tile-bg: #e7e5df; --tile-muted: #5e5a50; --tile-line: #c7c4ba; }
+.monthly-services__tile--workspace { --tile-bg: #e7e5df; --tile-muted: #5e5a50; --tile-line: #c7c4ba; }
 .monthly-services .monthly-services__tile h3 { font: 500 clamp(18px, 1.65vw, 24px)/1.3 var(--font-sans); letter-spacing: -.025em; }
 .monthly-services__need { font-size: 14px; color: var(--tile-muted); padding-top: 6px; }
 .monthly-services__price { padding-top: 8px; }
@@ -27,6 +27,7 @@
 .monthly-services__details[open] .monthly-services__plus { display: none; }
 .monthly-services__detail-body { padding-block: 4px 24px; }
 .monthly-services .monthly-services__detail-body p { color: var(--tile-muted); font-size: 13px; padding: 0; }
+.monthly-services__detail-body > p + p { margin-top: 12px; }
 .monthly-services__example { margin: 20px 0; padding-block: 18px; border-block: 1px solid var(--tile-line); }
 .monthly-services__example figcaption { font-size: 12px; line-height: 1.5; color: var(--tile-muted); margin-bottom: 16px; }
 .monthly-services__example blockquote { margin: 0 0 14px; font: 400 28px/1.15 var(--font-serif); }
@@ -36,12 +37,6 @@
 .monthly-services__sequence li::before { content: ''; position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--tile-link); left: -4px; top: 7px; }
 .monthly-services__sequence strong { display: block; font-size: 13px; font-weight: 600; line-height: 1.5; }
 .monthly-services__sequence span { display: block; font-size: 13px; line-height: 1.65; color: var(--tile-muted); margin-top: 4px; }
-.monthly-services__record > strong { font-size: 20px; font-weight: 500; }
-.monthly-services .monthly-services__record > p { margin-top: 4px; }
-.monthly-services__record dl { margin: 16px 0 0; }
-.monthly-services__record dl > div { padding-top: 12px; }
-.monthly-services__record dt { font-size: 12px; color: var(--tile-muted); }
-.monthly-services__record dd { margin: 3px 0 0; font-size: 14px; line-height: 1.5; }
 .monthly-services__footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 8px 0 0; margin-top: 16px; border-top: 1px solid var(--monthly-line); }
 .monthly-services__footer p { font-size: 13px; color: var(--monthly-muted); max-width: 65ch; }
 .monthly-services__footer .monthly-services__link { flex-shrink: 0; }

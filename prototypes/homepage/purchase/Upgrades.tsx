@@ -4,6 +4,7 @@ import { shiftHandoffHref } from '../../../src/lib/quizHandoff'
 import './upgrades.css'
 
 const managedAutomation = engagementGroups.find(group => group.id === 'automation')?.items.find(item => item.title === 'Managed automation')
+const followUpSetup = engagementGroups.find(group => group.id === 'automation')?.items.find(item => item.title === 'Follow-up setup')
 
 function Arrow() {
   return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
@@ -50,22 +51,24 @@ export default function Upgrades() {
           </article>
 
           <article className="monthly-services__tile" aria-labelledby="monthly-follow-up-heading">
-            <h3 id="monthly-follow-up-heading">Automatic follow up</h3>
-            <p className="monthly-services__need">Keep an agreed follow up sequence working as your business changes.</p>
+            <h3 id="monthly-follow-up-heading">Managed follow up</h3>
+            <p className="monthly-services__need">For an existing follow up workflow you want us to look after.</p>
             <div className="monthly-services__price">
               <strong>{managedAutomation ? `From $${managedAutomation.price}` : 'Quoted'}</strong>
-              <span>/ month for ongoing management</span>
+              <span>/ month for optional ongoing management</span>
             </div>
             <div className="monthly-services__value">
               <h4>Each month</h4>
-              <p>Monitoring, maintenance, failure recovery and minor adjustments. Your first workflow setup stays included in the $1,500 lead package.</p>
+              <p>We monitor your workflow, fix failures and make minor adjustments as your business changes.</p>
             </div>
-            <p className="monthly-services__boundary">Software and message usage are additional. New workflows are quoted separately.</p>
+            <p className="monthly-services__boundary">First setup: included in the $1,500 lead package, or {followUpSetup ? `from $${followUpSetup.price} once` : 'quoted separately'}. Software and usage extra.</p>
             <a className="monthly-services__link" href={shiftHandoffHref('automation-integration')}>Discuss follow up<Arrow /></a>
             <details className="monthly-services__details">
-              <summary>Setup & example<Plus /></summary>
+              <summary>Setup costs & example<Plus /></summary>
               <div className="monthly-services__detail-body">
-                <p>Before we start, we agree the messages, timing and when they stop, then test the workflow in compatible tools. Monthly management is optional.</p>
+                <p><strong>Setup without monthly management.</strong> Budget $500 to $1,000 once for a simple sequence in one existing tool, depending on scope. The $1,500 lead package already includes its first workflow setup.</p>
+                <p>After setup, you can manage it yourself. Software, message usage and any required hosting still have their own costs. The monthly management fee above applies only if you choose our ongoing monitoring and upkeep.</p>
+                <p>Setup includes agreed messages, timing, stop conditions, testing and a walkthrough for your team.</p>
                 <figure className="monthly-services__example">
                   <figcaption>Example sequence · illustrative</figcaption>
                   <ol className="monthly-services__sequence">
@@ -79,34 +82,28 @@ export default function Upgrades() {
             </details>
           </article>
 
-          <article className="monthly-services__tile monthly-services__tile--crm" aria-labelledby="monthly-crm-heading">
-            <h3 id="monthly-crm-heading">Wallace Shift CRM</h3>
-            <p className="monthly-services__need">For teams piecing together customer details from messages and notes.</p>
+          <article className="monthly-services__tile monthly-services__tile--workspace" aria-labelledby="monthly-workspace-heading">
+            <h3 id="monthly-workspace-heading">Business workspace + AI</h3>
+            <p className="monthly-services__need">Email, marketing and website performance, together in one place.</p>
             <div className="monthly-services__price">
               <span>Monthly price and timing to be confirmed</span>
             </div>
             <div className="monthly-services__value">
               <h4>Planned monthly access</h4>
-              <p>A customer workspace with contact details, conversation notes and next actions. Included support and connections are still being defined.</p>
+              <p>Email, ad and social reporting, Google Analytics and search performance. Planned AI assistance to ask questions across your connected data.</p>
             </div>
-            <p className="monthly-services__boundary">For your own customers. Separate from your Wallace Shift agreement and invoice portal.</p>
-            <a className="monthly-services__link" href={shiftHandoffHref('custom-web-app')}>Discuss your CRM needs<Arrow /></a>
+            <p className="monthly-services__boundary">We agree which accounts, data access and ongoing support your plan includes.</p>
+            <a className="monthly-services__link" href="/contact">Discuss your workspace<Arrow /></a>
             <details className="monthly-services__details">
               <summary>What we’re building<Plus /></summary>
               <div className="monthly-services__detail-body">
-                <p>CRM means customer relationship manager: one place to see who needs help, what has been discussed and what your team should do next.</p>
+                <p>We’re bringing email tools, paid advertising, social reporting, Google Analytics and Google Search Console into a shared workspace. The next step is an AI assistant that can answer questions using the information you connect.</p>
                 <figure className="monthly-services__example">
-                  <figcaption>Planned experience · fictional record</figcaption>
-                  <div className="monthly-services__record">
-                    <strong>Alex Morgan</strong><p>Asked about a kitchen remodel</p>
-                    <dl>
-                      <div><dt>Last conversation</dt><dd>Needs an estimate</dd></div>
-                      <div><dt>Next action</dt><dd>Arrange a site visit</dd></div>
-                      <div><dt>Assigned to</dt><dd>Jamie</dd></div>
-                    </dl>
-                  </div>
+                  <figcaption>Planned AI experience · illustrative</figcaption>
+                  <blockquote>“How are our ads and website performing this month?”</blockquote>
+                  <p>The intended assistant compares the available reports, highlights changes and points you to the data behind its answer.</p>
                 </figure>
-                <p>Share how you manage customers today. Availability, migration, connections and ongoing support will be confirmed before the CRM is offered.</p>
+                <p>Tell us which accounts you want to bring together. Supported connections, customer access and AI assistance will be confirmed before your service starts. Answers depend on the data available and the permissions you allow.</p>
               </div>
             </details>
           </article>
