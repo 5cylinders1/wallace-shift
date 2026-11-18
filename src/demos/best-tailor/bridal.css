@@ -113,23 +113,31 @@
   .bt-assembly-detail,.bt-assembly-finale,.bt-assembly-scroll,.bt-assembly-progress{display:none!important}
 }
 
-.bt-assembly-intro{top:12%;width:34%;max-width:540px}
-.bt-assembly-intro .bt-assembly-title{font-size:clamp(72px,7.4vw,132px);line-height:.88;letter-spacing:-.045em}
-.bt-assembly-intro .bt-assembly-lead,.bt-assembly-lead>span{display:block}
-.bt-assembly-intro .bt-assembly-title em{font-size:clamp(30px,3.1vw,52px);line-height:1.08;letter-spacing:-.025em;margin-top:24px;max-width:12ch;text-wrap:balance}
-.bt-assembly-intro .bt-assembly-body{display:none}
+/* Hero heading: kept inside the dark top-left of the frame, with a soft shade that fades out with it. */
+.bt-assembly-intro{top:10%;width:38%;max-width:580px}
+.bt-assembly-intro::before{content:'';position:absolute;z-index:-1;inset:-30% -32% -42% -30%;background:radial-gradient(ellipse 50% 50% at 40% 48%,rgba(24,16,17,.62),rgba(24,16,17,.36) 55%,rgba(24,16,17,0));pointer-events:none}
+.bt-assembly-kicker{display:flex;align-items:center;gap:14px;font-size:12px;font-weight:500;line-height:1.4;letter-spacing:.16em;text-transform:uppercase;color:#f3e4d3;margin-bottom:28px;text-shadow:0 1px 12px rgba(20,12,13,.7)}
+.bt-assembly-kicker::before{content:'';flex:none;width:36px;height:1px;background:#d9af94}
+.bt-assembly-intro .bt-assembly-title{font-size:clamp(72px,7.2vw,128px);line-height:.9;letter-spacing:-.04em;color:#fbf8f2;text-shadow:0 2px 3px rgba(20,12,13,.25),0 10px 44px rgba(20,12,13,.6)}
+.bt-assembly-intro .bt-assembly-title span,.bt-assembly-intro .bt-assembly-title em{display:block}
+.bt-assembly-intro .bt-assembly-title em{color:#efd3ae;padding-left:.5em}
 @media(min-width:851px){.bt-assembly-detail{top:12%}}
 @media(min-width:601px) and (max-width:850px){
-  .bt-assembly-intro{width:36%}
-  .bt-assembly-intro .bt-assembly-title{font-size:clamp(48px,8.2vw,70px)}
-  .bt-assembly-intro .bt-assembly-title em{font-size:26px;margin-top:18px}
+  .bt-assembly-intro{width:42%}
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(50px,8.4vw,70px)}
+  .bt-assembly-kicker{font-size:10px;letter-spacing:.14em;gap:10px;margin-bottom:18px}
+  .bt-assembly-kicker::before{width:24px}
 }
 @media(max-width:600px){
-  .bt-assembly-intro{top:18px;width:calc(100% - 44px);max-width:none}
-  .bt-assembly-intro .bt-assembly-title{font-size:clamp(54px,13.5vw,76px);line-height:.9}
-  .bt-assembly-intro .bt-assembly-title em{font-size:clamp(22px,5.7vw,30px);line-height:1.08;max-width:none;margin-top:12px}
+  .bt-assembly-intro{top:10px;width:calc(100% - 44px);max-width:none}
+  .bt-assembly-intro::before{inset:-10px -22px -64px;background:linear-gradient(rgba(24,16,17,.74),rgba(24,16,17,.6) 58%,rgba(24,16,17,0))}
+  .bt-assembly-kicker{justify-content:center;font-size:10px;letter-spacing:.14em;margin-bottom:9px}
+  .bt-assembly-kicker::before{display:none}
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(42px,12.2vw,58px);line-height:.92}
+  .bt-assembly-intro .bt-assembly-fit em,.bt-assembly-intro .bt-assembly-fit span{display:inline}
+  .bt-assembly-intro .bt-assembly-title em{padding-left:0}
 }
 @media(max-height:650px) and (min-width:601px){
   .bt-assembly-intro .bt-assembly-title{font-size:clamp(54px,6.5vw,88px)}
-  .bt-assembly-intro .bt-assembly-title em{font-size:30px;margin-top:14px}
+  .bt-assembly-kicker{margin-bottom:16px}
 }
