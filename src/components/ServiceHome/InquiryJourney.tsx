@@ -73,24 +73,44 @@ function TeamDestination() {
 
 export default function InquiryJourney() {
   const root = useRef<HTMLElement>(null)
+  const heading = useRef<HTMLDivElement>(null)
+  const pin = useRef<HTMLDivElement>(null)
   const story = useRef<HTMLDivElement>(null)
+  const completed = useRef(false)
   const [canPin, setCanPin] = useState(false)
 
-  // Only hold the story on screen if all its content fits. Larger text and
-  // smaller screens retain ordinary document scrolling and reading order.
+  const storyTop = () => {
+    const headerHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height')) || 0
+    return headerHeight + (heading.current?.offsetHeight ?? 0)
+  }
+
+  // Measure natural content, not the wrapper whose height GSAP sets when
+  // pinned. Reserve space for both headings beneath the site's fixed header.
   useEffect(() => {
-    const update = () => setCanPin(window.innerWidth > 900 && (story.current?.offsetHeight ?? Infinity) < window.innerHeight - 48)
+    let frame = 0
+    const update = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        setCanPin(window.innerWidth > 900 && (story.current?.offsetHeight ?? Infinity) + storyTop() + 16 <= window.innerHeight)
+      })
+    }
     const observer = new ResizeObserver(update)
     if (story.current) observer.observe(story.current)
+    if (heading.current) observer.observe(heading.current)
+    ScrollTrigger.addEventListener('refresh', update)
     window.addEventListener('resize', update)
     update()
-    return () => { observer.disconnect(); window.removeEventListener('resize', update) }
+    return () => {
+      cancelAnimationFrame(frame)
+      observer.disconnect()
+      ScrollTrigger.removeEventListener('refresh', update)
+      window.removeEventListener('resize', update)
+    }
   }, [])
 
   useGSAP(() => {
     const host = root.current!
     const scene = host.querySelector<HTMLElement>('.ij-scene')!
-    const track = host.querySelector<HTMLElement>('.ij-scroll-track')!
     const record = host.querySelector<HTMLElement>('.ij-record')!
     const dock = host.querySelector<HTMLElement>('.ij-envelope-dock')!
     const email = host.querySelector<HTMLElement>('.ij-email-example')!
@@ -141,7 +161,11 @@ export default function InquiryJourney() {
         ]
         paths.forEach((path, i) => { path.setAttribute('d', d[i]); ink[i].setAttribute('d', d[i]); lengths[i] = path.getTotalLength() })
       }
-      const paint = (p: number) => {
+      const paint = (progress: number) => {
+        // Completion belongs to this visit, not a particular trigger. Keep
+        // the full delivery after backscroll, resize or preference changes.
+        if (progress >= 1) completed.current = true
+        const p = completed.current ? 1 : progress
         const first = clamp((p - .08) / .23)
         const opening = clamp((p - .31) / .13)
         const second = clamp((p - .64) / .25)
@@ -185,11 +209,12 @@ export default function InquiryJourney() {
         return
       }
       const trigger = ScrollTrigger.create({
-        trigger: held ? track : scene,
-        pin: held ? story.current : false,
+        id: 'inquiry-journey',
+        trigger: held ? pin.current : scene,
+        pin: held ? pin.current : false,
         pinSpacing: true,
         anticipatePin: 1,
-        start: held ? 'top 24px' : 'top 65%',
+        start: held ? () => `top ${storyTop()}px` : 'top 65%',
         end: held ? () => `+=${window.innerHeight * 1.5}` : () => `top+=${center(target).y} 55%`,
         onUpdate: self => paint(self.progress),
         onRefresh: self => { measure(); paint(self.progress) },
@@ -197,30 +222,36 @@ export default function InquiryJourney() {
       paint(trigger.progress)
       return () => { trigger.kill(); delete host.dataset.motion }
     })
-    const refresh = () => { if (!disposed) ScrollTrigger.refresh() }
+    let refreshFrame = 0
+    const refresh = () => {
+      cancelAnimationFrame(refreshFrame)
+      refreshFrame = requestAnimationFrame(() => { if (!disposed) ScrollTrigger.refresh() })
+    }
     void document.fonts.ready.then(refresh)
     // Comparison expansion and package reordering above this section can move
     // its start without resizing the window.
     const upstream = new ResizeObserver(refresh)
     let previous = host.previousElementSibling
     while (previous) { upstream.observe(previous); previous = previous.previousElementSibling }
-    return () => { disposed = true; upstream.disconnect(); media.revert() }
+    return () => { disposed = true; cancelAnimationFrame(refreshFrame); upstream.disconnect(); media.revert() }
   }, { scope: root, dependencies: [canPin], revertOnUpdate: true })
 
   return <section ref={root} className="r-section r-light ij-section" id="work" aria-labelledby="inquiry-heading">
     <div className="r-wrap">
-      <div className="r-section-head"><h2 id="inquiry-heading">The website is the start.<br /><em>Here is what comes next.</em></h2><p>From a customer’s phone to a conversation with your team. Follow one roof repair request.</p></div>
       <div className="ij-demo">
         <div className="ij-scroll-track" data-held={canPin}>
-          <div ref={story} id="inquiry-story" className="ij-story">
-            <div className="ij-caption"><div className="ij-caption-stack">{steps.map((step, i) => <div className="ij-caption-copy" key={step.title} aria-hidden={i !== 0}><span className="ij-scope">{step.scope}</span><h3>{step.title}</h3></div>)}</div><div className="ij-scroll-cue"><span className="ij-progress-count" aria-hidden="true">01 / 03</span><span>Scroll to follow the inquiry ↓</span><a href="#guarantee">Skip demonstration</a></div></div>
-            <div className="ij-scene">
-              <div className="ij-scene-note">ILLUSTRATIVE EMAIL WORKFLOW<span>Fictional details. Nothing is collected or sent.</span></div>
-              <svg className="ij-route-lines" fill="none" aria-hidden="true">{[0, 1].map(i => <g key={i}><path className="ij-route-segment" /><path className="ij-route-ink" /></g>)}</svg>
-              <svg className="ij-route" fill="none" aria-hidden="true"><g className="ij-traveler"><rect x="-22" y="-17" width="44" height="34" rx="4" fill="#175c99" stroke="white" strokeWidth="1.5" /><path d="m-21-13 21 17 21-17" stroke="white" strokeWidth="1.5" strokeLinejoin="round" /></g></svg>
-              <CustomerPhone /><InquiryRecord /><TeamDestination />
+          <div ref={heading} className="r-section-head ij-heading"><h2 id="inquiry-heading">The website is the start.<br /><em>Here is what comes next.</em></h2><p>From a customer’s phone to a conversation with your team. Follow one roof repair request.</p></div>
+          <div ref={pin} className="ij-story-pin">
+            <div ref={story} id="inquiry-story" className="ij-story">
+              <div className="ij-caption"><div className="ij-caption-stack">{steps.map((step, i) => <div className="ij-caption-copy" key={step.title} aria-hidden={i !== 0}><span className="ij-scope">{step.scope}</span><h3>{step.title}</h3></div>)}</div><div className="ij-scroll-cue"><span className="ij-progress-count" aria-hidden="true">01 / 03</span><span>Scroll to follow the inquiry ↓</span><a href="#guarantee">Skip demonstration</a></div></div>
+              <div className="ij-scene">
+                <div className="ij-scene-note">ILLUSTRATIVE EMAIL WORKFLOW<span>Fictional details. Nothing is collected or sent.</span></div>
+                <svg className="ij-route-lines" fill="none" aria-hidden="true">{[0, 1].map(i => <g key={i}><path className="ij-route-segment" /><path className="ij-route-ink" /></g>)}</svg>
+                <svg className="ij-route" fill="none" aria-hidden="true"><g className="ij-traveler"><rect x="-22" y="-17" width="44" height="34" rx="4" fill="#175c99" stroke="white" strokeWidth="1.5" /><path d="m-21-13 21 17 21-17" stroke="white" strokeWidth="1.5" strokeLinejoin="round" /></g></svg>
+                <CustomerPhone /><InquiryRecord /><TeamDestination />
+              </div>
+              <div className="ij-explanation">{steps.map((step, i) => <p className="ij-explanation-copy" key={step.title} aria-hidden={i !== 0}>{step.text}{i === 2 && <small>A reply stops this sample sequence. The original inquiry can already be available to the team.</small>}</p>)}</div>
             </div>
-            <div className="ij-explanation">{steps.map((step, i) => <p className="ij-explanation-copy" key={step.title} aria-hidden={i !== 0}>{step.text}{i === 2 && <small>A reply stops this sample sequence. The original inquiry can already be available to the team.</small>}</p>)}</div>
           </div>
         </div>
         <p className="ij-package-note"><strong>Website package?</strong> The inquiry goes straight to your agreed inbox for your team to reply. The $1,500 setup adds one agreed automatic workflow. Channels, timing and stop conditions are scoped before setup.</p>

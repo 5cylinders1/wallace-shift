@@ -1,0 +1,394 @@
+{
+  "checkedAt": "2026-11-18T01:29:38.598Z",
+  "origin": "http://127.0.0.1:5194",
+  "status": "passed",
+  "environment": "Isolated headless Chrome with no authentication cookies; public local route",
+  "method": "Native wheel seeks, real viewport changes, held or missing HTTP responses, and sampled pixels from the visible canvas or poster. No timeline mutation or exact resample hash requirement.",
+  "cases": [
+    {
+      "name": "Delayed frames, rapid native seeks, and resize while pending",
+      "status": "passed",
+      "heldRequests": [
+        {
+          "number": 9,
+          "path": "/demos/best-tailor/media/cinematic/frame-0009.webp"
+        },
+        {
+          "number": 10,
+          "path": "/demos/best-tailor/media/cinematic/frame-0010.webp"
+        },
+        {
+          "number": 11,
+          "path": "/demos/best-tailor/media/cinematic/frame-0011.webp"
+        },
+        {
+          "number": 12,
+          "path": "/demos/best-tailor/media/cinematic/frame-0012.webp"
+        }
+      ],
+      "requests": {
+        "manifests": [
+          "/demos/best-tailor/media/cinematic/manifest.json",
+          "/demos/best-tailor/media/cinematic/manifest.json"
+        ],
+        "frames": 57,
+        "writeMethods": []
+      },
+      "initial": {
+        "time": 223.09999999962747,
+        "viewport": 1440,
+        "mode": "cinematic",
+        "frame": 0,
+        "target": 0,
+        "progress": 0,
+        "count": 180,
+        "canvas": {
+          "width": 1440,
+          "height": 804
+        },
+        "poster": {
+          "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+          "loaded": true
+        },
+        "pinCount": 1,
+        "pixels": {
+          "min": 9,
+          "max": 230.67,
+          "variance": 3372.58,
+          "brightFraction": 0.34619140625,
+          "error": null
+        },
+        "visibleInLayout": true,
+        "loaded": true,
+        "nonblank": true
+      },
+      "pendingBeforeResize": {
+        "time": 639.7999999998137,
+        "viewport": 1440,
+        "mode": "cinematic",
+        "frame": 0,
+        "target": 154,
+        "progress": 86.009,
+        "count": 180,
+        "canvas": {
+          "width": 1440,
+          "height": 804
+        },
+        "poster": {
+          "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+          "loaded": true
+        },
+        "pinCount": 1,
+        "pixels": {
+          "min": 9,
+          "max": 230.67,
+          "variance": 3372.58,
+          "brightFraction": 0.34619140625,
+          "error": null
+        },
+        "visibleInLayout": true,
+        "loaded": true,
+        "nonblank": true
+      },
+      "pendingAfterResize": {
+        "time": 971.7000000001863,
+        "viewport": 1200,
+        "mode": "cinematic",
+        "frame": 0,
+        "target": 167,
+        "progress": 93.267,
+        "count": 180,
+        "canvas": {
+          "width": 1200,
+          "height": 724
+        },
+        "poster": {
+          "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+          "loaded": true
+        },
+        "pinCount": 1,
+        "pixels": {
+          "min": 8.33,
+          "max": 228,
+          "variance": 3427.44,
+          "brightFraction": 0.373779296875,
+          "error": null
+        },
+        "visibleInLayout": true,
+        "loaded": true,
+        "nonblank": true
+      },
+      "recovered": {
+        "time": 1012.9000000003725,
+        "viewport": 1200,
+        "mode": "cinematic",
+        "frame": 167,
+        "target": 167,
+        "progress": 93.267,
+        "count": 180,
+        "canvas": {
+          "width": 1200,
+          "height": 724
+        },
+        "poster": {
+          "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+          "loaded": true
+        },
+        "pinCount": 1,
+        "pixels": {
+          "min": 9.33,
+          "max": 245.33,
+          "variance": 2208.41,
+          "brightFraction": 0.19677734375,
+          "error": null
+        },
+        "visibleInLayout": true,
+        "loaded": true,
+        "nonblank": true
+      },
+      "sampleCount": 24,
+      "blankSamples": [],
+      "observedModes": [
+        "cinematic"
+      ],
+      "minimumSampledVariance": 2208.41
+    },
+    {
+      "name": "Live landscape to portrait to landscape manifest switching",
+      "status": "passed",
+      "requests": {
+        "manifests": [
+          "/demos/best-tailor/media/cinematic/manifest.json",
+          "/demos/best-tailor/media/cinematic/manifest.json",
+          "/demos/best-tailor/media/cinematic/mobile/manifest.json",
+          "/demos/best-tailor/media/cinematic/manifest.json"
+        ],
+        "frames": 540,
+        "writeMethods": []
+      },
+      "states": [
+        {
+          "width": 1440,
+          "manifest": "/demos/best-tailor/media/cinematic/manifest.json",
+          "time": 343.5,
+          "viewport": 1440,
+          "mode": "cinematic",
+          "frame": 86,
+          "target": 86,
+          "progress": 47.998,
+          "count": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true
+          },
+          "pinCount": 1,
+          "pixels": {
+            "min": 9,
+            "max": 237.67,
+            "variance": 2811.55,
+            "brightFraction": 0.27392578125,
+            "error": null
+          },
+          "visibleInLayout": true,
+          "loaded": true,
+          "nonblank": true
+        },
+        {
+          "width": 390,
+          "manifest": "/demos/best-tailor/media/cinematic/mobile/manifest.json",
+          "time": 570.5,
+          "viewport": 390,
+          "mode": "cinematic",
+          "frame": 0,
+          "target": 0,
+          "progress": 0,
+          "count": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true
+          },
+          "pinCount": 1,
+          "pixels": {
+            "min": 10.67,
+            "max": 237,
+            "variance": 3220.87,
+            "brightFraction": 0.375,
+            "error": null
+          },
+          "visibleInLayout": true,
+          "loaded": true,
+          "nonblank": true
+        },
+        {
+          "width": 1440,
+          "manifest": "/demos/best-tailor/media/cinematic/manifest.json",
+          "time": 803.8999999994412,
+          "viewport": 1440,
+          "mode": "cinematic",
+          "frame": 86,
+          "target": 86,
+          "progress": 47.998,
+          "count": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true
+          },
+          "pinCount": 1,
+          "pixels": {
+            "min": 9,
+            "max": 237.67,
+            "variance": 2811.55,
+            "brightFraction": 0.27392578125,
+            "error": null
+          },
+          "visibleInLayout": true,
+          "loaded": true,
+          "nonblank": true
+        }
+      ]
+    },
+    {
+      "name": "Reduced motion loads a static poster without frame requests",
+      "status": "passed",
+      "requests": {
+        "manifests": [
+          "/demos/best-tailor/media/cinematic/mobile/manifest.json",
+          "/demos/best-tailor/media/cinematic/mobile/manifest.json"
+        ],
+        "frames": 0,
+        "writeMethods": []
+      },
+      "state": {
+        "time": 741.7000000001863,
+        "viewport": 390,
+        "mode": "static",
+        "frame": -1,
+        "target": -1,
+        "progress": 100,
+        "count": 180,
+        "canvas": {
+          "width": 390,
+          "height": 628
+        },
+        "poster": {
+          "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+          "loaded": true
+        },
+        "pinCount": 0,
+        "pixels": {
+          "min": 17.33,
+          "max": 219.33,
+          "variance": 2081.64,
+          "brightFraction": 0.25146484375,
+          "error": null
+        },
+        "visibleInLayout": true,
+        "loaded": true,
+        "nonblank": true
+      },
+      "appointmentAnchorWorks": true
+    },
+    {
+      "name": "Missing manifest falls back to a visible poster and usable appointment anchor",
+      "status": "passed",
+      "injectedFailures": [
+        "/demos/best-tailor/media/cinematic/mobile/manifest.json"
+      ],
+      "requests": {
+        "manifests": [
+          "/demos/best-tailor/media/cinematic/mobile/manifest.json",
+          "/demos/best-tailor/media/cinematic/mobile/manifest.json"
+        ],
+        "frames": 0,
+        "writeMethods": []
+      },
+      "state": {
+        "time": 188.09999999962747,
+        "viewport": 390,
+        "mode": "static",
+        "frame": -1,
+        "target": -1,
+        "progress": 100,
+        "count": 0,
+        "canvas": {
+          "width": 390,
+          "height": 628
+        },
+        "poster": {
+          "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+          "loaded": true
+        },
+        "pinCount": 0,
+        "pixels": {
+          "min": 17.33,
+          "max": 219.33,
+          "variance": 2081.64,
+          "brightFraction": 0.25146484375,
+          "error": null
+        },
+        "visibleInLayout": true,
+        "loaded": true,
+        "nonblank": true
+      },
+      "appointmentAnchorWorks": true
+    },
+    {
+      "name": "Missing frame falls back to a visible poster and usable appointment anchor",
+      "status": "passed",
+      "injectedFailures": [
+        "/demos/best-tailor/media/cinematic/frame-0001.webp"
+      ],
+      "requests": {
+        "manifests": [
+          "/demos/best-tailor/media/cinematic/manifest.json",
+          "/demos/best-tailor/media/cinematic/manifest.json"
+        ],
+        "frames": 2,
+        "writeMethods": []
+      },
+      "state": {
+        "time": 199.20000000018626,
+        "viewport": 1440,
+        "mode": "static",
+        "frame": -1,
+        "target": -1,
+        "progress": 100,
+        "count": 180,
+        "canvas": {
+          "width": 1440,
+          "height": 804
+        },
+        "poster": {
+          "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+          "loaded": true
+        },
+        "pinCount": 0,
+        "pixels": {
+          "min": 14.33,
+          "max": 205.67,
+          "variance": 1811.32,
+          "brightFraction": 0.19384765625,
+          "error": null
+        },
+        "visibleInLayout": true,
+        "loaded": true,
+        "nonblank": true
+      },
+      "appointmentAnchorWorks": true
+    }
+  ],
+  "runtimeErrors": [],
+  "browser": "157.0.8103.80"
+}

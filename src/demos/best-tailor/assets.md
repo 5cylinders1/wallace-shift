@@ -1,6 +1,6 @@
 # Sue’s Tailor Shop illustrative imagery
 
-**Current status:** the five-cutout assembly below was rejected by the user as insufficiently cinematic. It is retained as obsolete provenance, not approved production artwork. A new Higgsfield image job is pending for an original cinematic garment sequence; the planned video has not yet been recorded as submitted or charged.
+**Current status:** the five-cutout assembly below was rejected by the user as insufficiently cinematic and is retained as obsolete provenance. All four replacement image/video jobs have completed. Original landscape and native portrait films now supply the scroll-controlled canvas sequences; source inspection shows continuous cloth motion and finished-gown endpoints. Local browser results and their limits are recorded in [the final verification](../../../docs/review/sues-tailor/cinematic/README.md).
 
 ## Tailoring hero
 
@@ -35,7 +35,7 @@ Constraints: genuine photographic appearance, tactile weave, no stylized illustr
 - Delivery panels: `first-fitting.webp`, `small-details.webp`, `final-fitting.webp`, each 640 × 1086, lossily re-encoded at WebP quality 88 after extracting equal thirds. No additional generation was needed.
 - Visual inspection: same ivory square-neck gown on a headless mannequin; first panel pools at the hem with waist pins, second has a pinned hem, third is smooth and finished. Warm neutral plaster setting, no people or branding.
 - On-page disclosure: “Illustrative fitting story.” These images are conceptual and do not depict Sue’s actual work or establish custom wedding dress design services.
-- These three images provided the source artwork for the rejected bridal assembly layers described below. That extraction required no additional media generation; a new replacement generation is now pending.
+- These three images provided the source artwork for the rejected bridal assembly layers described below. That extraction required no additional media generation; the separate cinematic replacement generations are recorded below.
 - Inspiration: user-supplied Instagram reel `https://www.instagram.com/reel/Da8LPoqoLY5/`, inspected in the browser. Its floating tailored-jacket construction story and finished silhouette informed the staged garment approach. No content from the reel was copied into this site.
 
 ### Exact Higgsfield prompt
@@ -57,15 +57,24 @@ The user explicitly rejected this five-cutout result. File integrity, aligned co
 - Total: **167,396 bytes** for all five layers and the assembled fallback. The script validates that no fully opaque source pixels become alpha gaps in the final assembly.
 - Reproduction: `python3 scripts/sues-tailor/extract_assembly.py` using Pillow and `cwebp`; all geometry and output validation are included in the script.
 - Manifest: `public/demos/best-tailor/media/assembly/manifest.json` records the source hash, dimensions, layer bounds, byte sizes, file hashes, provenance, and validation.
-- Historical review artifacts: `docs/review/sues-tailor/assembly/assembly-contact-sheet.jpg` and `assembly-storyboard-proposal.jpg`. The five checkpoints at 0%, 25%, 50%, 75%, and 100% belong to the rejected cutout proposal, not the forthcoming cinematic sequence.
+- Historical review artifacts: `docs/review/sues-tailor/assembly/assembly-contact-sheet.jpg` and `assembly-storyboard-proposal.jpg`. The five checkpoints at 0%, 25%, 50%, 75%, and 100% belong to the rejected cutout proposal, not the completed cinematic media.
 - Quality limit: the source is 640 pixels wide. Do not imply that extracting layers adds image detail or that the generated gown represents Sue’s actual work.
 
-## Cinematic replacement — generation pending
+## Completed cinematic replacement
 
-- New Higgsfield image job: `bed32843-333b-436c-9029-f676b29fae1b`.
-- Image generation allocation: **2.75 credits**. The result is pending and has not been visually accepted.
-- Completed prior generation plus pending image allocation: **9.25 credits** (6.5 + 2.75).
-- Planned next step: a **10-second MiniMax H3 video**, quoted at **20 credits**. That quote is not included in the allocated total; submission, completion, and charge are not yet confirmed in this record.
-- Intended delivery: original generated motion converted to canvas frames, following the mechanism verified in [the reference study](../../../docs/review/sues-tailor/assembly/reference-study.md). Resolution, continuity, frame count, file size, browser performance, and quality acceptance remain unverified.
-- No reference-site image frames or reel footage are authorized production assets for Sue’s. New media must remain illustrative rather than a claim about the shop’s actual work.
-- Actual output paths, prompts, settings, costs, and review findings will be recorded by the root task after results are available. The current ledger is in [the assembly review](../../../docs/review/sues-tailor/assembly/README.md).
+| Asset job | Job ID | Credits | Status |
+| --- | --- | --- | --- |
+| Landscape image | `bed32843-333b-436c-9029-f676b29fae1b` | 2.75 | Completed |
+| Landscape MiniMax H3 video | `ae0bf8fc-6c18-4b53-b89f-22dd245819ff` | 20 | Completed |
+| Portrait image | `ff5323e2-6497-4a0b-ae18-b3178b8a219e` | 2.75 | Completed |
+| Portrait MiniMax H3 video | `ba059b17-2628-4253-9902-a36a62840f66` | 20 | Completed |
+
+- The two 10-second films show an ivory gown opening into flowing cloth around a luminous form. The site trims the **first 7.5 seconds before reversal**, then extracts **180 frames at 24 fps**, so scrolling forward assembles the gown and the last frame is the completed source garment.
+- Landscape delivery: `public/demos/best-tailor/media/cinematic/`, **1280 × 720**, 180 frames, **7,664,048 frame bytes**.
+- Native portrait delivery: `public/demos/best-tailor/media/cinematic/mobile/`, **720 × 1280**, 180 frames, **7,994,014 frame bytes**. Used at viewport widths of 600 px and below; generated separately rather than cropped from landscape. Byte totals exclude posters, manifests, and application code.
+- Both folders contain a poster and a manifest with source job, duration used, dimensions, frame count, and frame filenames. Source contact sheets are in `docs/review/sues-tailor/cinematic/` and its `mobile/` subfolder.
+- Visual direction: amber illumination, warm dark-plum background, dimensional ivory cloth, and a stable camera. No artificial desktop zoom is added. Cloth bending and unfolding are present in the generated imagery; this does not establish a physical cloth simulation.
+- Verified credit balance: **1,193.5 before → 1,148 after**, confirming **45.5 credits** debited for the replacement. Including the original 6.5-credit triptych, **52 credits** were used, approximately **$3.12** at the previously observed $6-per-100-credit rate; **$1.88** remains within the original $5 cap. No credit purchase or new card charge occurred. No further generation is planned.
+- Exact landscape and portrait prompts, submission settings, job IDs, and costs are retained in [cinematic-generation.json](../../../docs/review/sues-tailor/assembly/cinematic-generation.json). The portrait parameters were recovered directly from the submitted tool arguments.
+- The source-media endpoints have been visually inspected. See [the final verification](../../../docs/review/sues-tailor/cinematic/README.md) for local browser and performance results. The opening portrait composition slightly clips outer fabric; the completed gown fits. Physical-phone performance and visual parity with the reference are not established, and technical checks do not imply user acceptance.
+- No reference-site image frames or reel footage are production assets for Sue’s. This generated media is illustrative and does not depict the shop’s actual work or establish custom gown construction services.

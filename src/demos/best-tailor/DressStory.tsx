@@ -254,13 +254,13 @@ export default function DressStory() {
     let trigger: ScrollTrigger | undefined
     const dimensions = sequence?.manifest ?? poster
 
-    function rectangle() {
+    function rectangle(frameIndex = target) {
       const width = media.clientWidth
       const height = media.clientHeight
       let scale = Math.max(width / dimensions.width, height / dimensions.height)
       // On portrait screens preserve the central gown rather than magnifying its edges out of view.
       if (window.innerWidth <= 600 && dimensions.width > dimensions.height) {
-        const progress = sequence ? target / (sequence.manifest.frameCount - 1) : 1
+        const progress = sequence ? frameIndex / (sequence.manifest.frameCount - 1) : 1
         const subjectWidth = reduced ? .40 : progress <= .6 ? .84 - .14 * progress / .6 : .70 - .30 * (progress - .6) / .4
         scale = Math.min(scale, width / (dimensions.width * subjectWidth))
       }
@@ -271,15 +271,28 @@ export default function DressStory() {
 
     function paint(force = false) {
       if (disposed || reduced || !sequence || !context) return
-      const frame = sequence.get(target)
-      if (!frame || (!force && target === displayed)) return
-      const rect = rectangle()
+      let frameIndex = target
+      let frame = sequence.get(frameIndex)
+      if (!frame && force && displayed >= 0) {
+        frameIndex = displayed
+        frame = sequence.get(frameIndex)
+      }
+      if (!frame) {
+        if (force) {
+          displayed = -1
+          root!.dataset.assemblyFrame = '-1'
+          root!.dataset.assemblyMode = 'static'
+        }
+        return
+      }
+      if (!force && frameIndex === displayed) return
+      const rect = rectangle(frameIndex)
       const ratio = canvas.width / Math.max(rect.width, 1)
       context.setTransform(ratio, 0, 0, ratio, 0, 0)
       context.fillStyle = '#20191a'
       context.fillRect(0, 0, rect.width, rect.height)
       context.drawImage(frame.image, rect.x, rect.y, rect.drawWidth, rect.drawHeight)
-      displayed = target
+      displayed = frameIndex
       root!.dataset.assemblyFrame = String(displayed)
       root!.dataset.assemblyMode = 'cinematic'
     }
@@ -288,13 +301,16 @@ export default function DressStory() {
       if (disposed) return
       const rect = rectangle()
       const ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth <= 600 ? 1.5 : 2)
-      canvas.width = Math.round(rect.width * ratio)
-      canvas.height = Math.round(rect.height * ratio)
+      const width = Math.round(rect.width * ratio)
+      const height = Math.round(rect.height * ratio)
+      const changed = canvas.width !== width || canvas.height !== height
+      if (canvas.width !== width) canvas.width = width
+      if (canvas.height !== height) canvas.height = height
       root!.style.setProperty('--bt-cinematic-width', `${rect.drawWidth}px`)
       root!.style.setProperty('--bt-cinematic-height', `${rect.drawHeight}px`)
       root!.style.setProperty('--bt-cinematic-left', `${rect.x}px`)
       root!.style.setProperty('--bt-cinematic-top', `${rect.y}px`)
-      paint(true)
+      paint(changed)
     }
 
     resize()

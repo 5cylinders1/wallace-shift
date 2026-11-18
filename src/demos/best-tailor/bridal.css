@@ -70,7 +70,7 @@
   :root{scroll-padding-top:100px}
   .bt-header{height:84px}
   .bt-assembly{height:calc(100svh - 142px - env(safe-area-inset-bottom))}
-  .bt-assembly-media{top:88px;bottom:42px}
+  .bt-assembly-media{top:0;bottom:42px}
   .bt-assembly-copy,.bt-assembly-detail,.bt-assembly-finale{top:20px;left:22px;width:calc(100% - 44px);max-width:none;text-align:center}
   .bt-assembly-title{font-size:clamp(28px,7.4vw,36px);line-height:1.04;letter-spacing:-.02em}
   .bt-assembly-title span{display:inline}

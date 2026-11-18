@@ -33,14 +33,106 @@
       "prompt": "One continuous cinematic shot of the exact floating ivory silk wedding gown in the reference. Locked camera, identical framing, unchanging warm dark-plum atelier and amber spotlight. This is a high-end reverse-construction film with real three-dimensional fabric motion. Hold the complete gown briefly. Then the gown slowly and gracefully UNSEWS ITSELF: fine seam threads release in luminous arcs; the straps curl and lift away, the ruched bodice gently unfurls into curved silk panels, and the skirt's individual shaped gores peel apart along their seams, curling and rippling in depth as soft supple cloth. Each ivory panel retains real weight, thickness, weave, highlights, shadows and the original garment identity. The silk rotates slightly in space and bends into elegant folds, exposing the hollow three-dimensional interior; it must never behave like rigid flat cardboard. A fine warm-gold wireframe outline of the same dress remains in the center as the physical panels open around it. The fabric stays closely and symmetrically arranged around the central gown silhouette, within the central 35% of the frame, as a beautiful sculptural couture study, never flying offscreen. At the end the entire gown is recognizably decomposed into softly draped curved fabric panels and fine threads poised around that delicate glowing dress-form outline, with a quiet gap between each piece. Keep all material visible from straps to hem throughout. No person or solid mannequin, no hands, no sudden cuts, no camera movement, no zoom, no changing dress style, no dissolve or opacity crossfade between states, no smoke transformation, no melting material, no duplicated dress, no flat rectangular slices, no text or logos. The action must read clearly when reversed: the cloth sweeps inward and seams close to construct the finished gown. Slow deliberate continuous choreography, physically convincing couture cloth simulation."
     },
     "resultUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KYxgZMxXolmOi8GpnzPrbMQGOO/hf_20261117_233259_ae0bf8fc-6c18-4b53-b89f-22dd245819ff.mp4",
-    "delivery": "24fps reversed WebP sequence, native scroll-controlled canvas"
+    "delivery": "Trim first 7.5 seconds, then reverse and extract 180 WebP frames at 24 fps for a native scroll-controlled canvas",
+    "deliveredMedia": {
+      "width": 1280,
+      "height": 720,
+      "frameCount": 180,
+      "totalFrameBytes": 7664048,
+      "manifest": "public/demos/best-tailor/media/cinematic/manifest.json",
+      "sourceContactSheet": "docs/review/sues-tailor/cinematic/cinematic-motion-contact-sheet.jpg"
+    }
   },
-  "totalAllocatedCredits": 29.25,
-  "dollarEquivalent": 1.755,
+  "totalAllocatedCredits": 52,
+  "dollarEquivalent": 3.12,
   "cap": 5,
   "rateBasis": "Previously observed $6 per 100 credits; equivalent value, not a new card charge.",
   "balanceBeforeNewGeneration": 1193.5,
-  "balanceAfterImageAndVideoSubmission": 1170.75,
-  "verifiedNewCreditsDebited": 22.75,
-  "totalCreditsDebitedIncludingOriginal": 29.25
+  "verifiedNewCreditsDebited": 45.5,
+  "totalCreditsDebitedIncludingOriginal": 52,
+  "portraitImage": {
+    "id": "ff5323e2-6497-4a0b-ae18-b3178b8a219e",
+    "credits": 2.75,
+    "status": "completed",
+    "resultUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KYxgZMxXolmOi8GpnzPrbMQGOO/hf_20261117_234621_ff5323e2-6497-4a0b-ae18-b3178b8a219e.png",
+    "promptRecorded": true,
+    "params": {
+      "model": "gpt_image_2_6",
+      "quality": "high",
+      "resolution": "2k",
+      "aspect_ratio": "9:16",
+      "count": 1,
+      "medias": [
+        {
+          "role": "image",
+          "value": "bed32843-333b-436c-9029-f676b29fae1b"
+        }
+      ],
+      "prompt": "Reframe this EXACT ivory silk wedding gown and the same dark plum atelier lighting as a portrait 9:16 cinematic full-length film frame. Preserve the exact sweetheart neckline, fine pearl embroidery, thin straps, ruched diagonal silk bodice, folds and garment identity. Gown hovering with no mannequin, no person, no support. Entire gown including hem and straps completely visible, centered, 70% of image height and 60% of image width. Provide clear margin at top bottom and both sides; do not crop the skirt or train. Warm amber overhead spotlight, dark plum charcoal backdrop, quiet glowing pool of light on the floor under the gown, physically dimensional flowing ivory satin. Vertical composition, elegant quiet luxury, no text, no collage, no design changes, no watermark."
+    }
+  },
+  "portraitVideo": {
+    "id": "ba059b17-2628-4253-9902-a36a62840f66",
+    "credits": 20,
+    "status": "completed",
+    "model": "minimax_h3",
+    "durationSeconds": 10,
+    "startImageJob": "ff5323e2-6497-4a0b-ae18-b3178b8a219e",
+    "resultUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KYxgZMxXolmOi8GpnzPrbMQGOO/hf_20261117_234838_ba059b17-2628-4253-9902-a36a62840f66.mp4",
+    "promptRecorded": true,
+    "params": {
+      "model": "minimax_h3",
+      "duration": 10,
+      "resolution": "2K",
+      "aspect_ratio": "9:16",
+      "count": 1,
+      "medias": [
+        {
+          "role": "start_image",
+          "value": "ff5323e2-6497-4a0b-ae18-b3178b8a219e"
+        }
+      ],
+      "prompt": "A single continuous PORTRAIT 9:16 cinematic couture film. The EXACT ivory silk wedding gown in the supplied first frame slowly unsews itself. Locked camera, same framing, dark-plum atelier, constant warm amber spotlight. No person, no mannequin. From 0 to 1 second show the complete gown. From 1 to 7 seconds delicate seam threads release, the thin straps curl upward, the ruched bodice unfurls into soft sculpted silk panels and the skirt panels peel along their seams, curling, rippling and folding in real three-dimensional depth. A fine warm-gold wireframe of the same gown is revealed underneath. IMPORTANT PORTRAIT COMPOSITION: the skirt fabric folds UPWARD AND INWARD in soft vertical S-curves close to the dress form, rather than fanning out sideways. Keep ALL cloth and straps entirely visible inside the portrait frame, within 75 percent of frame width and 80 percent height. No large horizontal wings. Final pose is an elegant tall sculptural arrangement of curved silk panels poised close around the glowing central gown outline. Preserve exact original gown identity, ivory satin texture, sweetheart neckline, pearl embroidery, consistent lighting, floor glow and real weight and volume. Fabric must visibly bend and roll; no rigid cardboard slices, no simple translated still images, no crossfades, no smoke morph, no melting, no cuts, no camera move, no zoom, no text. Intended to play in reverse as a continuous dress-assembly film: panels gracefully curve inward and seams join into the exact finished dress."
+    },
+    "delivery": "Trim first 7.5 seconds, then reverse and extract 180 WebP frames at 24 fps for a native portrait canvas at viewport widths of 600px and below",
+    "deliveredMedia": {
+      "width": 720,
+      "height": 1280,
+      "frameCount": 180,
+      "totalFrameBytes": 7994014,
+      "manifest": "public/demos/best-tailor/media/cinematic/mobile/manifest.json",
+      "sourceContactSheet": "docs/review/sues-tailor/cinematic/mobile/cinematic-motion-contact-sheet.jpg"
+    }
+  },
+  "capRemainingDollarEquivalent": 1.88,
+  "balanceAfterLandscapeJobs": 1170.75,
+  "balanceAfterAllReplacementJobs": 1148,
+  "creditPackPurchased": false,
+  "newCardCharge": false,
+  "furtherGenerationPlanned": false,
+  "verification": {
+    "jobCompletion": "All four replacement jobs completed; root task verified balance 1193.5 before and 1148 after.",
+    "sourceMedia": "Landscape and portrait contact sheets inspected. Continuous rendered cloth bending and unfurling are visible. Final assembly frames show the complete gown after correcting trim order.",
+    "byteScope": "Frame totals exclude posters, manifests, and application code.",
+    "visualDirection": "Warm dark plum ground, amber light, cream Caslon type, locked camera, no artificial desktop zoom. Rest of boutique page retains warm ivory, blush, and burgundy.",
+    "rejectedApproach": "Five transformed cutout layers rejected by the user as insufficiently cinematic; retained only as obsolete provenance.",
+    "finalBrowserQa": "Passed: local Chromium at widths 320, 390, 768, 1440, and 1920; five reduced-motion runs and five resilience cases. Full results and measured limits: ../cinematic/README.md.",
+    "userAcceptance": "Not inferred from technical checks; visual assessment remains with the user.",
+    "simulationClaim": "Generated illustrative media; no claim that a physical cloth simulation was used.",
+    "limitations": "The opening portrait composition slightly clips outer fabric; the completed gown fits. Physical-phone performance and visual parity with the reference are not established.",
+    "browserReport": {
+      "path": "../cinematic/browser-results.json",
+      "status": "passed",
+      "checkedAt": "2026-11-18T01:29:39.494Z",
+      "viewportRuns": 5,
+      "reducedMotionRuns": 5,
+      "runtimeErrors": []
+    },
+    "resilienceReport": {
+      "path": "../cinematic/resilience-results.json",
+      "status": "passed",
+      "checkedAt": "2026-11-18T01:29:38.598Z",
+      "caseCount": 5
+    }
+  }
 }

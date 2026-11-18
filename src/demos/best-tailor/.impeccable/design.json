@@ -39,6 +39,10 @@
       "blush-surface": {
         "role": "neutral",
         "displayName": "Soft blush surface"
+      },
+      "cinematic-backdrop": {
+        "role": "neutral",
+        "displayName": "Dark plum cinematic ground"
       }
     },
     "typographyMeta": {
@@ -65,9 +69,9 @@
     ],
     "motion": [
       {
-        "name": "cinematic-dress-sequence-pending",
-        "value": "Planned canvas image sequence scrubbed by native scroll; media and implementation pending",
-        "purpose": "The user rejected the five-cutout garment assembly as insufficiently cinematic. An original generated garment film will supply a continuous reversible sequence, with a static reduced-motion fallback. New media quality and browser behavior are not yet validated or accepted."
+        "name": "cinematic-dress-sequence",
+        "value": "180 canvas frames at 24 fps, scrubbed reversibly by native scroll; separate portrait sequence at 600px and below",
+        "purpose": "Completed original landscape and portrait films replace the rejected five-cutout assembly. Trim the first 7.5 seconds before reversal to preserve the complete gown endpoint. Continuous rendered cloth, a locked camera, and no added desktop zoom establish the visual motion. Reduced motion uses a finished-gown still. Local browser results and limits: docs/review/sues-tailor/cinematic/README.md. Physical-phone performance and visual parity are not established; technical checks do not imply user acceptance."
       },
       {
         "name": "control-transition",
@@ -108,10 +112,10 @@
     {
       "name": "Fitting request button",
       "kind": "button",
-      "refersTo": "button-burgundy",
-      "description": "The primary fitting request action on the ivory hero; opens the local appointment preview.",
-      "html": "<a class=\"ds-button ds-burgundy\" href=\"#request-fitting\">Request a fitting <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4 12h15M13 5l7 7-7 7\"/></svg></a>",
-      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:26px;min-height:54px;padding:18px 25px;font:500 12px \"DM Sans\",sans-serif;text-decoration:none;border:0;border-radius:0;transition:background .2s,color .2s}.ds-button svg{width:18px;height:18px;transition:transform .2s}.ds-button:hover svg{transform:translateX(4px)}.ds-button:focus-visible{outline:2px solid #a35839;outline-offset:6px}@media(prefers-reduced-motion:reduce){.ds-button,.ds-button svg{transition:none}}.ds-burgundy{background:var(--bt-burgundy,#4b242b);color:var(--bt-cream,#f7f3eb)}.ds-burgundy:hover{background:#6a3640}"
+      "refersTo": "button-cream",
+      "description": "The cream primary fitting request action on the dark plum cinematic hero; opens the local appointment preview.",
+      "html": "<a class=\"ds-button ds-cream\" href=\"#request-fitting\">Request a fitting <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4 12h15M13 5l7 7-7 7\"/></svg></a>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:26px;min-height:54px;padding:18px 25px;font:500 12px \"DM Sans\",sans-serif;text-decoration:none;border:0;border-radius:0;transition:background .2s,color .2s}.ds-button svg{width:18px;height:18px;transition:transform .2s}.ds-button:hover svg{transform:translateX(4px)}.ds-button:focus-visible{outline:2px solid #f7f3eb;outline-offset:6px}@media(prefers-reduced-motion:reduce){.ds-button,.ds-button svg{transition:none}}.ds-cream{background:var(--bt-cream,#f7f3eb);color:var(--bt-burgundy,#4b242b)}.ds-cream:hover{background:#e8cbb8}"
     },
     {
       "name": "Navigation links",
@@ -158,10 +162,10 @@
   ],
   "narrative": {
     "northStar": "A personal dress fitting",
-    "overview": "Scoped to Sue’s Tailor Shop at /demo/sues-tailor. The feminine neighborhood boutique direction remains. The five-cutout hero is REJECTED and obsolete; its working transforms and captures are not visual acceptance. The replacement is an original generated garment film converted to a scroll-controlled canvas image sequence. Generation, visual review, and integration validation are pending. Appointment controls must remain accessible, the local demo form sends or books nothing, and illustrative gown imagery establishes no custom dressmaking service.",
+    "overview": "Scoped to Sue’s Tailor Shop at /demo/sues-tailor. The feminine neighborhood boutique direction remains. The five-cutout hero is REJECTED and obsolete; its working transforms and captures are not visual acceptance. Completed original landscape and portrait garment films now supply 180-frame scroll-controlled canvas sequences. Source contact sheets show continuous cloth bending and finished-gown endpoints; local browser results and limits are recorded in docs/review/sues-tailor/cinematic/README.md. The opening portrait composition slightly clips outer fabric; the completed gown fits. Physical-phone performance and visual parity are not established, and technical checks do not imply user acceptance. Appointment controls must remain accessible, the local demo form sends or books nothing, and illustrative gown imagery establishes no custom dressmaking service.",
     "keyCharacteristics": [
-      "Target: a continuous cinematic garment sequence, with media pending; preserve the fine needle-and-thread mark. The former five transparent cutouts are rejected.",
-      "Warm ivory, soft blush surfaces, deep burgundy, and restrained copper-brown accents.",
+      "A continuous cinematic garment sequence with completed landscape and native portrait media; preserve the fine needle-and-thread mark. The former five transparent cutouts are rejected.",
+      "A dark plum hero with amber light and cream type leads into warm ivory, soft blush surfaces, deep burgundy, and restrained copper-brown accents.",
       "Expressive serif headings paired with small, calm sans-serif utility text.",
       "Open sections and ruled service rows, with subtle motion tied to interaction."
     ],

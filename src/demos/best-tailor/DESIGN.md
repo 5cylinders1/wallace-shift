@@ -4,6 +4,7 @@ description: A feminine neighborhood boutique for dress alterations and personal
 colors:
   burgundy: "#4b242b"
   cream: "#f7f3eb"
+  cinematic-backdrop: "#20191a"
   ink: "#3e3030"
   muted: "#74625c"
   line: "#d9cec1"
@@ -64,34 +65,34 @@ components:
 
 **Creative North Star: "A personal dress fitting"**
 
-This record applies only to Sue’s Tailor Shop at `/demo/sues-tailor`. The prior `/demo/best-tailor` alias and internal source and asset paths remain available. It captures the established feminine boutique direction without changing the Wallace Shift design system. **The five-cutout hero proposal is rejected and obsolete:** the user found it insufficiently cinematic. The replacement direction is an original generated garment film, converted to a scroll-controlled canvas image sequence. Media generation, visual review, and implementation validation are pending; this record is not approval of the new result. Wedding dress copy invites discussion of a particular garment; the imagery does not establish custom gown services or actual client results.
+This record applies only to Sue’s Tailor Shop at `/demo/sues-tailor`. The prior `/demo/best-tailor` alias and internal source and asset paths remain available. It captures the established feminine boutique direction without changing the Wallace Shift design system. **The five-cutout hero proposal is rejected and obsolete:** the user found it insufficiently cinematic. The replacement uses completed original landscape and portrait garment films, converted to scroll-controlled canvas image sequences. Source contact sheets show continuous cloth bending and unfolding with a completed gown at the endpoint. Local browser results and their limits are recorded in [the final verification](../../../docs/review/sues-tailor/cinematic/README.md); technical checks do not imply user acceptance. Wedding dress copy invites discussion of a particular garment; the imagery does not establish custom gown services or actual client results.
 
 **Key Characteristics:**
 
-- A continuous cinematic garment sequence is the target; its media is pending. The fine needle-and-thread mark remains part of the boutique identity.
-- Warm ivory, soft blush surfaces, deep burgundy, and restrained copper-brown accents.
+- A continuous cinematic garment sequence accompanies short editorial copy. The fine needle-and-thread mark remains part of the boutique identity.
+- A dark plum hero with amber light and cream type leads into warm ivory, soft blush surfaces, deep burgundy, and restrained copper-brown accents.
 - Expressive serif headings paired with small, calm sans-serif utility text.
 - Open sections and ruled service rows, with subtle motion tied to interaction.
 
 ## Colors
 
-Burgundy anchors the identity, fitting request buttons, and the full-width review section. Cream is the principal page surface and the light text color on dark areas. Ink and muted tones separate primary reading from supporting copy; line defines dividers. Blush surface gives the welcome line, process, and footer a gentle change in tone; warm surface grounds the appointment preview. Warm emphasis distinguishes selected heading phrases on the ivory hero. Focus is reserved for visible keyboard outlines on light surfaces; focus-on-dark serves the review section and mobile contact strip.
+Burgundy anchors the identity, fitting request buttons outside the hero, and the full-width review section. The cinematic hero uses a warm dark plum ground, amber lighting within the rendered imagery, and cream headings and fitting action. Cream is the principal surface for the rest of the page. Ink and muted tones separate primary reading from supporting copy; line defines dividers. Blush surface gives the welcome line, process, and footer a gentle change in tone; warm surface grounds the appointment preview. Warm emphasis distinguishes selected phrases on light surfaces. Focus is reserved for visible keyboard outlines on light surfaces; focus-on-dark serves the dark hero, review section, and mobile contact strip.
 
 ## Typography
 
-Libre Caslon Display is self-hosted for headings, the wordmark, review summaries, and process numbers. DM Sans is self-hosted for body text and controls, with regular and medium files. The display and headline values above are desktop defaults; mobile hero type uses `clamp(56px, 13.5vw, 76px)` with a 0.99 line height. Supporting copy stays narrow: introduction paragraphs are capped at 360px and hero copy at 370px.
+Libre Caslon Display is self-hosted for headings, the wordmark, review summaries, and process numbers. DM Sans is self-hosted for body text and controls, with regular and medium files. The display and headline values above are general page tokens; the cinematic hero uses scoped type sizing, with compact centered headings on portrait screens. Supporting copy stays narrow so the garment remains the main visual subject.
 
 ## Layout
 
 The shared desktop container is `min(1248px, 100% - 112px)`. Gutters reduce to 40px at 1100px and 22px at 600px. Services and process use a two-column `.9fr 1.1fr` arrangement; the visit section uses `1.2fr .8fr`. These sections stack at 600px. Three review columns become three stacked entries at the same breakpoint.
 
-The target hero is one pinned editorial stage with an original cinematic gown sequence and short supporting typography. The generated sequence must keep the garment, framing, materials, and light coherent through visible construction stages. Mobile must reserve room for the fitting action; reduced motion must present a finished-garment still without the long pin. These are replacement requirements, not verified behavior while generation is pending. The former five-layer composition is not an accepted layout reference.
+The hero is one pinned editorial stage with an original cinematic gown sequence and short supporting typography. The completed landscape delivery has 180 frames at 1280 × 720; a separately generated native portrait delivery has 180 frames at 720 × 1280 and is selected at 600px and below. Each 10-second source is trimmed to its first 7.5 seconds before reversal and extraction at 24 fps, preserving the finished gown at the assembly endpoint. The camera stays locked, with no added desktop zoom. Mobile must reserve room for the fitting action; reduced motion must present a finished-garment still without the long pin. Local validation of those behaviors is recorded in [the final verification](../../../docs/review/sues-tailor/cinematic/README.md). The opening portrait composition slightly clips outer fabric; the completed gown fits. The former five-layer composition is not an accepted layout reference.
 
 Navigation becomes a dropdown at 850px. At 600px, fixed fitting-request and call actions appear above the device safe area, with matching footer space. The appointment preview has an introductory column and a form column, stacking at 850px; its paired date inputs stack at 600px.
 
 ## Elevation & Depth
 
-Most surfaces are flat, separated by tonal changes and thin rules. Depth in the new garment story should come from consistent cinematic imagery, not the rejected arrangement of flat cutouts. Lighting, composition, and perceived material depth remain subject to media review. Shadows on the existing interface appear beneath the mobile navigation dropdown (`0 18px 24px #281b1b12`) and above the fixed mobile actions (`0 -4px 16px #2a16121a`).
+Most surfaces are flat, separated by tonal changes and thin rules. Depth in the garment story comes from the continuous rendered imagery: cloth folds, bending panels, amber highlights, and shadows. The imagery is generated illustration; it is not evidence of a physical cloth simulation or Sue’s actual work. Final visual acceptance remains with the user. Shadows on the existing interface appear beneath the mobile navigation dropdown (`0 18px 24px #281b1b12`) and above the fixed mobile actions (`0 -4px 16px #2a16121a`).
 
 ## Shapes
 
@@ -99,14 +100,14 @@ Controls and panels have square corners. Buttons are simple rectangular blocks. 
 
 ## Components
 
-- **Primary actions:** burgundy fitting-request buttons over ivory link to the local form; direct call actions remain available. Desktop buttons are at least 54px high. Hover changes the background and shifts the trailing arrow 4px. Visible focus uses an offset outline, with cream focus on dark reviews and the mobile strip; the fixed strip uses a -6px outline offset to keep focus inside each link.
+- **Primary actions:** the cream fitting-request button on the dark plum hero and burgundy buttons on ivory sections link to the local form; direct call actions remain available. Desktop buttons are at least 54px high. Hover changes the background and shifts the trailing arrow 4px. Visible focus uses an offset outline, with cream focus on dark surfaces; the fixed strip uses a -6px outline offset to keep focus inside each link.
 - **Navigation:** understated text links and a filled fitting-request action. The mobile menu closes on link selection, outside pointer interaction, or Escape; Escape returns focus to the menu button.
-- **Dress story, pending replacement:** native scrolling will scrub frames from an original generated garment film, and reverse scrolling will reverse the same sequence. The former five-layer skirt/bodice/strap transform approach is rejected. No new result is visually accepted yet. The imagery must remain labelled illustrative.
+- **Dress story:** native scrolling scrubs the 180-frame canvas sequence, and reverse scrolling reverses the same construction. Landscape and native portrait films are complete and source endpoints have been inspected. The former five-layer skirt/bodice/strap transform approach is rejected. See [the final verification](../../../docs/review/sues-tailor/cinematic/README.md) for local browser results and their limits; technical checks do not imply user acceptance. The imagery must remain labelled illustrative.
 - **Services:** four ruled accordion rows, with only one open at a time and the first open initially. A plus rotates 45 degrees when expanded. Native buttons expose expanded state and control a labelled region with a fitting tip.
 - **Reviews:** three attributed review summaries per page, with explicit previous/next controls, disabled end states, and a polite live region. The control does not auto-advance. Summaries are labelled and link to the Google originals; the aggregate rating is displayed with its observation date.
 - **Appointment preview:** a compact form with square cream fields, native contact radios and selects, 16px input text, optional dates and notes, inline errors, and a focused error summary. A local review state explicitly says nothing has been sent or booked, with call, edit, and clear actions. Field focus uses a 2px outline with 3px offset; error text and borders use warm dark red.
 - **Visit panel:** Sue’s verified address, directions link, listed hours, and appointment guidance within a double outline. The fixed mobile strip provides Request a fitting and Call Sue within a navigation landmark named “Quick contact.”
-- **Motion requirement:** the garment sequence follows native scroll position rather than autonomous playback or still-image crossfades. Canvas frame delivery, scrub tuning, loading, and performance remain to be implemented and measured against the new media. Reduced motion must use a static finished garment without an extended pin. Existing control transitions remain disabled under reduced motion.
+- **Motion:** the garment sequence follows native scroll position rather than autonomous playback or still-image crossfades. Canvas frame delivery is implemented; [the final verification](../../../docs/review/sues-tailor/cinematic/README.md) records local scrub, loading, responsiveness, and performance checks. Physical-phone performance and visual parity with the reference are not established. Reduced motion must use a static finished garment without an extended pin. Existing control transitions remain disabled under reduced motion.
 
 ## Do's and Don'ts
 
