@@ -1,6 +1,7 @@
 .site-header {
   position: fixed;
   inset-inline: 0;
+  inset-inline-end: var(--modal-scrollbar-width, 0px);
   top: 0;
   z-index: 50;
   padding-block: clamp(18px, 3vw, 28px);
@@ -251,6 +252,18 @@
   .site-header__cta {
     display: inline-flex;
   }
+
+  /* Equal side columns put the nav on the page's true center line. Flex auto
+     margins only centered it between the brand and the phone, which differ in
+     width, so it sat visibly left of center. */
+  .site-header__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .site-header__brand { justify-self: start; }
+  .site-header__nav { margin-inline: 0; }
+  .site-header__actions { justify-self: end; margin-left: 0; }
 
   .site-header__menu-toggle {
     display: none;

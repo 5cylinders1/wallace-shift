@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SiteHeader } from './components/SiteHeader/SiteHeader'
 import { SiteFooter } from './components/SiteFooter/SiteFooter'
 import { HomePage } from './pages/HomePage'
+import { ShowcasePage } from './pages/ShowcasePage'
 import { ServicesPage } from './pages/ServicesPage'
 import { ServiceLandingPage } from './pages/ServiceLandingPage'
 import { serviceLandingPages } from './content/serviceLandingPages'
@@ -17,11 +18,12 @@ import { contractorOfferForPath } from './content/contractorOffers'
 import { WhatNowPage } from './pages/WhatNowPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { scrollToRouteTarget, useRoutePath } from './lib/router'
-import { AI_OFFER_CONFIRMATION_PATH, AI_OFFER_PATH, PIT_STOP_EXPERIMENT_PATH, WATER_HERO_EXPERIMENT_PATH, WHAT_NOW_PATH } from './content/routeMeta'
+import { AI_OFFER_CONFIRMATION_PATH, AI_OFFER_PATH, PIT_STOP_EXPERIMENT_PATH, SHOWCASE_PATH, WATER_HERO_EXPERIMENT_PATH, WHAT_NOW_PATH } from './content/routeMeta'
 
 const pages: Record<string, () => ReactElement> = {
   ...Object.fromEntries(serviceLandingPages.map(service => [service.path, () => <ServiceLandingPage service={service} />])),
   '/': HomePage,
+  [SHOWCASE_PATH]: ShowcasePage,
   '/services': ServicesPage,
   '/pricing': PricingPage,
   '/approach': ApproachPage,
@@ -38,7 +40,7 @@ const pages: Record<string, () => ReactElement> = {
  * Experimental routes, kept apart from the site proper on purpose.
  *
  * They load on demand and render without the site header and footer.
- * The homepage separately lazy-loads the water scene for eligible desktops;
+ * The showcase separately lazy-loads the water scene for eligible desktops;
  * mobile visitors keep the existing video and do not load its WebGL chunk.
  * The experiment still owns its review controls and noindex metadata.
  */
@@ -106,7 +108,7 @@ function App() {
       <main id="main">
         <Page />
       </main>
-      {path !== '/' && <SiteFooter />}
+      {path !== SHOWCASE_PATH && <SiteFooter />}
     </>
   )
 }

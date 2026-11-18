@@ -1,0 +1,1905 @@
+{
+  "checkedAt": "2026-11-18T01:29:39.494Z",
+  "artifactType": "Real video-derived cinematic canvas sequence",
+  "origin": "http://127.0.0.1:5194",
+  "environment": "Headless local Chromium, emulated viewports at DPR 1; no authentication cookies",
+  "method": "Recorded passes use small native wheel steps with instant document-scroll checkpoint correction. Other widths use requestAnimationFrame document scrollTo. Animation state is never assigned by the test.",
+  "runs": [
+    {
+      "width": 320,
+      "height": 900,
+      "checks": {
+        "pauseDoesNotAdvance": true,
+        "completedLastFrame": true,
+        "checkpointsRenderDistinctPixels": true,
+        "reverseMatchesForward": true,
+        "noOverflow": true
+      },
+      "checkpoints": [
+        {
+          "direction": "forward",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "0682a4d5e82c86d05dc1fbd0fe0da6c6031f614305bac92bf0e180054b1964cb",
+            "bufferId": 1
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.25,
+          "scrollY": 606,
+          "mode": "cinematic",
+          "progress": 0.24978999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "ff5064f5af2a6cfa729706db337ba67b14c9a901027eaf65e80793482beb5566",
+            "bufferId": 2
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.5,
+          "scrollY": 1213,
+          "mode": "cinematic",
+          "progress": 0.5,
+          "frame": 90,
+          "targetFrame": 90,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "7e12c9e34de61c6b4f5544caf3b929383af6ddf05c9630baf25e8b839ef21fae",
+            "bufferId": 3
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.75,
+          "scrollY": 1819,
+          "mode": "cinematic",
+          "progress": 0.74979,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "80ef1f4ba3bdae06b8e1c18c3dfeea4a59833d392a00a1ad869a001ec23d76f4",
+            "bufferId": 6
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 1,
+          "scrollY": 2427,
+          "mode": "cinematic",
+          "progress": 1,
+          "frame": 179,
+          "targetFrame": 179,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "3f3eed57e6a33bd7e3c72588edf8cc37a47427d4b4476ee8ef34500375dcfaaf",
+            "bufferId": 7
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.75,
+          "scrollY": 1819,
+          "mode": "cinematic",
+          "progress": 0.74979,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "80ef1f4ba3bdae06b8e1c18c3dfeea4a59833d392a00a1ad869a001ec23d76f4",
+            "bufferId": 8
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.5,
+          "scrollY": 1213,
+          "mode": "cinematic",
+          "progress": 0.5,
+          "frame": 90,
+          "targetFrame": 90,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "7e12c9e34de61c6b4f5544caf3b929383af6ddf05c9630baf25e8b839ef21fae",
+            "bufferId": 9
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.25,
+          "scrollY": 606,
+          "mode": "cinematic",
+          "progress": 0.24978999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "c8781670288bb931513c114b49d1b426e1d780026b2b74dbdae812d3d39864f2",
+            "bufferId": 10
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 320,
+            "height": 628,
+            "pixelSha256": "39b2e2fb5be5f9b5d797a500c7eb9e7e373c845f865dc15a3728ccebbd5920b4",
+            "bufferId": 11
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        }
+      ],
+      "status": "passed",
+      "bounds": {
+        "start": -0.001,
+        "end": 2426
+      },
+      "trace": {
+        "recorded": false,
+        "reason": "Not requested for this viewport"
+      },
+      "performance": {
+        "sampleCount": 103,
+        "rafP50Ms": 33.3,
+        "rafP95Ms": 33.4,
+        "rafMaxMs": 33.4,
+        "framesOver33Ms": 17,
+        "framesOver50Ms": 0,
+        "longTasksDuringScroll": [],
+        "longTaskTotalMs": 0,
+        "layoutShiftsDuringScroll": [],
+        "clsDuringScroll": 0,
+        "longAnimationFramesDuringScroll": [],
+        "displayedFrameChangesDuringScroll": 79,
+        "uniqueFramesDuringScroll": 61,
+        "supportedEntryTypes": [
+          "element",
+          "event",
+          "first-input",
+          "interaction-contentful-paint",
+          "largest-contentful-paint",
+          "layout-shift",
+          "long-animation-frame",
+          "longtask",
+          "mark",
+          "measure",
+          "navigation",
+          "paint",
+          "resource",
+          "soft-navigation",
+          "visibility-state"
+        ],
+        "interpretation": "Diagnostic measurements on this local headless run; not a physical-device or production performance claim."
+      },
+      "contact": {
+        "mobileBarWithinViewport": true,
+        "actualAnchorClickReachedForm": true
+      },
+      "form": {
+        "requiredFieldValidation": true,
+        "reviewEditClear": true,
+        "noWriteRequests": true,
+        "noStorageWrites": true
+      },
+      "recordingWallTimeSeconds": null
+    },
+    {
+      "width": 390,
+      "height": 900,
+      "checks": {
+        "pauseDoesNotAdvance": true,
+        "completedLastFrame": true,
+        "checkpointsRenderDistinctPixels": true,
+        "uniqueFramesDuringNativeWheel": 78,
+        "reverseMatchesForward": true,
+        "noOverflow": true
+      },
+      "checkpoints": [
+        {
+          "direction": "forward",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "772883fe5ee2256d63ddb828802eea85eaa8100eb1a3a8210ff7c08a076e61fa",
+            "bufferId": 1
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.25,
+          "scrollY": 606,
+          "mode": "cinematic",
+          "progress": 0.24978999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "1f36af8b0bbbd96c2dda30d685bda7f03fd81db2a661c0089e680b3c49598808",
+            "bufferId": 2
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.5,
+          "scrollY": 1213,
+          "mode": "cinematic",
+          "progress": 0.5,
+          "frame": 90,
+          "targetFrame": 90,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "b891369f6e4871478be6c1efc8dfa72c5ec46cbceacdb82262011b593c285cfa",
+            "bufferId": 3
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.75,
+          "scrollY": 1819,
+          "mode": "cinematic",
+          "progress": 0.74979,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "2f7f4d27d38f69d9c2c4439759fbc9de8396817109a6af570ab9512e1b9d7a11",
+            "bufferId": 6
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 1,
+          "scrollY": 2427,
+          "mode": "cinematic",
+          "progress": 1,
+          "frame": 179,
+          "targetFrame": 179,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "b61585fb916c4ca1135e603ac8cf4f5376a17b4bbf1acff4bd6c10a10e71919d",
+            "bufferId": 7
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.75,
+          "scrollY": 1819,
+          "mode": "cinematic",
+          "progress": 0.74979,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "2f7f4d27d38f69d9c2c4439759fbc9de8396817109a6af570ab9512e1b9d7a11",
+            "bufferId": 8
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.5,
+          "scrollY": 1213,
+          "mode": "cinematic",
+          "progress": 0.5,
+          "frame": 90,
+          "targetFrame": 90,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "b891369f6e4871478be6c1efc8dfa72c5ec46cbceacdb82262011b593c285cfa",
+            "bufferId": 9
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.25,
+          "scrollY": 606,
+          "mode": "cinematic",
+          "progress": 0.24978999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "40edf8ca74b6c50c1aea1342fed7886eda0431175bafd01459e1c71d870e3f6c",
+            "bufferId": 10
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 390,
+            "height": 628,
+            "pixelSha256": "8b036cf03cdc4f7a9267a5b884d082f120b24084abc6697650febdbbd2b06942",
+            "bufferId": 11
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/mobile/poster.webp",
+            "loaded": true,
+            "width": 720,
+            "height": 1280
+          }
+        }
+      ],
+      "status": "passed",
+      "bounds": {
+        "start": -0.001,
+        "end": 2426
+      },
+      "trace": {
+        "recorded": true,
+        "file": "trace-390.json.gz",
+        "events": 38940,
+        "categories": {
+          "FunctionCall": {
+            "count": 3552,
+            "totalDurationMs": 50.94,
+            "maxDurationMs": 0.25
+          },
+          "UpdateLayoutTree": {
+            "count": 190,
+            "totalDurationMs": 10.87,
+            "maxDurationMs": 0.59
+          },
+          "Paint": {
+            "count": 79,
+            "totalDurationMs": 6.73,
+            "maxDurationMs": 0.25
+          },
+          "Layout": {
+            "count": 2,
+            "totalDurationMs": 0.16,
+            "maxDurationMs": 0.1
+          },
+          "AnimationFrame": {
+            "count": 3372,
+            "totalDurationMs": 0,
+            "maxDurationMs": 0
+          }
+        },
+        "note": "Trace includes checkpoint pixel hashing and screenshots between scroll segments. Nested event durations overlap and must not be added together."
+      },
+      "performance": {
+        "sampleCount": 643,
+        "rafP50Ms": 16.7,
+        "rafP95Ms": 16.7,
+        "rafMaxMs": 16.8,
+        "framesOver33Ms": 0,
+        "framesOver50Ms": 0,
+        "longTasksDuringScroll": [],
+        "longTaskTotalMs": 0,
+        "layoutShiftsDuringScroll": [],
+        "clsDuringScroll": 0,
+        "longAnimationFramesDuringScroll": [],
+        "displayedFrameChangesDuringScroll": 153,
+        "uniqueFramesDuringScroll": 78,
+        "supportedEntryTypes": [
+          "element",
+          "event",
+          "first-input",
+          "interaction-contentful-paint",
+          "largest-contentful-paint",
+          "layout-shift",
+          "long-animation-frame",
+          "longtask",
+          "mark",
+          "measure",
+          "navigation",
+          "paint",
+          "resource",
+          "soft-navigation",
+          "visibility-state"
+        ],
+        "interpretation": "Diagnostic measurements on this local headless run; not a physical-device or production performance claim."
+      },
+      "contact": {
+        "mobileBarWithinViewport": true,
+        "actualAnchorClickReachedForm": true
+      },
+      "form": {
+        "requiredFieldValidation": true,
+        "reviewEditClear": true,
+        "noWriteRequests": true,
+        "noStorageWrites": true
+      },
+      "recordingWallTimeSeconds": 16.39,
+      "video": "scroll-forward-reverse-390.webm"
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "checks": {
+        "pauseDoesNotAdvance": true,
+        "completedLastFrame": true,
+        "checkpointsRenderDistinctPixels": true,
+        "reverseMatchesForward": true,
+        "noOverflow": true
+      },
+      "checkpoints": [
+        {
+          "direction": "forward",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "05ecd9efddf5181d645ecc26826548b9acdc9ca42e20cf72f18c51daa0c3b083",
+            "bufferId": 1
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.25,
+          "scrollY": 601,
+          "mode": "cinematic",
+          "progress": 0.24978999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "f41e6f2704b503d834666420a4fcbfcfa27e68bf0eaea365af27cfeadd308d86",
+            "bufferId": 2
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.5,
+          "scrollY": 1203,
+          "mode": "cinematic",
+          "progress": 0.5,
+          "frame": 90,
+          "targetFrame": 90,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "5a68337a83ccbc207df01a697b3dcb3f3ba4806d8a2931cb1c94dcab16bee588",
+            "bufferId": 3
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.75,
+          "scrollY": 1804,
+          "mode": "cinematic",
+          "progress": 0.74979,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "8d647c836dac5b8348e58ad764cd1c65ec807c94c6066b5cb9daf6718eeaf3a9",
+            "bufferId": 6
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 1,
+          "scrollY": 2407,
+          "mode": "cinematic",
+          "progress": 1,
+          "frame": 179,
+          "targetFrame": 179,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "23e56a7c5b140e8e5231559e99f3df3ca281c1dd3bef2a5be69af9255b8b566b",
+            "bufferId": 7
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.75,
+          "scrollY": 1804,
+          "mode": "cinematic",
+          "progress": 0.74979,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "8d647c836dac5b8348e58ad764cd1c65ec807c94c6066b5cb9daf6718eeaf3a9",
+            "bufferId": 8
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.5,
+          "scrollY": 1203,
+          "mode": "cinematic",
+          "progress": 0.5,
+          "frame": 90,
+          "targetFrame": 90,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "5a68337a83ccbc207df01a697b3dcb3f3ba4806d8a2931cb1c94dcab16bee588",
+            "bufferId": 9
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.25,
+          "scrollY": 601,
+          "mode": "cinematic",
+          "progress": 0.24978999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "2e699fbbe10c4f67b2fbb088396c0979df05f1611c8ba3e5971b5064ebe692fc",
+            "bufferId": 10
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 768,
+            "height": 752,
+            "pixelSha256": "8661c15bb4f346812ee0adbd414527bef13d9414774e58e1e7a5869c0a7639f6",
+            "bufferId": 11
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        }
+      ],
+      "status": "passed",
+      "bounds": {
+        "start": -0.001,
+        "end": 2406
+      },
+      "trace": {
+        "recorded": false,
+        "reason": "Not requested for this viewport"
+      },
+      "performance": {
+        "sampleCount": 105,
+        "rafP50Ms": 33.3,
+        "rafP95Ms": 33.4,
+        "rafMaxMs": 33.5,
+        "framesOver33Ms": 14,
+        "framesOver50Ms": 0,
+        "longTasksDuringScroll": [],
+        "longTaskTotalMs": 0,
+        "layoutShiftsDuringScroll": [],
+        "clsDuringScroll": 0,
+        "longAnimationFramesDuringScroll": [],
+        "displayedFrameChangesDuringScroll": 80,
+        "uniqueFramesDuringScroll": 75,
+        "supportedEntryTypes": [
+          "element",
+          "event",
+          "first-input",
+          "interaction-contentful-paint",
+          "largest-contentful-paint",
+          "layout-shift",
+          "long-animation-frame",
+          "longtask",
+          "mark",
+          "measure",
+          "navigation",
+          "paint",
+          "resource",
+          "soft-navigation",
+          "visibility-state"
+        ],
+        "interpretation": "Diagnostic measurements on this local headless run; not a physical-device or production performance claim."
+      },
+      "contact": {
+        "mobileBarWithinViewport": true,
+        "actualAnchorClickReachedForm": true
+      },
+      "form": {
+        "requiredFieldValidation": true,
+        "reviewEditClear": true,
+        "noWriteRequests": true,
+        "noStorageWrites": true
+      },
+      "recordingWallTimeSeconds": null
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "checks": {
+        "pauseDoesNotAdvance": true,
+        "completedLastFrame": true,
+        "checkpointsRenderDistinctPixels": true,
+        "uniqueFramesDuringNativeWheel": 79,
+        "reverseMatchesForward": true,
+        "noOverflow": true
+      },
+      "checkpoints": [
+        {
+          "direction": "forward",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "64cdb5bc93fd5e6694f3b35fe64a64dd35e3f8c3d20482ede1bbc86511de5ee5",
+            "bufferId": 1
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.25,
+          "scrollY": 643,
+          "mode": "cinematic",
+          "progress": 0.24989999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "0d19b782b11adae7ba497ad3b551e306e0c4d83e04562faccb1775e4d53904cd",
+            "bufferId": 2
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.5,
+          "scrollY": 1286,
+          "mode": "cinematic",
+          "progress": 0.49981000000000003,
+          "frame": 89,
+          "targetFrame": 89,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "33f540160983e3d2fe947566b6fdd36fdf0de20fd61ea452063bb012f0686c76",
+            "bufferId": 3
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.75,
+          "scrollY": 1930,
+          "mode": "cinematic",
+          "progress": 0.7501000000000001,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "fadbe18f387b88486978dd77ea675ffb8c41f0483e2b23e409e19b8e482839e3",
+            "bufferId": 6
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 1,
+          "scrollY": 2574,
+          "mode": "cinematic",
+          "progress": 1,
+          "frame": 179,
+          "targetFrame": 179,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "fdeaeffbf0c099d4796236fa5348825e0663e495a671e87a3ddce418f179f2d9",
+            "bufferId": 7
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.75,
+          "scrollY": 1930,
+          "mode": "cinematic",
+          "progress": 0.7501000000000001,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "fadbe18f387b88486978dd77ea675ffb8c41f0483e2b23e409e19b8e482839e3",
+            "bufferId": 8
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.5,
+          "scrollY": 1286,
+          "mode": "cinematic",
+          "progress": 0.49981000000000003,
+          "frame": 89,
+          "targetFrame": 89,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "33f540160983e3d2fe947566b6fdd36fdf0de20fd61ea452063bb012f0686c76",
+            "bufferId": 9
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.25,
+          "scrollY": 643,
+          "mode": "cinematic",
+          "progress": 0.24989999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "f369027c58145694fc909776717a6294e3d9868ce67a4b047a7417f4bf628267",
+            "bufferId": 10
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1440,
+            "height": 804,
+            "pixelSha256": "53413b72b3fcec23d1dcde1fde48851e2a66b28d8ad9614e06531bdac68543ae",
+            "bufferId": 11
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        }
+      ],
+      "status": "passed",
+      "bounds": {
+        "start": -0.001,
+        "end": 2573
+      },
+      "trace": {
+        "recorded": true,
+        "file": "trace-1440.json.gz",
+        "events": 43352,
+        "categories": {
+          "FunctionCall": {
+            "count": 3648,
+            "totalDurationMs": 45.26,
+            "maxDurationMs": 0.25
+          },
+          "UpdateLayoutTree": {
+            "count": 190,
+            "totalDurationMs": 10.88,
+            "maxDurationMs": 0.48
+          },
+          "Paint": {
+            "count": 81,
+            "totalDurationMs": 8.48,
+            "maxDurationMs": 0.29
+          },
+          "Layout": {
+            "count": 2,
+            "totalDurationMs": 0.14,
+            "maxDurationMs": 0.08
+          },
+          "AnimationFrame": {
+            "count": 3528,
+            "totalDurationMs": 0,
+            "maxDurationMs": 0
+          }
+        },
+        "note": "Trace includes checkpoint pixel hashing and screenshots between scroll segments. Nested event durations overlap and must not be added together."
+      },
+      "performance": {
+        "sampleCount": 642,
+        "rafP50Ms": 16.7,
+        "rafP95Ms": 16.7,
+        "rafMaxMs": 16.8,
+        "framesOver33Ms": 0,
+        "framesOver50Ms": 0,
+        "longTasksDuringScroll": [],
+        "longTaskTotalMs": 0,
+        "layoutShiftsDuringScroll": [],
+        "clsDuringScroll": 0,
+        "longAnimationFramesDuringScroll": [],
+        "displayedFrameChangesDuringScroll": 153,
+        "uniqueFramesDuringScroll": 79,
+        "supportedEntryTypes": [
+          "element",
+          "event",
+          "first-input",
+          "interaction-contentful-paint",
+          "largest-contentful-paint",
+          "layout-shift",
+          "long-animation-frame",
+          "longtask",
+          "mark",
+          "measure",
+          "navigation",
+          "paint",
+          "resource",
+          "soft-navigation",
+          "visibility-state"
+        ],
+        "interpretation": "Diagnostic measurements on this local headless run; not a physical-device or production performance claim."
+      },
+      "contact": {
+        "mobileBarWithinViewport": "not applicable",
+        "actualAnchorClickReachedForm": true
+      },
+      "form": {
+        "requiredFieldValidation": true,
+        "reviewEditClear": true,
+        "noWriteRequests": true,
+        "noStorageWrites": true
+      },
+      "recordingWallTimeSeconds": 17.13,
+      "video": "scroll-forward-reverse-1440.webm"
+    },
+    {
+      "width": 1920,
+      "height": 900,
+      "checks": {
+        "pauseDoesNotAdvance": true,
+        "completedLastFrame": true,
+        "checkpointsRenderDistinctPixels": true,
+        "reverseMatchesForward": true,
+        "noOverflow": true
+      },
+      "checkpoints": [
+        {
+          "direction": "forward",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "ac30d71cbebebbeeb5dc858b94bb360b3533425c5251e50ef506cf2bc86744a6",
+            "bufferId": 1
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.25,
+          "scrollY": 643,
+          "mode": "cinematic",
+          "progress": 0.24989999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "a3448e4eba322becfd2fb9126159dcd7aa1da9c21bb33c7fa449dcdd57f82885",
+            "bufferId": 2
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.5,
+          "scrollY": 1286,
+          "mode": "cinematic",
+          "progress": 0.49981000000000003,
+          "frame": 89,
+          "targetFrame": 89,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "6fadcff9a15a15f7dc52e5ead307e560b51c1219f58c7110816b04869d174985",
+            "bufferId": 3
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 0.75,
+          "scrollY": 1930,
+          "mode": "cinematic",
+          "progress": 0.7501000000000001,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "711027e7fd78f8d71e65c4c7633613df4d6485a019cb4cefeabeb70da2e3493e",
+            "bufferId": 6
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "forward",
+          "expectedProgress": 1,
+          "scrollY": 2574,
+          "mode": "cinematic",
+          "progress": 1,
+          "frame": 179,
+          "targetFrame": 179,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "75a44a1b068132e40007b663ad2dc45a68f6a076550da0194dc1f3a63ffd27bb",
+            "bufferId": 7
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.75,
+          "scrollY": 1930,
+          "mode": "cinematic",
+          "progress": 0.7501000000000001,
+          "frame": 134,
+          "targetFrame": 134,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "711027e7fd78f8d71e65c4c7633613df4d6485a019cb4cefeabeb70da2e3493e",
+            "bufferId": 8
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.5,
+          "scrollY": 1286,
+          "mode": "cinematic",
+          "progress": 0.49981000000000003,
+          "frame": 89,
+          "targetFrame": 89,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "6fadcff9a15a15f7dc52e5ead307e560b51c1219f58c7110816b04869d174985",
+            "bufferId": 9
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0.25,
+          "scrollY": 643,
+          "mode": "cinematic",
+          "progress": 0.24989999999999998,
+          "frame": 45,
+          "targetFrame": 45,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "795f3e67dba7dddfd5cf3d9ddfed3273f183db02adeb7aa8b2bbf481a09bb10d",
+            "bufferId": 10
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        },
+        {
+          "direction": "reverse",
+          "expectedProgress": 0,
+          "scrollY": 0,
+          "mode": "cinematic",
+          "progress": 0,
+          "frame": 0,
+          "targetFrame": 0,
+          "frameCount": 180,
+          "canvas": {
+            "width": 1920,
+            "height": 804,
+            "pixelSha256": "cbdf2862c9adc55d7dcb292feb4695f293e43f79cbb333c85e52cfc46752ab14",
+            "bufferId": 11
+          },
+          "poster": {
+            "source": "http://127.0.0.1:5194/demos/best-tailor/media/cinematic/poster.webp",
+            "loaded": true,
+            "width": 1920,
+            "height": 1080
+          }
+        }
+      ],
+      "status": "passed",
+      "bounds": {
+        "start": -0.001,
+        "end": 2573
+      },
+      "trace": {
+        "recorded": false,
+        "reason": "Not requested for this viewport"
+      },
+      "performance": {
+        "sampleCount": 104,
+        "rafP50Ms": 33.3,
+        "rafP95Ms": 33.4,
+        "rafMaxMs": 33.4,
+        "framesOver33Ms": 20,
+        "framesOver50Ms": 0,
+        "longTasksDuringScroll": [],
+        "longTaskTotalMs": 0,
+        "layoutShiftsDuringScroll": [],
+        "clsDuringScroll": 0,
+        "longAnimationFramesDuringScroll": [],
+        "displayedFrameChangesDuringScroll": 79,
+        "uniqueFramesDuringScroll": 51,
+        "supportedEntryTypes": [
+          "element",
+          "event",
+          "first-input",
+          "interaction-contentful-paint",
+          "largest-contentful-paint",
+          "layout-shift",
+          "long-animation-frame",
+          "longtask",
+          "mark",
+          "measure",
+          "navigation",
+          "paint",
+          "resource",
+          "soft-navigation",
+          "visibility-state"
+        ],
+        "interpretation": "Diagnostic measurements on this local headless run; not a physical-device or production performance claim."
+      },
+      "contact": {
+        "mobileBarWithinViewport": "not applicable",
+        "actualAnchorClickReachedForm": true
+      },
+      "form": {
+        "requiredFieldValidation": true,
+        "reviewEditClear": true,
+        "noWriteRequests": true,
+        "noStorageWrites": true
+      },
+      "recordingWallTimeSeconds": null
+    }
+  ],
+  "reducedMotion": [
+    {
+      "width": 320,
+      "staticCinematicPoster": true,
+      "noPinSpacer": true,
+      "noGiantScrollSection": true,
+      "noOverflow": true,
+      "livePreferenceSwitch": "not run at this width",
+      "height": 758,
+      "viewport": 900,
+      "ancestorPin": false,
+      "descendantPins": 0
+    },
+    {
+      "width": 390,
+      "staticCinematicPoster": true,
+      "noPinSpacer": true,
+      "noGiantScrollSection": true,
+      "noOverflow": true,
+      "livePreferenceSwitch": "not run at this width",
+      "height": 758,
+      "viewport": 900,
+      "ancestorPin": false,
+      "descendantPins": 0
+    },
+    {
+      "width": 768,
+      "staticCinematicPoster": true,
+      "noPinSpacer": true,
+      "noGiantScrollSection": true,
+      "noOverflow": true,
+      "livePreferenceSwitch": "not run at this width",
+      "height": 752,
+      "viewport": 900,
+      "ancestorPin": false,
+      "descendantPins": 0
+    },
+    {
+      "width": 1440,
+      "staticCinematicPoster": true,
+      "noPinSpacer": true,
+      "noGiantScrollSection": true,
+      "noOverflow": true,
+      "livePreferenceSwitch": {
+        "reducedModeRemovesPinAndSpacing": true,
+        "restoredModeCreatesOnePin": true,
+        "restoredSceneFollowsScroll": true,
+        "restoredPauseIsStable": true
+      },
+      "height": 804,
+      "viewport": 900,
+      "ancestorPin": false,
+      "descendantPins": 0
+    },
+    {
+      "width": 1920,
+      "staticCinematicPoster": true,
+      "noPinSpacer": true,
+      "noGiantScrollSection": true,
+      "noOverflow": true,
+      "livePreferenceSwitch": "not run at this width",
+      "height": 804,
+      "viewport": 900,
+      "ancestorPin": false,
+      "descendantPins": 0
+    }
+  ],
+  "runtimeErrors": [],
+  "pixelComparisons": [
+    {
+      "label": "Paused halfway at 320",
+      "frame": 90,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.75 at 320",
+      "frame": 134,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.5 at 320",
+      "frame": 90,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.25 at 320",
+      "frame": 45,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 1.138716,
+      "rmsRgb": 3.667563,
+      "maxChannelDifference": 73,
+      "changedPixelsPercent": 53.522592,
+      "pixelsOver8Percent": 3.040406,
+      "pixelsOver32Percent": 0.271198,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0 at 320",
+      "frame": 0,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 1.248481,
+      "rmsRgb": 3.777559,
+      "maxChannelDifference": 69,
+      "changedPixelsPercent": 57.234275,
+      "pixelsOver8Percent": 3.42705,
+      "pixelsOver32Percent": 0.290605,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Paused halfway at 390",
+      "frame": 90,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.75 at 390",
+      "frame": 134,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.5 at 390",
+      "frame": 90,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.25 at 390",
+      "frame": 45,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.308593,
+      "rmsRgb": 0.637475,
+      "maxChannelDifference": 13,
+      "changedPixelsPercent": 43.109995,
+      "pixelsOver8Percent": 0.014699,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0 at 390",
+      "frame": 0,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.332781,
+      "rmsRgb": 0.661243,
+      "maxChannelDifference": 11,
+      "changedPixelsPercent": 46.70668,
+      "pixelsOver8Percent": 0.011432,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Paused halfway at 768",
+      "frame": 90,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.75 at 768",
+      "frame": 134,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.5 at 768",
+      "frame": 90,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.25 at 768",
+      "frame": 45,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.38883,
+      "rmsRgb": 0.733491,
+      "maxChannelDifference": 12,
+      "changedPixelsPercent": 51.710889,
+      "pixelsOver8Percent": 0.011774,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0 at 768",
+      "frame": 0,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.415118,
+      "rmsRgb": 0.771539,
+      "maxChannelDifference": 13,
+      "changedPixelsPercent": 54.52093,
+      "pixelsOver8Percent": 0.010908,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Paused halfway at 1440",
+      "frame": 89,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.75 at 1440",
+      "frame": 134,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.5 at 1440",
+      "frame": 89,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.25 at 1440",
+      "frame": 45,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.259099,
+      "rmsRgb": 0.586313,
+      "maxChannelDifference": 14,
+      "changedPixelsPercent": 35.266463,
+      "pixelsOver8Percent": 0.006219,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0 at 1440",
+      "frame": 0,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.288811,
+      "rmsRgb": 0.623356,
+      "maxChannelDifference": 11,
+      "changedPixelsPercent": 39.321189,
+      "pixelsOver8Percent": 0.00501,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Paused halfway at 1920",
+      "frame": 89,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.75 at 1920",
+      "frame": 134,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.5 at 1920",
+      "frame": 89,
+      "exactHashMatch": true,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0.25 at 1920",
+      "frame": 45,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.276225,
+      "rmsRgb": 0.582836,
+      "maxChannelDifference": 11,
+      "changedPixelsPercent": 40.385248,
+      "pixelsOver8Percent": 0.002397,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reverse checkpoint 0 at 1920",
+      "frame": 0,
+      "exactHashMatch": false,
+      "allowRasterTolerance": true,
+      "meanAbsoluteRgb": 0.312792,
+      "rmsRgb": 0.622668,
+      "maxChannelDifference": 11,
+      "changedPixelsPercent": 45.856719,
+      "pixelsOver8Percent": 0.002203,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reduced-motion static garment at 320",
+      "frame": -1,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reduced-motion static garment at 390",
+      "frame": -1,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reduced-motion static garment at 768",
+      "frame": -1,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reduced-motion static garment at 1440",
+      "frame": -1,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Restored scene remains scroll bound",
+      "frame": 0,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    },
+    {
+      "label": "Reduced-motion static garment at 1920",
+      "frame": -1,
+      "exactHashMatch": true,
+      "allowRasterTolerance": false,
+      "meanAbsoluteRgb": 0,
+      "rmsRgb": 0,
+      "maxChannelDifference": 0,
+      "changedPixelsPercent": 0,
+      "pixelsOver8Percent": 0,
+      "pixelsOver32Percent": 0,
+      "withinRasterTolerance": true,
+      "passed": true
+    }
+  ],
+  "reverseRasterTolerance": {
+    "meanAbsoluteRgb": 2,
+    "rmsRgb": 5,
+    "maxChannelDifference": 96,
+    "pixelsOver32Percent": 0.5,
+    "channelRange": "0–255",
+    "reason": "Allows small resampling differences only when frame index, requested frame, frame count and canvas dimensions match exactly. Does not establish the cause of a mismatch."
+  },
+  "status": "passed",
+  "browser": "157.0.8103.80"
+}

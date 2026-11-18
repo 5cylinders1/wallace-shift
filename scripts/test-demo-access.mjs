@@ -230,6 +230,15 @@ test('the Dopps Chiropractic concept is a public demo: page, 3D model and source
   for (const path of ['/demos/dopps-2/', '/demos/doppsx/index.html', '/src/demos/doppsx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
+test('the Sue’s Tailor Shop alias and original tailor namespace stay public without opening private neighbours', async () => {
+  for (const path of ['/demo/sues-tailor', '/demo/sues-tailor/', '/demo/best-tailor', '/demo/best-tailor/', '/demos/best-tailor', '/demos/best-tailor/', '/demos/best-tailor/index.html', '/src/demos/best-tailor/main.tsx', '/demos/best-tailor/media/tailoring-hero.webp', '/public/demos/best-tailor/media/tailoring-hero.webp']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('best-tailor'), 'roofers', 'Public demos have no access-request key')
+  assert.equal(access.demoKey('sues-tailor'), 'roofers', 'Public aliases have no access-request key')
+  for (const path of ['/demos/best-tailor-2/', '/demos/best-tailorx/index.html', '/src/demos/best-tailorx/main.tsx', '/demos/sues-tailor/', '/src/demos/sues-tailor/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('the Deer Creek Plumbing concept is a public demo: pages, media and source need no access', async () => {
   for (const path of ['/demo/deercreek', '/demo/deercreek/', '/demo/deercreek/services/water-heaters', '/demo/deercreek/schedule', '/demos/deercreek/', '/demos/deercreek/index.html', '/src/demos/deercreek/main.tsx', '/demos/deercreek/photos/truck-1600.webp', '/public/demos/deercreek/logo-white.png']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)

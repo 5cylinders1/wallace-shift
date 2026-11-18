@@ -1,0 +1,76 @@
+/* Rolodex stack: the chosen package sits in front and the other tucks in
+   behind it, its top edge left showing. usePackageSwap animates between the
+   two resting poses defined here. */
+/* A card falling toward the viewer widens past the screen edges for a moment. */
+.p-packages:has(> .p-package-stack) { overflow-x: clip; }
+.p-package-stack {
+  --stack-lead: 48px;
+  --stack-peek: 52px;
+  --stack-scale: .955;
+  --stack-inset: 40px;
+  display: grid;
+  align-content: start;
+  gap: 0;
+  padding-top: calc(var(--stack-lead) + var(--stack-peek));
+}
+.p-package-stack > .p-package {
+  /* All four lines: an absolutely positioned back card with an auto end line
+     would reach into the list's bottom padding. */
+  grid-area: 1 / 1 / 2 / 2;
+  transform-origin: 50% 0;
+  transition: background-color .45s ease, box-shadow .45s ease;
+}
+.p-package-stack > .p-package.is-selected { position: relative; z-index: 3; box-shadow: 0 -6px 18px rgb(8 13 18 / .05), 0 14px 36px rgb(8 13 18 / .08); }
+.p-package-stack > .p-package:not(.is-selected) {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: clip;
+  transform: translateY(calc(-1 * var(--stack-peek))) scale(var(--stack-scale));
+  /* Stay unchanged while falling forward; recede once out of sight.
+     Matches FALL in usePackageSwap.ts. */
+  transition-delay: .42s;
+}
+/* Only the tab speaks for the back card; its own content would show as clipped text. */
+.p-package-stack > .p-package > * { transition: opacity .3s ease .05s; }
+.p-package-stack > .p-package:not(.is-selected) > * { opacity: 0; transition-duration: .2s; transition-delay: .42s; }
+.p-package-stack:has(> .p-stack-tab:hover) > .p-package:not(.is-selected) { background: #d6e0e6; }
+.service-home .p-package-stack > .p-package[id] {
+  scroll-margin-top: calc(var(--package-scroll-offset, calc(var(--site-header-height) + 112px)) + var(--stack-peek));
+}
+
+/* The exposed edge of the back card doubles as a way to bring it forward. */
+.p-stack-tab {
+  grid-area: 1 / 1;
+  align-self: start;
+  justify-self: center;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: calc(100% * var(--stack-scale));
+  height: var(--stack-peek);
+  margin-top: calc(-1 * var(--stack-peek));
+  padding: 0 calc(var(--stack-inset) * var(--stack-scale));
+  border: 0;
+  border-radius: 20px 20px 0 0;
+  background: none;
+  color: #33454f;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.p-stack-tab-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+.p-stack-tab-name em { font-weight: 500; }
+.p-stack-tab-price { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.p-stack-tab-price small { color: #52616b; font-size: 12px; }
+.p-stack-tab-price svg { width: 18px; height: 18px; color: #175c99; transform: rotate(-90deg); }
+.p-stack-tab:hover .p-stack-tab-name { color: #175c99; }
+
+@media (max-width: 760px) {
+  .p-package-stack { --stack-lead: 28px; --stack-peek: 46px; --stack-scale: .94; --stack-inset: 24px; }
+  .p-stack-tab { gap: 10px; border-radius: 16px 16px 0 0; }
+  .p-stack-tab-name, .p-stack-tab-price { font-size: 13px; }
+  .p-stack-tab-price small { display: none; }
+}

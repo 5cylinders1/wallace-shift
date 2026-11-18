@@ -1,0 +1,6 @@
+{
+  "prompt": "Derived from the existing Higgsfield GPT Image 2 final-fitting.webp photograph. Source generation used 6.5 credits on 2026-11-17; this extraction used 0 additional credits. Asset: assembled. Source pixels preserved with a transparent silhouette and garment partition mask. Exact generation prompt and source history: src/demos/best-tailor/assets.md. Reproduce with scripts/sues-tailor/extract_assembly.py. No new image generation.",
+  "source": "/demos/best-tailor/media/final-fitting.webp",
+  "sourceSha256": "083b0373e178265ac850924d0d049e3d4dc97f32d7436205b62c3fdb80f35795",
+  "generated": false
+}

@@ -1,0 +1,71 @@
+{
+  "results": [
+    {
+      "width": 320,
+      "noOverflow": true,
+      "imageLoaded": true,
+      "accordionKeyboard": true,
+      "reviewNavigation": true,
+      "mobileMenu": true,
+      "accessibility": "not run"
+    },
+    {
+      "width": 390,
+      "noOverflow": true,
+      "imageLoaded": true,
+      "accordionKeyboard": true,
+      "reviewNavigation": true,
+      "mobileMenu": true,
+      "accessibility": {
+        "violations": 0,
+        "manualReview": [
+          "color-contrast"
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "noOverflow": true,
+      "imageLoaded": true,
+      "accordionKeyboard": true,
+      "reviewNavigation": true,
+      "mobileMenu": true,
+      "accessibility": "not run"
+    },
+    {
+      "width": 1024,
+      "noOverflow": true,
+      "imageLoaded": true,
+      "accordionKeyboard": true,
+      "reviewNavigation": true,
+      "mobileMenu": "not applicable",
+      "accessibility": "not run"
+    },
+    {
+      "width": 1440,
+      "noOverflow": true,
+      "imageLoaded": true,
+      "accordionKeyboard": true,
+      "reviewNavigation": true,
+      "mobileMenu": "not applicable",
+      "accessibility": {
+        "violations": 0,
+        "manualReview": [
+          "color-contrast"
+        ]
+      }
+    },
+    {
+      "width": 1920,
+      "noOverflow": true,
+      "imageLoaded": true,
+      "accordionKeyboard": true,
+      "reviewNavigation": true,
+      "mobileMenu": "not applicable",
+      "accessibility": "not run"
+    }
+  ],
+  "runtimeErrors": [],
+  "checkedAt": "2026-11-17",
+  "environment": "local Vite development preview"
+}

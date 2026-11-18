@@ -1,5 +1,7 @@
 # Hero callback and Google Meet review
 
+Historical preview review. The lander has since moved into the production homepage source; see [homepage promotion and contact choices](homepage-promotion-review.md) for current validation and deployment status.
+
 Reviewed November 17, 2026. Website changes are local and uncommitted. The existing Calendly event was updated live to 20 minutes at the user's request. No callback email or calendar booking was sent during this review.
 
 ## Scope and observed evidence

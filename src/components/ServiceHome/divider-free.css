@@ -1,0 +1,36 @@
+/* Remove separators only from this service page; retain control outlines and focus. */
+.p-page :is(
+  .m-header,
+  .m-header-contact,
+  .m-text-link,
+  .r-opening-prices,
+  .r-hero-foot,
+  .r-contact,
+  .r-footer,
+  .monthly-services,
+  .monthly-services__value,
+  .monthly-services__example,
+  .monthly-services__footer,
+  .r-faq-grid > div
+),
+.p-page details,
+.p-page .monthly-services .monthly-services__details,
+.p-page .p-comparison-table :is(th, td) {
+  border-block: 0;
+}
+
+.p-page :is(.m-header-contact, .m-text-link) {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+/* Keep comparison rows and disclosure groups distinct through space. */
+.p-page .p-comparison-table { border-collapse: separate; border-spacing: 0 8px; }
+.p-page .r-faq-grid > div { display: grid; gap: 8px; }
+.p-page .r-faq-grid details { padding-inline: 20px; background: #e1e8ec; border-radius: 8px; }
+.p-page .r-faq-grid details[open] { background: #fff; }
+.p-page .r-faq-grid summary { gap: 18px; }
+
+@media (max-width: 760px) {
+  .p-page .m-nav { border-bottom: 0; }
+}

@@ -1,0 +1,38 @@
+{
+  "business": "Sue\u2019s Tailor Shop",
+  "checkedAt": "2026-11-17",
+  "method": "In-app browser through CUA; rendered DOM and screenshots",
+  "route": "http://127.0.0.1:5194/demo/sues-tailor",
+  "responsiveWidths": [
+    320,
+    390,
+    768,
+    1024,
+    1440,
+    1920
+  ],
+  "horizontalOverflow": false,
+  "oldBrandVisible": false,
+  "phoneLinks": "tel:+19139441983",
+  "checkedInteractions": [
+    "Mobile menu opens",
+    "Escape closes mobile menu",
+    "Next reviews shows Tom, Megan, Tiffany",
+    "Previous reviews restores Sophie, Charlie, Valeria",
+    "Back to top",
+    "New preview alias"
+  ],
+  "sourceDetailsVerified": [
+    "Address",
+    "Phone",
+    "Appointment requirement",
+    "Weekly hours",
+    "Google rating and review count",
+    "Accessibility and parking"
+  ],
+  "build": "npm run build passed",
+  "gateTests": 47,
+  "httpResponsesPassed": 735,
+  "automatedAccessibility": "Not rerun for this content rebrand. Earlier Best Tailor scan does not validate the new page.",
+  "productionDeployment": false
+}

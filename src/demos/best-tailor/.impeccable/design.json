@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T20:50:09.428602Z",
+  "title": "Design System: Sue’s Tailor Shop demo",
+  "extensions": {
+    "colorMeta": {
+      "burgundy": {
+        "role": "primary",
+        "displayName": "Deep burgundy",
+        "tonalRamp": [
+          "oklch(15% 0.02 10)",
+          "oklch(25% 0.04 10)",
+          "oklch(35% 0.06 10)",
+          "oklch(45% 0.07 10)",
+          "oklch(58% 0.07 10)",
+          "oklch(70% 0.06 10)",
+          "oklch(83% 0.04 10)",
+          "oklch(95% 0.01 10)"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Warm ivory",
+        "tonalRamp": [
+          "oklch(15% 0.01 80)",
+          "oklch(25% 0.015 80)",
+          "oklch(35% 0.02 80)",
+          "oklch(45% 0.025 80)",
+          "oklch(58% 0.025 80)",
+          "oklch(70% 0.025 80)",
+          "oklch(83% 0.02 80)",
+          "oklch(95% 0.015 80)"
+        ]
+      },
+      "focus-on-dark": {
+        "role": "neutral",
+        "displayName": "Cream keyboard focus on dark surfaces"
+      },
+      "blush-surface": {
+        "role": "neutral",
+        "displayName": "Soft blush surface"
+      },
+      "cinematic-backdrop": {
+        "role": "neutral",
+        "displayName": "Dark plum cinematic ground"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Dress fitting hero promise",
+        "purpose": "Editorial serif text accompanying the scroll-controlled illustrative gown."
+      },
+      "headline": {
+        "displayName": "Section headings",
+        "purpose": "Large calm serif statements with warm phrase emphasis."
+      }
+    },
+    "shadows": [
+      {
+        "name": "mobile-navigation",
+        "value": "0 18px 24px #281b1b12",
+        "purpose": "Separate the open navigation dropdown from the page."
+      },
+      {
+        "name": "mobile-actions",
+        "value": "0 -4px 16px #2a16121a",
+        "purpose": "Separate the fixed call and directions strip from scrolling content."
+      }
+    ],
+    "motion": [
+      {
+        "name": "cinematic-dress-sequence",
+        "value": "180 canvas frames at 24 fps, scrubbed reversibly by native scroll; separate portrait sequence at 600px and below",
+        "purpose": "Completed original landscape and portrait films replace the rejected five-cutout assembly. Trim the first 7.5 seconds before reversal to preserve the complete gown endpoint. Continuous rendered cloth, a locked camera, and no added desktop zoom establish the visual motion. Reduced motion uses a finished-gown still. Local browser results and limits: docs/review/sues-tailor/cinematic/README.md. Physical-phone performance and visual parity are not established; technical checks do not imply user acceptance."
+      },
+      {
+        "name": "control-transition",
+        "value": "0.2s",
+        "purpose": "Background, text, and arrow feedback."
+      },
+      {
+        "name": "accordion-icon",
+        "value": "0.25s cubic-bezier(.16,1,.3,1); rotate(45deg)",
+        "purpose": "Show whether a service row is expanded."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none; transition: none; scroll-behavior: auto",
+        "purpose": "Respect the prefers-reduced-motion media query."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-min",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-desktop-max",
+        "value": "1100px"
+      },
+      {
+        "name": "mobile-navigation-max",
+        "value": "850px"
+      },
+      {
+        "name": "stacked-mobile-max",
+        "value": "600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Fitting request button",
+      "kind": "button",
+      "refersTo": "button-cream",
+      "description": "The cream primary fitting request action on the dark plum cinematic hero; opens the local appointment preview.",
+      "html": "<a class=\"ds-button ds-cream\" href=\"#request-fitting\">Request a fitting <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4 12h15M13 5l7 7-7 7\"/></svg></a>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:26px;min-height:54px;padding:18px 25px;font:500 12px \"DM Sans\",sans-serif;text-decoration:none;border:0;border-radius:0;transition:background .2s,color .2s}.ds-button svg{width:18px;height:18px;transition:transform .2s}.ds-button:hover svg{transform:translateX(4px)}.ds-button:focus-visible{outline:2px solid #f7f3eb;outline-offset:6px}@media(prefers-reduced-motion:reduce){.ds-button,.ds-button svg{transition:none}}.ds-cream{background:var(--bt-cream,#f7f3eb);color:var(--bt-burgundy,#4b242b)}.ds-cream:hover{background:#e8cbb8}"
+    },
+    {
+      "name": "Navigation links",
+      "kind": "nav",
+      "description": "Quiet section links and a filled fitting-request action; mobile navigation becomes a dropdown at 850px.",
+      "html": "<nav class=\"ds-navigation\" aria-label=\"Demo navigation\"><a href=\"#alterations\">Alterations &amp; repairs</a><a href=\"#kind-words\">Kind words</a><a href=\"#visit\">Visit Sue</a><a class=\"ds-nav-request\" href=\"#request-fitting\">Request a fitting</a></nav>",
+      "css": ".ds-navigation{display:flex;align-items:center;flex-wrap:wrap;gap:32px;color:var(--bt-burgundy,#4b242b);font:400 12px \"DM Sans\",sans-serif}.ds-navigation a{color:inherit;padding-block:16px;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:5px;transition:text-decoration-color .2s}.ds-navigation a:hover{text-decoration-color:currentColor}.ds-navigation .ds-nav-request{border:1px solid var(--bt-burgundy,#4b242b);background:var(--bt-burgundy,#4b242b);color:var(--bt-cream,#f7f3eb);padding:13px 17px;text-decoration:none;transition:background .2s,color .2s}.ds-navigation .ds-nav-request:hover{background:#6a3640;color:var(--bt-cream,#f7f3eb)}.ds-navigation a:focus-visible{outline:2px solid #a35839;outline-offset:6px}@media(prefers-reduced-motion:reduce){.ds-navigation a{transition:none}}"
+    },
+    {
+      "name": "Service row",
+      "kind": "custom",
+      "description": "Visual specimen of the React accordion row; production uses a button with aria-expanded and a labelled controlled region.",
+      "html": "<div class=\"ds-service\"><button type=\"button\" aria-expanded=\"false\">Dresses for special occasions<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M5 12h14M12 5v14\"/></svg></button></div>",
+      "css": ".ds-service{border-block:1px solid var(--bt-line,#d9cec1);max-width:520px}.ds-service button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:23px 0;border:0;background:none;color:var(--bt-burgundy,#4b242b);font:400 32px var(--bt-serif,\"Libre Caslon Display\",Georgia,serif);text-align:left;cursor:pointer}.ds-service button:hover{color:#986149}.ds-service button:focus-visible{outline:2px solid #a35839;outline-offset:6px}.ds-service svg{width:22px;height:22px;transition:transform .25s cubic-bezier(.16,1,.3,1)}.ds-service button[aria-expanded=\"true\"] svg{transform:rotate(45deg)}@media(prefers-reduced-motion:reduce){.ds-service svg{transition:none}}"
+    },
+    {
+      "name": "Review controls",
+      "kind": "custom",
+      "description": "Manual previous/next buttons with an explicit page count and disabled end state.",
+      "html": "<div class=\"ds-review-controls\"><span>1 / 2</span><button disabled type=\"button\" aria-label=\"Previous reviews\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"m15 5-7 7 7 7\"/></svg></button><button type=\"button\" aria-label=\"Next reviews\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"m9 5 7 7-7 7\"/></svg></button></div>",
+      "css": ".ds-review-controls{display:flex;align-items:center;gap:9px;background:var(--bt-burgundy,#4b242b);color:var(--bt-cream,#f7f3eb);padding:18px;width:fit-content;font:400 11px \"DM Sans\",sans-serif}.ds-review-controls span{margin-right:14px;font-variant-numeric:tabular-nums;color:#d8bfb3}.ds-review-controls button{display:grid;place-items:center;width:40px;height:40px;border:1px solid #9e7b7c;background:transparent;color:inherit;cursor:pointer;transition:background .2s}.ds-review-controls button:not(:disabled):hover{background:#6d4248}.ds-review-controls button:disabled{opacity:.35;cursor:default}.ds-review-controls button:focus-visible{outline:2px solid var(--bt-cream,#f7f3eb);outline-offset:6px}.ds-review-controls svg{width:16px;height:16px}@media(prefers-reduced-motion:reduce){.ds-review-controls button{transition:none}}"
+    },
+    {
+      "name": "Shop address panel",
+      "kind": "card",
+      "description": "A printed-card treatment for Sue’s verified address, directions, listed hours, and appointment guidance.",
+      "html": "<div class=\"ds-address\"><p>Come say hello.</p><address>Sue’s Tailor Shop<br>14873 Metcalf Avenue<br>Overland Park, KS 66223</address><a href=\"https://www.google.com/maps/dir/?api=1&amp;destination=Sue%27s+Tailor+Shop%2C+14873+Metcalf+Ave%2C+Overland+Park%2C+KS+66223\">Get directions <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4 12h15M13 5l7 7-7 7\"/></svg></a></div>",
+      "css": ".ds-address{padding:38px 42px;border:1px solid #baa591;outline:1px solid #d9cabb;outline-offset:-8px;background:#f4eddf;max-width:390px}.ds-address p{margin:0;color:var(--bt-burgundy,#4b242b);font:400 30px var(--bt-serif,\"Libre Caslon Display\",Georgia,serif)}.ds-address address{margin-top:25px;color:#674e43;font:400 13px/1.9 \"DM Sans\",sans-serif}.ds-address a{display:inline-flex;align-items:center;gap:18px;margin-top:21px;color:var(--bt-ink,#3e3030);font:400 12px \"DM Sans\",sans-serif;text-decoration:underline;text-decoration-color:#ad9385;text-underline-offset:5px}.ds-address a:hover{text-decoration-color:currentColor}.ds-address a:focus-visible{outline:2px solid #a35839;outline-offset:6px}.ds-address svg{width:17px;height:17px}"
+    },
+    {
+      "name": "Mobile quick contact",
+      "kind": "nav",
+      "description": "Named Quick contact landmark with Request a fitting and Call Sue, using inset cream keyboard focus.",
+      "html": "<nav class=\"ds-mobile-contact\" aria-label=\"Quick contact\"><a href=\"#request-fitting\">Request a fitting</a><a href=\"tel:+19139441983\">Call Sue</a></nav>",
+      "css": ".ds-mobile-contact{display:flex;padding:0 18px;background:var(--bt-burgundy,#4b242b);color:var(--bt-cream,#f7f3eb);box-shadow:0 -4px 16px #2a16121a;font:400 11px \"DM Sans\",sans-serif}.ds-mobile-contact a{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;flex:1;color:inherit;text-decoration:none}.ds-mobile-contact a+a{border-left:1px solid #79555a}.ds-mobile-contact a:focus-visible{outline:2px solid var(--bt-cream,#f7f3eb);outline-offset:-6px}.ds-mobile-contact a:first-child{flex:1.35}"
+    },
+    {
+      "name": "Fitting request field",
+      "kind": "input",
+      "description": "Square cream field with a visible required label and 16px entry text, used by the local-only request preview.",
+      "html": "<div class=\"ds-fitting-field\"><label for=\"ds-fitting-name\">Your name <span>(required)</span></label><input id=\"ds-fitting-name\" name=\"name\" autocomplete=\"name\" maxlength=\"120\" required aria-describedby=\"ds-fitting-note\"><p id=\"ds-fitting-note\">Preview only. Nothing is sent or booked.</p></div>",
+      "css": ".ds-fitting-field{background:#eee5d7;padding:22px;max-width:480px;color:var(--bt-burgundy,#4b242b)}.ds-fitting-field label{display:block;margin-bottom:9px;font:500 12px/1.5 \"DM Sans\",sans-serif}.ds-fitting-field label span{font-size:10px;font-weight:400;color:#67554b}.ds-fitting-field input{display:block;box-sizing:border-box;width:100%;min-height:48px;padding:12px 14px;border:1px solid #ac9585;border-radius:0;background:var(--bt-cream,#f7f3eb);color:var(--bt-ink,#3e3030);font:400 16px/1.5 \"DM Sans\",sans-serif;caret-color:var(--bt-burgundy,#4b242b);transition:border-color .2s}.ds-fitting-field input:hover{border-color:#76564c}.ds-fitting-field input:focus-visible{outline:2px solid #873f2a;outline-offset:3px}.ds-fitting-field p{margin:12px 0 0;font:400 11px/1.7 \"DM Sans\",sans-serif;color:#67554b}@media(prefers-reduced-motion:reduce){.ds-fitting-field input{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A personal dress fitting",
+    "overview": "Scoped to Sue’s Tailor Shop at /demo/sues-tailor. The feminine neighborhood boutique direction remains. The five-cutout hero is REJECTED and obsolete; its working transforms and captures are not visual acceptance. Completed original landscape and portrait garment films now supply 180-frame scroll-controlled canvas sequences. Source contact sheets show continuous cloth bending and finished-gown endpoints; local browser results and limits are recorded in docs/review/sues-tailor/cinematic/README.md. The opening portrait composition slightly clips outer fabric; the completed gown fits. Physical-phone performance and visual parity are not established, and technical checks do not imply user acceptance. Appointment controls must remain accessible, the local demo form sends or books nothing, and illustrative gown imagery establishes no custom dressmaking service.",
+    "keyCharacteristics": [
+      "A continuous cinematic garment sequence with completed landscape and native portrait media; preserve the fine needle-and-thread mark. The former five transparent cutouts are rejected.",
+      "A dark plum hero with amber light and cream type leads into warm ivory, soft blush surfaces, deep burgundy, and restrained copper-brown accents.",
+      "Expressive serif headings paired with small, calm sans-serif utility text.",
+      "Open sections and ruled service rows, with subtle motion tied to interaction."
+    ],
+    "rules": [],
+    "dos": [
+      "Do preserve the feminine dress-focused boutique direction, serif and sans-serif pairing, square controls, and fine tailoring mark.",
+      "Do keep the fitting request, call action, and appointment-only language easy to find on narrow screens.",
+      "Do preserve the illustrative image disclosure and the user-requested absence of visible Wallace Shift attribution.",
+      "Do visually assess the replacement against the verified reference and keep technical checks separate from user acceptance."
+    ],
+    "donts": [
+      "Don't represent the generated dress stages as the shop's actual work or promise custom gown creation.",
+      "Don't imply the local preview sends an appointment request or reserves a fitting.",
+      "Don't turn the review selector into an automatic carousel or add motion that ignores reduced-motion preferences.",
+      "Don't present the rejected cutout proposal or its historical captures as the accepted design direction."
+    ]
+  }
+}

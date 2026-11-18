@@ -1,0 +1,135 @@
+:root{scroll-behavior:auto}
+.bt-header{height:96px;position:sticky;top:0;z-index:30}
+.bt-header-call{background:var(--bt-burgundy);color:var(--bt-cream);border-color:var(--bt-burgundy)}
+.bt-header-call:hover{background:#6a3640}
+.bt-header-call:focus-visible{outline-color:#a35839}
+.bt-assembly{--bt-cinematic-backdrop:#20191a;position:relative;height:calc(100svh - 96px);color:var(--bt-cream);background:var(--bt-cinematic-backdrop);isolation:isolate}
+.bt-assembly-stage{height:100%;position:relative;overflow:hidden;background:var(--bt-cinematic-backdrop)}
+.bt-assembly-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.bt-assembly-media{position:absolute;inset:0;overflow:hidden;pointer-events:none;background:var(--bt-cinematic-backdrop)}
+.bt-assembly-canvas{display:none;position:absolute;inset:0;width:100%;height:100%}
+.bt-assembly-poster{position:absolute;display:block;left:var(--bt-cinematic-left,0);top:var(--bt-cinematic-top,0);width:var(--bt-cinematic-width,100%);height:var(--bt-cinematic-height,100%);max-width:none;object-fit:cover;user-select:none}
+.bt-assembly[data-assembly-mode=cinematic] .bt-assembly-canvas{display:block}
+.bt-assembly[data-assembly-mode=cinematic] .bt-assembly-poster{display:none}
+.bt-assembly-copy{position:absolute;z-index:2;left:max(4.5%,calc((100% - 1720px)/2));top:26%;width:28%;max-width:390px;pointer-events:none}
+.bt-assembly-title{font-family:var(--bt-serif);font-weight:400;font-size:clamp(48px,5.1vw,82px);line-height:1.02;letter-spacing:-.025em}
+.bt-assembly-title span,.bt-assembly-title em{display:block}
+.bt-assembly-title em{color:#ddbdac}
+.bt-assembly-body{font-size:12px;line-height:1.8;max-width:23ch;margin-top:25px;color:#dfcfc4}
+.bt-assembly-detail{left:76%;top:35%;width:20%;max-width:330px;opacity:0}
+.bt-assembly-finale{top:34%;opacity:0}
+.bt-assembly-detail .bt-assembly-title,.bt-assembly-finale .bt-assembly-title{font-size:clamp(42px,4.3vw,68px)}
+.bt-assembly-contact{position:absolute;left:max(4.5%,calc((100% - 1720px)/2));bottom:80px;z-index:3;display:flex;flex-direction:column;align-items:flex-start}
+.bt-assembly-contact .bt-button{min-height:52px;gap:28px;font-size:12px;padding-inline:23px;background:var(--bt-cream);color:var(--bt-burgundy)}
+.bt-assembly-contact .bt-button:hover{background:#e8cbb8}
+.bt-assembly-contact .bt-button svg{width:19px;height:19px}
+.bt-assembly-contact a:focus-visible{outline-color:var(--bt-cream);outline-offset:5px}
+.bt-assembly-call{font-size:11px;margin-top:17px;text-decoration:underline;text-decoration-color:#a78577}
+.bt-assembly-contact p{font-size:9px;line-height:1.5;margin-top:18px;color:#dfcfc4}
+.bt-assembly-footer{position:absolute;left:4.5%;right:4.5%;bottom:25px;z-index:2;display:flex;align-items:center;gap:25px;font-size:9px;color:#dfcfc4}
+.bt-assembly-scroll{display:flex;gap:12px;align-items:center}
+.bt-assembly-scroll svg{width:12px;height:17px}
+.bt-assembly-progress{height:1px;flex:1;max-width:220px;background:#73594e;overflow:hidden}
+.bt-assembly-progress-fill{display:block;width:100%;height:100%;background:#d9af94;transform:scaleX(0);transform-origin:left}
+.bt-assembly-caption{margin-left:auto}
+.bt-assembly[data-assembly-mode=static] .bt-assembly-scroll,.bt-assembly[data-assembly-mode=static] .bt-assembly-progress,.bt-assembly[data-assembly-mode=static] .bt-assembly-detail,.bt-assembly[data-assembly-mode=static] .bt-assembly-finale{display:none}
+.bt-welcome-line{background:#eee3dd;padding:64px 4.5%;gap:48px;align-items:flex-end}
+.bt-welcome-line p{font-size:clamp(52px,6.8vw,112px);line-height:.98;letter-spacing:-.035em;max-width:1120px;text-wrap:balance}
+.bt-welcome-line p em{display:block;color:#8b5c4b}
+.bt-welcome-line>a{flex-shrink:0;padding-bottom:8px}
+.bt-services-intro h2{font-size:clamp(64px,6.7vw,96px);line-height:.96;letter-spacing:-.035em}
+.bt-services-intro h2 em{font-size:.78em}
+.bt-reviews h2{font-size:clamp(72px,8.2vw,124px);line-height:.98;letter-spacing:-.035em}
+.bt-reviews h2 em{display:inline-block;font-size:.44em;line-height:1.1;letter-spacing:-.02em}
+.bt-process{background:#eee3dd}
+.bt-footer{background:#eee3dd}
+
+@media(max-width:1100px){
+  .bt-assembly-copy{top:24%;width:29%;left:4%}
+  .bt-assembly-title{font-size:clamp(44px,5.3vw,60px)}
+  .bt-assembly-body{font-size:11px;margin-top:20px}
+  .bt-assembly-detail{top:34%;left:76%;width:21%}
+  .bt-assembly-detail .bt-assembly-title,.bt-assembly-finale .bt-assembly-title{font-size:clamp(36px,4.3vw,48px)}
+  .bt-assembly-contact{left:4%;bottom:65px}
+}
+@media(max-width:850px){
+  :root{scroll-padding-top:105px}
+  .bt-header{height:90px}
+  .bt-header-call .bt-icon{display:block}
+  .bt-assembly{height:calc(100svh - 148px - env(safe-area-inset-bottom))}
+  .bt-assembly-copy{width:29%;top:26%}
+  .bt-assembly-title{font-size:clamp(36px,5.5vw,46px)}
+  .bt-assembly-detail,.bt-assembly-finale{left:4%;width:30%;top:35%}
+  .bt-assembly-detail .bt-assembly-title,.bt-assembly-finale .bt-assembly-title{font-size:38px}
+  .bt-assembly-contact{display:none}
+  .bt-assembly-body{font-size:11px;max-width:20ch}
+  .bt-mobile-actions{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:40;background:var(--bt-burgundy);color:var(--bt-cream);padding:0 18px env(safe-area-inset-bottom);box-shadow:0 -4px 16px #2a16121a}
+  .bt-mobile-actions a{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;flex:1;font-size:11px}
+  .bt-mobile-actions a+a{border-left:1px solid #79555a}
+  .bt-mobile-actions .bt-icon{width:16px;height:16px}
+  .bt-footer{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .bt-welcome-line{gap:25px;padding-block:48px}
+  .bt-welcome-line p{font-size:clamp(46px,6.8vw,58px);max-width:540px}
+  .bt-welcome-line a{flex-shrink:0}
+  .bt-services-intro h2{font-size:clamp(48px,6.5vw,60px)}
+}
+@media(max-width:600px){
+  :root{scroll-padding-top:100px}
+  .bt-header{height:84px}
+  .bt-assembly{height:calc(100svh - 142px - env(safe-area-inset-bottom))}
+  .bt-assembly-media{top:0;bottom:42px}
+  .bt-assembly-copy,.bt-assembly-detail,.bt-assembly-finale{top:20px;left:22px;width:calc(100% - 44px);max-width:none;text-align:center}
+  .bt-assembly-title{font-size:clamp(28px,7.4vw,36px);line-height:1.04;letter-spacing:-.02em}
+  .bt-assembly-title span{display:inline}
+  .bt-assembly-title em{display:block}
+  .bt-assembly-body{display:none}
+  .bt-assembly-detail .bt-assembly-title,.bt-assembly-finale .bt-assembly-title{font-size:clamp(28px,7.4vw,36px)}
+  .bt-assembly-footer{left:22px;right:22px;bottom:17px;font-size:8px;gap:13px}
+  .bt-assembly-scroll{gap:7px;max-width:153px;line-height:1.5}
+  .bt-assembly-scroll svg{height:14px;width:10px;flex-shrink:0}
+  .bt-assembly-progress{max-width:48px}
+  .bt-assembly-caption{max-width:66px;text-align:right;line-height:1.4}
+  .bt-mobile-actions a:first-child{flex:1.35}
+  .bt-welcome-line{padding:42px 22px}
+  .bt-welcome-line p{font-size:clamp(40px,9.5vw,58px);max-width:none}
+  .bt-welcome-line a{font-size:10px;margin-top:24px;padding-bottom:0}
+  .bt-services-intro h2{font-size:clamp(54px,12vw,72px)}
+  .bt-reviews h2{font-size:clamp(64px,15vw,86px)}
+  .bt-reviews h2 em{font-size:.48em}
+}
+@media(max-height:650px) and (min-width:601px){
+  .bt-assembly-copy{top:14%}
+  .bt-assembly-title{font-size:clamp(35px,4.5vw,58px)}
+  .bt-assembly-body{font-size:11px;margin-top:14px}
+  .bt-assembly-contact{bottom:55px}
+  .bt-assembly-contact p{display:none}
+  .bt-assembly-contact .bt-button{min-height:44px}
+  .bt-assembly-detail,.bt-assembly-finale{top:25%}
+}
+@media(prefers-reduced-motion:reduce){
+  .bt-assembly-canvas{display:none!important}
+  .bt-assembly-poster{display:block!important}
+  .bt-assembly-intro{opacity:1!important;transform:none!important}
+  .bt-assembly-detail,.bt-assembly-finale,.bt-assembly-scroll,.bt-assembly-progress{display:none!important}
+}
+
+.bt-assembly-intro{top:12%;width:34%;max-width:540px}
+.bt-assembly-intro .bt-assembly-title{font-size:clamp(72px,7.4vw,132px);line-height:.88;letter-spacing:-.045em}
+.bt-assembly-intro .bt-assembly-lead,.bt-assembly-lead>span{display:block}
+.bt-assembly-intro .bt-assembly-title em{font-size:clamp(30px,3.1vw,52px);line-height:1.08;letter-spacing:-.025em;margin-top:24px;max-width:12ch;text-wrap:balance}
+.bt-assembly-intro .bt-assembly-body{display:none}
+@media(min-width:851px){.bt-assembly-detail{top:12%}}
+@media(min-width:601px) and (max-width:850px){
+  .bt-assembly-intro{width:36%}
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(48px,8.2vw,70px)}
+  .bt-assembly-intro .bt-assembly-title em{font-size:26px;margin-top:18px}
+}
+@media(max-width:600px){
+  .bt-assembly-intro{top:18px;width:calc(100% - 44px);max-width:none}
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(54px,13.5vw,76px);line-height:.9}
+  .bt-assembly-intro .bt-assembly-title em{font-size:clamp(22px,5.7vw,30px);line-height:1.08;max-width:none;margin-top:12px}
+}
+@media(max-height:650px) and (min-width:601px){
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(54px,6.5vw,88px)}
+  .bt-assembly-intro .bt-assembly-title em{font-size:30px;margin-top:14px}
+}

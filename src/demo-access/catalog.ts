@@ -35,6 +35,10 @@ export const adminDemos: AdminDemo[] = [
     name: 'Dopps Chiropractic', detail: 'Chiropractic 3D website concept',
   },
   {
+    id: 'best-tailor', slug: 'sues-tailor', href: '/demo/sues-tailor',
+    name: 'Sue’s Tailor Shop', detail: 'Tailoring and alterations website concept',
+  },
+  {
     id: 'deercreek', slug: 'deercreek', href: '/demo/deercreek',
     name: 'Deer Creek Plumbing — Site A', detail: 'Plumbing website concept',
   },

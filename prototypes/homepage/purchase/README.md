@@ -1,6 +1,6 @@
 # Examples first: clearer choices
 
-Isolated local preview, reviewed 17 November 2026.
+Promoted into the production homepage source on 17 November 2026. Components now live in `src/components/ServiceHome`; this preview entry renders the same implementation and shared navigation. The earlier review below is historical. See [homepage promotion validation](../../../docs/homepage-promotion-review.md) for current results and deployment status.
 
 [Open the preview](http://127.0.0.1:5184/prototypes/homepage/purchase/index.html) · [Previous version](../refined/index.html)
 
@@ -19,7 +19,7 @@ This is a reasoned design recommendation, not a proven conversion winner. No act
 - [Evidence table, complete internal comparison, capabilities and cost worksheet](../../../docs/homepage-purchase-evidence.md)
 - [180 Sites primary sources, proposed guarantee and upgrade economics](../../../docs/homepage-guarantee-upgrade-research.md)
 
-The two dedicated offer pages are already deployed. The live homepage remains separate from this preview. Only the new preview directory and two research documents were added. Existing preview files, production routes, offer definitions, billing and animation assets were preserved. This entry is not included in the production Vite build inputs, and its HTML is marked noindex. That is isolation from deployment, not authentication.
+At the original preview review, the two dedicated offer pages were deployed and the homepage was separate. The lander has since been integrated into the production `/` route. This preview URL itself remains outside the production build and noindex. The previous interactive homepage is preserved at `/showcase`.
 
 The material limitation is unresolved terms, not just layout: included page count and update allowance, minimum commitment, cancellation, ownership and tool running costs must be agreed before a purchase. We show those unknowns near the price. A final all inclusive total cannot be honestly calculated without them.
 
