@@ -159,12 +159,6 @@ export function SiteHeader() {
 
         <div className="site-header__actions">
           <PhoneLink className="site-header__phone ws-phone-link--compact" />
-          <PageLink href="/contact" className="site-header__cta">
-            Discuss your system
-            <span className="site-header__cta-arrow" aria-hidden="true">
-              &#8599;
-            </span>
-          </PageLink>
         </div>
 
         <button

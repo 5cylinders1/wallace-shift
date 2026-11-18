@@ -12,6 +12,7 @@
 .monthly-services__price { padding-top: 8px; }
 .monthly-services__price > strong { display: block; font-size: 27px; line-height: 1.3; font-weight: 500; font-variant-numeric: tabular-nums; }
 .monthly-services__price > span { display: block; margin-top: 4px; font-size: 12px; line-height: 1.6; color: var(--tile-muted); }
+.monthly-services__price > .monthly-services__care-price { color: var(--tile-ink); font-weight: 600; }
 .monthly-services__value { padding-top: 16px; border-top: 1px solid var(--tile-line); }
 .monthly-services .monthly-services__value h4 { font: 600 13px/1.5 var(--font-sans); margin: 0 0 6px; }
 .monthly-services__value > p { font-size: 14px; color: var(--tile-muted); }

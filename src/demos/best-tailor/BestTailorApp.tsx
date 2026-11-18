@@ -59,16 +59,7 @@ export default function SuesTailorApp() {
     </header>
 
     <main id="main">
-      <section className="bt-bridal-hero bt-container" aria-labelledby="hero-title">
-        <div className="bt-bridal-copy">
-          <h1 id="hero-title">Your dress.<br />A fit that<br /><em>feels like you.</em></h1>
-          <p>For the aisle, the evening, and the everyday.<br />Personal dress alterations and thoughtful repairs, with time set aside just for you.</p>
-          <a className="bt-button bt-button-burgundy" href="#request-fitting">Request a fitting <Icon name="arrow" /></a>
-          <a className="bt-bridal-call" href={phone}><Icon name="phone" /> Or call {business.phone}</a>
-          <p className="bt-appointment-note">By appointment only · Overland Park, Kansas</p>
-        </div>
-        <DressStory />
-      </section>
+      <DressStory />
 
       <div className="bt-welcome-line"><p>The dress is yours.<em> Let’s make the fit yours, too.</em></p><a href="#alterations">Explore alterations <Icon name="arrow" /></a></div>
 

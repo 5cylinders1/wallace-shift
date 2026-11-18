@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "source": "/demos/best-tailor/media/final-fitting.webp",
+  "sourceSha256": "083b0373e178265ac850924d0d049e3d4dc97f32d7436205b62c3fdb80f35795",
+  "sourceAttribution": {
+    "provider": "Higgsfield",
+    "model": "GPT Image 2",
+    "generationDate": "2026-11-17",
+    "originalGenerationCredits": 6.5,
+    "additionalGenerationCredits": 0,
+    "originalTriptych": "/demos/best-tailor/media/bridal-triptych.webp",
+    "promptRecord": "src/demos/best-tailor/assets.md",
+    "disclosure": "Illustrative AI-generated gown; not Sue\u2019s actual work."
+  },
+  "width": 640,
+  "height": 1086,
+  "format": "WebP lossless RGBA; -exact encoding verified byte for byte",
+  "coordinateSystem": "Every layer uses the original full 640 \u00d7 1086 source canvas. No independent cropping or resizing.",
+  "assemblyOrder": [
+    "skirt-left",
+    "skirt-right",
+    "skirt-center",
+    "bodice",
+    "straps"
+  ],
+  "fallback": "assembled.webp",
+  "layers": {
+    "straps": {
+      "file": "straps.webp",
+      "alphaBounds": [
+        242,
+        192,
+        410,
+        255
+      ],
+      "bytes": 3476,
+      "sha256": "677afe1e1ae5fc3bf5b92185556a37b46e8ddcef7ada5cd80aedb5f758208f19"
+    },
+    "bodice": {
+      "file": "bodice.webp",
+      "alphaBounds": [
+        245,
+        243,
+        406,
+        367
+      ],
+      "bytes": 10012,
+      "sha256": "f69632bbcfde12bb948f3765099c4860c8ae658ce3f53b6c08262897a69154de"
+    },
+    "skirt-left": {
+      "file": "skirt-left.webp",
+      "alphaBounds": [
+        135,
+        359,
+        300,
+        1023
+      ],
+      "bytes": 20692,
+      "sha256": "8d8a6de4fb41605f9f80907d842934db8edbe0c49644faba6eea4e5e5dc9057c"
+    },
+    "skirt-center": {
+      "file": "skirt-center.webp",
+      "alphaBounds": [
+        210,
+        360,
+        424,
+        1026
+      ],
+      "bytes": 31656,
+      "sha256": "968b3288ca8bdf7537877f46bc97d625f0e2fa8ff79264b8b8a6d8635c863d6b"
+    },
+    "skirt-right": {
+      "file": "skirt-right.webp",
+      "alphaBounds": [
+        350,
+        360,
+        531,
+        1023
+      ],
+      "bytes": 28398,
+      "sha256": "97f42f09e1703097c094f061325eb9c6bab7910bb8c03cb685be982b836bed97"
+    }
+  },
+  "fallbackBytes": 73162,
+  "totalAssetBytes": 167396,
+  "validation": {
+    "exactLosslessDecode": true,
+    "opaqueSourcePixelsWithAlphaGaps": 0
+  },
+  "extraction": "4\u00d7 supersampled hand-traced silhouette, source-pixel partitions, 2px internal overlaps. Fully invisible RGB cleared for file size.",
+  "limitations": [
+    "Original source is 640px wide.",
+    "Waist and skirt partitions are visual assembly masks, not verified physical sewing patterns.",
+    "The assembled fallback is the exact composited five-layer image."
+  ],
+  "reproduce": "python3 scripts/sues-tailor/extract_assembly.py",
+  "storyboard": "docs/review/sues-tailor/assembly/assembly-storyboard-proposal.jpg"
+}

@@ -1,6 +1,6 @@
 # Sue’s Tailor Shop website demo
 
-The active tailor demo is Sue’s Tailor Shop in Overland Park. The current revision brings a more feminine focus to dresses, special occasions, and wedding dress inquiries, with an interactive fitting story and a local appointment request preview. Visible Wallace Shift concept attribution was removed at the user’s explicit request; the illustrative photography credit remains in the footer.
+The active tailor demo is Sue’s Tailor Shop in Overland Park, with a feminine focus on dresses, special occasions, and wedding dress inquiries, plus a local appointment request preview. **The five-cutout hero was rejected by the user as insufficiently cinematic and is obsolete.** Its replacement media is being generated; the new visual story is pending and unaccepted. Visible Wallace Shift concept attribution was removed at the user’s explicit request; the illustrative photography credit remains in the footer.
 
 ## Preview and implementation
 
@@ -32,13 +32,17 @@ Google displayed **4.9 from 263 reviews**, checked **November 17, 2026**. This i
 
 The full source record, directory conflicts, and collection limits are documented in [sues-tailor-research.md](sues-tailor-research.md). The current directly observed Google address takes precedence over older conflicting directory addresses.
 
-The hero now presents three generated dress stages: “The first fitting,” “The small details,” and “The final try-on.” The images illustrate a fitting sequence and do not document Sue’s owner, premises, or completed work. A caption and footer identify illustrative imagery. The original sewing-machine image remains an unused retained asset. Libre Caslon Display and DM Sans are self-hosted under the retained public font directory.
+The rejected hero attempt used five transparent pieces extracted from one Higgsfield gown image. Although their transforms followed scrolling, the result did not satisfy the user’s cinematic reference. The new direction uses an original generated garment film, converted to canvas frames and scrubbed with scrolling. Media generation and visual acceptance are pending. The imagery does not document Sue’s actual work or establish custom gown creation. The original triptych and sewing-machine image remain retained source assets.
+
+The verified reference study, rejected storyboard, generation ledger, and historical browser evidence are collected in [the assembly review](review/sues-tailor/assembly/README.md). The creator is Octaboot; the matching reference is https://tailor-by-octaboot.vercel.app/. Its public script uses 535 WebP frames in a canvas. The replacement must retain a static reduced-motion presentation and access to the existing fitting form; those behaviors require fresh verification after integration.
 
 ## Generated dress media
 
 One image was generated through the Higgsfield browser interface using **GPT Image 2**, **2K**, **High**, and **16:9**. The generation used **6.5 credits**, approximately **$0.39 of credit value** at the displayed $6-per-100-credit rate, within the user’s $5 limit. No top-up or new plan was purchased.
 
-The 1920 × 1086 triptych was split into three 640 × 1086 WebP panels: `first-fitting.webp`, `small-details.webp`, and `final-fitting.webp`, under `public/demos/best-tailor/media/`. DressStory uses manual stage controls with crossfades and a small settling scale. It does not auto-advance. Reduced-motion preferences remove the transitions.
+The 1920 × 1086 triptych was split into three 640 × 1086 WebP panels: `first-fitting.webp`, `small-details.webp`, and `final-fitting.webp`, under `public/demos/best-tailor/media/`. The final panel supplied the five lossless transparent layers for the rejected cutout attempt. That extraction required no additional generation; it is historical provenance, not an accepted visual solution.
+
+The replacement image job `bed32843-333b-436c-9029-f676b29fae1b` has **2.75 credits allocated** and is pending. Combined with the completed 6.5-credit generation, **9.25 credits are currently allocated**. A planned 10-second MiniMax H3 video is quoted at **20 credits**, excluded from the current total because its submission and charge are not yet confirmed. Neither new image nor video quality is accepted. See the assembly review for the dated ledger and subsequent results.
 
 ## Appointment request preview
 
@@ -48,7 +52,7 @@ Submission validates the required details, future dates, weekday fittings, and a
 
 The page retains the service accordion, manual review selector, mobile menu, direct phone links, and Google Maps directions. The mobile quick-contact navigation now offers Request a fitting and Call Sue.
 
-## Current validation status
+## Historical fitting-image revision validation
 
 The bridal revision was verified through computer-use browser inspection at 320, 390, 768, 1024, 1440, and 1920 pixels. Every width had no horizontal overflow and all dress images loaded. No console errors were observed.
 
@@ -56,8 +60,8 @@ The bridal revision was verified through computer-use browser inspection at 320,
 - Rendered checks passed for keyboard dress-stage changes, mobile menu Escape and focus return, and both review pages.
 - Form checks passed for blank-submit error focus, phone and email review flows, pointer selection of Email, rejection of past dates, weekend fittings and fittings after the event, valid-date summaries, and Edit/Clear focus and retained or cleared values.
 - The final full production build passed after the CSS and copy changes. Built HTTP integration passed all 735 route/asset responses with mocked services and no external provider calls. The HTTP test required permission to bind a localhost server outside the sandbox.
-- `scripts/test-best-tailor-browser.mjs` now checks the current hero/service/navigation selectors, all three dress images and keyboard stages, reduced motion, form validation/review/edit/clear, both contact methods, and absence of form POST requests or storage writes. The updated browser script has **not been executed** in this revision.
-- Current CUA evidence is recorded in `docs/review/sues-tailor/bridal/browser-results.json`. Future script captures use the same bridal review directory to preserve the earlier identity-rebrand results.
+- The browser script at that point covered three images and keyboard stages plus the form. Those stage-specific checks do not validate either the rejected cutout assembly or its pending cinematic replacement.
+- Historical CUA evidence is recorded in `docs/review/sues-tailor/bridal/browser-results.json`; it must remain separate from replacement validation.
 - Automated axe accessibility scanning was not rerun for this revision; the completed browser inspection is not represented as an axe pass.
 
 The work has not been deployed or committed.
@@ -67,3 +71,7 @@ Proposed commit message: `Add an interactive dress fitting story and appointment
 ### Historical identity-rebrand verification, November 17, 2026
 
 The full production build passed. Demo access tests passed 47/47, and built HTTP integration passed 735 route/asset responses. The rebranded page was inspected in the in-app browser at 320, 390, 768, 1024, 1440, and 1920 pixels with no horizontal overflow. Sue’s longer wordmark fits, old business/Wallace Shift text is absent, every phone link uses the verified number, the mobile menu opens and closes with Escape, and both review pages display the correct customers. The new alias is open in the user’s preview. Evidence is recorded in `docs/review/sues-tailor/browser-results.json`; screenshots were inspected inline. Automated accessibility was not rerun for this content rebrand. No production deployment or commit was made.
+
+## Cinematic assembly replacement — pending
+
+See [the assembly review](review/sues-tailor/assembly/README.md) for the verified reference, rejected five-cutout storyboard, replacement cost ledger, and current status. The cutout recordings and checkpoint screenshots are obsolete and do not establish visual quality or user acceptance. The recorded cutout browser suite also contains an overall failure. Fresh visual review and browser validation are required after the new media and canvas sequence are integrated. Earlier checks above describe the previous fitting-image revision only.

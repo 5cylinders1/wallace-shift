@@ -44,7 +44,7 @@
     "typographyMeta": {
       "display": {
         "displayName": "Dress fitting hero promise",
-        "purpose": "Large serif text beside the three-stage illustrative dress portrait."
+        "purpose": "Editorial serif text accompanying the scroll-controlled illustrative gown."
       },
       "headline": {
         "displayName": "Section headings",
@@ -65,14 +65,9 @@
     ],
     "motion": [
       {
-        "name": "dress-crossfade",
-        "value": "0.7s cubic-bezier(.16,1,.3,1); opacity 0 to 1; scale(1.015) to scale(1)",
-        "purpose": "Manual transitions between the three dress stages; never auto-advances."
-      },
-      {
-        "name": "dress-stage-underline",
-        "value": "0.3s cubic-bezier(.16,1,.3,1); scaleX(0) to scaleX(1)",
-        "purpose": "Show the currently selected fitting stage."
+        "name": "cinematic-dress-sequence-pending",
+        "value": "Planned canvas image sequence scrubbed by native scroll; media and implementation pending",
+        "purpose": "The user rejected the five-cutout garment assembly as insufficiently cinematic. An original generated garment film will supply a continuous reversible sequence, with a static reduced-motion fallback. New media quality and browser behavior are not yet validated or accepted."
       },
       {
         "name": "control-transition",
@@ -154,13 +149,6 @@
       "css": ".ds-mobile-contact{display:flex;padding:0 18px;background:var(--bt-burgundy,#4b242b);color:var(--bt-cream,#f7f3eb);box-shadow:0 -4px 16px #2a16121a;font:400 11px \"DM Sans\",sans-serif}.ds-mobile-contact a{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;flex:1;color:inherit;text-decoration:none}.ds-mobile-contact a+a{border-left:1px solid #79555a}.ds-mobile-contact a:focus-visible{outline:2px solid var(--bt-cream,#f7f3eb);outline-offset:-6px}.ds-mobile-contact a:first-child{flex:1.35}"
     },
     {
-      "name": "Dress stage controls",
-      "kind": "custom",
-      "description": "Three manual fitting stages with pressed states; the app swaps the portrait and announces the current description.",
-      "html": "<div class=\"ds-dress-stages\" role=\"group\" aria-label=\"Explore the fitting stages\"><button type=\"button\" aria-pressed=\"true\"><span aria-hidden=\"true\">01</span>The first fitting</button><button type=\"button\" aria-pressed=\"false\"><span aria-hidden=\"true\">02</span>The small details</button><button type=\"button\" aria-pressed=\"false\"><span aria-hidden=\"true\">03</span>The final try-on</button></div>",
-      "css": ".ds-dress-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid #cab4a6;background:var(--bt-cream,#f7f3eb)}.ds-dress-stages button{position:relative;min-height:65px;background:none;border:0;text-align:left;font:400 11px/1.45 \"DM Sans\",sans-serif;padding:7px 8px 13px;color:#79625a;cursor:pointer}.ds-dress-stages span{display:block;font:400 17px var(--bt-serif,\"Libre Caslon Display\",Georgia,serif);margin-bottom:4px;font-variant-numeric:tabular-nums}.ds-dress-stages button::after{content:\"\";position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:var(--bt-burgundy,#4b242b);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.16,1,.3,1)}.ds-dress-stages button[aria-pressed=true]{color:var(--bt-burgundy,#4b242b)}.ds-dress-stages button[aria-pressed=true]::after{transform:scaleX(1)}.ds-dress-stages button:hover{color:var(--bt-burgundy,#4b242b);background:#eee5dc}.ds-dress-stages button:focus-visible{outline:2px solid #a35839;outline-offset:-3px}@media(prefers-reduced-motion:reduce){.ds-dress-stages button::after{transition:none}}"
-    },
-    {
       "name": "Fitting request field",
       "kind": "input",
       "description": "Square cream field with a visible required label and 16px entry text, used by the local-only request preview.",
@@ -170,9 +158,9 @@
   ],
   "narrative": {
     "northStar": "A personal dress fitting",
-    "overview": "This record applies only to Sue’s Tailor Shop at `/demo/sues-tailor`. The prior `/demo/best-tailor` alias and internal source and asset paths remain available. It captures the user-approved direction and the implemented CSS and React behavior, without changing the Wallace Shift design system. The current direction is feminine and focused on dresses, with the warmth of a neighborhood boutique. The composition is led by code: a large serif promise and fitting request action sit beside three illustrative dress stages. Wedding dress copy invites discussion of a particular garment; the imagery does not establish custom gown services or actual client results.",
+    "overview": "Scoped to Sue’s Tailor Shop at /demo/sues-tailor. The feminine neighborhood boutique direction remains. The five-cutout hero is REJECTED and obsolete; its working transforms and captures are not visual acceptance. The replacement is an original generated garment film converted to a scroll-controlled canvas image sequence. Generation, visual review, and integration validation are pending. Appointment controls must remain accessible, the local demo form sends or books nothing, and illustrative gown imagery establishes no custom dressmaking service.",
     "keyCharacteristics": [
-      "Three illustrative dress-fitting stages and a fine needle-and-thread mark.",
+      "Target: a continuous cinematic garment sequence, with media pending; preserve the fine needle-and-thread mark. The former five transparent cutouts are rejected.",
       "Warm ivory, soft blush surfaces, deep burgundy, and restrained copper-brown accents.",
       "Expressive serif headings paired with small, calm sans-serif utility text.",
       "Open sections and ruled service rows, with subtle motion tied to interaction."
@@ -181,12 +169,14 @@
     "dos": [
       "Do preserve the feminine dress-focused boutique direction, serif and sans-serif pairing, square controls, and fine tailoring mark.",
       "Do keep the fitting request, call action, and appointment-only language easy to find on narrow screens.",
-      "Do preserve the illustrative image disclosure and the user-requested absence of visible Wallace Shift attribution."
+      "Do preserve the illustrative image disclosure and the user-requested absence of visible Wallace Shift attribution.",
+      "Do visually assess the replacement against the verified reference and keep technical checks separate from user acceptance."
     ],
     "donts": [
       "Don't represent the generated dress stages as the shop's actual work or promise custom gown creation.",
       "Don't imply the local preview sends an appointment request or reserves a fitting.",
-      "Don't turn the review selector into an automatic carousel or add motion that ignores reduced-motion preferences."
+      "Don't turn the review selector into an automatic carousel or add motion that ignores reduced-motion preferences.",
+      "Don't present the rejected cutout proposal or its historical captures as the accepted design direction."
     ]
   }
 }

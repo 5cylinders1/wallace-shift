@@ -64,11 +64,11 @@ components:
 
 **Creative North Star: "A personal dress fitting"**
 
-This record applies only to Sue’s Tailor Shop at `/demo/sues-tailor`. The prior `/demo/best-tailor` alias and internal source and asset paths remain available. It captures the user-approved direction and the implemented CSS and React behavior, without changing the Wallace Shift design system. The current direction is feminine and focused on dresses, with the warmth of a neighborhood boutique. The composition is led by code: a large serif promise and fitting request action sit beside three illustrative dress stages. Wedding dress copy invites discussion of a particular garment; the imagery does not establish custom gown services or actual client results.
+This record applies only to Sue’s Tailor Shop at `/demo/sues-tailor`. The prior `/demo/best-tailor` alias and internal source and asset paths remain available. It captures the established feminine boutique direction without changing the Wallace Shift design system. **The five-cutout hero proposal is rejected and obsolete:** the user found it insufficiently cinematic. The replacement direction is an original generated garment film, converted to a scroll-controlled canvas image sequence. Media generation, visual review, and implementation validation are pending; this record is not approval of the new result. Wedding dress copy invites discussion of a particular garment; the imagery does not establish custom gown services or actual client results.
 
 **Key Characteristics:**
 
-- Three illustrative dress-fitting stages and a fine needle-and-thread mark.
+- A continuous cinematic garment sequence is the target; its media is pending. The fine needle-and-thread mark remains part of the boutique identity.
 - Warm ivory, soft blush surfaces, deep burgundy, and restrained copper-brown accents.
 - Expressive serif headings paired with small, calm sans-serif utility text.
 - Open sections and ruled service rows, with subtle motion tied to interaction.
@@ -85,13 +85,13 @@ Libre Caslon Display is self-hosted for headings, the wordmark, review summaries
 
 The shared desktop container is `min(1248px, 100% - 112px)`. Gutters reduce to 40px at 1100px and 22px at 600px. Services and process use a two-column `.9fr 1.1fr` arrangement; the visit section uses `1.2fr .8fr`. These sections stack at 600px. Three review columns become three stacked entries at the same breakpoint.
 
-The hero uses two equal columns with a 7% gap: text at left, the portrait dress sequence at right. Each dress frame has a 640:1086 aspect ratio and is capped at 330px wide on desktop, 360px on wide screens, and 320px on phones. At 600px, the hero stacks text above the dress sequence.
+The target hero is one pinned editorial stage with an original cinematic gown sequence and short supporting typography. The generated sequence must keep the garment, framing, materials, and light coherent through visible construction stages. Mobile must reserve room for the fitting action; reduced motion must present a finished-garment still without the long pin. These are replacement requirements, not verified behavior while generation is pending. The former five-layer composition is not an accepted layout reference.
 
 Navigation becomes a dropdown at 850px. At 600px, fixed fitting-request and call actions appear above the device safe area, with matching footer space. The appointment preview has an introductory column and a form column, stacking at 850px; its paired date inputs stack at 600px.
 
 ## Elevation & Depth
 
-Most surfaces are flat, separated by tonal changes and thin rules. Dress photography sits in its own portrait frame beside the hero copy; it does not need a dark text overlay. Shadows appear only beneath the mobile navigation dropdown (`0 18px 24px #281b1b12`) and above the fixed mobile actions (`0 -4px 16px #2a16121a`).
+Most surfaces are flat, separated by tonal changes and thin rules. Depth in the new garment story should come from consistent cinematic imagery, not the rejected arrangement of flat cutouts. Lighting, composition, and perceived material depth remain subject to media review. Shadows on the existing interface appear beneath the mobile navigation dropdown (`0 18px 24px #281b1b12`) and above the fixed mobile actions (`0 -4px 16px #2a16121a`).
 
 ## Shapes
 
@@ -101,18 +101,20 @@ Controls and panels have square corners. Buttons are simple rectangular blocks. 
 
 - **Primary actions:** burgundy fitting-request buttons over ivory link to the local form; direct call actions remain available. Desktop buttons are at least 54px high. Hover changes the background and shifts the trailing arrow 4px. Visible focus uses an offset outline, with cream focus on dark reviews and the mobile strip; the fixed strip uses a -6px outline offset to keep focus inside each link.
 - **Navigation:** understated text links and a filled fitting-request action. The mobile menu closes on link selection, outside pointer interaction, or Escape; Escape returns focus to the menu button.
-- **Dress story:** three native pressed-state buttons select the first fitting, small details, or final try-on. Each state has one visible portrait image and a polite live text description. The imagery remains labelled illustrative.
+- **Dress story, pending replacement:** native scrolling will scrub frames from an original generated garment film, and reverse scrolling will reverse the same sequence. The former five-layer skirt/bodice/strap transform approach is rejected. No new result is visually accepted yet. The imagery must remain labelled illustrative.
 - **Services:** four ruled accordion rows, with only one open at a time and the first open initially. A plus rotates 45 degrees when expanded. Native buttons expose expanded state and control a labelled region with a fitting tip.
 - **Reviews:** three attributed review summaries per page, with explicit previous/next controls, disabled end states, and a polite live region. The control does not auto-advance. Summaries are labelled and link to the Google originals; the aggregate rating is displayed with its observation date.
 - **Appointment preview:** a compact form with square cream fields, native contact radios and selects, 16px input text, optional dates and notes, inline errors, and a focused error summary. A local review state explicitly says nothing has been sent or booked, with call, edit, and clear actions. Field focus uses a 2px outline with 3px offset; error text and borders use warm dark red.
 - **Visit panel:** Sue’s verified address, directions link, listed hours, and appointment guidance within a double outline. The fixed mobile strip provides Request a fitting and Call Sue within a navigation landmark named “Quick contact.”
-- **Motion:** dress stages crossfade over 0.7 seconds using `cubic-bezier(.16,1,.3,1)`, settling from scale 1.015 to 1. The active stage underline changes over 0.3 seconds. The sequence never auto-advances. Other control transitions take 0.2 seconds; the accordion icon takes 0.25 seconds. Reduced motion disables animation, transitions, and smooth scrolling.
+- **Motion requirement:** the garment sequence follows native scroll position rather than autonomous playback or still-image crossfades. Canvas frame delivery, scrub tuning, loading, and performance remain to be implemented and measured against the new media. Reduced motion must use a static finished garment without an extended pin. Existing control transitions remain disabled under reduced motion.
 
 ## Do's and Don'ts
 
 - **Do** preserve the feminine dress-focused boutique direction, serif and sans-serif pairing, square controls, and fine tailoring mark.
 - **Do** keep the fitting request, call action, and appointment-only language easy to find on narrow screens.
 - **Do** preserve the illustrative image disclosure and the user-requested absence of visible Wallace Shift attribution.
+- **Do** compare the replacement visually against the verified cinematic reference and distinguish technical checks from visual acceptance.
+- **Don't** reuse the rejected cutout proposal or its browser captures as the accepted design direction.
 - **Don't** represent the generated dress stages as the shop's actual work or promise custom gown creation.
 - **Don't** imply the local preview sends an appointment request or reserves a fitting.
 - **Don't** turn the review selector into an automatic carousel or add motion that ignores reduced-motion preferences.

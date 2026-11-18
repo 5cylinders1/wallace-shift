@@ -3,8 +3,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { playwright } from '../videos/contractor-previews/runtime.mjs'
 
 const origin = process.env.BEST_TAILOR_ORIGIN || 'http://127.0.0.1:5194'
-// Keep the earlier business-identity review separate from the bridal/form revision.
-const output = new URL('../docs/review/sues-tailor/bridal/', import.meta.url)
+// Preserve earlier prototype evidence; this run validates the final film page.
+const output = new URL('../docs/review/sues-tailor/cinematic/regression/', import.meta.url)
 const { chromium } = await playwright()
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const errors = []
@@ -28,29 +28,29 @@ try {
     assert.doesNotMatch(await page.locator('body').innerText(), /Best Tailor|Wallace Shift|website concept|Christine Antes|Frank Gilkey|942-1042|15009 Metcalf/i)
     assert.match(await page.locator('body').innerText(), /Sue’s Tailor Shop/)
     assert.match(await page.title(), /Sue’s Tailor Shop/)
-    await page.waitForFunction(() => [...document.querySelectorAll('.bt-dress-image')].every(image => image.complete && image.naturalWidth === 640 && image.naturalHeight === 1086))
-    assert.equal(await page.locator('.bt-dress-image').count(), 3)
+    await page.waitForFunction(() => {
+      const image = document.querySelector('.bt-assembly-finished')
+      return image && image.complete && image.naturalWidth > 0
+    })
+    assert.equal(await page.locator('.bt-assembly-finished').count(), 1)
     assert.ok(await page.evaluate(() => document.fonts.check('16px "Libre Caslon Display"')))
     const dimensions = await page.evaluate(() => ({ viewport: innerWidth, scroll: document.documentElement.scrollWidth }))
     assert.ok(dimensions.scroll <= width + 1, `No overflow at ${width}: ${JSON.stringify(dimensions)}`)
-    assert.equal(await page.locator('.bt-bridal-copy').getByRole('link', { name: 'Request a fitting', exact: true }).getAttribute('href'), '#request-fitting')
+    assert.equal(await page.locator('.bt-assembly-contact').getByRole('link', { name: 'Request a fitting', exact: true }).getAttribute('href'), '#request-fitting')
     for (const link of await page.locator('a[href^="tel:"]').all()) assert.equal(await link.getAttribute('href'), 'tel:+19139441983')
     for (const link of await page.locator('a[href^="https://www.google.com/maps/dir/"]').all()) {
       assert.match(new URL(await link.getAttribute('href')).searchParams.get('destination'), /14873 Metcalf/)
     }
 
-    const stages = page.getByRole('group', { name: 'Explore the fitting stages' })
-    for (const [name, heading] of [['The small details', 'A little care, everywhere.'], ['The final try-on', 'Ready for your moment.'], ['The first fitting', 'It begins with you.']]) {
-      const control = stages.getByRole('button', { name, exact: true })
-      await control.focus()
-      await page.keyboard.press('Enter')
-      assert.equal(await control.getAttribute('aria-pressed'), 'true')
-      assert.equal(await stages.locator('[aria-pressed="true"]').count(), 1)
-      assert.equal(await page.locator('.bt-dress-image[aria-hidden="false"]').count(), 1)
-      assert.equal(await page.locator('.bt-dress-image.is-active').evaluate(image => getComputedStyle(image).opacity), '1')
-      assert.equal(await page.locator('#bt-dress-detail').getByRole('heading', { name: heading, exact: true }).isVisible(), true)
-    }
-    assert.equal(await page.locator('.bt-dress-image.is-active').evaluate(image => getComputedStyle(image).transitionDuration), '0s', 'Reduced motion removes dress crossfades')
+    const assembly = page.locator('[data-assembly-progress]')
+    await page.waitForFunction(() => document.querySelector('[data-assembly-progress]')?.dataset.assemblyReady === 'true')
+    assert.equal(await assembly.getAttribute('data-reduced-motion'), 'true')
+    assert.equal(await assembly.getAttribute('data-assembly-mode'), 'static')
+    assert.equal(Number(await assembly.getAttribute('data-assembly-frame')), -1)
+    assert.ok(Number(await assembly.getAttribute('data-assembly-frame-count')) > 1, 'The final cinematic manifest is loaded')
+    assert.equal(Number(await assembly.getAttribute('data-assembly-progress')), 100)
+    assert.equal(await page.locator('.bt-assembly-finished').isVisible(), true)
+    assert.equal(await assembly.evaluate(section => Boolean(section.closest('.pin-spacer'))), false, 'Reduced motion removes assembly pinning')
 
     const dresses = page.getByRole('button', { name: 'Dresses for special occasions', exact: true })
     const everyday = page.getByRole('button', { name: 'Everyday dresses & skirts', exact: true })
@@ -166,18 +166,18 @@ try {
         await page.screenshot({ path: new URL('mobile-contact-focus.png', output).pathname })
       }
     }
-    results.push({ width, noOverflow: true, dressImagesLoaded: true, dressStagesKeyboard: true, reducedMotion: true, accordionKeyboard: true, reviewNavigation: true, fittingValidation: true, fittingReviewEditClear: true, fittingNoNetworkOrStorage: true, mobileMenu: width <= 850 ? true : 'not applicable', accessibility })
+    results.push({ width, noOverflow: true, assembledGarmentLoaded: true, reducedMotionStaticGarment: true, accordionKeyboard: true, reviewNavigation: true, fittingValidation: true, fittingReviewEditClear: true, fittingNoNetworkOrStorage: true, mobileMenu: width <= 850 ? true : 'not applicable', accessibility })
     await page.close()
   }
   assert.deepEqual(errors, [], 'No browser runtime errors')
   const context = await browser.newContext()
-  for (const path of ['/demo/sues-tailor/', '/demo/best-tailor/', '/demos/best-tailor/index.html', '/demos/best-tailor/media/first-fitting.webp', '/demos/best-tailor/media/small-details.webp', '/demos/best-tailor/media/final-fitting.webp', '/demos/best-tailor/fonts/libre-caslon-display.ttf']) {
+  for (const path of ['/demo/sues-tailor/', '/demo/best-tailor/', '/demos/best-tailor/index.html', '/demos/best-tailor/media/cinematic/manifest.json', '/demos/best-tailor/media/cinematic/poster.webp', '/demos/best-tailor/fonts/libre-caslon-display.ttf']) {
     const response = await context.request.get(`${origin}${path}`)
     assert.equal(response.status(), 200, path)
   }
   await context.close()
   await writeFile(new URL('browser-results.json', output), `${JSON.stringify({ results, runtimeErrors: errors, checkedAt: '2026-11-17', environment: 'local Vite development preview' }, null, 2)}\n`)
-  console.log(`Sue’s Tailor Shop bridal revision: ${results.length} viewport checks passed; dress stages, reduced motion, accordion, reviews, appointment preview validation/edit/clear, no form transmission, mobile navigation and public routes passed.`)
+  console.log(`Sue’s Tailor Shop bridal revision: ${results.length} viewport checks passed; reduced-motion assembled garment, accordion, reviews, appointment preview validation/edit/clear, no form transmission, mobile navigation and public routes passed.`)
 } finally {
   await browser.close()
 }

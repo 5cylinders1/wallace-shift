@@ -1,0 +1,46 @@
+{
+  "created": "2026-11-17",
+  "originalCredits": 6.5,
+  "image": {
+    "id": "bed32843-333b-436c-9029-f676b29fae1b",
+    "credits": 2.75,
+    "status": "completed",
+    "params": {
+      "model": "gpt_image_2_6",
+      "quality": "high",
+      "resolution": "2k",
+      "aspect_ratio": "16:9",
+      "count": 1,
+      "prompt": "Create ONE cinematic luxury bridal atelier film frame, widescreen 16:9. A breathtaking ivory silk wedding gown floats upright in midair with no body, no mannequin, no hanger, no visible support. Full gown from delicate straps to the softly curved hem entirely visible, centered precisely at x=50%, occupying 72% of image height and about 28% of image width. Graceful sculpted sweetheart bodice with softly draped silk, subtle real seams and fine pearl-like embroidery confined to the neckline, narrow elegant straps; an expansive A-line skirt of rich flowing ivory satin with dimensional folds and a modest train. Physically convincing hollow garment volume, exquisite fabric texture, no human or skin. Warm dark plum and charcoal atelier atmosphere (#20191a), a soft amber overhead spotlight, delicate rim light along the silk edges, gentle haze and a subtle warm pool of light on the floor beneath the hovering hem. The floor and backdrop are continuous and quiet. Symmetrical straight-on three-quarter garment volume, cinematic fashion editorial, natural shadows and luminous highlights, realistic rendered cloth depth, luxurious yet personal and warm. Camera is locked, slightly below bodice level with a 65mm lens, no wide angle distortion. Leave generous completely dark negative space on BOTH sides for website typography. Keep the entire dress inside the central 30 percent so it can be cropped to a vertical phone screen. No lettering, no logo, no watermark, no flowers, no people, no sewing machine, no collage, no triptych, no diagram, no flat paper cutout look."
+    }
+  },
+  "video": {
+    "id": "ae0bf8fc-6c18-4b53-b89f-22dd245819ff",
+    "credits": 20,
+    "status": "completed",
+    "params": {
+      "model": "minimax_h3",
+      "duration": 10,
+      "resolution": "2K",
+      "aspect_ratio": "16:9",
+      "count": 1,
+      "medias": [
+        {
+          "role": "start_image",
+          "value": "bed32843-333b-436c-9029-f676b29fae1b"
+        }
+      ],
+      "prompt": "One continuous cinematic shot of the exact floating ivory silk wedding gown in the reference. Locked camera, identical framing, unchanging warm dark-plum atelier and amber spotlight. This is a high-end reverse-construction film with real three-dimensional fabric motion. Hold the complete gown briefly. Then the gown slowly and gracefully UNSEWS ITSELF: fine seam threads release in luminous arcs; the straps curl and lift away, the ruched bodice gently unfurls into curved silk panels, and the skirt's individual shaped gores peel apart along their seams, curling and rippling in depth as soft supple cloth. Each ivory panel retains real weight, thickness, weave, highlights, shadows and the original garment identity. The silk rotates slightly in space and bends into elegant folds, exposing the hollow three-dimensional interior; it must never behave like rigid flat cardboard. A fine warm-gold wireframe outline of the same dress remains in the center as the physical panels open around it. The fabric stays closely and symmetrically arranged around the central gown silhouette, within the central 35% of the frame, as a beautiful sculptural couture study, never flying offscreen. At the end the entire gown is recognizably decomposed into softly draped curved fabric panels and fine threads poised around that delicate glowing dress-form outline, with a quiet gap between each piece. Keep all material visible from straps to hem throughout. No person or solid mannequin, no hands, no sudden cuts, no camera movement, no zoom, no changing dress style, no dissolve or opacity crossfade between states, no smoke transformation, no melting material, no duplicated dress, no flat rectangular slices, no text or logos. The action must read clearly when reversed: the cloth sweeps inward and seams close to construct the finished gown. Slow deliberate continuous choreography, physically convincing couture cloth simulation."
+    },
+    "resultUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3KYxgZMxXolmOi8GpnzPrbMQGOO/hf_20261117_233259_ae0bf8fc-6c18-4b53-b89f-22dd245819ff.mp4",
+    "delivery": "24fps reversed WebP sequence, native scroll-controlled canvas"
+  },
+  "totalAllocatedCredits": 29.25,
+  "dollarEquivalent": 1.755,
+  "cap": 5,
+  "rateBasis": "Previously observed $6 per 100 credits; equivalent value, not a new card charge.",
+  "balanceBeforeNewGeneration": 1193.5,
+  "balanceAfterImageAndVideoSubmission": 1170.75,
+  "verifiedNewCreditsDebited": 22.75,
+  "totalCreditsDebitedIncludingOriginal": 29.25
+}

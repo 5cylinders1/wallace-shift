@@ -18,7 +18,7 @@ export default function Upgrades() {
     <section className="r-section r-light monthly-services" id="upgrades" aria-labelledby="monthly-services-heading">
       <div className="r-wrap">
         <header className="monthly-services__intro">
-          <h2 id="monthly-services-heading">Monthly services.<br /><em>Choose the help you need.</em></h2>
+          <h2 id="monthly-services-heading">Setup & ongoing support.<br /><em>Choose the help you need.</em></h2>
           <p>Optional additions for the conversations and customer details that fill your day. Your original package stays complete.</p>
         </header>
 
@@ -84,26 +84,30 @@ export default function Upgrades() {
 
           <article className="monthly-services__tile monthly-services__tile--workspace" aria-labelledby="monthly-workspace-heading">
             <h3 id="monthly-workspace-heading">Business workspace + AI</h3>
-            <p className="monthly-services__need">Email, marketing and website performance, together in one place.</p>
+            <p className="monthly-services__need">Your key reports and AI answers, together in one private dashboard.</p>
             <div className="monthly-services__price">
-              <span>Monthly price and timing to be confirmed</span>
+              <strong>$2,500</strong>
+              <span>one time starter build</span>
+              <span className="monthly-services__care-price">Optional care: $500 / month after launch</span>
             </div>
             <div className="monthly-services__value">
-              <h4>Planned monthly access</h4>
-              <p>Email, ad and social reporting, Google Analytics and search performance. Planned AI assistance to ask questions across your connected data.</p>
+              <h4>Included in your build</h4>
+              <p>One business dashboard, up to two standard account connections, and AI assistance to understand your reports. Built around the numbers that matter to you.</p>
             </div>
-            <p className="monthly-services__boundary">We agree which accounts, data access and ongoing support your plan includes.</p>
+            <p className="monthly-services__boundary">Monthly care is optional. Hosting, software subscriptions and AI usage are separate.</p>
             <a className="monthly-services__link" href="/contact">Discuss your workspace<Arrow /></a>
             <details className="monthly-services__details">
-              <summary>What we’re building<Plus /></summary>
+              <summary>Scope, costs & support<Plus /></summary>
               <div className="monthly-services__detail-body">
-                <p>We’re bringing email tools, paid advertising, social reporting, Google Analytics and Google Search Console into a shared workspace. The next step is an AI assistant that can answer questions using the information you connect.</p>
+                <p><strong>Your $2,500 build.</strong> We set up one private dashboard for one business and owner account, connect up to two supported reporting accounts, configure your agreed metrics and add AI questions and summaries grounded in those reports. Setup includes testing, one review round and a walkthrough at handoff.</p>
+                <p>Standard connections use existing integrations, such as Google Analytics and Google Search Console. We confirm your account access, included metrics and running costs before work starts. Additional connections, new integrations, inbox tools, CRM features and data migration are quoted separately.</p>
+                <p><strong>Optional $500 monthly care.</strong> After launch, we check the existing connections, review performance with you and make small report adjustments, within two hours of support each month. The allowance does not roll over. Larger changes are quoted separately. This service is in addition to the one time build; you can choose the build and handoff without monthly care.</p>
                 <figure className="monthly-services__example">
-                  <figcaption>Planned AI experience · illustrative</figcaption>
-                  <blockquote>“How are our ads and website performing this month?”</blockquote>
-                  <p>The intended assistant compares the available reports, highlights changes and points you to the data behind its answer.</p>
+                  <figcaption>Example question · illustrative</figcaption>
+                  <blockquote>“Where is our website traffic coming from?”</blockquote>
+                  <p>Ask your AI assistant to summarize the connected reports, explain changes and point you to the data behind its answer.</p>
                 </figure>
-                <p>Tell us which accounts you want to bring together. Supported connections, customer access and AI assistance will be confirmed before your service starts. Answers depend on the data available and the permissions you allow.</p>
+                <p>Hosting, software subscriptions, paid connectors and AI usage are billed separately from the build and care fees. We agree these costs before you commit. AI answers use the data and permissions available in your connected accounts.</p>
               </div>
             </details>
           </article>
