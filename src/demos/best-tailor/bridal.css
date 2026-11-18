@@ -33,8 +33,14 @@
 .bt-assembly-progress-fill{display:block;width:100%;height:100%;background:#d9af94;transform:scaleX(0);transform-origin:left}
 .bt-assembly-caption{margin-left:auto}
 .bt-assembly[data-assembly-mode=static] .bt-assembly-scroll,.bt-assembly[data-assembly-mode=static] .bt-assembly-progress,.bt-assembly[data-assembly-mode=static] .bt-assembly-detail,.bt-assembly[data-assembly-mode=static] .bt-assembly-finale{display:none}
-.bt-welcome-line{background:#eee3dd;padding-block:28px}
-.bt-welcome-line p{font-size:28px}
+.bt-welcome-line{background:#eee3dd;padding:64px 4.5%;gap:48px;align-items:flex-end}
+.bt-welcome-line p{font-size:clamp(52px,6.8vw,112px);line-height:.98;letter-spacing:-.035em;max-width:1120px;text-wrap:balance}
+.bt-welcome-line p em{display:block;color:#8b5c4b}
+.bt-welcome-line>a{flex-shrink:0;padding-bottom:8px}
+.bt-services-intro h2{font-size:clamp(64px,6.7vw,96px);line-height:.96;letter-spacing:-.035em}
+.bt-services-intro h2 em{font-size:.78em}
+.bt-reviews h2{font-size:clamp(72px,8.2vw,124px);line-height:.98;letter-spacing:-.035em}
+.bt-reviews h2 em{display:inline-block;font-size:.44em;line-height:1.1;letter-spacing:-.02em}
 .bt-process{background:#eee3dd}
 .bt-footer{background:#eee3dd}
 
@@ -62,9 +68,10 @@
   .bt-mobile-actions a+a{border-left:1px solid #79555a}
   .bt-mobile-actions .bt-icon{width:16px;height:16px}
   .bt-footer{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
-  .bt-welcome-line{gap:25px}
-  .bt-welcome-line p{font-size:24px;max-width:400px}
+  .bt-welcome-line{gap:25px;padding-block:48px}
+  .bt-welcome-line p{font-size:clamp(46px,6.8vw,58px);max-width:540px}
   .bt-welcome-line a{flex-shrink:0}
+  .bt-services-intro h2{font-size:clamp(48px,6.5vw,60px)}
 }
 @media(max-width:600px){
   :root{scroll-padding-top:100px}
@@ -83,9 +90,12 @@
   .bt-assembly-progress{max-width:48px}
   .bt-assembly-caption{max-width:66px;text-align:right;line-height:1.4}
   .bt-mobile-actions a:first-child{flex:1.35}
-  .bt-welcome-line{padding-block:24px}
-  .bt-welcome-line p{font-size:25px;max-width:320px}
-  .bt-welcome-line a{font-size:10px}
+  .bt-welcome-line{padding:42px 22px}
+  .bt-welcome-line p{font-size:clamp(40px,9.5vw,58px);max-width:none}
+  .bt-welcome-line a{font-size:10px;margin-top:24px;padding-bottom:0}
+  .bt-services-intro h2{font-size:clamp(54px,12vw,72px)}
+  .bt-reviews h2{font-size:clamp(64px,15vw,86px)}
+  .bt-reviews h2 em{font-size:.48em}
 }
 @media(max-height:650px) and (min-width:601px){
   .bt-assembly-copy{top:14%}
@@ -103,6 +113,23 @@
   .bt-assembly-detail,.bt-assembly-finale,.bt-assembly-scroll,.bt-assembly-progress{display:none!important}
 }
 
-@media(min-width:851px){.bt-assembly-intro{top:12%}.bt-assembly-intro .bt-assembly-title{font-size:clamp(44px,4.5vw,70px)}}
-
-@media(min-width:851px){.bt-assembly-detail{top:12%}.bt-assembly-intro .bt-assembly-body{display:none}}
+.bt-assembly-intro{top:12%;width:34%;max-width:540px}
+.bt-assembly-intro .bt-assembly-title{font-size:clamp(72px,7.4vw,132px);line-height:.88;letter-spacing:-.045em}
+.bt-assembly-intro .bt-assembly-lead,.bt-assembly-lead>span{display:block}
+.bt-assembly-intro .bt-assembly-title em{font-size:clamp(30px,3.1vw,52px);line-height:1.08;letter-spacing:-.025em;margin-top:24px;max-width:12ch;text-wrap:balance}
+.bt-assembly-intro .bt-assembly-body{display:none}
+@media(min-width:851px){.bt-assembly-detail{top:12%}}
+@media(min-width:601px) and (max-width:850px){
+  .bt-assembly-intro{width:36%}
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(48px,8.2vw,70px)}
+  .bt-assembly-intro .bt-assembly-title em{font-size:26px;margin-top:18px}
+}
+@media(max-width:600px){
+  .bt-assembly-intro{top:18px;width:calc(100% - 44px);max-width:none}
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(54px,13.5vw,76px);line-height:.9}
+  .bt-assembly-intro .bt-assembly-title em{font-size:clamp(22px,5.7vw,30px);line-height:1.08;max-width:none;margin-top:12px}
+}
+@media(max-height:650px) and (min-width:601px){
+  .bt-assembly-intro .bt-assembly-title{font-size:clamp(54px,6.5vw,88px)}
+  .bt-assembly-intro .bt-assembly-title em{font-size:30px;margin-top:14px}
+}

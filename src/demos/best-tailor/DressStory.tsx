@@ -363,7 +363,7 @@ export default function DressStory() {
   }, { scope: section, dependencies: [sequence, reduced, status, poster, frameCount], revertOnUpdate: true })
 
   return <section ref={section} className="bt-assembly" aria-labelledby="hero-title" aria-describedby="assembly-description" data-assembly-progress="100" data-assembly-frame="-1" data-assembly-frame-count={frameCount} data-assembly-start="0" data-assembly-end="0" data-assembly-ready="false" data-assembly-mode="static" data-reduced-motion={reduced} data-poster-kind="cinematic">
-    <h1 id="hero-title" className="bt-assembly-sr">Your dress. A fit that feels like you.</h1>
+    <h1 id="hero-title" className="bt-assembly-sr">Look incredible. Feel completely you.</h1>
     <p id="assembly-description" className="bt-assembly-sr">Personal dress alterations and thoughtful repairs, by appointment in Overland Park. An illustrative film follows the flowing fabric and details of a gown. Ask Sue about the fit, timing, and alterations for your own dress.</p>
     <div className="bt-assembly-stage">
       <div className="bt-assembly-media" role="img" aria-label="Illustrative ivory gown in warm studio light">
@@ -371,7 +371,7 @@ export default function DressStory() {
         <canvas className="bt-assembly-canvas" aria-hidden="true" />
       </div>
       <div className="bt-assembly-copy bt-assembly-intro" aria-hidden="true">
-        <p className="bt-assembly-title"><span>Your dress.</span>{' '}<span>A fit that</span>{' '}<em>feels like you.</em></p>
+        <p className="bt-assembly-title"><span className="bt-assembly-lead"><span>Look</span>{' '}<span>incredible.</span></span>{' '}<em>Feel completely you.</em></p>
         <p className="bt-assembly-body">For the aisle, the evening, and the everyday.</p>
       </div>
       <div className="bt-assembly-copy bt-assembly-detail" aria-hidden="true"><p className="bt-assembly-title">Every detail.<br /><em>A little more you.</em></p></div>
