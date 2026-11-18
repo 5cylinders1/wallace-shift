@@ -12,8 +12,10 @@ import PackageArtwork from './PackageArtwork'
 import Questions from './Questions'
 import CallRequestDialog, { type InquiryMode } from './CallRequestDialog'
 import { business } from '../../content/siteConfig'
+import { usePackageSwap } from './usePackageSwap'
 import './divider-free.css'
 import './service-home.css'
+import './package-stack.css'
 
 const email = 'mailto:matthew@wallaceshift.com?subject=Question%20about%20my%20website'
 const offerPaths = { website: '/offers/contractor-websites', lead: '/offers/lead-page-follow-up' }
@@ -147,7 +149,8 @@ function packageFromHash(): PackageId | undefined {
 }
 function PackageCard({ kind, selected }: { kind: PackageId; selected: boolean }) {
   const item = packageContent[kind]
-  return <article className={`p-package ${selected ? 'is-selected' : ''}`} id={`${kind}-package`} aria-labelledby={`${kind}-package-heading`}>
+  // The back card is covered except for its top edge, so keep focus and assistive tech on the front one.
+  return <article className={`p-package ${selected ? 'is-selected' : ''}`} id={`${kind}-package`} aria-labelledby={`${kind}-package-heading`} data-stack-card={kind} inert={!selected}>
     <header className="p-package-heading">
       <div className="p-package-overview">
         <div className="p-package-purpose"><span className="p-package-icon"><PackageIcon kind={kind} /></span><div><h3 id={`${kind}-package-heading`}>{item.name}<br /><em>{item.accent}</em></h3><p>{item.fit}</p></div></div>
@@ -169,8 +172,11 @@ function Packages() {
   const slotRef = useRef<HTMLDivElement>(null)
   const selectorRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const tabRef = useRef<HTMLButtonElement>(null)
   const fullPanelHeight = useRef(0)
   const scrollFrame = useRef(0)
+  const animateSwap = useRef(false)
+  usePackageSwap(listRef, selected, animateSwap)
 
   // Keep one set of controls mounted so focus survives docking and package reordering.
   useLayoutEffect(() => {
@@ -207,35 +213,39 @@ function Packages() {
     return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule) }
   }, [])
 
-  const choose = useCallback((kind: PackageId, updateHistory = true) => {
+  const choose = useCallback((kind: PackageId, { updateHistory = true, animate = true } = {}) => {
+    animateSwap.current = animate
     flushSync(() => { setSelected(kind); setDocked(true) })
     const hash = `#${kind}-package`
     if (updateHistory && window.location.hash !== hash) window.history.pushState(window.history.state, '', hash)
-    const firstPackage = listRef.current?.firstElementChild
-    if (!firstPackage || !selectorRef.current) return
-    const top = window.scrollY + firstPackage.getBoundingClientRect().top - selectorRef.current.getBoundingClientRect().bottom - 24
+    // The tab marks the top of the stack and is never transformed, so it measures true mid swap.
+    const stackTop = tabRef.current
+    if (!stackTop || !selectorRef.current) return
+    const top = window.scrollY + stackTop.getBoundingClientRect().top - selectorRef.current.getBoundingClientRect().bottom - 24
     window.scrollTo({ top, behavior: 'instant' })
   }, [])
 
   useEffect(() => {
     let cancelled = false
-    const followHash = () => {
+    const followHash = (animate: boolean) => {
       const kind = packageFromHash()
-      if (kind) choose(kind, false)
+      if (kind) choose(kind, { updateHistory: false, animate })
     }
+    const onHashChange = () => followHash(true)
     // Fragment navigation can precede React mounting and web font layout.
     void document.fonts.ready.then(() => {
       if (cancelled) return
       scrollFrame.current = requestAnimationFrame(() => {
-        if (packageFromHash()) followHash()
+        if (packageFromHash()) followHash(false)
         else if (window.location.hash === '#packages') sectionRef.current?.scrollIntoView()
       })
     })
-    window.addEventListener('hashchange', followHash)
-    return () => { cancelled = true; cancelAnimationFrame(scrollFrame.current); window.removeEventListener('hashchange', followHash) }
+    window.addEventListener('hashchange', onHashChange)
+    return () => { cancelled = true; cancelAnimationFrame(scrollFrame.current); window.removeEventListener('hashchange', onHashChange) }
   }, [choose])
 
-  const order: PackageId[] = selected === 'website' ? ['website', 'lead'] : ['lead', 'website']
+  const back: PackageId = selected === 'website' ? 'lead' : 'website'
+  const backItem = packageContent[back]
   return <section className="r-section r-light p-packages" id="packages" ref={sectionRef}>
     <div className="p-package-intro">
       <div className="p-package-intro-copy">
@@ -252,8 +262,14 @@ function Packages() {
         <div className="p-starting-help"><p>Need both, or not sure?</p><a href="#questions">Ask Matthew a question<Arrow diagonal /></a></div>
       </div></div>
     </div>
-    <div className="r-wrap p-package-list" ref={listRef}>{order.map(kind => <PackageCard key={kind} kind={kind} selected={selected === kind} />)}</div>
-    <span className="p-visually-hidden" role="status">{selected === 'website' ? 'Business website and care' : 'Lead page and automatic follow up'} shown first. Both packages remain available.</span>
+    <div className="r-wrap p-package-list p-package-stack" ref={listRef}>
+      <button ref={tabRef} type="button" className="p-stack-tab" data-stack-tab aria-controls={`${back}-package`} onClick={() => choose(back)}>
+        <span className="p-stack-tab-name"><span className="p-visually-hidden">Bring forward: </span>{backItem.name} <em>{backItem.accent}</em></span>
+        <span className="p-stack-tab-price">{backItem.price}<small>{backItem.cadence}</small><Arrow /></span>
+      </button>
+      {(['website', 'lead'] as const).map(kind => <PackageCard key={kind} kind={kind} selected={selected === kind} />)}
+    </div>
+    <span className="p-visually-hidden" role="status">{selected === 'website' ? 'Business website and care' : 'Lead page and automatic follow up'} shown in front. Both packages remain available.</span>
   </section>
 }
 
