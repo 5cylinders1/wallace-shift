@@ -172,6 +172,7 @@ Sitemap: ${SITE_ORIGIN}/sitemap.xml
 const DEV_API_ROUTES: Record<string, string> = {
   '/api/ai-booking': '/api/_lib/ai-booking-handler.ts',
   '/api/ai-checkout': '/api/_lib/ai-checkout-handler.ts',
+  '/api/package-checkout': '/api/_lib/package-checkout-handler.ts',
   '/api/ai-opportunity': '/api/_lib/ai-opportunity-handler.ts',
   '/api/roof-suggest': '/api/roof-suggest.ts',
   '/api/roof-lookup': '/api/roof-lookup.ts',

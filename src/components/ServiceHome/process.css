@@ -65,7 +65,6 @@
 .process-review strong { font-weight: 600; font-size: 15px; }
 .process-review p { margin-top: 8px; color: #405b6e; font-size: 14px; }
 .process-example-link { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; color: #175c99; text-decoration: underline; font-size: 13px; margin-top: 20px; }
-.process-portal-note { grid-column: 1; font-size: 12px; color: var(--process-muted); }
 .process-mobile-description { display: none; }
 .process-section :focus-visible { outline: 2px solid #a6d8ff; outline-offset: 5px; }
 .process-section .process-sheet:focus-visible { outline-color: #a6d8ff; }
@@ -94,5 +93,4 @@
   .process-sheet-footer { padding: 24px; }
   .process-sheet dd { font-size: 14px; }
   .process-mobile-description { display: block; font-size: 13px; color: #526775; margin-bottom: 24px; }
-  .process-portal-note { grid-row: auto; }
 }

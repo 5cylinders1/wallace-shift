@@ -64,7 +64,7 @@ export const serviceDetails: ServiceDetail[] = [
     notFor:
       'We assess what your existing tools can do before recommending a custom build. Small builds include focused scoping; larger systems or unclear requirements start with a paid definition sprint. Migration and more complex requirements are scoped explicitly.',
     pricingAnchor: '/pricing#web-apps',
-    pricingLabel: 'System pricing — definition, build, and partnership',
+    pricingLabel: 'System pricing: definition, build, and partnership',
     example: { href: '/demos/roofers-offer/#dashboard', label: 'See a sample CRM workflow' },
   },
   {

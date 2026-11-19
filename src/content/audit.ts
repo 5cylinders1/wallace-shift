@@ -23,7 +23,7 @@ export const auditCopy = {
   summary:
     'A website can be the entry point to your business system. This check looks at that public page; it does not assess your CRM or internal workflows.',
   supporting:
-    'Enter your current website and we will load it on a simulated phone, the way a customer would. Keep reading while it runs — the result is waiting at the end of this page. No contact details needed.',
+    'Enter your current website and we will load it on a simulated phone, the way a customer would. Keep reading while it runs. The result is waiting at the end of this page. No contact details needed.',
   inputLabel: 'Your website address',
   placeholder: 'yourbusiness.com',
   submit: 'Check this website',
@@ -36,7 +36,7 @@ export const auditCopy = {
     'How your page looks part-way through loading, frame by frame',
     'How long a customer waits before anything appears',
     'What a search engine can read about the page',
-    'Accessibility basics — contrast, labels, alternatives',
+    'Accessibility basics: contrast, labels, alternatives',
   ],
 
   /* The tool only works for an existing public site. These keep the other
@@ -53,7 +53,7 @@ export const auditCopy = {
    *  dead time, so this points down the page rather than apologising. */
   runningTitle: 'Checking your site now',
   runningBody:
-    'This runs on Google’s infrastructure and takes up to a minute. Read on — your result is being assembled at the end of the page.',
+    'This runs on Google’s infrastructure and takes up to a minute. Read on. Your result is being assembled at the end of the page.',
   runningCta: 'Read while it runs',
 
   /* Failure has to be stated where the visitor is, not only where the
@@ -62,7 +62,7 @@ export const auditCopy = {
      checks" list would read as though nothing had happened. */
   errorPanelTitle: 'That check did not finish',
   errorPanelBody:
-    'Nothing is wrong with your site because of this — the detail is with your result further down.',
+    'Nothing is wrong with your site because of this. The detail is with your result further down.',
   errorPanelCta: 'See what happened',
 
   /** The sticky marker that follows the visitor while it works. */
@@ -96,19 +96,19 @@ export const auditCopy = {
   nextSecondary: 'See website pricing',
 
   disclaimer:
-    'An automated check, measured once on a simulated mobile connection. It is a starting point for a conversation, not a full review or a verdict — real conditions vary, and plenty of successful businesses run slow sites.',
+    'An automated check, measured once on a simulated mobile connection. It is a starting point for a conversation, not a full review or a verdict. Real conditions vary, and plenty of successful businesses run slow sites.',
 
   retry: 'Try again',
 
   errors: {
     invalid_url:
-      'That does not look like a web address. Try it without the https:// — just yourbusiness.com.',
+      'That does not look like a web address. Try it without the https://, just yourbusiness.com.',
     unreachable:
       'We could not load that page. It may be password-protected, blocking automated visits, or not published yet.',
     timeout:
-      'Your site took longer to analyse than this check allows — which usually means there is a lot going on in the page. That is worth a conversation in itself. Send us the address and we will run it properly.',
+      'Your site took longer to analyse than this check allows, which usually means there is a lot going on in the page. That is worth a conversation in itself. Send us the address and we will run it properly.',
     quota:
-      'Our check allowance for today is used up. Send us the address and we will run it manually — that is the same check, just with a person doing it.',
+      'Our check allowance for today is used up. Send us the address and we will run it manually. It is the same check, just with a person doing it.',
     rate_limited:
       'That is a lot of checks in a short time. Give it a few minutes, or send us the address and we will run it for you.',
     upstream: 'The audit service did not respond. Try again in a moment.',
@@ -172,14 +172,14 @@ export const conclusions: Record<string, ConclusionCopy> = {
     matters:
       'That is time a visitor spends looking at a blank screen with no evidence anything is happening. It is the point at which people go back to the search results and pick somebody else.',
     change:
-      'Getting something meaningful on screen sooner — usually by cutting what has to load before the page can draw at all.',
+      'Getting something meaningful on screen sooner, usually by cutting what has to load before the page can draw at all.',
     stage: '02',
   },
   lcp: {
     headline:
       'The main content on {site} takes {value} to finish loading on a phone.',
     matters:
-      'The largest thing on screen — normally your headline or main image — is what tells a visitor they are in the right place. Until it arrives they are waiting without knowing what for.',
+      'The largest thing on screen, normally your headline or main image, is what tells a visitor they are in the right place. Until it arrives they are waiting without knowing what for.',
     change:
       'Prioritising the content that matters most so it loads first, rather than last behind everything else.',
     stage: '02',
@@ -196,7 +196,7 @@ export const conclusions: Record<string, ConclusionCopy> = {
     headline:
       'Some text on {site} is too close in tone to its background to read comfortably.',
     matters:
-      'It usually looks refined on the designer’s monitor and disappears in daylight, on an older screen, or for anyone with less than perfect vision — which is a large share of most local customer bases.',
+      'It usually looks refined on the designer’s monitor and disappears in daylight, on an older screen, or for anyone with less than perfect vision, which is a large share of most local customer bases.',
     change:
       'Adjusting the affected text so it holds up outdoors and on ordinary screens, without flattening the design.',
     stage: '02',
@@ -212,7 +212,7 @@ export const conclusions: Record<string, ConclusionCopy> = {
   altText: {
     headline: 'Some images on {site} have no text alternative.',
     matters:
-      'Those images are invisible to screen readers and to search engines — they simply are not there for either.',
+      'Those images are invisible to screen readers and to search engines. They simply are not there for either.',
     change:
       'Describing the images that carry meaning, and marking the purely decorative ones as decorative.',
     stage: '02',
@@ -249,7 +249,7 @@ export const conclusions: Record<string, ConclusionCopy> = {
     // The honest sell: name the limit of the tool rather than inventing a
     // problem to justify a conversation.
     change:
-      'An automated check can only see how a page is built. It cannot tell whether the words persuade anyone, whether the offer is clear, or whether the path to enquiring makes sense — which is usually where the real friction is. That part needs a person.',
+      'An automated check can only see how a page is built. It cannot tell whether the words persuade anyone, whether the offer is clear, or whether the path to enquiring makes sense, which is usually where the real friction is. That part needs a person.',
     stage: '01',
   },
 }
@@ -279,7 +279,7 @@ export const metricSpecs = [
   {
     id: 'lcp' as const,
     label: 'The main content appears',
-    note: 'When the largest thing on screen — usually your headline or hero image — finishes loading.',
+    note: 'When the largest thing on screen, usually your headline or hero image, finishes loading.',
   },
   {
     id: 'cls' as const,
@@ -325,7 +325,7 @@ export const findingSpecs: FindingSpec[] = [
     label: 'What search results show',
     good: 'A search description is available for results pages to use.',
     attention:
-      'There is no description for search engines to show under your name, so Google writes its own — usually from whatever text it finds first.',
+      'There is no description for search engines to show under your name, so Google writes its own, usually from whatever text it finds first.',
   },
   {
     id: 'viewport',
@@ -349,7 +349,7 @@ export const findingSpecs: FindingSpec[] = [
     label: 'Text legibility',
     good: 'The text sampled has enough contrast against its background to stay readable.',
     attention:
-      'Some text sits too close in tone to its background to read comfortably — most often light grey on white, which looks refined on a designer’s monitor and disappears in daylight.',
+      'Some text sits too close in tone to its background to read comfortably. Most often it is light grey on white, which looks refined on a designer’s monitor and disappears in daylight.',
   },
   {
     id: 'altText',

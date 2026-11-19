@@ -8,6 +8,8 @@ type Props = {
   selected?: 'phone' | 'meeting'
   context?: 'hero' | 'dialog'
   compact?: boolean
+  /** Called with the option someone picked, for analytics. */
+  onChoose?: (method: 'phone' | 'meeting' | 'direct') => void
 }
 
 function ChoiceIcon({ kind }: { kind: 'callback' | 'meeting' | 'phone' }) {
@@ -25,19 +27,19 @@ function ChoiceArrow({ selected = false }: { selected?: boolean }) {
 }
 
 /** All three ways to talk stay visible; only the two on-page tasks select a mode. */
-export default function ContactChoices({ onRequestCall, onBookMeeting, selected, context = 'hero', compact = false }: Props) {
+export default function ContactChoices({ onRequestCall, onBookMeeting, selected, context = 'hero', compact = false, onChoose }: Props) {
   return <div className={`contact-choices contact-choices--${context}${compact ? ' contact-choices--compact' : ''}`} role="group" aria-label="How would you like to talk?">
-    <button type="button" className="contact-choice contact-choice--callback" aria-pressed={selected === undefined ? undefined : selected === 'phone'} aria-haspopup={context === 'hero' ? 'dialog' : undefined} onClick={onRequestCall}>
+    <button type="button" className="contact-choice contact-choice--callback" aria-pressed={selected === undefined ? undefined : selected === 'phone'} aria-haspopup={context === 'hero' ? 'dialog' : undefined} onClick={() => { onChoose?.('phone'); onRequestCall() }}>
       <ChoiceIcon kind="callback" />
       <span className="contact-choice__copy"><span className="contact-choice__title">Request a call</span><span className="contact-choice__description">Leave your number. Matthew will call.</span></span>
       <ChoiceArrow selected={selected === 'phone'} />
     </button>
-    <button type="button" className="contact-choice contact-choice--meeting" aria-pressed={selected === undefined ? undefined : selected === 'meeting'} aria-haspopup={context === 'hero' ? 'dialog' : undefined} onClick={onBookMeeting}>
+    <button type="button" className="contact-choice contact-choice--meeting" aria-pressed={selected === undefined ? undefined : selected === 'meeting'} aria-haspopup={context === 'hero' ? 'dialog' : undefined} onClick={() => { onChoose?.('meeting'); onBookMeeting() }}>
       <ChoiceIcon kind="meeting" />
       <span className="contact-choice__copy"><span className="contact-choice__title">Book a Google Meet</span><span className="contact-choice__description">Choose a time for a {aiConsultation.durationMinutes} minute video call.</span></span>
       <ChoiceArrow selected={selected === 'meeting'} />
     </button>
-    <a className="contact-choice contact-choice--direct" href={`tel:${business.phone.number}`} aria-label={`Call directly: ${business.phone.display}`}>
+    <a className="contact-choice contact-choice--direct" href={`tel:${business.phone.number}`} onClick={() => onChoose?.('direct')} aria-label={`Call directly: ${business.phone.display}`}>
       <ChoiceIcon kind="phone" />
       <span className="contact-choice__copy"><span className="contact-choice__title">Call directly</span><span className="contact-choice__description contact-choice__number">{business.phone.display}</span></span>
       <ChoiceArrow />

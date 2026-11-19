@@ -122,7 +122,7 @@ Now imagine the same company introduces a complex service-selection process. Cus
 
 The team could test a custom comparison component within its existing platform. If that solves the problem, it may not need a completely new backend or site. If the requirement later becomes a private pricing and account-management system, that additional work needs its own scope.
 
-The useful decision is the smallest coherent approach that meets the requirements and remains maintainable—not a permanent allegiance to either templates or custom development.
+The useful decision is the smallest coherent approach that meets the requirements and remains maintainable. It is not a permanent allegiance to either templates or custom development.
 
 ## Frequently asked questions
 

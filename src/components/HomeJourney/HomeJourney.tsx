@@ -274,7 +274,7 @@ export function HomeJourney() {
               <div className="journey-process__copy">
                 <p className="eyebrow journey-kicker">02 / How the shift happens</p>
                 <h2 id="journey-process-heading">{renderLines(approach.headingLines)}<span className="journey-process__baseline" aria-hidden="true" /></h2>
-                <p className="journey-process__annotation" aria-hidden="true">W / 01 — The starting point</p>
+                <p className="journey-process__annotation" aria-hidden="true">W / 01 · The starting point</p>
               </div>
             </div>
           </header>

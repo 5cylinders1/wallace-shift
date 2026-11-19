@@ -5,7 +5,7 @@ slug: "connect-website-form-to-crm"
 title: "How to Connect a Website Form to a CRM Without Losing the Handoff"
 description: "Map website form fields to your CRM, distinguish repeat requests from duplicates, and test ownership, failures, and recovery before relying on the handoff."
 question: "How do I connect a website form to a CRM and verify the handoff?"
-answer: "Connect a website form to a CRM by choosing a supported connection, mapping the submitted information to the right records, and defining who receives the next task. Then test whether each received inquiry becomes useful, assigned work—including requests from existing customers, repeated submissions, and interrupted connections."
+answer: "Connect a website form to a CRM by choosing a supported connection, mapping the submitted information to the right records, and defining who receives the next task. Then test whether each received inquiry becomes useful, assigned work. That includes requests from existing customers, repeated submissions, and interrupted connections."
 category: "Workflow automation"
 author:
   type: "Organization"

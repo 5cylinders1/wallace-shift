@@ -31,12 +31,6 @@
 .systems-link:hover svg { transform: translate(2px, -2px); }
 .systems-link:focus-visible { outline-color: var(--color-pearl); }
 
-.systems-copy > .systems-scope {
-  max-width: 49ch;
-  margin-top: 18px;
-  font-size: 12px;
-}
-
 .systems-figure { width: 100%; max-width: 620px; margin: 0; justify-self: end; }
 .systems-map-layout {
   position: relative;
@@ -99,7 +93,6 @@
 .systems-output > svg { color: var(--color-accent); margin-bottom: 14px; }
 .systems-output strong { font-size: 16px; font-weight: 500; line-height: 1.4; }
 .systems-output > span { margin-top: 6px; color: var(--color-muted); font-size: 12px; line-height: 1.6; }
-.systems-figure figcaption { margin-top: 28px; text-align: center; font-size: 12px; line-height: 1.6; color: var(--color-muted); }
 
 @media (prefers-reduced-motion: no-preference) {
   .is-connected .systems-signal { animation: systems-connect 1.8s var(--ease-out-soft) both; }
@@ -136,7 +129,6 @@
   .systems-layout { gap: 36px; }
   .p-page .systems-copy h2 { font-size: clamp(37px, 9.8vw, 52px); }
   .systems-copy > p { margin-top: 22px; font-size: 14px; }
-  .systems-copy > .systems-scope { margin-top: 16px; font-size: 12px; }
   .systems-link { margin-top: 24px; }
   .systems-figure { max-width: 400px; }
   .systems-map-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: 118px 112px 160px; gap: 32px 16px; height: 454px; }
@@ -156,5 +148,4 @@
   .systems-assistance { grid-column: 1; }
   .systems-handoffs { grid-column: 2; }
   .systems-output strong { font-size: 15px; }
-  .systems-figure figcaption { margin-top: 22px; }
 }

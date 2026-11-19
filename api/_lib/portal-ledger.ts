@@ -48,7 +48,7 @@ export function accessible(entries: Engagement[], id: unknown, who: Identity): E
 export function changeLedger(entries: Engagement[], body: Record<string, unknown>, who: Identity): void {
   const e = accessible(entries, body.id, who)
   const action = body.action
-  if (['archive', 'restore', 'issue', 'complete', 'record-payment', 'void'].includes(String(action)) && !who.admin) throw new DemoError('forbidden', 403)
+  if (['archive', 'restore', 'issue', 'complete', 'record-payment', 'void', 'launch-invoice'].includes(String(action)) && !who.admin) throw new DemoError('forbidden', 403)
   if (e.aiSubscription && !e.archivedAt && (action === 'archive' || action === 'complete')) {
     const expiresAt = subscriptionView(e.aiSubscription).accessExpiresAt
     if (expiresAt && Date.parse(expiresAt) > Date.now()) throw new DemoError('subscription_service_active', 409)
@@ -105,6 +105,15 @@ export function changeLedger(entries: Engagement[], body: Record<string, unknown
     if (e.autopay) e.autopay.enabled = false
     if (e.aiSubscription) e.aiSubscription.renewalAuthorized = false
     audit(e, who.email, 'Engagement completed')
+    return
+  }
+  if (action === 'launch-invoice' && who.admin) {
+    // Self-service lead page: the second half of the $1,500 is invoiced when the page and workflow go live.
+    if (e.selfService?.packageId !== 'lead' || e.state !== 'issued' || !e.signature) throw new DemoError('launch_invoice_unavailable', 409)
+    if (e.invoices.some(i => i.id === `${e.id}-launch`)) throw new DemoError('launch_invoice_exists', 409)
+    if (!e.invoices.some(i => i.status === 'paid')) throw new DemoError('deposit_unpaid', 409)
+    e.invoices.push({ id: `${e.id}-launch`, due: new Date().toISOString().slice(0, 10), amount: e.amount, fee: 0, status: 'open' })
+    audit(e, who.email, 'Launch invoice issued for the second payment')
     return
   }
   const invoice = e.invoices.find(i => i.id === body.invoiceId)

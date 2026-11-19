@@ -20,7 +20,8 @@
 .monthly-services__link { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; color: var(--tile-link, var(--monthly-blue)); font-size: 14px; font-weight: 600; text-decoration: none; }
 .monthly-services__link:hover { text-decoration: underline; text-underline-offset: 5px; }
 .monthly-services__link:active { opacity: .8; }
-.monthly-services :is(a, summary):focus-visible { outline: 2px solid var(--tile-link, var(--monthly-blue)); outline-offset: 3px; }
+button.monthly-services__link { width: 100%; padding: 0; border: 0; background: none; font-family: inherit; text-align: left; cursor: pointer; }
+.monthly-services :is(a, button, summary):focus-visible { outline: 2px solid var(--tile-link, var(--monthly-blue)); outline-offset: 3px; }
 .monthly-services .monthly-services__details { border-top: 1px solid var(--tile-line); border-bottom: 0; margin-top: 8px; }
 .monthly-services .monthly-services__details summary { color: var(--tile-muted); min-height: 52px; padding-block: 14px; font-size: 13px; font-weight: 500; }
 .monthly-services__details summary:hover { color: var(--tile-link); }
@@ -38,9 +39,6 @@
 .monthly-services__sequence li::before { content: ''; position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--tile-link); left: -4px; top: 7px; }
 .monthly-services__sequence strong { display: block; font-size: 13px; font-weight: 600; line-height: 1.5; }
 .monthly-services__sequence span { display: block; font-size: 13px; line-height: 1.65; color: var(--tile-muted); margin-top: 4px; }
-.monthly-services__footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 8px 0 0; margin-top: 16px; border-top: 1px solid var(--monthly-line); }
-.monthly-services__footer p { font-size: 13px; color: var(--monthly-muted); max-width: 65ch; }
-.monthly-services__footer .monthly-services__link { flex-shrink: 0; }
 @media (min-width: 760px) and (max-width: 1199px) {
   .monthly-services__grid { gap: 14px; }
   .monthly-services__tile { padding-inline: 18px; grid-template-rows: minmax(52px, auto) minmax(76px, auto) minmax(94px, auto) minmax(164px, auto) minmax(88px, auto) minmax(48px, auto) auto; }
@@ -58,5 +56,4 @@
   .monthly-services__price { padding-block: 18px; }
   .monthly-services__value { padding-top: 14px; }
   .monthly-services__boundary { padding-block: 14px 8px; }
-  .monthly-services__footer { align-items: flex-start; flex-direction: column; gap: 4px; margin-top: 20px; padding-top: 16px; }
 }

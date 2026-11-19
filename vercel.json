@@ -146,6 +146,7 @@
     { "source": "/api/ai-opportunity", "destination": "/api/demo-admin?offer=ai" },
     { "source": "/api/ai-booking", "destination": "/api/demo-admin?offer=booking" },
     { "source": "/api/ai-checkout", "destination": "/api/demo-admin?offer=checkout" },
+    { "source": "/api/package-checkout", "destination": "/api/demo-admin?offer=package" },
     { "source": "/api/client-portal", "destination": "/api/demo-admin?portal=client" },
     { "source": "/api/business-dashboard", "destination": "/api/demo-admin?dashboard=business" },
     { "source": "/api/business-publishing", "destination": "/api/demo-admin?publishing=linkedin" },

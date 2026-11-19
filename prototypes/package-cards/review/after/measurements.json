@@ -1,0 +1,398 @@
+[
+  {
+    "size": "desktop",
+    "width": 1440,
+    "kind": "website",
+    "height": 617,
+    "contentHeight": 617,
+    "overflow": "visible",
+    "rows": {
+      "name": 40,
+      "fit": 136,
+      "price": 64,
+      "schedule": 123,
+      "buy": 162,
+      "learn": null,
+      "included": 278,
+      "includedLast": 419,
+      "includedNote": null,
+      "terms": 278,
+      "termsLast": 450,
+      "termsNote": null,
+      "footer": 533
+    },
+    "words": 130,
+    "numbers": {
+      "2": 1,
+      "8": 1,
+      "10": 0,
+      "12": 1,
+      "30": 1,
+      "$250": 2,
+      "$750": 0,
+      "$1,500": 0
+    },
+    "controls": [
+      {
+        "label": "Buy now: Business website & care",
+        "inside": true,
+        "bottom": 214
+      },
+      {
+        "label": "How the guarantee works",
+        "inside": true,
+        "bottom": 377
+      },
+      {
+        "label": "Explore website examples",
+        "inside": true,
+        "bottom": 577
+      }
+    ],
+    "text": "Business website & care Show your services, work and service area in one place, with ongoing technical care. $250 /month First $250 when you sign, then on that date each month. Buy now What’s included Up to 8 pages for your business An inquiry form routed to you Hosting, maintenance and basic on page SEO Up to 2 hours of small edits a month Good to know Cancelling Cancel in the first 30 days and your first payment is refunded. After that, service runs to the end of that billing month, then the site comes down unless you restart. How the guarantee works Ownership Yours after 12 monthly payments. Until then it belongs to Wallace Shift. Extra costs Domain registration and paid services, confirmed before you commit. Explore website examples"
+  },
+  {
+    "size": "desktop",
+    "width": 1440,
+    "kind": "lead",
+    "height": 617,
+    "contentHeight": 617,
+    "overflow": "visible",
+    "rows": {
+      "name": 40,
+      "fit": 136,
+      "price": 64,
+      "schedule": 123,
+      "buy": 162,
+      "learn": null,
+      "included": 278,
+      "includedLast": 419,
+      "includedNote": null,
+      "terms": 278,
+      "termsLast": 407,
+      "termsNote": null,
+      "footer": 533
+    },
+    "words": 109,
+    "numbers": {
+      "2": 0,
+      "8": 0,
+      "10": 0,
+      "12": 0,
+      "30": 0,
+      "$250": 0,
+      "$750": 2,
+      "$1,500": 1
+    },
+    "controls": [
+      {
+        "label": "Buy now: Lead page & automatic follow up",
+        "inside": true,
+        "bottom": 214
+      },
+      {
+        "label": "Try the inquiry example",
+        "inside": true,
+        "bottom": 577
+      }
+    ],
+    "text": "Lead page & automatic follow up Give one service or campaign its own inquiry and follow up path, alongside your existing website. $1,500 once for setup $750 when you sign, $750 when it goes live. Buy now What’s included One focused page for one service or offer Inquiry capture, routed to your inbox or tool One agreed automatic follow up workflow Testing and a handoff Good to know Cancelling End it in writing. We refund anything you’ve paid beyond completed work and approved costs. Ownership Yours once both payments are made. Extra costs Hosting, software and message usage, confirmed before work begins. Advertising is separate. Try the inquiry example"
+  },
+  {
+    "size": "tablet",
+    "width": 1024,
+    "kind": "website",
+    "height": 682,
+    "contentHeight": 682,
+    "overflow": "visible",
+    "rows": {
+      "name": 32,
+      "fit": 112,
+      "price": 52,
+      "schedule": 102,
+      "buy": 162,
+      "learn": null,
+      "included": 267,
+      "includedLast": 407,
+      "includedNote": null,
+      "terms": 267,
+      "termsLast": 507,
+      "termsNote": null,
+      "footer": 606
+    },
+    "words": 130,
+    "numbers": {
+      "2": 1,
+      "8": 1,
+      "10": 0,
+      "12": 1,
+      "30": 1,
+      "$250": 2,
+      "$750": 0,
+      "$1,500": 0
+    },
+    "controls": [
+      {
+        "label": "Buy now: Business website & care",
+        "inside": true,
+        "bottom": 215
+      },
+      {
+        "label": "How the guarantee works",
+        "inside": true,
+        "bottom": 410
+      },
+      {
+        "label": "Explore website examples",
+        "inside": true,
+        "bottom": 650
+      }
+    ],
+    "text": "Business website & care Show your services, work and service area in one place, with ongoing technical care. $250 /month First $250 when you sign, then on that date each month. Buy now What’s included Up to 8 pages for your business An inquiry form routed to you Hosting, maintenance and basic on page SEO Up to 2 hours of small edits a month Good to know Cancelling Cancel in the first 30 days and your first payment is refunded. After that, service runs to the end of that billing month, then the site comes down unless you restart. How the guarantee works Ownership Yours after 12 monthly payments. Until then it belongs to Wallace Shift. Extra costs Domain registration and paid services, confirmed before you commit. Explore website examples"
+  },
+  {
+    "size": "tablet",
+    "width": 1024,
+    "kind": "lead",
+    "height": 682,
+    "contentHeight": 682,
+    "overflow": "visible",
+    "rows": {
+      "name": 32,
+      "fit": 112,
+      "price": 52,
+      "schedule": 102,
+      "buy": 162,
+      "learn": null,
+      "included": 267,
+      "includedLast": 407,
+      "includedNote": null,
+      "terms": 267,
+      "termsLast": 442,
+      "termsNote": null,
+      "footer": 606
+    },
+    "words": 109,
+    "numbers": {
+      "2": 0,
+      "8": 0,
+      "10": 0,
+      "12": 0,
+      "30": 0,
+      "$250": 0,
+      "$750": 2,
+      "$1,500": 1
+    },
+    "controls": [
+      {
+        "label": "Buy now: Lead page & automatic follow up",
+        "inside": true,
+        "bottom": 215
+      },
+      {
+        "label": "Try the inquiry example",
+        "inside": true,
+        "bottom": 650
+      }
+    ],
+    "text": "Lead page & automatic follow up Give one service or campaign its own inquiry and follow up path, alongside your existing website. $1,500 once for setup $750 when you sign, $750 when it goes live. Buy now What’s included One focused page for one service or offer Inquiry capture, routed to your inbox or tool One agreed automatic follow up workflow Testing and a handoff Good to know Cancelling End it in writing. We refund anything you’ve paid beyond completed work and approved costs. Ownership Yours once both payments are made. Extra costs Hosting, software and message usage, confirmed before work begins. Advertising is separate. Try the inquiry example"
+  },
+  {
+    "size": "iphone",
+    "width": 390,
+    "kind": "website",
+    "height": 1063,
+    "contentHeight": 1063,
+    "overflow": "visible",
+    "rows": {
+      "name": 24,
+      "fit": 100,
+      "price": 218,
+      "schedule": 270,
+      "buy": 330,
+      "learn": null,
+      "included": 430,
+      "includedLast": 588,
+      "includedNote": null,
+      "terms": 638,
+      "termsLast": 900,
+      "termsNote": null,
+      "footer": 995
+    },
+    "words": 130,
+    "numbers": {
+      "2": 1,
+      "8": 1,
+      "10": 0,
+      "12": 1,
+      "30": 1,
+      "$250": 2,
+      "$750": 0,
+      "$1,500": 0
+    },
+    "controls": [
+      {
+        "label": "Buy now: Business website & care",
+        "inside": true,
+        "bottom": 382
+      },
+      {
+        "label": "How the guarantee works",
+        "inside": true,
+        "bottom": 803
+      },
+      {
+        "label": "Explore website examples",
+        "inside": true,
+        "bottom": 1039
+      }
+    ],
+    "text": "Business website & care Show your services, work and service area in one place, with ongoing technical care. $250 /month First $250 when you sign, then on that date each month. Buy now What’s included Up to 8 pages for your business An inquiry form routed to you Hosting, maintenance and basic on page SEO Up to 2 hours of small edits a month Good to know Cancelling Cancel in the first 30 days and your first payment is refunded. After that, service runs to the end of that billing month, then the site comes down unless you restart. How the guarantee works Ownership Yours after 12 monthly payments. Until then it belongs to Wallace Shift. Extra costs Domain registration and paid services, confirmed before you commit. Explore website examples"
+  },
+  {
+    "size": "iphone",
+    "width": 390,
+    "kind": "lead",
+    "height": 1063,
+    "contentHeight": 1063,
+    "overflow": "visible",
+    "rows": {
+      "name": 24,
+      "fit": 100,
+      "price": 218,
+      "schedule": 270,
+      "buy": 330,
+      "learn": null,
+      "included": 430,
+      "includedLast": 588,
+      "includedNote": null,
+      "terms": 638,
+      "termsLast": 835,
+      "termsNote": null,
+      "footer": 995
+    },
+    "words": 109,
+    "numbers": {
+      "2": 0,
+      "8": 0,
+      "10": 0,
+      "12": 0,
+      "30": 0,
+      "$250": 0,
+      "$750": 2,
+      "$1,500": 1
+    },
+    "controls": [
+      {
+        "label": "Buy now: Lead page & automatic follow up",
+        "inside": true,
+        "bottom": 382
+      },
+      {
+        "label": "Try the inquiry example",
+        "inside": true,
+        "bottom": 1039
+      }
+    ],
+    "text": "Lead page & automatic follow up Give one service or campaign its own inquiry and follow up path, alongside your existing website. $1,500 once for setup $750 when you sign, $750 when it goes live. Buy now What’s included One focused page for one service or offer Inquiry capture, routed to your inbox or tool One agreed automatic follow up workflow Testing and a handoff Good to know Cancelling End it in writing. We refund anything you’ve paid beyond completed work and approved costs. Ownership Yours once both payments are made. Extra costs Hosting, software and message usage, confirmed before work begins. Advertising is separate. Try the inquiry example"
+  },
+  {
+    "size": "android",
+    "width": 360,
+    "kind": "website",
+    "height": 1103,
+    "contentHeight": 1103,
+    "overflow": "visible",
+    "rows": {
+      "name": 24,
+      "fit": 100,
+      "price": 218,
+      "schedule": 267,
+      "buy": 327,
+      "learn": null,
+      "included": 427,
+      "includedLast": 585,
+      "includedNote": null,
+      "terms": 678,
+      "termsLast": 940,
+      "termsNote": null,
+      "footer": 1035
+    },
+    "words": 130,
+    "numbers": {
+      "2": 1,
+      "8": 1,
+      "10": 0,
+      "12": 1,
+      "30": 1,
+      "$250": 2,
+      "$750": 0,
+      "$1,500": 0
+    },
+    "controls": [
+      {
+        "label": "Buy now: Business website & care",
+        "inside": true,
+        "bottom": 379
+      },
+      {
+        "label": "How the guarantee works",
+        "inside": true,
+        "bottom": 843
+      },
+      {
+        "label": "Explore website examples",
+        "inside": true,
+        "bottom": 1079
+      }
+    ],
+    "text": "Business website & care Show your services, work and service area in one place, with ongoing technical care. $250 /month First $250 when you sign, then on that date each month. Buy now What’s included Up to 8 pages for your business An inquiry form routed to you Hosting, maintenance and basic on page SEO Up to 2 hours of small edits a month Good to know Cancelling Cancel in the first 30 days and your first payment is refunded. After that, service runs to the end of that billing month, then the site comes down unless you restart. How the guarantee works Ownership Yours after 12 monthly payments. Until then it belongs to Wallace Shift. Extra costs Domain registration and paid services, confirmed before you commit. Explore website examples"
+  },
+  {
+    "size": "android",
+    "width": 360,
+    "kind": "lead",
+    "height": 1103,
+    "contentHeight": 1103,
+    "overflow": "visible",
+    "rows": {
+      "name": 24,
+      "fit": 100,
+      "price": 218,
+      "schedule": 267,
+      "buy": 327,
+      "learn": null,
+      "included": 427,
+      "includedLast": 628,
+      "includedNote": null,
+      "terms": 678,
+      "termsLast": 875,
+      "termsNote": null,
+      "footer": 1035
+    },
+    "words": 109,
+    "numbers": {
+      "2": 0,
+      "8": 0,
+      "10": 0,
+      "12": 0,
+      "30": 0,
+      "$250": 0,
+      "$750": 2,
+      "$1,500": 1
+    },
+    "controls": [
+      {
+        "label": "Buy now: Lead page & automatic follow up",
+        "inside": true,
+        "bottom": 379
+      },
+      {
+        "label": "Try the inquiry example",
+        "inside": true,
+        "bottom": 1079
+      }
+    ],
+    "text": "Lead page & automatic follow up Give one service or campaign its own inquiry and follow up path, alongside your existing website. $1,500 once for setup $750 when you sign, $750 when it goes live. Buy now What’s included One focused page for one service or offer Inquiry capture, routed to your inbox or tool One agreed automatic follow up workflow Testing and a handoff Good to know Cancelling End it in writing. We refund anything you’ve paid beyond completed work and approved costs. Ownership Yours once both payments are made. Extra costs Hosting, software and message usage, confirmed before work begins. Advertising is separate. Try the inquiry example"
+  }
+]

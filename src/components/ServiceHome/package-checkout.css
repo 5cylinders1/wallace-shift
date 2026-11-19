@@ -1,0 +1,17 @@
+/* Package checkout: shares the slide-in panel and form styles in call-request.css. */
+.package-checkout .package-checkout-price { margin-top: 12px; font-size: 16px; color: #33454f; }
+.package-checkout .package-checkout-price strong { color: #080d12; font-weight: 600; }
+.package-checkout-steps { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; }
+.package-checkout-steps li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #52616b; }
+.package-checkout-steps li span { display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; border: 1px solid #a7b9c5; font-size: 12px; font-variant-numeric: tabular-nums; }
+.package-checkout-steps li[aria-current] { color: #080d12; font-weight: 600; }
+.package-checkout-steps li[aria-current] span { background: #175c99; border-color: #175c99; color: #fff; }
+.package-checkout-terms { margin-top: 24px; padding: 18px 20px; border-radius: 12px; background: #eef3f5; }
+.package-checkout-terms h3 { font-size: 14px; font-weight: 600; }
+.package-checkout-terms ul { margin: 10px 0 0; padding-left: 18px; list-style: disc; display: grid; gap: 8px; font-size: 13.5px; line-height: 1.55; color: #33454f; }
+.package-checkout-terms li::marker { color: #7b8e9a; }
+.package-checkout-terms p { margin-top: 12px; font-size: 12.5px; line-height: 1.55; color: #52616b; }
+.package-checkout-check { display: flex; gap: 12px; align-items: flex-start; margin: 4px 0 20px; font-size: 14px; line-height: 1.5; cursor: pointer; }
+.package-checkout-check input { width: 20px; height: 20px; flex-shrink: 0; margin: 1px 0 0; accent-color: #175c99; }
+.package-checkout-links { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-top: 14px; }
+.package-checkout-links button { min-height: 44px; padding: 0; border: 0; background: none; color: #175c99; font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }

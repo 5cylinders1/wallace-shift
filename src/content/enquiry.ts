@@ -16,13 +16,13 @@ export type EnquiryOption = { value: string; label: string }
 const UNSURE = { value: 'unsure', label: 'Not sure yet' }
 
 export const enquiryServices: EnquiryOption[] = [
-  ...services.items.map(item => ({ value: item.enquiryValue, label: `${item.label} — ${item.title}` })),
+  ...services.items.map(item => ({ value: item.enquiryValue, label: `${item.label}: ${item.title}` })),
   UNSURE,
 ]
 
 export const enquiryPackages: EnquiryOption[] = [
   ...engagementGroups.map(group => ({ value: group.id, label: group.label })),
-  ...siteTiers.tiers.map(tier => ({ value: tier.id, label: `${tier.name} — ${tier.category}` })),
+  ...siteTiers.tiers.map(tier => ({ value: tier.id, label: `${tier.name}: ${tier.category}` })),
   UNSURE,
 ]
 
@@ -30,9 +30,9 @@ export const enquiryPackages: EnquiryOption[] = [
  *  with what the pricing page already says. */
 export const enquiryBudgets: EnquiryOption[] = [
   { value: 'under-1k', label: 'Under $1,000' },
-  { value: '1k-5k', label: '$1,000 – $5,000' },
-  { value: '5k-10k', label: '$5,000 – $10,000' },
-  { value: '10k-25k', label: '$10,000 – $25,000' },
+  { value: '1k-5k', label: '$1,000 to $5,000' },
+  { value: '5k-10k', label: '$5,000 to $10,000' },
+  { value: '10k-25k', label: '$10,000 to $25,000' },
   { value: 'over-25k', label: '$25,000+' },
   UNSURE,
 ]

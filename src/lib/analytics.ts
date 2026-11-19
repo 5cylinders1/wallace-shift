@@ -1,6 +1,8 @@
 import type { DemoHandoffId } from '../content/demoHandoff'
 
-type EnquirySurface = 'home_hero' | 'contact_form' | 'roofing_offer'
+/** Homepage places that open the contact panel. */
+type HomeContactSurface = 'home_hero' | 'home_packages' | 'home_comparison' | 'home_questions' | 'home_addon_agents' | 'home_addon_follow_up' | 'home_addon_workspace'
+type EnquirySurface = HomeContactSurface | 'contact_form' | 'roofing_offer'
 
 /** Demos whose "Discuss my website" link carries context to /contact. */
 type DemoContext = DemoHandoffId
@@ -17,6 +19,13 @@ type SiteAnalyticsEvent =
   | { name: 'offer_recommendation_view'; value: 'package' | 'consultation' | 'resource' }
   | { name: 'contractor_offer_demo' | 'contractor_offer_form_started' | 'contractor_offer_failed'; value: ContractorOffer }
   | { name: 'contractor_offer_submitted'; value: ContractorOffer; readiness?: 'ready' | 'questions' | 'planning' }
+  // Homepage contact panel: where it was opened, the way someone chose to talk, and package links.
+  | { name: 'contact_open'; value: HomeContactSurface }
+  | { name: 'contact_choice'; value: 'phone' | 'meeting' | 'direct'; surface: HomeContactSurface }
+  | { name: 'package_link'; value: 'website' | 'lead' }
+  | { name: 'meeting_booked'; value: EnquirySurface }
+  // Homepage package checkout: panel opened, verification code sent, email verified (the agreement is then issued).
+  | { name: 'package_checkout_open' | 'package_checkout_code_sent' | 'package_checkout_verified'; value: 'website' | 'lead' }
 
 /** Only fixed event labels and catalog IDs belong here, never form values.
  * The shared public bootstrap applies its route and value allowlists before

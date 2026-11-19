@@ -29,7 +29,12 @@
   const contractorOfferEvents = new Set(['contractor_offer_demo', 'contractor_offer_form_started', 'contractor_offer_submitted', 'contractor_offer_failed'])
   const inquiryIntents = new Set(['ready', 'questions', 'planning'])
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
-  const surfaces = new Set(['home_hero', 'contact_form', 'roofing_offer'])
+  // Homepage places that open the contact panel, then the site's other enquiry forms.
+  const homeSurfaces = new Set(['home_hero', 'home_packages', 'home_comparison', 'home_questions', 'home_addon_agents', 'home_addon_follow_up', 'home_addon_workspace'])
+  const surfaces = new Set([...homeSurfaces, 'contact_form', 'roofing_offer'])
+  // Homepage contact panel and package links. Fixed labels only, and only on the homepage.
+  const contactMethods = new Set(['phone', 'meeting', 'direct'])
+  const packageLinks = new Set(['website', 'lead'])
   // Demos whose "Discuss my website" link carries context to /contact.
   const demoContexts = new Set(['deercreek', 'deercreekplumbing'])
   const demos = new Set([
@@ -304,6 +309,18 @@
       send(name, { demo_id: value })
     } else if ((name === 'quiz_started' || name === 'quiz_completed') && value === undefined) {
       send(name)
+    } else if (['package_checkout_open', 'package_checkout_code_sent', 'package_checkout_verified'].includes(name) && packageLinks.has(value) && publicUrl(window.location.href)?.pathname === '/') {
+      // Only the fixed package id. A verified email issues an agreement; payment happens later in the portal.
+      if (name === 'package_checkout_open') send('begin_checkout', { package_id: value })
+      else if (name === 'package_checkout_code_sent') send(name, { package_id: value })
+      else send('generate_lead', { lead_type: 'purchase_started', package_id: value })
+    } else if (name === 'meeting_booked' && surfaces.has(value)) {
+      // Calendly confirmed the booking in the page; record it as one lead.
+      send('generate_lead', { lead_type: 'meeting', form_surface: value })
+    } else if (['contact_open', 'contact_choice', 'package_link'].includes(name) && publicUrl(window.location.href)?.pathname === '/') {
+      if (name === 'contact_open' && homeSurfaces.has(value)) send(name, { form_surface: value })
+      else if (name === 'contact_choice' && contactMethods.has(value) && homeSurfaces.has(detail.surface)) send(name, { form_surface: detail.surface, contact_method: value })
+      else if (name === 'package_link' && packageLinks.has(value)) send(name, { package_id: value })
     } else if (contractorOfferEvents.has(name) && contractorOffers.has(value) && contractorOffers.get(value) === publicUrl(window.location.href)?.pathname) {
       // The page dispatches success only after API acknowledgement. Convert it
       // to one lead event, not a second conversion alongside a success event.

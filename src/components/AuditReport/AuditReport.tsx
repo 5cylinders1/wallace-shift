@@ -63,7 +63,7 @@ export function AuditReport({ state, id }: AuditReportProps) {
             <span className="audit__spinner" aria-hidden="true" />
             <p className="report__waiting-text">
               Still checking {hostOf(lastRun)}. This is where your result
-              appears — it will fill in on its own.
+              appears. It will fill in on its own.
             </p>
           </div>
         )}
@@ -181,7 +181,7 @@ export function AuditReport({ state, id }: AuditReportProps) {
                           <li className="filmstrip__frame" key={index}>
                             <img src={frame.data} alt="" loading="lazy" />
                             <span className="filmstrip__time">
-                              {seconds(frame.timing) ?? '—'}
+                              {seconds(frame.timing) ?? 'No time'}
                             </span>
                           </li>
                         ))}

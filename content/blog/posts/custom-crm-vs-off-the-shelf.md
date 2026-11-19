@@ -5,7 +5,7 @@ slug: "custom-crm-vs-off-the-shelf"
 title: "Custom CRM vs. Off-the-Shelf: Test Your Workflow Before You Build"
 description: "Compare configuring, extending, buying, and building a CRM using the same service-business tasks, ownership questions, and evidence of fit."
 question: "Should a service business use a custom or off-the-shelf CRM?"
-answer: "Choose a custom CRM when important, demonstrated requirements remain difficult to satisfy through a suitable packaged product, configuration, or a focused integration—and when you can support the resulting system over time. Choose an existing product when it handles the essential work with acceptable constraints and operating responsibilities. The decision depends on the workflow you can prove, not whether your business considers itself unique."
+answer: "Choose a custom CRM when important, demonstrated requirements remain difficult to satisfy through a suitable packaged product, configuration, or a focused integration, and when you can support the resulting system over time. Choose an existing product when it handles the essential work with acceptable constraints and operating responsibilities. The decision depends on the workflow you can prove, not whether your business considers itself unique."
 category: "Business systems"
 author:
   type: "Organization"

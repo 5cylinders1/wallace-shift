@@ -106,7 +106,7 @@ Use one entry for each task that prompted the discussion. Record evidence before
 
 Do not require a numeric score if the decision does not need one. An unresolved essential permission requirement deserves its own conclusion, even if the candidate performs several convenient tasks well.
 
-## Decide what would move—and what would stay
+## Decide what would move and what would stay
 
 If a CRM looks promising, define the first useful workflow before transferring every file. Identify the customers, active requests, locations, contacts, and history necessary for that workflow. Decide what can remain in an accessible archive and what must be available during daily work.
 

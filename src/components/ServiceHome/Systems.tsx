@@ -45,7 +45,6 @@ export default function Systems() {
         <h2 id="systems-heading">When the work needs<br /><em>more than a website.</em></h2>
         <p>Customer records, handoffs and tools that do not connect can need a different solution.</p>
         <a className="m-button systems-link" href="/services">Explore custom systems<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" /></svg></a>
-        <p className="systems-scope">We scope custom CRMs, AI integrations and connected workflows separately.</p>
       </div>
       <figure className="systems-figure">
         <div className="systems-map" role="img" aria-label="Illustrative setup: customer records connect with AI assistance and team handoffs through a shared workflow.">
@@ -75,7 +74,6 @@ export default function Systems() {
             </div>
           </div>
         </div>
-        <figcaption>Illustrative setup. Connections agreed in scope.</figcaption>
       </figure>
     </div>
   </section>

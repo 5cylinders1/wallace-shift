@@ -1,0 +1,2022 @@
+[
+  {
+    "size": "desktop",
+    "width": 1440,
+    "height": 900,
+    "pinned": true,
+    "scrollLength": 1350,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "01Capture the request.",
+        "scene": {
+          "top": 296,
+          "bottom": 796,
+          "left": 96,
+          "width": 1248,
+          "height": 500,
+          "centerX": 720,
+          "centerY": 546
+        },
+        "story": {
+          "top": 224,
+          "bottom": 832,
+          "left": 64,
+          "width": 1312,
+          "height": 608,
+          "centerX": 720,
+          "centerY": 528
+        },
+        "frames": [
+          {
+            "top": 295.6,
+            "height": 320,
+            "centerY": 455.6
+          },
+          {
+            "top": 295.6,
+            "height": 320,
+            "centerY": 455.6
+          },
+          {
+            "top": 295.6,
+            "height": 320,
+            "centerY": 455.6
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 296,
+            "bottom": 616,
+            "left": 143,
+            "width": 300,
+            "height": 320,
+            "centerX": 293,
+            "centerY": 456
+          },
+          "inquiry": {
+            "top": 296,
+            "bottom": 616,
+            "left": 570,
+            "width": 300,
+            "height": 320,
+            "centerX": 720,
+            "centerY": 456
+          },
+          "team": {
+            "top": 296,
+            "bottom": 616,
+            "left": 997,
+            "width": 300,
+            "height": 320,
+            "centerX": 1147,
+            "centerY": 456
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 316,
+            "bottom": 596,
+            "left": 193,
+            "width": 200,
+            "height": 280,
+            "centerX": 293,
+            "centerY": 456
+          },
+          "inquiry": {
+            "top": 379,
+            "bottom": 552,
+            "left": 596,
+            "width": 248,
+            "height": 173,
+            "centerX": 720,
+            "centerY": 466
+          },
+          "team": {
+            "top": 343,
+            "bottom": 569,
+            "left": 1037,
+            "width": 220,
+            "height": 226,
+            "centerX": 1147,
+            "centerY": 456
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 644,
+            "bottom": 670,
+            "left": 181,
+            "width": 224,
+            "height": 26,
+            "centerX": 293,
+            "centerY": 657
+          },
+          "inquiry": {
+            "top": 644,
+            "bottom": 670,
+            "left": 602,
+            "width": 236,
+            "height": 26,
+            "centerX": 720,
+            "centerY": 657
+          },
+          "team": {
+            "top": 644,
+            "bottom": 670,
+            "left": 1036,
+            "width": 220,
+            "height": 26,
+            "centerX": 1147,
+            "centerY": 657
+          }
+        },
+        "labelType": [
+          "21px 500",
+          "21px 500",
+          "21px 500"
+        ],
+        "heading": {
+          "height": 141,
+          "position": "sticky"
+        },
+        "connectors": [
+          {
+            "length": 126.7,
+            "angle": 0,
+            "rise": 0,
+            "run": 127,
+            "from": [
+              443,
+              456
+            ],
+            "to": [
+              570,
+              456
+            ]
+          },
+          {
+            "length": 126.7,
+            "angle": 0,
+            "rise": 0,
+            "run": 127,
+            "from": [
+              870,
+              456
+            ],
+            "to": [
+              997,
+              456
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "02Confirm and follow up.",
+        "scene": {
+          "top": 296,
+          "bottom": 796,
+          "left": 96,
+          "width": 1248,
+          "height": 500,
+          "centerX": 720,
+          "centerY": 546
+        },
+        "story": {
+          "top": 224,
+          "bottom": 832,
+          "left": 64,
+          "width": 1312,
+          "height": 608,
+          "centerX": 720,
+          "centerY": 528
+        },
+        "frames": [
+          {
+            "top": 295.6,
+            "height": 320,
+            "centerY": 455.6
+          },
+          {
+            "top": 295.6,
+            "height": 320,
+            "centerY": 455.6
+          },
+          {
+            "top": 295.6,
+            "height": 320,
+            "centerY": 455.6
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 296,
+            "bottom": 616,
+            "left": 143,
+            "width": 300,
+            "height": 320,
+            "centerX": 293,
+            "centerY": 456
+          },
+          "inquiry": {
+            "top": 296,
+            "bottom": 616,
+            "left": 570,
+            "width": 300,
+            "height": 320,
+            "centerX": 720,
+            "centerY": 456
+          },
+          "team": {
+            "top": 296,
+            "bottom": 616,
+            "left": 997,
+            "width": 300,
+            "height": 320,
+            "centerX": 1147,
+            "centerY": 456
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 316,
+            "bottom": 596,
+            "left": 193,
+            "width": 200,
+            "height": 280,
+            "centerX": 293,
+            "centerY": 456
+          },
+          "inquiry": {
+            "top": 369,
+            "bottom": 542,
+            "left": 596,
+            "width": 248,
+            "height": 173,
+            "centerX": 720,
+            "centerY": 456
+          },
+          "team": {
+            "top": 343,
+            "bottom": 569,
+            "left": 1037,
+            "width": 220,
+            "height": 226,
+            "centerX": 1147,
+            "centerY": 456
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 644,
+            "bottom": 670,
+            "left": 181,
+            "width": 224,
+            "height": 26,
+            "centerX": 293,
+            "centerY": 657
+          },
+          "inquiry": {
+            "top": 644,
+            "bottom": 670,
+            "left": 602,
+            "width": 236,
+            "height": 26,
+            "centerX": 720,
+            "centerY": 657
+          },
+          "team": {
+            "top": 644,
+            "bottom": 670,
+            "left": 1036,
+            "width": 220,
+            "height": 26,
+            "centerX": 1147,
+            "centerY": 657
+          }
+        },
+        "labelType": [
+          "21px 500",
+          "21px 500",
+          "21px 500"
+        ],
+        "heading": {
+          "height": 141,
+          "position": "sticky"
+        },
+        "connectors": [
+          {
+            "length": 126.7,
+            "angle": 0,
+            "rise": 0,
+            "run": 127,
+            "from": [
+              443,
+              456
+            ],
+            "to": [
+              570,
+              456
+            ]
+          },
+          {
+            "length": 126.7,
+            "angle": 0,
+            "rise": 0,
+            "run": 127,
+            "from": [
+              870,
+              456
+            ],
+            "to": [
+              997,
+              456
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "03Hand it to your team.",
+        "scene": {
+          "top": 292,
+          "bottom": 792,
+          "left": 96,
+          "width": 1248,
+          "height": 500,
+          "centerX": 720,
+          "centerY": 542
+        },
+        "story": {
+          "top": 220,
+          "bottom": 828,
+          "left": 64,
+          "width": 1312,
+          "height": 608,
+          "centerX": 720,
+          "centerY": 524
+        },
+        "frames": [
+          {
+            "top": 291.6,
+            "height": 320,
+            "centerY": 451.6
+          },
+          {
+            "top": 291.6,
+            "height": 320,
+            "centerY": 451.6
+          },
+          {
+            "top": 291.6,
+            "height": 320,
+            "centerY": 451.6
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 292,
+            "bottom": 612,
+            "left": 143,
+            "width": 300,
+            "height": 320,
+            "centerX": 293,
+            "centerY": 452
+          },
+          "inquiry": {
+            "top": 292,
+            "bottom": 612,
+            "left": 570,
+            "width": 300,
+            "height": 320,
+            "centerX": 720,
+            "centerY": 452
+          },
+          "team": {
+            "top": 292,
+            "bottom": 612,
+            "left": 997,
+            "width": 300,
+            "height": 320,
+            "centerX": 1147,
+            "centerY": 452
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 312,
+            "bottom": 592,
+            "left": 193,
+            "width": 200,
+            "height": 280,
+            "centerX": 293,
+            "centerY": 452
+          },
+          "inquiry": {
+            "top": 365,
+            "bottom": 538,
+            "left": 596,
+            "width": 248,
+            "height": 173,
+            "centerX": 720,
+            "centerY": 452
+          },
+          "team": {
+            "top": 339,
+            "bottom": 565,
+            "left": 1037,
+            "width": 220,
+            "height": 226,
+            "centerX": 1147,
+            "centerY": 452
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 640,
+            "bottom": 666,
+            "left": 181,
+            "width": 224,
+            "height": 26,
+            "centerX": 293,
+            "centerY": 653
+          },
+          "inquiry": {
+            "top": 640,
+            "bottom": 666,
+            "left": 602,
+            "width": 236,
+            "height": 26,
+            "centerX": 720,
+            "centerY": 653
+          },
+          "team": {
+            "top": 640,
+            "bottom": 666,
+            "left": 1036,
+            "width": 220,
+            "height": 26,
+            "centerX": 1147,
+            "centerY": 653
+          }
+        },
+        "labelType": [
+          "21px 500",
+          "21px 500",
+          "21px 500"
+        ],
+        "heading": {
+          "height": 141,
+          "position": "sticky"
+        },
+        "connectors": [
+          {
+            "length": 126.7,
+            "angle": 0,
+            "rise": 0,
+            "run": 127,
+            "from": [
+              443,
+              452
+            ],
+            "to": [
+              570,
+              452
+            ]
+          },
+          {
+            "length": 126.7,
+            "angle": 0,
+            "rise": 0,
+            "run": 127,
+            "from": [
+              870,
+              452
+            ],
+            "to": [
+              997,
+              452
+            ]
+          }
+        ]
+      }
+    },
+    "axe": []
+  },
+  {
+    "size": "tablet",
+    "width": 1024,
+    "height": 768,
+    "pinned": true,
+    "scrollLength": 1152,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "01Capture the request.",
+        "scene": {
+          "top": 260,
+          "bottom": 685,
+          "left": 56,
+          "width": 912,
+          "height": 426,
+          "centerX": 512,
+          "centerY": 473
+        },
+        "story": {
+          "top": 192,
+          "bottom": 713,
+          "left": 32,
+          "width": 960,
+          "height": 522,
+          "centerX": 512,
+          "centerY": 453
+        },
+        "frames": [
+          {
+            "top": 259.7,
+            "height": 260,
+            "centerY": 389.7
+          },
+          {
+            "top": 259.7,
+            "height": 260,
+            "centerY": 389.7
+          },
+          {
+            "top": 259.7,
+            "height": 260,
+            "centerY": 389.7
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 260,
+            "bottom": 520,
+            "left": 91,
+            "width": 219,
+            "height": 260,
+            "centerX": 200,
+            "centerY": 390
+          },
+          "inquiry": {
+            "top": 260,
+            "bottom": 520,
+            "left": 403,
+            "width": 219,
+            "height": 260,
+            "centerX": 512,
+            "centerY": 390
+          },
+          "team": {
+            "top": 260,
+            "bottom": 520,
+            "left": 715,
+            "width": 219,
+            "height": 260,
+            "centerX": 824,
+            "centerY": 390
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 280,
+            "bottom": 500,
+            "left": 121,
+            "width": 157,
+            "height": 220,
+            "centerX": 200,
+            "centerY": 390
+          },
+          "inquiry": {
+            "top": 323,
+            "bottom": 477,
+            "left": 417,
+            "width": 191,
+            "height": 154,
+            "centerX": 512,
+            "centerY": 400
+          },
+          "team": {
+            "top": 307,
+            "bottom": 473,
+            "left": 744,
+            "width": 160,
+            "height": 166,
+            "centerX": 824,
+            "centerY": 390
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 542,
+            "bottom": 564,
+            "left": 103,
+            "width": 194,
+            "height": 23,
+            "centerX": 200,
+            "centerY": 553
+          },
+          "inquiry": {
+            "top": 542,
+            "bottom": 564,
+            "left": 410,
+            "width": 204,
+            "height": 23,
+            "centerX": 512,
+            "centerY": 553
+          },
+          "team": {
+            "top": 542,
+            "bottom": 564,
+            "left": 729,
+            "width": 191,
+            "height": 23,
+            "centerX": 824,
+            "centerY": 553
+          }
+        },
+        "labelType": [
+          "18px 500",
+          "18px 500",
+          "18px 500"
+        ],
+        "heading": {
+          "height": 115,
+          "position": "sticky"
+        },
+        "connectors": [
+          {
+            "length": 93.1,
+            "angle": 0,
+            "rise": 0,
+            "run": 93,
+            "from": [
+              309,
+              390
+            ],
+            "to": [
+              403,
+              390
+            ]
+          },
+          {
+            "length": 93.1,
+            "angle": 0,
+            "rise": 0,
+            "run": 93,
+            "from": [
+              621,
+              390
+            ],
+            "to": [
+              715,
+              390
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "02Confirm and follow up.",
+        "scene": {
+          "top": 260,
+          "bottom": 685,
+          "left": 56,
+          "width": 912,
+          "height": 426,
+          "centerX": 512,
+          "centerY": 473
+        },
+        "story": {
+          "top": 192,
+          "bottom": 713,
+          "left": 32,
+          "width": 960,
+          "height": 522,
+          "centerX": 512,
+          "centerY": 453
+        },
+        "frames": [
+          {
+            "top": 259.7,
+            "height": 260,
+            "centerY": 389.7
+          },
+          {
+            "top": 259.7,
+            "height": 260,
+            "centerY": 389.7
+          },
+          {
+            "top": 259.7,
+            "height": 260,
+            "centerY": 389.7
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 260,
+            "bottom": 520,
+            "left": 91,
+            "width": 219,
+            "height": 260,
+            "centerX": 200,
+            "centerY": 390
+          },
+          "inquiry": {
+            "top": 260,
+            "bottom": 520,
+            "left": 403,
+            "width": 219,
+            "height": 260,
+            "centerX": 512,
+            "centerY": 390
+          },
+          "team": {
+            "top": 260,
+            "bottom": 520,
+            "left": 715,
+            "width": 219,
+            "height": 260,
+            "centerX": 824,
+            "centerY": 390
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 280,
+            "bottom": 500,
+            "left": 121,
+            "width": 157,
+            "height": 220,
+            "centerX": 200,
+            "centerY": 390
+          },
+          "inquiry": {
+            "top": 313,
+            "bottom": 467,
+            "left": 417,
+            "width": 191,
+            "height": 154,
+            "centerX": 512,
+            "centerY": 390
+          },
+          "team": {
+            "top": 307,
+            "bottom": 473,
+            "left": 744,
+            "width": 160,
+            "height": 166,
+            "centerX": 824,
+            "centerY": 390
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 542,
+            "bottom": 564,
+            "left": 103,
+            "width": 194,
+            "height": 23,
+            "centerX": 200,
+            "centerY": 553
+          },
+          "inquiry": {
+            "top": 542,
+            "bottom": 564,
+            "left": 410,
+            "width": 204,
+            "height": 23,
+            "centerX": 512,
+            "centerY": 553
+          },
+          "team": {
+            "top": 542,
+            "bottom": 564,
+            "left": 729,
+            "width": 191,
+            "height": 23,
+            "centerX": 824,
+            "centerY": 553
+          }
+        },
+        "labelType": [
+          "18px 500",
+          "18px 500",
+          "18px 500"
+        ],
+        "heading": {
+          "height": 115,
+          "position": "sticky"
+        },
+        "connectors": [
+          {
+            "length": 93.1,
+            "angle": 0,
+            "rise": 0,
+            "run": 93,
+            "from": [
+              309,
+              390
+            ],
+            "to": [
+              403,
+              390
+            ]
+          },
+          {
+            "length": 93.1,
+            "angle": 0,
+            "rise": 0,
+            "run": 93,
+            "from": [
+              621,
+              390
+            ],
+            "to": [
+              715,
+              390
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "03Hand it to your team.",
+        "scene": {
+          "top": 256,
+          "bottom": 681,
+          "left": 56,
+          "width": 912,
+          "height": 426,
+          "centerX": 512,
+          "centerY": 469
+        },
+        "story": {
+          "top": 188,
+          "bottom": 709,
+          "left": 32,
+          "width": 960,
+          "height": 522,
+          "centerX": 512,
+          "centerY": 449
+        },
+        "frames": [
+          {
+            "top": 255.7,
+            "height": 260,
+            "centerY": 385.7
+          },
+          {
+            "top": 255.7,
+            "height": 260,
+            "centerY": 385.7
+          },
+          {
+            "top": 255.7,
+            "height": 260,
+            "centerY": 385.7
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 256,
+            "bottom": 516,
+            "left": 91,
+            "width": 219,
+            "height": 260,
+            "centerX": 200,
+            "centerY": 386
+          },
+          "inquiry": {
+            "top": 256,
+            "bottom": 516,
+            "left": 403,
+            "width": 219,
+            "height": 260,
+            "centerX": 512,
+            "centerY": 386
+          },
+          "team": {
+            "top": 256,
+            "bottom": 516,
+            "left": 715,
+            "width": 219,
+            "height": 260,
+            "centerX": 824,
+            "centerY": 386
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 276,
+            "bottom": 496,
+            "left": 121,
+            "width": 157,
+            "height": 220,
+            "centerX": 200,
+            "centerY": 386
+          },
+          "inquiry": {
+            "top": 309,
+            "bottom": 463,
+            "left": 417,
+            "width": 191,
+            "height": 154,
+            "centerX": 512,
+            "centerY": 386
+          },
+          "team": {
+            "top": 303,
+            "bottom": 469,
+            "left": 744,
+            "width": 160,
+            "height": 166,
+            "centerX": 824,
+            "centerY": 386
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 538,
+            "bottom": 560,
+            "left": 103,
+            "width": 194,
+            "height": 23,
+            "centerX": 200,
+            "centerY": 549
+          },
+          "inquiry": {
+            "top": 538,
+            "bottom": 560,
+            "left": 410,
+            "width": 204,
+            "height": 23,
+            "centerX": 512,
+            "centerY": 549
+          },
+          "team": {
+            "top": 538,
+            "bottom": 560,
+            "left": 729,
+            "width": 191,
+            "height": 23,
+            "centerX": 824,
+            "centerY": 549
+          }
+        },
+        "labelType": [
+          "18px 500",
+          "18px 500",
+          "18px 500"
+        ],
+        "heading": {
+          "height": 115,
+          "position": "sticky"
+        },
+        "connectors": [
+          {
+            "length": 93.1,
+            "angle": 0,
+            "rise": 0,
+            "run": 93,
+            "from": [
+              309,
+              386
+            ],
+            "to": [
+              403,
+              386
+            ]
+          },
+          {
+            "length": 93.1,
+            "angle": 0,
+            "rise": 0,
+            "run": 93,
+            "from": [
+              621,
+              386
+            ],
+            "to": [
+              715,
+              386
+            ]
+          }
+        ]
+      }
+    },
+    "axe": []
+  },
+  {
+    "size": "iphone",
+    "width": 390,
+    "height": 664,
+    "pinned": false,
+    "scrollLength": 1057,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "01Capture the request.",
+        "scene": {
+          "top": 168,
+          "bottom": 1445,
+          "left": 36,
+          "width": 318,
+          "height": 1277,
+          "centerX": 195,
+          "centerY": 807
+        },
+        "story": {
+          "top": 108,
+          "bottom": 1473,
+          "left": 20,
+          "width": 350,
+          "height": 1365,
+          "centerX": 195,
+          "centerY": 791
+        },
+        "frames": [
+          {
+            "top": 168,
+            "height": 240,
+            "centerY": 288
+          },
+          {
+            "top": 603.1,
+            "height": 240,
+            "centerY": 723.1
+          },
+          {
+            "top": 1038.1,
+            "height": 240,
+            "centerY": 1158.1
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 168,
+            "bottom": 408,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": 288
+          },
+          "inquiry": {
+            "top": 603,
+            "bottom": 843,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": 723
+          },
+          "team": {
+            "top": 1038,
+            "bottom": 1278,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": 1158
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 178,
+            "bottom": 398,
+            "left": 132,
+            "width": 157,
+            "height": 220,
+            "centerX": 211,
+            "centerY": 288
+          },
+          "inquiry": {
+            "top": 656,
+            "bottom": 810,
+            "left": 88,
+            "width": 246,
+            "height": 154,
+            "centerX": 211,
+            "centerY": 733
+          },
+          "team": {
+            "top": 1070,
+            "bottom": 1246,
+            "left": 126,
+            "width": 170,
+            "height": 176,
+            "centerX": 211,
+            "centerY": 1158
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 424,
+            "bottom": 449,
+            "left": 68,
+            "width": 213,
+            "height": 25,
+            "centerX": 174,
+            "centerY": 437
+          },
+          "inquiry": {
+            "top": 859,
+            "bottom": 884,
+            "left": 68,
+            "width": 224,
+            "height": 25,
+            "centerX": 180,
+            "centerY": 872
+          },
+          "team": {
+            "top": 1294,
+            "bottom": 1319,
+            "left": 68,
+            "width": 209,
+            "height": 25,
+            "centerX": 173,
+            "centerY": 1307
+          }
+        },
+        "labelType": [
+          "20px 500",
+          "20px 500",
+          "20px 500"
+        ],
+        "heading": {
+          "height": 154,
+          "position": "static"
+        },
+        "connectors": [
+          {
+            "length": 435,
+            "angle": 90,
+            "rise": 435,
+            "run": 0,
+            "from": [
+              46,
+              288
+            ],
+            "to": [
+              46,
+              723
+            ]
+          },
+          {
+            "length": 435,
+            "angle": 90,
+            "rise": 435,
+            "run": 0,
+            "from": [
+              46,
+              723
+            ],
+            "to": [
+              46,
+              1158
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "02Confirm and follow up.",
+        "scene": {
+          "top": -181,
+          "bottom": 1096,
+          "left": 36,
+          "width": 318,
+          "height": 1277,
+          "centerX": 195,
+          "centerY": 458
+        },
+        "story": {
+          "top": -241,
+          "bottom": 1124,
+          "left": 20,
+          "width": 350,
+          "height": 1365,
+          "centerX": 195,
+          "centerY": 442
+        },
+        "frames": [
+          {
+            "top": -181,
+            "height": 240,
+            "centerY": -61
+          },
+          {
+            "top": 254.1,
+            "height": 240,
+            "centerY": 374.1
+          },
+          {
+            "top": 689.1,
+            "height": 240,
+            "centerY": 809.1
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": -181,
+            "bottom": 59,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": -61
+          },
+          "inquiry": {
+            "top": 254,
+            "bottom": 494,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": 374
+          },
+          "team": {
+            "top": 689,
+            "bottom": 929,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": 809
+          }
+        },
+        "art": {
+          "customer": {
+            "top": -171,
+            "bottom": 49,
+            "left": 132,
+            "width": 157,
+            "height": 220,
+            "centerX": 211,
+            "centerY": -61
+          },
+          "inquiry": {
+            "top": 297,
+            "bottom": 451,
+            "left": 88,
+            "width": 246,
+            "height": 154,
+            "centerX": 211,
+            "centerY": 374
+          },
+          "team": {
+            "top": 721,
+            "bottom": 897,
+            "left": 126,
+            "width": 170,
+            "height": 176,
+            "centerX": 211,
+            "centerY": 809
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 75,
+            "bottom": 100,
+            "left": 68,
+            "width": 213,
+            "height": 25,
+            "centerX": 174,
+            "centerY": 88
+          },
+          "inquiry": {
+            "top": 510,
+            "bottom": 535,
+            "left": 68,
+            "width": 224,
+            "height": 25,
+            "centerX": 180,
+            "centerY": 523
+          },
+          "team": {
+            "top": 945,
+            "bottom": 970,
+            "left": 68,
+            "width": 209,
+            "height": 25,
+            "centerX": 173,
+            "centerY": 958
+          }
+        },
+        "labelType": [
+          "20px 500",
+          "20px 500",
+          "20px 500"
+        ],
+        "heading": {
+          "height": 154,
+          "position": "static"
+        },
+        "connectors": [
+          {
+            "length": 435,
+            "angle": 90,
+            "rise": 435,
+            "run": 0,
+            "from": [
+              46,
+              -61
+            ],
+            "to": [
+              46,
+              374
+            ]
+          },
+          {
+            "length": 435,
+            "angle": 90,
+            "rise": 435,
+            "run": 0,
+            "from": [
+              46,
+              374
+            ],
+            "to": [
+              46,
+              809
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "03Hand it to your team.",
+        "scene": {
+          "top": -629,
+          "bottom": 648,
+          "left": 36,
+          "width": 318,
+          "height": 1277,
+          "centerX": 195,
+          "centerY": 10
+        },
+        "story": {
+          "top": -689,
+          "bottom": 676,
+          "left": 20,
+          "width": 350,
+          "height": 1365,
+          "centerX": 195,
+          "centerY": -6
+        },
+        "frames": [
+          {
+            "top": -629,
+            "height": 240,
+            "centerY": -509
+          },
+          {
+            "top": -193.9,
+            "height": 240,
+            "centerY": -73.9
+          },
+          {
+            "top": 241.1,
+            "height": 240,
+            "centerY": 361.1
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": -629,
+            "bottom": -389,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": -509
+          },
+          "inquiry": {
+            "top": -194,
+            "bottom": 46,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": -74
+          },
+          "team": {
+            "top": 241,
+            "bottom": 481,
+            "left": 68,
+            "width": 286,
+            "height": 240,
+            "centerX": 211,
+            "centerY": 361
+          }
+        },
+        "art": {
+          "customer": {
+            "top": -619,
+            "bottom": -399,
+            "left": 132,
+            "width": 157,
+            "height": 220,
+            "centerX": 211,
+            "centerY": -509
+          },
+          "inquiry": {
+            "top": -151,
+            "bottom": 3,
+            "left": 88,
+            "width": 246,
+            "height": 154,
+            "centerX": 211,
+            "centerY": -74
+          },
+          "team": {
+            "top": 273,
+            "bottom": 449,
+            "left": 126,
+            "width": 170,
+            "height": 176,
+            "centerX": 211,
+            "centerY": 361
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": -373,
+            "bottom": -348,
+            "left": 68,
+            "width": 213,
+            "height": 25,
+            "centerX": 174,
+            "centerY": -360
+          },
+          "inquiry": {
+            "top": 62,
+            "bottom": 87,
+            "left": 68,
+            "width": 224,
+            "height": 25,
+            "centerX": 180,
+            "centerY": 75
+          },
+          "team": {
+            "top": 497,
+            "bottom": 522,
+            "left": 68,
+            "width": 209,
+            "height": 25,
+            "centerX": 173,
+            "centerY": 510
+          }
+        },
+        "labelType": [
+          "20px 500",
+          "20px 500",
+          "20px 500"
+        ],
+        "heading": {
+          "height": 154,
+          "position": "static"
+        },
+        "connectors": [
+          {
+            "length": 435,
+            "angle": 90,
+            "rise": 435,
+            "run": 0,
+            "from": [
+              46,
+              -509
+            ],
+            "to": [
+              46,
+              -74
+            ]
+          },
+          {
+            "length": 435,
+            "angle": 90,
+            "rise": 435,
+            "run": 0,
+            "from": [
+              46,
+              -74
+            ],
+            "to": [
+              46,
+              361
+            ]
+          }
+        ]
+      }
+    },
+    "axe": []
+  },
+  {
+    "size": "android",
+    "width": 360,
+    "height": 640,
+    "pinned": false,
+    "scrollLength": 1104,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "01Capture the request.",
+        "scene": {
+          "top": 140,
+          "bottom": 1491,
+          "left": 36,
+          "width": 288,
+          "height": 1351,
+          "centerX": 180,
+          "centerY": 816
+        },
+        "story": {
+          "top": 80,
+          "bottom": 1519,
+          "left": 20,
+          "width": 320,
+          "height": 1439,
+          "centerX": 180,
+          "centerY": 800
+        },
+        "frames": [
+          {
+            "top": 140,
+            "height": 240,
+            "centerY": 260
+          },
+          {
+            "top": 599.8,
+            "height": 240,
+            "centerY": 719.8
+          },
+          {
+            "top": 1059.6,
+            "height": 240,
+            "centerY": 1179.6
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": 140,
+            "bottom": 380,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": 260
+          },
+          "inquiry": {
+            "top": 600,
+            "bottom": 840,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": 720
+          },
+          "team": {
+            "top": 1060,
+            "bottom": 1300,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": 1180
+          }
+        },
+        "art": {
+          "customer": {
+            "top": 150,
+            "bottom": 370,
+            "left": 117,
+            "width": 157,
+            "height": 220,
+            "centerX": 196,
+            "centerY": 260
+          },
+          "inquiry": {
+            "top": 653,
+            "bottom": 807,
+            "left": 88,
+            "width": 216,
+            "height": 154,
+            "centerX": 196,
+            "centerY": 730
+          },
+          "team": {
+            "top": 1092,
+            "bottom": 1268,
+            "left": 111,
+            "width": 170,
+            "height": 176,
+            "centerX": 196,
+            "centerY": 1180
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 396,
+            "bottom": 421,
+            "left": 68,
+            "width": 213,
+            "height": 25,
+            "centerX": 174,
+            "centerY": 409
+          },
+          "inquiry": {
+            "top": 856,
+            "bottom": 881,
+            "left": 68,
+            "width": 224,
+            "height": 25,
+            "centerX": 180,
+            "centerY": 868
+          },
+          "team": {
+            "top": 1316,
+            "bottom": 1341,
+            "left": 68,
+            "width": 209,
+            "height": 25,
+            "centerX": 173,
+            "centerY": 1328
+          }
+        },
+        "labelType": [
+          "20px 500",
+          "20px 500",
+          "20px 500"
+        ],
+        "heading": {
+          "height": 154,
+          "position": "static"
+        },
+        "connectors": [
+          {
+            "length": 459.8,
+            "angle": 90,
+            "rise": 460,
+            "run": 0,
+            "from": [
+              46,
+              260
+            ],
+            "to": [
+              46,
+              720
+            ]
+          },
+          {
+            "length": 459.8,
+            "angle": 90,
+            "rise": 460,
+            "run": 0,
+            "from": [
+              46,
+              720
+            ],
+            "to": [
+              46,
+              1180
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "02Confirm and follow up.",
+        "scene": {
+          "top": -224,
+          "bottom": 1127,
+          "left": 36,
+          "width": 288,
+          "height": 1351,
+          "centerX": 180,
+          "centerY": 452
+        },
+        "story": {
+          "top": -284,
+          "bottom": 1155,
+          "left": 20,
+          "width": 320,
+          "height": 1439,
+          "centerX": 180,
+          "centerY": 436
+        },
+        "frames": [
+          {
+            "top": -224,
+            "height": 240,
+            "centerY": -104
+          },
+          {
+            "top": 235.8,
+            "height": 240,
+            "centerY": 355.8
+          },
+          {
+            "top": 695.6,
+            "height": 240,
+            "centerY": 815.6
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": -224,
+            "bottom": 16,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": -104
+          },
+          "inquiry": {
+            "top": 236,
+            "bottom": 476,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": 356
+          },
+          "team": {
+            "top": 696,
+            "bottom": 936,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": 816
+          }
+        },
+        "art": {
+          "customer": {
+            "top": -214,
+            "bottom": 6,
+            "left": 117,
+            "width": 157,
+            "height": 220,
+            "centerX": 196,
+            "centerY": -104
+          },
+          "inquiry": {
+            "top": 279,
+            "bottom": 433,
+            "left": 88,
+            "width": 216,
+            "height": 154,
+            "centerX": 196,
+            "centerY": 356
+          },
+          "team": {
+            "top": 728,
+            "bottom": 904,
+            "left": 111,
+            "width": 170,
+            "height": 176,
+            "centerX": 196,
+            "centerY": 816
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 32,
+            "bottom": 57,
+            "left": 68,
+            "width": 213,
+            "height": 25,
+            "centerX": 174,
+            "centerY": 45
+          },
+          "inquiry": {
+            "top": 492,
+            "bottom": 517,
+            "left": 68,
+            "width": 224,
+            "height": 25,
+            "centerX": 180,
+            "centerY": 504
+          },
+          "team": {
+            "top": 952,
+            "bottom": 977,
+            "left": 68,
+            "width": 209,
+            "height": 25,
+            "centerX": 173,
+            "centerY": 964
+          }
+        },
+        "labelType": [
+          "20px 500",
+          "20px 500",
+          "20px 500"
+        ],
+        "heading": {
+          "height": 154,
+          "position": "static"
+        },
+        "connectors": [
+          {
+            "length": 459.8,
+            "angle": 90,
+            "rise": 460,
+            "run": 0,
+            "from": [
+              46,
+              -104
+            ],
+            "to": [
+              46,
+              356
+            ]
+          },
+          {
+            "length": 459.8,
+            "angle": 90,
+            "rise": 460,
+            "run": 0,
+            "from": [
+              46,
+              356
+            ],
+            "to": [
+              46,
+              816
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "03Hand it to your team.",
+        "scene": {
+          "top": -692,
+          "bottom": 659,
+          "left": 36,
+          "width": 288,
+          "height": 1351,
+          "centerX": 180,
+          "centerY": -16
+        },
+        "story": {
+          "top": -752,
+          "bottom": 687,
+          "left": 20,
+          "width": 320,
+          "height": 1439,
+          "centerX": 180,
+          "centerY": -32
+        },
+        "frames": [
+          {
+            "top": -692,
+            "height": 240,
+            "centerY": -572
+          },
+          {
+            "top": -232.2,
+            "height": 240,
+            "centerY": -112.2
+          },
+          {
+            "top": 227.6,
+            "height": 240,
+            "centerY": 347.6
+          }
+        ],
+        "pictures": {
+          "customer": {
+            "top": -692,
+            "bottom": -452,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": -572
+          },
+          "inquiry": {
+            "top": -232,
+            "bottom": 8,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": -112
+          },
+          "team": {
+            "top": 228,
+            "bottom": 468,
+            "left": 68,
+            "width": 256,
+            "height": 240,
+            "centerX": 196,
+            "centerY": 348
+          }
+        },
+        "art": {
+          "customer": {
+            "top": -682,
+            "bottom": -462,
+            "left": 117,
+            "width": 157,
+            "height": 220,
+            "centerX": 196,
+            "centerY": -572
+          },
+          "inquiry": {
+            "top": -189,
+            "bottom": -35,
+            "left": 88,
+            "width": 216,
+            "height": 154,
+            "centerX": 196,
+            "centerY": -112
+          },
+          "team": {
+            "top": 260,
+            "bottom": 436,
+            "left": 111,
+            "width": 170,
+            "height": 176,
+            "centerX": 196,
+            "centerY": 348
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": -436,
+            "bottom": -411,
+            "left": 68,
+            "width": 213,
+            "height": 25,
+            "centerX": 174,
+            "centerY": -423
+          },
+          "inquiry": {
+            "top": 24,
+            "bottom": 49,
+            "left": 68,
+            "width": 224,
+            "height": 25,
+            "centerX": 180,
+            "centerY": 36
+          },
+          "team": {
+            "top": 484,
+            "bottom": 509,
+            "left": 68,
+            "width": 209,
+            "height": 25,
+            "centerX": 173,
+            "centerY": 496
+          }
+        },
+        "labelType": [
+          "20px 500",
+          "20px 500",
+          "20px 500"
+        ],
+        "heading": {
+          "height": 154,
+          "position": "static"
+        },
+        "connectors": [
+          {
+            "length": 459.8,
+            "angle": 90,
+            "rise": 460,
+            "run": 0,
+            "from": [
+              46,
+              -572
+            ],
+            "to": [
+              46,
+              -112
+            ]
+          },
+          {
+            "length": 459.8,
+            "angle": 90,
+            "rise": 460,
+            "run": 0,
+            "from": [
+              46,
+              -112
+            ],
+            "to": [
+              46,
+              348
+            ]
+          }
+        ]
+      }
+    },
+    "axe": []
+  }
+]

@@ -1,0 +1,362 @@
+{
+  "blocks": 57,
+  "hidden": 22,
+  "repeats": [
+    {
+      "text": "Water around a skylight",
+      "count": 2
+    },
+    {
+      "text": "Alex Morgan",
+      "count": 2
+    },
+    {
+      "text": "Email",
+      "count": 2
+    }
+  ],
+  "items": [
+    {
+      "text": "The website is the start. Here is what comes next.",
+      "element": "h2",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "From a customer’s phone to a conversation with your team. Follow one roof repair request.",
+      "element": "p",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Inquiry capture in both packages",
+      "element": "span.ij-scope",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Capture the request.",
+      "element": "h3",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "One automatic workflow in the $1,500 package",
+      "element": "span.ij-scope",
+      "hidden": true,
+      "decorative": true
+    },
+    {
+      "text": "Give the inquiry a next step.",
+      "element": "h3",
+      "hidden": true,
+      "decorative": true
+    },
+    {
+      "text": "An agreed inquiry destination in both packages",
+      "element": "span.ij-scope",
+      "hidden": true,
+      "decorative": true
+    },
+    {
+      "text": "Put it in the right hands.",
+      "element": "h3",
+      "hidden": true,
+      "decorative": true
+    },
+    {
+      "text": "01 / 03",
+      "element": "span.ij-progress-count",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Scroll to follow the inquiry ↓",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Skip demonstration",
+      "element": "a",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "ILLUSTRATIVE EMAIL WORKFLOW",
+      "element": "div.ij-scene-note",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Fictional details. Nothing is collected or sent.",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Northvane Roofing",
+      "element": "div.ij-phone-brand",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "ROOF REPAIR REQUEST",
+      "element": "span.ij-phone-eyebrow",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "A little detail. A clearer next step.",
+      "element": "strong.ij-phone-title",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "What needs attention?",
+      "element": "dt",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Water around a skylight",
+      "element": "dd",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Your name",
+      "element": "dt",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Alex Morgan",
+      "element": "dd",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Preferred contact",
+      "element": "dt",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Email",
+      "element": "dd",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Sample form completed",
+      "element": "div.ij-phone-send",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "01 The customer",
+      "element": "p.ij-station-label",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "A completed form on their phone",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "The inquiry",
+      "element": "span",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "FICTIONAL LEAD · ROOF REPAIR",
+      "element": "span.ij-record-status",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Water around a skylight",
+      "element": "strong",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Urgent leak",
+      "element": "span.ij-urgent",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Email preferred",
+      "element": "span",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Name",
+      "element": "dt",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Alex Morgan",
+      "element": "dd",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Phone",
+      "element": "dt",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "(816) 555 0142",
+      "element": "dd",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Address",
+      "element": "dt",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "123 Example Lane Kansas City, MO",
+      "element": "dd",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Water entering the upstairs bedroom after last night’s rain. Homeowner is on site.",
+      "element": "p.ij-job-note",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Contact and project details together",
+      "element": "span.ij-record-tag",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "02 · EXAMPLE CONFIRMATION EMAIL",
+      "element": "div.ij-email-example",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "“Thanks, Alex. We have your roof repair request.”",
+      "element": "p",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "If there is no reply, a follow up can run at the agreed time.",
+      "element": "small",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "03 Your roofing team",
+      "element": "p.ij-station-label",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "The agreed person or inbox",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Choose how your team is notified",
+      "element": "p",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "In app notification",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "SMS",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Email",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Phone call",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Channel, setup and any usage costs agreed in scope.",
+      "element": "small",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "A customer describes the job on their phone. Their details become one inquiry your team can act on.",
+      "element": "p.ij-explanation-copy",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "A confirmation lets the customer know their request arrived. An agreed follow up can keep the conversation moving.",
+      "element": "p.ij-explanation-copy",
+      "hidden": true,
+      "decorative": true
+    },
+    {
+      "text": "The request and any replies reach the agreed inbox, ready for your team to continue the conversation.",
+      "element": "p.ij-explanation-copy",
+      "hidden": true,
+      "decorative": true
+    },
+    {
+      "text": "A reply stops this sample sequence. The original inquiry can already be available to the team.",
+      "element": "small",
+      "hidden": true,
+      "decorative": true
+    },
+    {
+      "text": "Website package? The inquiry goes straight to your agreed inbox for your team to reply. The $1,500 setup adds one agreed automatic workflow. Channels, timing and stop conditions are scoped before setup.",
+      "element": "p.ij-package-note",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Capture the request. A customer describes the job on their phone. Their details become one inquiry your team can act on. Inquiry capture in both packages .",
+      "element": "li",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Give the inquiry a next step. A confirmation lets the customer know their request arrived. An agreed follow up can keep the conversation moving. One automatic workflow in the $1,500 package .",
+      "element": "li",
+      "hidden": true,
+      "decorative": false
+    },
+    {
+      "text": "Put it in the right hands. The request and any replies reach the agreed inbox, ready for your team to continue the conversation. An agreed inquiry destination in both packages .",
+      "element": "li",
+      "hidden": true,
+      "decorative": false
+    }
+  ]
+}

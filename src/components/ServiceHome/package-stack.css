@@ -10,20 +10,24 @@
   --stack-inset: 40px;
   display: grid;
   align-content: start;
+  /* The cards' shared rows (package-card.css). Both cards are in flow in the same rows,
+     so each row, and so each card, is as tall as the taller card needs. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(3, auto);
   gap: 0;
   padding-top: calc(var(--stack-lead) + var(--stack-peek));
 }
 .p-package-stack > .p-package {
-  /* All four lines: an absolutely positioned back card with an auto end line
-     would reach into the list's bottom padding. */
-  grid-area: 1 / 1 / 2 / 2;
+  grid-column: 1;
+  grid-row: 1 / -1;
+  display: grid;
+  grid-template-rows: subgrid;
   transform-origin: 50% 0;
   transition: background-color .45s ease, box-shadow .45s ease;
 }
 .p-package-stack > .p-package.is-selected { position: relative; z-index: 3; box-shadow: 0 -6px 18px rgb(8 13 18 / .05), 0 14px 36px rgb(8 13 18 / .08); }
 .p-package-stack > .p-package:not(.is-selected) {
-  position: absolute;
-  inset: 0;
+  position: relative;
   z-index: 1;
   overflow: clip;
   transform: translateY(calc(-1 * var(--stack-peek))) scale(var(--stack-scale));
@@ -69,7 +73,7 @@
 .p-stack-tab:hover .p-stack-tab-name { color: #175c99; }
 
 @media (max-width: 760px) {
-  .p-package-stack { --stack-lead: 28px; --stack-peek: 46px; --stack-scale: .94; --stack-inset: 24px; }
+  .p-package-stack { --stack-lead: 28px; --stack-peek: 46px; --stack-scale: .94; --stack-inset: 24px; grid-template-rows: repeat(5, auto); }
   .p-stack-tab { gap: 10px; border-radius: 16px 16px 0 0; }
   .p-stack-tab-name, .p-stack-tab-price { font-size: 13px; }
   .p-stack-tab-price small { display: none; }
