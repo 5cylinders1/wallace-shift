@@ -1,26 +1,40 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react'
-import { createPortal } from 'react-dom'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { submitContactRequest } from '../../lib/contactAdapter'
 import { CalendlyScheduler } from '../../components/CalendlyScheduler'
 import { aiConsultation } from '../../content/aiConsultation'
 import ContactChoices from './ContactChoices'
+import { trackSiteEvent } from '../../lib/analytics'
 import './call-request.css'
+import SlideInDialog from './SlideInDialog'
 
 export type InquiryMode = 'phone' | 'meeting'
-type Props = { open: boolean; mode: InquiryMode; onModeChange: (mode: InquiryMode) => void; onClose: () => void }
+/** The add-on tiles whose "Discuss" buttons open this form. */
+export type AddOnSurface = 'home_addon_agents' | 'home_addon_follow_up' | 'home_addon_workspace'
+/** Where on the homepage the form was opened. The heading answers the button that opened it. */
+export type ContactSurface = 'home_hero' | 'home_packages' | 'home_comparison' | 'home_questions' | AddOnSurface
+// A specific opener also names its subject in the request Matthew receives: `topic` on the
+// Service line, and `about` (or the topic) in "Please call me about …".
+const openers: Record<ContactSurface, { lead: string; emphasis: string; topic?: string; about?: string }> = {
+  home_hero: { lead: 'Discuss', emphasis: 'your project.' },
+  home_packages: { lead: 'Ask Matthew', emphasis: 'a question.' },
+  home_comparison: { lead: 'Talk through', emphasis: 'the fit.', topic: 'Both packages', about: 'scoping both packages together' },
+  home_questions: { lead: 'Ask Matthew', emphasis: 'a question.' },
+  home_addon_agents: { lead: 'Discuss', emphasis: 'the agents.', topic: 'Chatbot + phone agent' },
+  home_addon_follow_up: { lead: 'Discuss', emphasis: 'follow up.', topic: 'Managed follow up' },
+  home_addon_workspace: { lead: 'Discuss', emphasis: 'your workspace.', topic: 'Business workspace + AI' },
+}
+type Props = { open: boolean; surface: ContactSurface; mode: InquiryMode; onModeChange: (mode: InquiryMode) => void; onClose: () => void }
 type Status = 'idle' | 'sending' | 'sent' | 'invalid' | 'not_configured' | 'network_error'
 
 /** This is an inquiry, not a calendar reservation. Keep the draft in memory
  * across dismissals, and never put contact details into analytics or storage. */
-export default function CallRequestDialog({ open, mode, onModeChange, onClose }: Props) {
-  const dialog = useRef<HTMLDialogElement>(null)
+export default function CallRequestDialog({ open, surface, mode, onModeChange, onClose }: Props) {
   const heading = useRef<HTMLHeadingElement>(null)
   const feedback = useRef<HTMLParagraphElement>(null)
   const success = useRef<HTMLHeadingElement>(null)
   const pending = useRef(false)
   const submission = useRef<{ signature: string; requestId: string } | null>(null)
   const controller = useRef<AbortController | null>(null)
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -35,75 +49,6 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
       : status === 'network_error'
         ? 'We could not confirm your request was sent. Your details are still here. Try again or email Matthew directly.'
         : null
-
-  const dismiss = useCallback(() => {
-    if (closeTimer.current) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      onClose()
-      return
-    }
-    if (dialog.current) dialog.current.dataset.closing = 'true'
-    closeTimer.current = setTimeout(() => {
-      closeTimer.current = null
-      onClose()
-    }, 180)
-  }, [onClose])
-
-  useLayoutEffect(() => {
-    const element = dialog.current
-    if (!open || !element) return
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    const { scrollX, scrollY } = window
-    const body = document.body
-    const root = document.documentElement
-    const original = {
-      position: body.style.position, top: body.style.top, left: body.style.left,
-      width: body.style.width, paddingRight: body.style.paddingRight, overflow: root.style.overflow,
-      scrollbarWidth: root.style.getPropertyValue('--modal-scrollbar-width'),
-    }
-    const scrollbar = window.innerWidth - root.clientWidth
-    const padding = Number.parseFloat(getComputedStyle(body).paddingRight) || 0
-    // Fixing the body also locks iOS scrolling. Compensate for the scrollbar
-    // before removing it so the page behind the dialog does not reflow.
-    Object.assign(body.style, {
-      position: 'fixed', top: `${-scrollY}px`, left: `${-scrollX}px`,
-      width: '100%', paddingRight: `${padding + scrollbar}px`,
-    })
-    // Viewport-fixed navigation ignores body padding, so preserve its own
-    // containing width while the document scrollbar is removed as well.
-    root.style.setProperty('--modal-scrollbar-width', `${scrollbar}px`)
-    root.style.overflow = 'hidden'
-    const viewport = window.visualViewport
-    const fitVisibleViewport = () => {
-      if (!viewport) return
-      element.style.setProperty('--call-visible-height', `${viewport.height}px`)
-      element.style.setProperty('--call-visible-top', `${viewport.offsetTop}px`)
-    }
-    fitVisibleViewport()
-    viewport?.addEventListener('resize', fitVisibleViewport)
-    viewport?.addEventListener('scroll', fitVisibleViewport)
-    delete element.dataset.closing
-    element.showModal()
-    element.scrollTop = 0
-    heading.current?.focus({ preventScroll: true })
-
-    return () => {
-      if (closeTimer.current) clearTimeout(closeTimer.current)
-      closeTimer.current = null
-      viewport?.removeEventListener('resize', fitVisibleViewport)
-      viewport?.removeEventListener('scroll', fitVisibleViewport)
-      element.style.removeProperty('--call-visible-height')
-      element.style.removeProperty('--call-visible-top')
-      element.close()
-      const { overflow, scrollbarWidth, ...bodyStyles } = original
-      Object.assign(body.style, bodyStyles)
-      root.style.overflow = overflow
-      if (scrollbarWidth) root.style.setProperty('--modal-scrollbar-width', scrollbarWidth)
-      else root.style.removeProperty('--modal-scrollbar-width')
-      window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' })
-      opener?.focus({ preventScroll: true })
-    }
-  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -123,10 +68,11 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
       setStatus('invalid')
       return
     }
+    const { topic, about } = openers[surface]
     const payload = {
       name: name.trim(), phone: phone.trim(), email: email.trim(), company, contactMethod: 'phone' as const,
-      service: 'Call request',
-      message: `Please call me about Wallace Shift services.${note.trim() ? `\n\n${note.trim()}` : ''}`,
+      service: topic ? `Call request: ${topic}` : 'Call request',
+      message: `Please call me about ${about ?? topic ?? 'Wallace Shift services'}.${note.trim() ? `\n\n${note.trim()}` : ''}`,
     }
     const signature = JSON.stringify(payload)
     // An uncertain response can be retried without a second email. Keep the
@@ -144,6 +90,8 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
         ...payload, requestId: submission.current.requestId,
       }, { signal: request.signal })
       setStatus(result.ok ? 'sent' : result.reason)
+      if (result.ok) trackSiteEvent({ name: 'enquiry_submitted', value: surface })
+      else if (result.reason !== 'invalid') trackSiteEvent({ name: 'enquiry_failed', value: surface })
     } finally {
       clearTimeout(timeout)
       controller.current = null
@@ -155,45 +103,24 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
   // Keep the component mounted so drafts and pending requests survive dismissal.
   if (!open) return null
 
-  return createPortal(
-    <dialog ref={dialog} className="call-request-dialog" aria-labelledby="call-request-heading" aria-describedby="call-request-next-step" onCancel={event => { event.preventDefault(); dismiss() }} onKeyDown={event => {
-      if (event.key !== 'Tab') return
-      // Native modality makes the background inert. Explicitly wrap the two
-      // ends as well so Tab does not move into browser chrome in Chromium.
-      const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('a[href], button, input, textarea, select, summary, iframe, [tabindex]'))
-        .filter(element => element.tabIndex >= 0 && !element.matches(':disabled') && element.getClientRects().length > 0)
-      const first = controls[0]
-      const last = controls.at(-1)
-      if (event.shiftKey && (document.activeElement === first || !controls.includes(document.activeElement as HTMLElement))) {
-        event.preventDefault()
-        last?.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first?.focus()
-      }
-    }}>
-      <div className="call-request-shell">
-        <header className="call-request-header">
-          <span className="call-request-brand">WALLACE SHIFT</span>
-          <button type="button" className="call-request-close" onClick={dismiss} aria-label="Close request form">Close<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" /></svg></button>
-        </header>
+  return <SlideInDialog open={open} onClose={onClose} labelledBy="call-request-heading" describedBy="call-request-next-step" closeLabel="Close request form" initialFocus={heading}>
         <div className={`call-request-content${mode === 'meeting' ? ' is-booking' : ''}`}>
           <div className="call-request-intro">
-            <h2 id="call-request-heading" ref={heading} tabIndex={-1}>{mode === 'phone' ? <>Request <em>a call.</em></> : <>Book a <em>Google Meet.</em></>}</h2>
+            <h2 id="call-request-heading" ref={heading} tabIndex={-1}>{openers[surface].lead} <em>{openers[surface].emphasis}</em></h2>
             <p id="call-request-next-step">{mode === 'phone' ? 'Leave your number and Matthew will call you to talk about what you need.' : `Choose an available time for a ${aiConsultation.durationMinutes} minute video call. Calendly sends your invitation and Google Meet link.`}</p>
-            <ContactChoices context="dialog" compact selected={mode} onRequestCall={() => onModeChange('phone')} onBookMeeting={() => onModeChange('meeting')} />
+            <ContactChoices context="dialog" compact selected={mode} onChoose={method => trackSiteEvent({ name: 'contact_choice', value: method, surface })} onRequestCall={() => onModeChange('phone')} onBookMeeting={() => onModeChange('meeting')} />
             <p className="call-request-reassurance">You do not need to choose a package.<br /> No payment or commitment.</p>
           </div>
           {mode === 'meeting' ? <div className="call-request-calendar">
-            {meetingBooked ? <div className="call-request-success" role="status"><h3 ref={success} tabIndex={-1}>Your Google Meet is booked.</h3><p>Check your email for the calendar invitation and Google Meet link. Use that invitation to reschedule or cancel.</p><button type="button" className="call-request-submit" onClick={dismiss}>Back to the website</button></div> : <>
-              {open && <CalendlyScheduler eventUrl={aiConsultation.fallbackBookingUrl} onScheduled={() => setMeetingBooked(true)} />}
+            {meetingBooked ? <div className="call-request-success" role="status"><h3 ref={success} tabIndex={-1}>Your Google Meet is booked.</h3><p>Check your email for the calendar invitation and Google Meet link. Use that invitation to reschedule or cancel.</p><button type="button" className="call-request-submit" data-dismiss>Back to the website</button></div> : <>
+              {open && <CalendlyScheduler eventUrl={aiConsultation.fallbackBookingUrl} onScheduled={() => { setMeetingBooked(true); trackSiteEvent({ name: 'meeting_booked', value: surface }) }} />}
               <button type="button" className="call-request-calendar-back" onClick={() => onModeChange('phone')}>Request a phone call instead</button>
             </>}
           </div> : status === 'sent' ? <div className="call-request-success" role="status">
             <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="20" cy="20" r="17" /><path d="m12 20 5 5 11-11" /></svg>
             <h3 ref={success} tabIndex={-1}>Your call request has been sent.</h3>
             <p>Matthew will call you at <strong>{phone.trim()}</strong>. This is a callback request, not a booked appointment.</p>
-            <button type="button" className="call-request-submit" onClick={dismiss}>Back to the website</button>
+            <button type="button" className="call-request-submit" data-dismiss>Back to the website</button>
           </div> : <form className="call-request-form" onSubmit={submit} aria-label="Call request" aria-busy={status === 'sending'}>
             <fieldset disabled={status === 'sending'}>
               <legend className="call-request-sr-only">Your contact details</legend>
@@ -214,7 +141,5 @@ export default function CallRequestDialog({ open, mode, onModeChange, onClose }:
             <p className="call-request-email">Prefer email? <a href="mailto:matthew@wallaceshift.com?subject=Call%20request">Email Matthew directly</a>.</p>
           </form>}
         </div>
-      </div>
-    </dialog>, document.body,
-  )
+  </SlideInDialog>
 }

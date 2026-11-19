@@ -23,7 +23,7 @@ Write a short outcome statement before requesting numbers. For example:
 
 Then describe what must support that outcome. How much existing information needs to move? Which roles need different access? Which other systems exchange data? Does historical correspondence need to be available inside the CRM, or can it remain in an accessible archive?
 
-Team size affects some costs, but it does not answer those questions. Two four-person teams—or two alternative plans for the same team—can involve substantially different work.
+Team size affects some costs, but it does not answer those questions. Two four-person teams, or two alternative plans for the same team, can involve substantially different work.
 
 If you are still distinguishing a customer-facing website from an operational application, settle that question with the [website-versus-web-app guide](/blog/web-app-vs-website) before comparing system estimates.
 
@@ -41,7 +41,7 @@ Finally, account for internal effort. Someone must resolve uncertain records, an
 
 ## A fully worked fictional budget
 
-Cedar Lane Maintenance and its customer Alder Studio are invented. All people, identifiers, scope choices, dollar amounts, and hour estimates below are hypothetical. These figures are arithmetic examples—not market averages, provider quotes, Wallace Shift prices, or predictions of what a real implementation should cost.
+Cedar Lane Maintenance and its customer Alder Studio are invented. All people, identifiers, scope choices, dollar amounts, and hour estimates below are hypothetical. These figures are arithmetic examples. They are not market averages, provider quotes, Wallace Shift prices, or predictions of what a real implementation should cost.
 
 Cedar Lane has four intended CRM users, including office coordinator Avery and field lead Jordan. Alder Studio is customer C-014, with L-01 Main studio and L-02 Workshop. Morgan Hale is its billing contact. The team needs to keep work for the two locations distinct while maintaining a shared customer relationship.
 

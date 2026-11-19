@@ -40,11 +40,11 @@ export const adminDemos: AdminDemo[] = [
   },
   {
     id: 'deercreek', slug: 'deercreek', href: '/demo/deercreek',
-    name: 'Deer Creek Plumbing — Site A', detail: 'Plumbing website concept',
+    name: 'Deer Creek Plumbing: Site A', detail: 'Plumbing website concept',
   },
   {
     id: 'deercreekplumbing', slug: 'deercreekplumbing', href: '/demo/deercreekplumbing',
-    name: 'Deer Creek Plumbing — Site B', detail: 'Plumbing website concept',
+    name: 'Deer Creek Plumbing: Site B', detail: 'Plumbing website concept',
   },
   {
     id: 'anthony', slug: 'anthony', href: '/demo/anthony',

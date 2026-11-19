@@ -32,8 +32,6 @@
 .p-guarantee-emblem-check { stroke: var(--guarantee-accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .p-page .p-guarantee h2 { font-size: clamp(38px, 3.5vw, 52px); line-height: 1.1; text-wrap: balance; }
 .p-guarantee-lede { margin-top: 20px; max-width: 36ch; font-size: 16px; color: var(--guarantee-ink); }
-.p-guarantee-status { margin-top: 30px; font-size: 13px; color: var(--guarantee-muted); }
-.p-guarantee-status strong { display: block; margin-bottom: 3px; font-size: 14px; font-weight: 500; color: var(--guarantee-ink); }
 .p-guarantee-terms { padding-top: 5px; min-width: 0; }
 .p-page .p-guarantee h3 { font: 500 20px/1.4 var(--font-sans); letter-spacing: -.02em; }
 .p-guarantee-intro { margin-top: 14px; margin-bottom: 18px; font-size: 15px; color: var(--guarantee-muted); }
@@ -60,7 +58,6 @@
   .p-guarantee-promise { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 36px; }
   .p-guarantee-identity { grid-column: 1; grid-row: 1 / 3; margin-bottom: 0; }
   .p-guarantee-promise h2, .p-guarantee-lede { grid-column: 2; }
-  .p-guarantee-status { grid-column: 1 / -1; margin-top: 24px; }
   .p-guarantee-intro { max-width: 68ch; }
 }
 @media (max-width: 600px) {
@@ -69,7 +66,6 @@
   .p-guarantee-emblem-frame { width: 72px; flex-basis: 72px; }
   .p-guarantee-identity p { font-size: 14px; }
   .p-guarantee-lede { font-size: 15px; margin-top: 16px; }
-  .p-guarantee-status { margin-top: 24px; }
   .p-page .p-guarantee summary { gap: 14px; font-size: 16px; }
   .p-guarantee-amount { font-size: 20px; }
   .p-guarantee-detail { padding-right: 0; }

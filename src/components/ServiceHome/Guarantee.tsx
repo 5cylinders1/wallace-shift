@@ -76,7 +76,7 @@ function DisclosureIcon() {
 }
 
 export default function Guarantee() {
-  return <section className="r-section p-guarantee" id="guarantee" aria-labelledby="guarantee-heading" aria-describedby="guarantee-status">
+  return <section className="r-section p-guarantee" id="guarantee" aria-labelledby="guarantee-heading">
     <div className="r-wrap p-guarantee-grid">
       <div className="p-guarantee-promise">
         <div className="p-guarantee-identity">
@@ -85,19 +85,18 @@ export default function Guarantee() {
         </div>
         <h2 id="guarantee-heading">Time to <em>be sure.</em></h2>
         <p className="p-guarantee-lede">Review the complete agreed work. Under this proposal, you could choose a correction or a covered refund.</p>
-        <p className="p-guarantee-status" id="guarantee-status"><strong>Draft for review</strong>This is a proposal, not an active guarantee.</p>
       </div>
 
       <div className="p-guarantee-terms">
         <h3>Proposed refund coverage</h3>
-        <p className="p-guarantee-intro">The 30 calendar day window would begin with written notice that the complete agreed work is ready to review.</p>
+        <p className="p-guarantee-intro">For a website, the 30 days start with your first payment. For a lead page, the window would begin with written notice that the complete agreed work is ready to review.</p>
 
         <details>
           <summary><span className="p-guarantee-summary-copy">Website &amp; care<span>First payment covered</span></span><span className="p-guarantee-amount">$250</span><DisclosureIcon /></summary>
           <div className="p-guarantee-detail">
-            <p>You could choose a correction within the agreed scope or a refund of your first $250 package payment.</p>
-            <p>The proposed billing schedule would collect that payment at complete delivery, with no second package payment before the review window ends. A timely refund request would pause future covered billing; a refund would end the covered service.</p>
-            <p>Later monthly payments would not be covered by this launch guarantee.</p>
+            <p>Cancel within 30 days of your first $250 payment and that payment is refunded. Nothing more is charged.</p>
+            <p>The first payment is taken when you sign. After 30 days, cancelling takes effect at the end of that month, and your site stays online until then.</p>
+            <p>Later monthly payments are not covered by this guarantee.</p>
           </div>
         </details>
         <details>

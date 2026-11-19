@@ -1,0 +1,66 @@
+/* Package card. Both cards in the stack share one set of rows (a subgrid of the stack, see
+   package-stack.css), so they are the same height and every row starts at the same place:
+     desktop and tablet  what it is | price, how you pay, Buy now
+                         what's included | good to know
+                         one link to see it
+     phones              what it is, price, what's included, good to know, link
+   Groups are separated by space and soft fills, never divider lines. */
+.p-page .p-package-stack > .p-package { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); column-gap: 56px; row-gap: 40px; }
+.p-page .pc-identity { grid-column: 1; grid-row: 1; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 28px; align-items: start; min-width: 0; }
+.p-page .pc-identity .p-package-art { width: 112px; margin-top: 6px; }
+.p-page .pc-identity h3 { font-size: clamp(28px, 2.4vw, 38px); font-weight: 500; line-height: 1.1; letter-spacing: -.025em; overflow-wrap: anywhere; }
+.p-page .pc-identity h3 em { font-size: 1.15em; }
+.p-page .pc-identity p { margin-top: 14px; max-width: 42ch; font-size: 15px; line-height: 1.65; color: #52616b; }
+
+/* The price box fills its row and keeps Buy now at the bottom, so the button sits in the same
+   place on both cards even when one card's payment line wraps. */
+.p-page .pc-offer { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 16px; background: #eef3f5; }
+.p-page .p-package:not(.is-selected) .pc-offer { background: #d8e1e6; }
+.p-page .pc-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; font-size: clamp(40px, 3.4vw, 52px); font-weight: 500; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: #080d12; }
+.p-page .pc-price span { font-size: 14px; font-weight: 400; letter-spacing: 0; color: #52616b; }
+.p-page .pc-schedule { font-size: 14px; line-height: 1.5; color: #33454f; }
+.p-page .pc-buy { width: 100%; justify-content: space-between; min-height: 52px; margin-top: auto; padding-inline: 22px; font-size: 15px; }
+.p-page .pc-schedule { margin-bottom: 8px; }
+
+/* The two lists sit side by side at the same height, with the same heading. */
+.p-page :is(.pc-included, .pc-know) { grid-row: 2; min-width: 0; }
+.p-page .pc-included { grid-column: 1; }
+.p-page .pc-know { grid-column: 2; }
+.p-page :is(.pc-included, .pc-know) h4 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.5; color: #080d12; }
+.p-page .pc-included ul { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; }
+.p-page .pc-included li { display: flex; gap: 12px; font-size: 15px; line-height: 1.55; }
+.p-page .pc-included li svg { flex-shrink: 0; margin-top: 3px; color: #175c99; }
+.p-page .pc-know dl { margin: 14px 0 0; display: grid; gap: 14px; }
+.p-page .pc-know dl > div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; }
+.p-page .pc-know dt { font-size: 14px; font-weight: 600; line-height: 1.55; color: #33454f; }
+.p-page .pc-know dd { margin: 0; font-size: 14px; line-height: 1.55; color: #33454f; }
+.p-page .pc-know dd a { color: #175c99; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+
+.p-page .pc-see { grid-column: 1; grid-row: 3; justify-self: start; display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: #175c99; font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
+.p-page .pc-see svg { width: 18px; height: 18px; }
+
+/* Tablet: the same two columns, closer together. */
+@media (max-width: 1100px) {
+  .p-page .p-package-stack > .p-package { column-gap: 36px; row-gap: 32px; }
+  .p-page .pc-identity { grid-template-columns: 80px minmax(0, 1fr); gap: 20px; }
+  .p-page .pc-identity .p-package-art { width: 80px; }
+  .p-page .pc-identity h3 { font-size: 28px; }
+  .p-page .pc-offer { padding: 20px; }
+  .p-page .pc-price { font-size: 40px; }
+  .p-page .pc-know dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+
+/* Phones: one column, in the order a buyer decides. */
+@media (max-width: 760px) {
+  .p-page .p-package-stack > .p-package { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .p-page :is(.pc-identity, .pc-offer, .pc-included, .pc-know, .pc-see) { grid-column: 1; }
+  .p-page .pc-identity { grid-row: 1; grid-template-columns: minmax(0, 1fr); }
+  .p-page .pc-identity .p-package-art { display: none; }
+  .p-page .pc-identity p { margin-top: 10px; font-size: 14px; }
+  .p-page .pc-offer { grid-row: 2; }
+  .p-page .pc-price { font-size: clamp(36px, 11vw, 44px); }
+  .p-page .pc-included { grid-row: 3; }
+  .p-page .pc-included li { font-size: 14px; }
+  .p-page .pc-know { grid-row: 4; }
+  .p-page .pc-see { grid-row: 5; }
+}

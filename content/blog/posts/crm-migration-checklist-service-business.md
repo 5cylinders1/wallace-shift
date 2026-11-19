@@ -57,14 +57,14 @@ This rehearsal contains **eight business records** and **two staff identity mapp
 
 | Record | Relationship and expected meaning |
 | --- | --- |
-| `C-014` — Alder Studio | One client, with billing contact `P-021` |
-| `L-01` — Main studio | Service location belonging to `C-014` |
-| `L-02` — Workshop | A different service location belonging to `C-014` |
-| `P-021` — Morgan Hale | Billing contact associated with `C-014` |
-| `J-101` — Scheduled job | Belongs to `C-014` at `L-01`; coordinator `U-01`, field lead `U-02` |
-| `J-102` — Awaiting customer decision | Belongs to `C-014` at `L-02`; coordinator `U-01`, field lead `U-02` |
-| `A-301` — Open site-visit task | Belongs to `J-101`; owned by `U-02` |
-| `A-302` — Open revised-quote review | Belongs to `J-102`; owned by `U-01` |
+| `C-014`: Alder Studio | One client, with billing contact `P-021` |
+| `L-01`: Main studio | Service location belonging to `C-014` |
+| `L-02`: Workshop | A different service location belonging to `C-014` |
+| `P-021`: Morgan Hale | Billing contact associated with `C-014` |
+| `J-101`: Scheduled job | Belongs to `C-014` at `L-01`; coordinator `U-01`, field lead `U-02` |
+| `J-102`: Awaiting customer decision | Belongs to `C-014` at `L-02`; coordinator `U-01`, field lead `U-02` |
+| `A-301`: Open site-visit task | Belongs to `J-101`; owned by `U-02` |
+| `A-302`: Open revised-quote review | Belongs to `J-102`; owned by `U-01` |
 
 The staff mappings are `U-01` for Avery and `U-02` for Jordan. Whether the destination uses staff accounts, owner fields, or another structure must be checked for that product.
 

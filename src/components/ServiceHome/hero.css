@@ -1,0 +1,59 @@
+/* Page order: headline, what you get, the demo, the two packages, then one action.
+   Desktop shows the demo in its own column beside the copy, vertically centred against it;
+   phones stack everything in that same order. */
+.p-page .r-hero-copy { display: contents; }
+.p-page .r-hero-grid {
+  grid-template-areas: ". demo" "title demo" "summary demo" "packages demo" "action demo" ". demo";
+  grid-template-rows: 1fr auto auto auto auto 1fr;
+  row-gap: 0; align-items: start;
+}
+.p-page .r-hero h1 { grid-area: title; }
+.p-page .r-hero-copy > p { grid-area: summary; }
+.p-page .r-website-demo { grid-area: demo; align-self: center; min-width: 0; }
+.p-page .r-hero-packages { grid-area: packages; }
+.p-page .r-hero-actions { grid-area: action; }
+
+/* Rows are separated by space and a soft fill, never divider lines, like the rest of this page. */
+.p-page .r-hero-packages { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 8px; max-width: 520px; }
+.p-page .r-hero-package {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto 20px; align-items: center; gap: 18px;
+  min-height: 72px; padding: 14px 18px 14px 20px; border-radius: 12px;
+  background: #111a22; color: #edf1f2; text-decoration: none;
+  transition: background-color .2s ease;
+}
+.p-page .r-hero-package:hover { background: #172430; }
+.p-page .r-hero-package:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.p-page .r-hero-package-name { font-size: 15px; font-weight: 500; line-height: 1.35; }
+.p-page .r-hero-package-name > span { color: #adbac3; }
+.p-page .r-hero-package-price { display: grid; justify-items: end; font-size: 26px; font-weight: 500; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.p-page .r-hero-package-price small { font-size: 12px; font-weight: 400; letter-spacing: 0; color: #adbac3; margin-top: 4px; }
+.p-page .r-hero-package > svg { color: var(--color-accent); transition: transform .2s ease; }
+.p-page .r-hero-package:hover > svg { transform: translateX(3px); }
+
+.p-page .r-hero-actions { margin-top: 28px; display: flex; }
+.p-page .r-hero-cta { min-height: 56px; padding: 16px 26px; font-size: 15px; gap: 28px; }
+
+@media (max-width: 1100px) {
+  .p-page .r-hero-package { gap: 14px; padding-inline: 16px; }
+  .p-page .r-hero-package-price { font-size: 23px; }
+}
+
+/* Phones read top to bottom: headline, what you get, the demo as proof, both prices, then the action. */
+@media (max-width: 760px) {
+  .p-page .r-hero-grid { grid-template-areas: "title" "summary" "demo" "packages" "action"; grid-template-rows: none; }
+  .p-page .r-website-demo { margin-top: 24px; }
+  .p-page .r-hero-packages { margin-top: 24px; max-width: none; gap: 6px; }
+  .p-page .r-hero-package { min-height: 64px; padding: 12px 14px 12px 16px; gap: 12px; grid-template-columns: minmax(0, 1fr) auto 18px; }
+  .p-page .r-hero-package-name { font-size: 14px; }
+  /* Same two-line name as the package cards, so "& automatic follow up" never breaks mid-phrase. */
+  .p-page .r-hero-package-name > span { display: block; }
+  .p-page .r-hero-package-price { font-size: 22px; }
+  .p-page .r-hero-package-price small { font-size: 11px; margin-top: 3px; }
+  .p-page .r-hero-actions { margin-top: 18px; }
+  .p-page .r-hero-cta { width: 100%; min-height: 54px; font-size: 14px; justify-content: space-between; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p-page .r-hero-package, .p-page .r-hero-package > svg { transition: none; }
+  .p-page .r-hero-package:hover > svg { transform: none; }
+}

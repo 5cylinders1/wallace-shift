@@ -125,7 +125,7 @@ export const servicePaths = {
       // was deliberately absent until then because pricing.ts publishes
       // only "a deposit to hold the schedule" with no percentage.
       step: 'From $1,000, then 50%',
-      note: 'Scope is agreed in writing first. The 50% deposit follows that approval and holds your place in the schedule — nothing is built before both are settled. CRM connections or other system work are included only when specified in that scope.',
+      note: 'Scope is agreed in writing first. The 50% deposit follows that approval and holds your place in the schedule. Nothing is built before both are settled. CRM connections or other system work are included only when specified in that scope.',
       href: '/pricing#websites',
     },
   ],

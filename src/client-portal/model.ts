@@ -36,8 +36,9 @@ export type Engagement = {
   issueEmail?: InvoiceEmail
   selfService?: {
     setupOrigin?: string
-    orderId: string; fingerprint: string; packageId: 'inquiry' | 'notes' | 'assistant'; offerVersion: string; buyerName: string
-    answers: AiQualificationAnswers
+    orderId: string; fingerprint: string; packageId: 'inquiry' | 'notes' | 'assistant' | 'website' | 'lead'; offerVersion: string; buyerName: string
+    /** AI packages only. Website and lead page purchases have no qualification quiz. */
+    answers?: AiQualificationAnswers
     ownerNotification?: {
       id: string; state: 'pending' | 'sent' | 'failed' | 'review'; startedAt: string
       sentAt?: string; providerId?: string; attemptToken?: string; leaseUntil?: number

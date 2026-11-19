@@ -22,6 +22,7 @@
     "test:ai-booking": "node scripts/test-ai-booking.mjs && node scripts/test-ai-quiz-notification.mjs",
     "test:ai-consultation-browser": "node scripts/test-ai-consultation-browser.mjs",
     "test:ai-checkout": "node scripts/test-ai-checkout.mjs",
+    "test:package-checkout": "node scripts/test-package-checkout.mjs",
     "test:ai-subscription": "node scripts/test-ai-subscription.mjs",
     "test:ai-subscription-browser": "node scripts/test-ai-subscription-browser.mjs",
     "test:ai-subscription-stripe": "node scripts/test-ai-subscription-stripe.mjs",

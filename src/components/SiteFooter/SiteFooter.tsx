@@ -29,7 +29,7 @@ export function SiteFooter() {
                 these render only once a real value is set. */}
             {business.serviceArea && (
               <p className="site-footer__area">
-                Serving {business.serviceArea} — and remote.
+                Serving {business.serviceArea} and remote clients.
               </p>
             )}
 

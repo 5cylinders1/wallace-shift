@@ -3,7 +3,7 @@ import { contractorOffers } from '../../content/contractorOffers'
 import './process.css'
 
 const steps = [
-  { short: 'Agree', title: 'Agree the work', description: 'We confirm the deliverables, costs, responsibilities and terms. Your questions help shape the scope.' },
+  { short: 'Agree', title: 'Agree the work', description: 'We confirm the deliverables, costs, responsibilities and terms. Your questions help shape the scope. Your agreement and invoices stay together in your private client portal.' },
   { short: 'Review', title: 'Review the working example', description: 'See the design and test the agreed inquiry path before launch.' },
   { short: 'Launch', title: 'Launch with a clear handoff', description: 'Know where inquiries arrive, what the tools do and how to ask for support.' },
 ]
@@ -95,7 +95,6 @@ export default function Process() {
           ][stage]}</p>
         </footer>
       </div>
-      <p className="process-portal-note">Your agreement and invoices stay together in your private client portal.</p>
     </div>
   </section>
 }

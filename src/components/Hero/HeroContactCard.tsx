@@ -16,7 +16,7 @@ export function HeroContactCard() {
       <div className="hero-contact-card__top">
         <p className="eyebrow hero-contact-card__eyebrow">New project</p>
         <span className="hero-contact-card__count" aria-hidden="true">
-          01&mdash;03
+          01 / 03
         </span>
       </div>
       <h2 className="hero-contact-card__heading">

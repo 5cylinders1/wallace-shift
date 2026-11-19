@@ -9,7 +9,8 @@ const retryWindow = 23 * 3600000
 const label = (options: readonly { value: string; label: string }[], value: string) => options.find(option => option.value === value)?.label ?? value
 
 function paidProject(e: Engagement): boolean {
-  return Boolean(!e.archivedAt && e.selfService && e.signature && e.signature.hash === e.agreementHash && e.cadence === 'once'
+  // Website and lead page purchases have their own notices; this paid-project email is for AI packages with quiz answers.
+  return Boolean(!e.archivedAt && e.selfService?.answers && !['website', 'lead'].includes(e.selfService.packageId) && e.signature && e.signature.hash === e.agreementHash && e.cadence === 'once'
     && e.invoices.length === 1 && e.invoices[0].status === 'paid' && e.invoices[0].method === 'stripe'
     && e.invoices[0].paymentIntent && !e.invoices[0].refunded && !e.invoices[0].disputed)
 }
@@ -33,7 +34,7 @@ function payload(e: Engagement, kind: 'paid' | 'setup'): Notification['payload']
   let to: string
   try { to = ownerEmail() } catch { return undefined }
   const purchase = e.selfService!
-  const a = purchase.answers
+  const a = purchase.answers!
   if (kind === 'setup') return {
     from, to: [to], subject: `AI service setup requested: ${e.client.replace(/[\r\n\t]+/g, ' ')}`,
     text: ['A verified client requested AI chatbot and phone agent setup. No trial or payment has started.', '',

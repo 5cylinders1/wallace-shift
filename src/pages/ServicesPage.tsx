@@ -68,7 +68,7 @@ export function ServicesPage() {
               >
                 <div className="service-detail__intro">
                   <span className="service-detail__index">
-                    {service.index} — {service.label}
+                    {service.index} · {service.label}
                   </span>
                   <h2 className="service-detail__title">{service.title}</h2>
                   <p className="service-detail__summary">{service.summary}</p>

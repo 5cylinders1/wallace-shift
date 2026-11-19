@@ -1,0 +1,33 @@
+/* The end of the homepage is two separate pieces: an optional detour to the
+   showcase on its own dark image band, then a light closing section with the
+   one question to ask. Different surfaces keep them from reading as one block. */
+
+/* Showcase: the WS-in-water still across the full width, centred, with the
+   copy in the dark water on the left. */
+.r-showcase { position: relative; isolation: isolate; overflow: hidden; display: grid; align-items: center; min-height: clamp(440px, 40vw, 600px); padding-block: 64px; background: #05080b; }
+.r-showcase-media { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+.r-showcase::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(5 8 11 / .82) 0%, rgb(5 8 11 / .5) 22%, rgb(5 8 11 / 0) 36%); }
+.r-showcase-copy > * { max-width: min(400px, calc(37vw - 72px)); }
+.r-showcase-copy p { margin-top: 20px; color: #c3ccd2; font-size: 15px; }
+.r-showcase-copy .m-text-link { margin-top: 22px; }
+
+/* Closing question: heading on the left, the reason and the one action on the right. */
+.r-contact-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 80px; align-items: center; }
+.r-contact-body { display: grid; gap: 28px; justify-items: start; }
+.r-contact-body > p { max-width: 46ch; color: #52616b; font-size: 16px; }
+.r-contact-body .m-button { border: 0; font-family: inherit; cursor: pointer; }
+
+/* Below 900px the WS needs the width, so the copy moves under the picture. */
+@media (max-width: 900px) {
+  .r-showcase { display: block; min-height: 0; padding: 0 0 56px; }
+  .r-showcase::before { display: none; }
+  .r-showcase-media { position: static; display: block; height: auto; aspect-ratio: 16 / 9; }
+  .r-showcase-copy { padding-top: 32px; }
+  .r-showcase-copy > * { max-width: 46ch; }
+  .r-contact-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+}
+@media (max-width: 760px) {
+  .r-showcase-copy p { font-size: 14px; margin-top: 16px; }
+  .r-contact-body { gap: 24px; }
+  .r-contact-body > p { font-size: 15px; }
+}

@@ -13,7 +13,7 @@ author:
   url: "/about"
 ---
 
-Choosing a web design agency becomes easier when you know what you are buying. A website proposal can cover strategy, writing, visual design, development, migration, training, and support—or only a few of those things.
+Choosing a web design agency becomes easier when you know what you are buying. A website proposal can cover strategy, writing, visual design, development, migration, training, and support, or only a few of those things.
 
 A polished portfolio tells you something about presentation. Your decision also needs to account for how the work will be delivered, who will make decisions, and what your business can operate after launch.
 
@@ -41,7 +41,7 @@ If you are still deciding whether a full rebuild is necessary, use our [website 
 
 Open a few completed sites and follow a realistic customer journey. Find a service, understand its scope, and locate the next step on a phone. A screenshot cannot show whether navigation, content, and forms work together.
 
-Ask the agency to explain one project that resembles your challenge. Similarity might mean a complicated service offering, an editorial workflow, or an integration—not necessarily the same industry.
+Ask the agency to explain one project that resembles your challenge. Similarity might mean a complicated service offering, an editorial workflow, or an integration. It does not have to mean the same industry.
 
 Find out what the agency actually contributed. Did it write the content, develop the site, or create the visual design? Was the example a client launch, a concept, or a collaboration? Clear attribution makes the evidence more useful.
 

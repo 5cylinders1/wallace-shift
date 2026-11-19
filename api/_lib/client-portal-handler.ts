@@ -5,7 +5,7 @@ import { identity, login, type Identity } from './portal-auth.js'
 import { allEngagements, audit, billingKey, getValue, mutateLedger, setValue } from './portal-store.js'
 import { accessible, canAccess, changeLedger, draft, field, generateDueInvoices } from './portal-ledger.js'
 import { charge, finishSetup, handleStripeEvent, quote, refreshPayments, resetFailedPayment, setupCard } from './portal-stripe.js'
-import { automaticInvoice, firstUnsettledInvoice, scheduleConsent } from '../../src/client-portal/model.js'
+import { automaticInvoice, firstUnsettledInvoice, money, scheduleConsent } from '../../src/client-portal/model.js'
 import type { Engagement } from '../../src/client-portal/model.js'
 import { issueAndEmail } from './portal-email.js'
 import { retryAiPurchaseNotifications } from './ai-purchase-notification.js'
@@ -68,6 +68,23 @@ function clientView(e: Engagement, who: Identity): unknown {
   delete view.stripeCustomer; delete view.paymentMethod; delete view.setup
   view.invoices.forEach(invoice => { delete invoice.attempt })
   return { ...view, ...subscriptionDetails, hasCard: Boolean(e.paymentMethod) }
+}
+/** Tells a lead page buyer the second payment is ready. The invoice exists either way; the owner sees the result. */
+async function emailLaunchInvoice(e: Engagement, origin: string): Promise<'sent' | 'failed'> {
+  const from = process.env.CONTACT_FROM_EMAIL?.trim()
+  const key = process.env.RESEND_API_KEY?.trim()
+  if (!from || /[\r\n]/.test(from) || !key) return 'failed'
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json', 'idempotency-key': `launch-invoice/${e.id}` },
+      body: JSON.stringify({
+        from, to: [e.email], subject: 'Your lead page is live: final payment ready',
+        text: [`Your ${e.title} is live.`, '', `The second payment of ${money(e.amount)} is ready in your client portal:`, `${origin}/client-portal`, '', 'Sign in with this email address to review and pay.'].join('\n'),
+      }),
+      signal: AbortSignal.timeout(8000),
+    })
+    return response.ok ? 'sent' : 'failed'
+  } catch { return 'failed' }
 }
 async function runBilling(origin: string): Promise<{ generated: number; attempted: number; failed: string[] }> {
   requirePortalStripeConfig()
@@ -216,6 +233,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (!instructions[body.method as keyof typeof instructions]) throw new DemoError('payment_instructions_required', 409)
     }
     await mutateLedger(entries => changeLedger(entries, body, who))
+    if (body.action === 'launch-invoice') { demoJson(res, 200, { ok: true, emailStatus: await emailLaunchInvoice(e, origin) }); return }
     demoJson(res, 200, { ok: true })
   } catch (error) {
     const failure = error instanceof DemoError ? error : new DemoError(error instanceof SyntaxError ? 'invalid_fields' : 'temporarily_unavailable', error instanceof SyntaxError ? 400 : 503)

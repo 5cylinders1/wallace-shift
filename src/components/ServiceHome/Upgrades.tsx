@@ -1,6 +1,6 @@
 import { aiSubscriptionMoney, aiSubscriptionOffer, aiSubscriptionPlans } from '../../content/aiSubscriptionOffer'
 import { engagementGroups } from '../../content/pricing'
-import { shiftHandoffHref } from '../../lib/quizHandoff'
+import type { AddOnSurface } from './CallRequestDialog'
 import './upgrades.css'
 
 const managedAutomation = engagementGroups.find(group => group.id === 'automation')?.items.find(item => item.title === 'Managed automation')
@@ -13,7 +13,8 @@ function Plus() {
   return <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M3 9h12" /><path className="monthly-services__plus" d="M9 3v12" /></svg>
 }
 
-export default function Upgrades() {
+// Each add-on's "Discuss" opens the homepage's slide-in form, titled for that add-on.
+export default function Upgrades({ onDiscuss }: { onDiscuss: (surface: AddOnSurface) => void }) {
   return (
     <section className="r-section r-light monthly-services" id="upgrades" aria-labelledby="monthly-services-heading">
       <div className="r-wrap">
@@ -35,7 +36,7 @@ export default function Upgrades() {
               <p>{aiSubscriptionOffer.monthlyChatReplies.toLocaleString('en-US')} chat replies + {aiSubscriptionOffer.monthlyPhoneMinutes} AI phone minutes, using your approved business information and call instructions.</p>
             </div>
             <p className="monthly-services__boundary">Tested before activation. Extra phone usage is purchased separately.</p>
-            <a className="monthly-services__link" href={shiftHandoffHref('ai-integration')}>Discuss the agents<Arrow /></a>
+            <button type="button" className="monthly-services__link" onClick={() => onDiscuss('home_addon_agents')} aria-haspopup="dialog">Discuss the agents<Arrow /></button>
             <details className="monthly-services__details">
               <summary>Setup, example & billing<Plus /></summary>
               <div className="monthly-services__detail-body">
@@ -62,7 +63,7 @@ export default function Upgrades() {
               <p>We monitor your workflow, fix failures and make minor adjustments as your business changes.</p>
             </div>
             <p className="monthly-services__boundary">First setup: included in the $1,500 lead package, or {followUpSetup ? `from $${followUpSetup.price} once` : 'quoted separately'}. Software and usage extra.</p>
-            <a className="monthly-services__link" href={shiftHandoffHref('automation-integration')}>Discuss follow up<Arrow /></a>
+            <button type="button" className="monthly-services__link" onClick={() => onDiscuss('home_addon_follow_up')} aria-haspopup="dialog">Discuss follow up<Arrow /></button>
             <details className="monthly-services__details">
               <summary>Setup costs & example<Plus /></summary>
               <div className="monthly-services__detail-body">
@@ -95,7 +96,7 @@ export default function Upgrades() {
               <p>One business dashboard, up to two standard account connections, and AI assistance to understand your reports. Built around the numbers that matter to you.</p>
             </div>
             <p className="monthly-services__boundary">Monthly care is optional. Hosting, software subscriptions and AI usage are separate.</p>
-            <a className="monthly-services__link" href="/contact">Discuss your workspace<Arrow /></a>
+            <button type="button" className="monthly-services__link" onClick={() => onDiscuss('home_addon_workspace')} aria-haspopup="dialog">Discuss your workspace<Arrow /></button>
             <details className="monthly-services__details">
               <summary>Scope, costs & support<Plus /></summary>
               <div className="monthly-services__detail-body">
@@ -113,10 +114,6 @@ export default function Upgrades() {
           </article>
         </div>
 
-        <footer className="monthly-services__footer">
-          <p>Not sure which fits? We’ll agree the setup, handoff and ongoing support with you.</p>
-          <a className="monthly-services__link" href="#questions">Talk through the options<Arrow /></a>
-        </footer>
       </div>
     </section>
   )

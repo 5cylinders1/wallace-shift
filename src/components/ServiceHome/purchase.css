@@ -1,25 +1,12 @@
 .p-page { padding-bottom: 0; }
-.p-page .r-hero-copy > .p-opening-note { font-size: 12px; margin-top: 14px; }
-.p-page .r-example-caption p, .p-page .r-panel-fine { font-size: 12px; }
+.p-page .r-panel-fine { font-size: 12px; }
 .p-page .r-example-top, .p-page .r-example-top button { font-size: 12px; }
-.p-page .r-opening-prices span, .p-page .r-opening-prices small { font-size: 12px; }
-.p-page .r-hero-foot { font-size: 12px; }
 .p-page .m-header { min-height: 88px; }
 .p-page .r-hero { padding-top: 40px; }
-.p-page .r-hero-actions { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 16px 24px; }
-.p-page .r-hero-actions .m-button { min-height: 52px; font-size: 14px; padding: 15px 24px; }
-.p-page .r-question-link { min-height: 44px; font-size: 13px; max-width: none; }
-.p-page .r-hero-copy > .p-call-next-step { font-size: 12px; margin-top: 12px; }
-.p-page .p-direct-phone { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: #c3d0d8; text-decoration: underline; text-underline-offset: 4px; }
-.p-page .r-opening-prices { margin-top: 24px; padding-top: 0; }
 @media (max-width: 760px) {
   .p-page .m-header { min-height: 76px; }
   .p-page .r-hero { padding-top: 24px; }
   .p-page .r-hero h1 { font-size: clamp(38px, 11vw, 48px); }
-  .p-page .r-hero-actions { gap: 8px 18px; }
-  .p-page .r-hero-actions .m-button { padding-inline: 20px; }
-  .p-page .r-opening-prices { gap: 16px; }
-  .p-page .r-opening-prices strong { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; }
 }
 .p-packages { padding-top: 0; padding-bottom: 68px; }
 .p-package-intro {
@@ -53,9 +40,11 @@
 .p-starting-links > button[aria-pressed="true"] .p-route-arrow { background: #175c99; color: #fff; border-radius: 50%; }
 .p-starting-help { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; margin-top: 16px; }
 .p-starting-help p { font-size: 12px; color: #475e6d; }
-.p-starting-help a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; font-size: 12px; font-weight: 600; color: #175c99; text-decoration: underline; }
+.p-starting-help button { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; font: inherit; font-size: 12px; font-weight: 600; color: #175c99; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .p-starting-help svg { width: 16px; height: 16px; }
-.p-starting-point.is-docked { position: fixed; z-index: 10; top: 16px; left: 50%; transform: translateX(-50%); width: min(860px, calc(100% - 40px)); padding: 8px; background: #fff; border-radius: 14px; box-shadow: 0 8px 30px rgb(8 13 18 / .18); }
+/* Docked, the switcher is a full-width bar under the site header, so the card scrolls cleanly beneath it
+   instead of showing cut-off lines around a floating pill. Its buttons keep an 860px column. */
+.p-starting-point.is-docked { position: fixed; z-index: 10; top: 0; left: 0; transform: none; width: 100%; padding: 8px max(20px, calc((100% - 860px) / 2)); border-radius: 0; background: #fff; box-shadow: 0 10px 24px rgb(8 13 18 / .08); }
 .p-starting-point.is-docked > h3, .p-starting-point.is-docked > p, .p-starting-point.is-docked .p-starting-help, .p-starting-point.is-docked button > span:first-child > span { display: none; }
 .p-starting-point.is-docked .p-starting-links { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin: 0; }
 .p-starting-point.is-docked button { min-height: 56px; padding: 12px 20px; gap: 12px; background: #edf1f2; }
@@ -66,8 +55,6 @@
 .p-page .p-package { padding: 40px; border-radius: 20px; background: #e1e8ec; }
 .p-page .p-package[id] { scroll-margin-top: var(--package-scroll-offset, 120px); }
 .p-package.is-selected { background: #fff; box-shadow: 0 14px 36px rgb(8 13 18 / .08); }
-.p-package-heading, .p-package-body { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); column-gap: 64px; }
-.p-package-overview { display: grid; grid-template-columns: minmax(0, 1fr) clamp(168px, 15.3vw, 240px); align-items: center; gap: 24px; min-width: 0; }
 .p-package-art { --art-line: 1.5; --art-route: 1.8; width: 100%; aspect-ratio: 18 / 13; align-self: center; pointer-events: none; user-select: none; }
 .p-package-art > svg { display: block; width: 100%; height: auto; }
 .p-art-paper { fill: #f8fafb; }
@@ -81,30 +68,6 @@
 .p-art-care, .p-art-route { stroke: #6b94b2; stroke-width: var(--art-route); }
 .p-art-clock { fill: #f8fafb; stroke: #6b94b2; stroke-width: var(--art-line); }
 .p-art-message { fill: #dcebf6; stroke: #6b94b2; stroke-width: var(--art-line); }
-.p-package-purpose { display: flex; align-items: flex-start; gap: 18px; min-width: 0; }
-.p-package-icon { flex-shrink: 0; color: #475e6d; margin-top: 6px; }
-.p-page .p-package-purpose h3 { font-size: clamp(27px, 2.3vw, 36px); font-weight: 500; line-height: 1.12; letter-spacing: -.025em; overflow-wrap: anywhere; }
-.p-package-purpose h3 em { font-size: 1.2em; }
-.p-package-purpose p { color: #52616b; font-size: 15px; margin-top: 16px; max-width: 44ch; line-height: 1.65; }
-.p-package-price { align-self: start; padding-top: 2px; }
-.p-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; font-size: clamp(44px, 4vw, 60px); line-height: 1.1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-.p-price span { font-size: 14px; letter-spacing: 0; color: #52616b; }
-.p-package-selection { display: flex; align-items: center; gap: 6px; margin-top: 14px; color: #475e6d; font-size: 12px; }
-.p-package-body { margin-top: 32px; }
-.p-package h4 { font-size: 14px; font-weight: 600; line-height: 1.5; }
-.p-package-scope ul { margin: 16px 0 24px; padding: 0; list-style: none; display: grid; gap: 12px; }
-.p-package-scope li { display: flex; gap: 12px; font-size: 15px; line-height: 1.6; }
-.p-package-scope li svg { flex-shrink: 0; margin-top: 3px; color: #475e6d; }
-.p-package-after p { margin-top: 8px; font-size: 14px; color: #52616b; line-height: 1.65; max-width: 52ch; }
-.p-package-terms { align-self: start; padding: 24px; border-radius: 12px; background: #edf1f2; }
-.p-package.is-selected .p-package-terms { background: #f0f4f6; }
-.p-package-terms p { margin-top: 10px; font-size: 13px; line-height: 1.65; color: #52616b; }
-.p-package-terms .p-cost-note { color: #080d12; }
-.p-sms-note { margin-top: 22px; }
-.p-package-actions { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px 32px; margin-top: 30px; }
-.p-package-actions .m-button { gap: 24px; min-height: 48px; }
-.p-policy-link { display: flex; align-items: center; color: #175c99; font-size: 12px; text-decoration: underline; text-underline-offset: 4px; width: fit-content; min-height: 44px; }
-.p-example-link { display: inline-flex; align-items: center; justify-content: space-between; min-height: 48px; gap: 20px; color: #175c99; font-size: 13px; font-weight: 600; text-decoration: underline; }
 .p-comparison { background: #080d12; color: #edf1f2; padding-bottom: 0; }
 .p-comparison-heading { margin-bottom: 44px; }
 .p-comparison-heading > p { line-height: 1.75; }
@@ -146,12 +109,6 @@
 .p-page #process { padding-top: 0; }
 .p-page .r-footer { flex-wrap: wrap; }
 .p-page a { text-underline-offset: 4px; }
-@media (min-width: 761px) and (max-width: 1199px) {
-  .p-package-overview { display: contents; }
-  .p-package-purpose { grid-column: 1; grid-row: 1; }
-  .p-package-price { grid-column: 2; grid-row: 1; max-width: calc(100% - 112px); }
-  .p-package-art { grid-column: 2; grid-row: 1; width: 100px; justify-self: end; }
-}
 @media (max-width: 1199px) {
   .p-package-art { --art-line: 2.4; --art-route: 2.7; }
 }
@@ -159,7 +116,6 @@
   .p-package-intro { --intro-gutter: 32px; --intro-gap: 40px; }
   .p-starting-point { padding: 28px; }
   .p-page .p-package { padding: 32px; }
-  .p-package-heading, .p-package-body { column-gap: 32px; }
   .p-upgrade-grid { gap: 40px; }
 }
 @media (max-width: 960px) {
@@ -170,38 +126,11 @@
 }
 @media (max-width: 760px) {
   .p-page .m-header { min-height: 72px; }
-  .p-page .r-opening-prices { gap: 12px; }
-  .p-page .r-opening-prices strong { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
-  .p-page .r-opening-prices span { font-size: 12px; }
-  .p-page .r-opening-prices small { font-size: 12px; }
-  .p-page .r-hero-actions { align-items: flex-start; }
-  .p-page .r-hero-actions .m-button { font-size: 12px; min-height: 48px; }
-  .p-page .r-question-link { font-size: 12px; min-height: 48px; }
   .p-page .r-example-top { align-items: flex-start; flex-direction: column; gap: 6px; }
   .p-page .r-example-top button { min-height: 44px; padding-inline: 14px; }
-  .p-page .r-example-caption a { min-height: 44px; font-size: 13px; }
-  .p-page .r-hero-foot a { min-height: 44px; }
   .p-package-list { padding-top: 28px; gap: 24px; }
   .p-page .p-package { padding: 24px; border-radius: 16px; }
-  .p-package-heading, .p-package-body { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .p-package-heading { grid-template-columns: minmax(0, 1fr) clamp(80px, 24vw, 160px); column-gap: 16px; }
-  .p-package-overview { display: contents; }
-  .p-package-purpose { gap: 12px; grid-column: 1 / -1; grid-row: 1; }
-  .p-package-art { grid-column: 2; grid-row: 2; }
-  .p-package-icon svg { width: 26px; height: 26px; }
-  .p-page .p-package-purpose h3 { font-size: 27px; }
-  .p-package-purpose p { margin-top: 12px; font-size: 14px; }
-  .p-package-body { margin-top: 26px; }
-  .p-package-price { grid-column: 1; grid-row: 2; padding-left: 0; }
-  .p-price { font-size: clamp(36px, 11vw, 44px); gap: 6px; }
-  .p-price span { font-size: 13px; }
-  .p-package-selection { margin-top: 8px; }
-  .p-package-scope li { font-size: 14px; }
-  .p-package-terms { padding: 20px; }
-  .p-package-actions { display: grid; gap: 6px; margin-top: 24px; }
-  .p-package-actions .m-button { width: 100%; justify-content: space-between; padding-inline: 18px; }
-  .p-example-link { justify-self: start; }
-  .p-starting-point.is-docked { top: 8px; width: calc(100% - 16px); padding: 6px; border-radius: 12px; }
+  .p-starting-point.is-docked { padding: 6px 8px; }
   .p-starting-point.is-docked .p-starting-links { gap: 6px; }
   .p-starting-point.is-docked button { padding: 10px; min-height: 56px; }
   .p-starting-point.is-docked strong { font-size: 12px; line-height: 1.4; }

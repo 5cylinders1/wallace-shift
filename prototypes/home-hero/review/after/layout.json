@@ -1,0 +1,306 @@
+[
+  {
+    "size": "desktop",
+    "width": 1440,
+    "height": 900,
+    "parts": {
+      "headline": {
+        "top": 144,
+        "bottom": 275,
+        "left": 64,
+        "width": 528,
+        "height": 131,
+        "firstScreen": true
+      },
+      "summary": {
+        "top": 299,
+        "bottom": 348,
+        "left": 64,
+        "width": 393,
+        "height": 50,
+        "firstScreen": true
+      },
+      "primary": {
+        "top": 560,
+        "bottom": 616,
+        "left": 64,
+        "width": 249,
+        "height": 56,
+        "firstScreen": true
+      },
+      "meetLink": null,
+      "priceWebsite": {
+        "top": 380,
+        "bottom": 452,
+        "left": 64,
+        "width": 520,
+        "height": 72,
+        "firstScreen": true
+      },
+      "priceLead": {
+        "top": 460,
+        "bottom": 532,
+        "left": 64,
+        "width": 520,
+        "height": 72,
+        "firstScreen": true
+      },
+      "demoTabs": {
+        "top": 149,
+        "bottom": 189,
+        "left": 648,
+        "width": 728,
+        "height": 40,
+        "firstScreen": true
+      },
+      "demo": {
+        "top": 201,
+        "bottom": 611,
+        "left": 648,
+        "width": 728,
+        "height": 410,
+        "firstScreen": true
+      }
+    },
+    "heroBottom": 688,
+    "overflowX": false,
+    "readingOrder": [
+      "headline",
+      "demoTabs",
+      "demo",
+      "summary",
+      "priceWebsite",
+      "priceLead",
+      "primary"
+    ],
+    "errors": []
+  },
+  {
+    "size": "tablet",
+    "width": 1024,
+    "height": 768,
+    "parts": {
+      "headline": {
+        "top": 144,
+        "bottom": 237,
+        "left": 32,
+        "width": 418,
+        "height": 93,
+        "firstScreen": true
+      },
+      "summary": {
+        "top": 261,
+        "bottom": 311,
+        "left": 32,
+        "width": 393,
+        "height": 50,
+        "firstScreen": true
+      },
+      "primary": {
+        "top": 523,
+        "bottom": 579,
+        "left": 32,
+        "width": 249,
+        "height": 56,
+        "firstScreen": true
+      },
+      "meetLink": null,
+      "priceWebsite": {
+        "top": 343,
+        "bottom": 415,
+        "left": 32,
+        "width": 418,
+        "height": 72,
+        "firstScreen": true
+      },
+      "priceLead": {
+        "top": 423,
+        "bottom": 495,
+        "left": 32,
+        "width": 418,
+        "height": 72,
+        "firstScreen": true
+      },
+      "demoTabs": {
+        "top": 192,
+        "bottom": 232,
+        "left": 482,
+        "width": 510,
+        "height": 40,
+        "firstScreen": true
+      },
+      "demo": {
+        "top": 244,
+        "bottom": 531,
+        "left": 482,
+        "width": 510,
+        "height": 287,
+        "firstScreen": true
+      }
+    },
+    "heroBottom": 651,
+    "overflowX": false,
+    "readingOrder": [
+      "headline",
+      "demoTabs",
+      "demo",
+      "summary",
+      "priceWebsite",
+      "priceLead",
+      "primary"
+    ],
+    "errors": []
+  },
+  {
+    "size": "iphone",
+    "width": 390,
+    "height": 664,
+    "parts": {
+      "headline": {
+        "top": 106,
+        "bottom": 200,
+        "left": 20,
+        "width": 350,
+        "height": 94,
+        "firstScreen": true
+      },
+      "summary": {
+        "top": 220,
+        "bottom": 266,
+        "left": 20,
+        "width": 350,
+        "height": 46,
+        "firstScreen": true
+      },
+      "primary": {
+        "top": 719,
+        "bottom": 773,
+        "left": 20,
+        "width": 350,
+        "height": 54,
+        "firstScreen": false
+      },
+      "meetLink": null,
+      "priceWebsite": {
+        "top": 567,
+        "bottom": 631,
+        "left": 20,
+        "width": 350,
+        "height": 64,
+        "firstScreen": true
+      },
+      "priceLead": {
+        "top": 637,
+        "bottom": 701,
+        "left": 20,
+        "width": 350,
+        "height": 64,
+        "firstScreen": false
+      },
+      "demoTabs": {
+        "top": 290,
+        "bottom": 334,
+        "left": 20,
+        "width": 350,
+        "height": 44,
+        "firstScreen": true
+      },
+      "demo": {
+        "top": 346,
+        "bottom": 543,
+        "left": 20,
+        "width": 350,
+        "height": 197,
+        "firstScreen": true
+      }
+    },
+    "heroBottom": 821,
+    "overflowX": false,
+    "readingOrder": [
+      "headline",
+      "summary",
+      "demoTabs",
+      "demo",
+      "priceWebsite",
+      "priceLead",
+      "primary"
+    ],
+    "errors": []
+  },
+  {
+    "size": "android",
+    "width": 360,
+    "height": 640,
+    "parts": {
+      "headline": {
+        "top": 106,
+        "bottom": 193,
+        "left": 20,
+        "width": 320,
+        "height": 87,
+        "firstScreen": true
+      },
+      "summary": {
+        "top": 213,
+        "bottom": 259,
+        "left": 20,
+        "width": 320,
+        "height": 46,
+        "firstScreen": true
+      },
+      "primary": {
+        "top": 695,
+        "bottom": 749,
+        "left": 20,
+        "width": 320,
+        "height": 54,
+        "firstScreen": false
+      },
+      "meetLink": null,
+      "priceWebsite": {
+        "top": 543,
+        "bottom": 607,
+        "left": 20,
+        "width": 320,
+        "height": 64,
+        "firstScreen": true
+      },
+      "priceLead": {
+        "top": 613,
+        "bottom": 677,
+        "left": 20,
+        "width": 320,
+        "height": 64,
+        "firstScreen": false
+      },
+      "demoTabs": {
+        "top": 283,
+        "bottom": 327,
+        "left": 20,
+        "width": 320,
+        "height": 44,
+        "firstScreen": true
+      },
+      "demo": {
+        "top": 339,
+        "bottom": 519,
+        "left": 20,
+        "width": 320,
+        "height": 180,
+        "firstScreen": true
+      }
+    },
+    "heroBottom": 797,
+    "overflowX": false,
+    "readingOrder": [
+      "headline",
+      "summary",
+      "demoTabs",
+      "demo",
+      "priceWebsite",
+      "priceLead",
+      "primary"
+    ],
+    "errors": []
+  }
+]

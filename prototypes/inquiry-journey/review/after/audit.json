@@ -1,0 +1,178 @@
+{
+  "blocks": 27,
+  "hidden": 0,
+  "repeats": [
+    {
+      "text": "Northvane Roofing",
+      "count": 2
+    },
+    {
+      "text": "Both packages",
+      "count": 2
+    }
+  ],
+  "items": [
+    {
+      "text": "The website is the start. Here is what comes next.",
+      "element": "h2",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "From a customer’s phone to a conversation with your team. Follow one roof repair request.",
+      "element": "p",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "An illustration with fictional details. Nothing is sent.",
+      "element": "p.ij-scene-note",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Scroll to follow the request ↓",
+      "element": "span",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Skip demonstration",
+      "element": "a",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Northvane Roofing",
+      "element": "div.ij-phone-brand",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "ROOF REPAIR REQUEST",
+      "element": "span.ij-phone-eyebrow",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "What needs attention?",
+      "element": "dt",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Water around a skylight",
+      "element": "dd",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Your name",
+      "element": "dt",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Alex Morgan",
+      "element": "dd",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Preferred contact",
+      "element": "dt",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Email",
+      "element": "dd",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Send request",
+      "element": "span.ij-phone-send",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "01 Capture the request.",
+      "element": "h3",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Both packages",
+      "element": "p.ij-chip",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "A customer describes the job on their phone and sends it.",
+      "element": "p.ij-step-text",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "N",
+      "element": "span.ij-mail-avatar",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Northvane Roofing",
+      "element": "strong",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "To Alex Morgan",
+      "element": "small",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "Thanks, Alex. We have your roof repair request.",
+      "element": "p.ij-mail-body",
+      "hidden": false,
+      "decorative": true
+    },
+    {
+      "text": "02 Confirm and follow up.",
+      "element": "h3",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Lead page only",
+      "element": "p.ij-chip",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "They get a confirmation right away. If they don’t reply, follow up goes out at the agreed time and stops when they do.",
+      "element": "p.ij-step-text",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "03 Hand it to your team.",
+      "element": "h3",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "Both packages",
+      "element": "p.ij-chip",
+      "hidden": false,
+      "decorative": false
+    },
+    {
+      "text": "The request reaches your inbox, ready for your team to pick up the conversation.",
+      "element": "p.ij-step-text",
+      "hidden": false,
+      "decorative": false
+    }
+  ]
+}

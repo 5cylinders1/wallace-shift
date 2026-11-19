@@ -1,0 +1,1310 @@
+[
+  {
+    "size": "desktop",
+    "width": 1440,
+    "height": 900,
+    "pinned": false,
+    "scrollLength": 367,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "Inquiry capture in both packagesCapture the request.",
+        "scene": {
+          "top": 493,
+          "bottom": 1054,
+          "left": 64,
+          "width": 1312,
+          "height": 561,
+          "centerX": 720,
+          "centerY": 774
+        },
+        "pictures": {
+          "customer": {
+            "top": 577,
+            "bottom": 932,
+            "left": 177,
+            "width": 220,
+            "height": 355,
+            "centerX": 287,
+            "centerY": 754
+          },
+          "inquiry": {
+            "top": 694,
+            "bottom": 756,
+            "left": 705,
+            "width": 71,
+            "height": 62,
+            "centerX": 740,
+            "centerY": 725
+          },
+          "team": {
+            "top": 579,
+            "bottom": 805,
+            "left": 1063,
+            "width": 220,
+            "height": 226,
+            "centerX": 1173,
+            "centerY": 692
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 956,
+            "bottom": 1003,
+            "left": 96,
+            "width": 383,
+            "height": 47,
+            "centerX": 287,
+            "centerY": 979
+          },
+          "inquiry": {
+            "top": 966,
+            "bottom": 1036,
+            "left": 519,
+            "width": 443,
+            "height": 70,
+            "centerX": 740,
+            "centerY": 1001
+          },
+          "team": {
+            "top": 817,
+            "bottom": 864,
+            "left": 1002,
+            "width": 342,
+            "height": 47,
+            "centerX": 1173,
+            "centerY": 840
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 9px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 482,
+            "angle": -19.2,
+            "rise": -158,
+            "run": 453,
+            "from": [
+              287,
+              903
+            ],
+            "to": [
+              740,
+              745
+            ]
+          },
+          {
+            "length": 435,
+            "angle": 3.3,
+            "rise": 25,
+            "run": 434,
+            "from": [
+              740,
+              745
+            ],
+            "to": [
+              1174,
+              770
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "One automatic workflow in the $1,500 packageGive the inquiry a next step.",
+        "scene": {
+          "top": 372,
+          "bottom": 933,
+          "left": 64,
+          "width": 1312,
+          "height": 561,
+          "centerX": 720,
+          "centerY": 653
+        },
+        "pictures": {
+          "customer": {
+            "top": 456,
+            "bottom": 811,
+            "left": 177,
+            "width": 220,
+            "height": 355,
+            "centerX": 287,
+            "centerY": 633
+          },
+          "inquiry": {
+            "top": 430,
+            "bottom": 817,
+            "left": 519,
+            "width": 443,
+            "height": 387,
+            "centerX": 740,
+            "centerY": 624
+          },
+          "team": {
+            "top": 458,
+            "bottom": 684,
+            "left": 1063,
+            "width": 220,
+            "height": 226,
+            "centerX": 1173,
+            "centerY": 571
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 835,
+            "bottom": 882,
+            "left": 96,
+            "width": 383,
+            "height": 47,
+            "centerX": 287,
+            "centerY": 858
+          },
+          "inquiry": {
+            "top": 837,
+            "bottom": 907,
+            "left": 519,
+            "width": 443,
+            "height": 70,
+            "centerX": 740,
+            "centerY": 872
+          },
+          "team": {
+            "top": 696,
+            "bottom": 743,
+            "left": 1002,
+            "width": 342,
+            "height": 47,
+            "centerX": 1173,
+            "centerY": 719
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 9px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 482,
+            "angle": -19.2,
+            "rise": -158,
+            "run": 453,
+            "from": [
+              287,
+              782
+            ],
+            "to": [
+              740,
+              624
+            ]
+          },
+          {
+            "length": 435,
+            "angle": 3.3,
+            "rise": 25,
+            "run": 434,
+            "from": [
+              740,
+              624
+            ],
+            "to": [
+              1174,
+              649
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "An agreed inquiry destination in both packagesPut it in the right hands.",
+        "scene": {
+          "top": 214,
+          "bottom": 775,
+          "left": 64,
+          "width": 1312,
+          "height": 561,
+          "centerX": 720,
+          "centerY": 495
+        },
+        "pictures": {
+          "customer": {
+            "top": 298,
+            "bottom": 653,
+            "left": 177,
+            "width": 220,
+            "height": 355,
+            "centerX": 287,
+            "centerY": 475
+          },
+          "inquiry": {
+            "top": 272,
+            "bottom": 659,
+            "left": 519,
+            "width": 443,
+            "height": 387,
+            "centerX": 740,
+            "centerY": 466
+          },
+          "team": {
+            "top": 300,
+            "bottom": 526,
+            "left": 1063,
+            "width": 220,
+            "height": 226,
+            "centerX": 1173,
+            "centerY": 413
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 677,
+            "bottom": 724,
+            "left": 96,
+            "width": 383,
+            "height": 47,
+            "centerX": 287,
+            "centerY": 700
+          },
+          "inquiry": {
+            "top": 679,
+            "bottom": 749,
+            "left": 519,
+            "width": 443,
+            "height": 70,
+            "centerX": 740,
+            "centerY": 714
+          },
+          "team": {
+            "top": 538,
+            "bottom": 585,
+            "left": 1002,
+            "width": 342,
+            "height": 47,
+            "centerX": 1173,
+            "centerY": 561
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 9px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 482,
+            "angle": -19.2,
+            "rise": -158,
+            "run": 453,
+            "from": [
+              287,
+              624
+            ],
+            "to": [
+              740,
+              466
+            ]
+          },
+          {
+            "length": 435,
+            "angle": 3.3,
+            "rise": 25,
+            "run": 434,
+            "from": [
+              740,
+              466
+            ],
+            "to": [
+              1174,
+              491
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "size": "tablet",
+    "width": 1024,
+    "height": 768,
+    "pinned": false,
+    "scrollLength": 336,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "Inquiry capture in both packagesCapture the request.",
+        "scene": {
+          "top": 415,
+          "bottom": 958,
+          "left": 32,
+          "width": 960,
+          "height": 542,
+          "centerX": 512,
+          "centerY": 686
+        },
+        "pictures": {
+          "customer": {
+            "top": 506,
+            "bottom": 828,
+            "left": 92,
+            "width": 200,
+            "height": 323,
+            "centerX": 192,
+            "centerY": 667
+          },
+          "inquiry": {
+            "top": 608,
+            "bottom": 667,
+            "left": 493,
+            "width": 53,
+            "height": 59,
+            "centerX": 520,
+            "centerY": 637
+          },
+          "team": {
+            "top": 484,
+            "bottom": 709,
+            "left": 730,
+            "width": 219,
+            "height": 225,
+            "centerX": 839,
+            "centerY": 597
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 852,
+            "bottom": 899,
+            "left": 56,
+            "width": 273,
+            "height": 47,
+            "centerX": 192,
+            "centerY": 876
+          },
+          "inquiry": {
+            "top": 870,
+            "bottom": 940,
+            "left": 353,
+            "width": 333,
+            "height": 70,
+            "centerX": 520,
+            "centerY": 905
+          },
+          "team": {
+            "top": 721,
+            "bottom": 768,
+            "left": 710,
+            "width": 258,
+            "height": 47,
+            "centerX": 839,
+            "centerY": 745
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 9px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 362,
+            "angle": -23.9,
+            "rise": -145,
+            "run": 327,
+            "from": [
+              192,
+              803
+            ],
+            "to": [
+              520,
+              657
+            ]
+          },
+          {
+            "length": 321,
+            "angle": 3.1,
+            "rise": 17,
+            "run": 321,
+            "from": [
+              520,
+              657
+            ],
+            "to": [
+              841,
+              675
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "One automatic workflow in the $1,500 packageGive the inquiry a next step.",
+        "scene": {
+          "top": 304,
+          "bottom": 847,
+          "left": 32,
+          "width": 960,
+          "height": 542,
+          "centerX": 512,
+          "centerY": 575
+        },
+        "pictures": {
+          "customer": {
+            "top": 395,
+            "bottom": 717,
+            "left": 92,
+            "width": 200,
+            "height": 323,
+            "centerX": 192,
+            "centerY": 556
+          },
+          "inquiry": {
+            "top": 362,
+            "bottom": 731,
+            "left": 353,
+            "width": 333,
+            "height": 368,
+            "centerX": 520,
+            "centerY": 546
+          },
+          "team": {
+            "top": 373,
+            "bottom": 598,
+            "left": 730,
+            "width": 219,
+            "height": 225,
+            "centerX": 839,
+            "centerY": 486
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 741,
+            "bottom": 788,
+            "left": 56,
+            "width": 273,
+            "height": 47,
+            "centerX": 192,
+            "centerY": 765
+          },
+          "inquiry": {
+            "top": 751,
+            "bottom": 821,
+            "left": 353,
+            "width": 333,
+            "height": 70,
+            "centerX": 520,
+            "centerY": 786
+          },
+          "team": {
+            "top": 610,
+            "bottom": 657,
+            "left": 710,
+            "width": 258,
+            "height": 47,
+            "centerX": 839,
+            "centerY": 634
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 9px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 362,
+            "angle": -23.9,
+            "rise": -145,
+            "run": 327,
+            "from": [
+              192,
+              692
+            ],
+            "to": [
+              520,
+              546
+            ]
+          },
+          {
+            "length": 321,
+            "angle": 3.1,
+            "rise": 17,
+            "run": 321,
+            "from": [
+              520,
+              546
+            ],
+            "to": [
+              841,
+              564
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "An agreed inquiry destination in both packagesPut it in the right hands.",
+        "scene": {
+          "top": 159,
+          "bottom": 702,
+          "left": 32,
+          "width": 960,
+          "height": 542,
+          "centerX": 512,
+          "centerY": 430
+        },
+        "pictures": {
+          "customer": {
+            "top": 250,
+            "bottom": 572,
+            "left": 92,
+            "width": 200,
+            "height": 323,
+            "centerX": 192,
+            "centerY": 411
+          },
+          "inquiry": {
+            "top": 217,
+            "bottom": 586,
+            "left": 353,
+            "width": 333,
+            "height": 368,
+            "centerX": 520,
+            "centerY": 401
+          },
+          "team": {
+            "top": 228,
+            "bottom": 453,
+            "left": 730,
+            "width": 219,
+            "height": 225,
+            "centerX": 839,
+            "centerY": 341
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 596,
+            "bottom": 643,
+            "left": 56,
+            "width": 273,
+            "height": 47,
+            "centerX": 192,
+            "centerY": 620
+          },
+          "inquiry": {
+            "top": 606,
+            "bottom": 676,
+            "left": 353,
+            "width": 333,
+            "height": 70,
+            "centerX": 520,
+            "centerY": 641
+          },
+          "team": {
+            "top": 465,
+            "bottom": 512,
+            "left": 710,
+            "width": 258,
+            "height": 47,
+            "centerX": 839,
+            "centerY": 489
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 9px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 362,
+            "angle": -23.9,
+            "rise": -145,
+            "run": 327,
+            "from": [
+              192,
+              547
+            ],
+            "to": [
+              520,
+              401
+            ]
+          },
+          {
+            "length": 321,
+            "angle": 3.1,
+            "rise": 17,
+            "run": 321,
+            "from": [
+              520,
+              401
+            ],
+            "to": [
+              841,
+              419
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "size": "iphone",
+    "width": 390,
+    "height": 664,
+    "pinned": false,
+    "scrollLength": 1442,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "Inquiry capture in both packagesCapture the request.",
+        "scene": {
+          "top": 71,
+          "bottom": 1709,
+          "left": 20,
+          "width": 350,
+          "height": 1638,
+          "centerX": 195,
+          "centerY": 890
+        },
+        "pictures": {
+          "customer": {
+            "top": 143,
+            "bottom": 466,
+            "left": 95,
+            "width": 200,
+            "height": 323,
+            "centerX": 195,
+            "centerY": 304
+          },
+          "inquiry": {
+            "top": 774,
+            "bottom": 842,
+            "left": 170,
+            "width": 50,
+            "height": 68,
+            "centerX": 195,
+            "centerY": 808
+          },
+          "team": {
+            "top": 1255,
+            "bottom": 1481,
+            "left": 85,
+            "width": 220,
+            "height": 226,
+            "centerX": 195,
+            "centerY": 1368
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 490,
+            "bottom": 537,
+            "left": 40,
+            "width": 310,
+            "height": 47,
+            "centerX": 195,
+            "centerY": 513
+          },
+          "inquiry": {
+            "top": 1068,
+            "bottom": 1183,
+            "left": 40,
+            "width": 310,
+            "height": 115,
+            "centerX": 195,
+            "centerY": 1125
+          },
+          "team": {
+            "top": 1493,
+            "bottom": 1540,
+            "left": 40,
+            "width": 310,
+            "height": 47,
+            "centerX": 195,
+            "centerY": 1516
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 10px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 641,
+            "angle": 90,
+            "rise": 388,
+            "run": 0,
+            "from": [
+              195,
+              440
+            ],
+            "to": [
+              195,
+              828
+            ]
+          },
+          {
+            "length": 869,
+            "angle": 89.9,
+            "rise": 618,
+            "run": 1,
+            "from": [
+              195,
+              828
+            ],
+            "to": [
+              196,
+              1446
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "One automatic workflow in the $1,500 packageGive the inquiry a next step.",
+        "scene": {
+          "top": -404,
+          "bottom": 1234,
+          "left": 20,
+          "width": 350,
+          "height": 1638,
+          "centerX": 195,
+          "centerY": 415
+        },
+        "pictures": {
+          "customer": {
+            "top": -332,
+            "bottom": -9,
+            "left": 95,
+            "width": 200,
+            "height": 323,
+            "centerX": 195,
+            "centerY": -171
+          },
+          "inquiry": {
+            "top": 142,
+            "bottom": 565,
+            "left": 40,
+            "width": 310,
+            "height": 423,
+            "centerX": 195,
+            "centerY": 353
+          },
+          "team": {
+            "top": 780,
+            "bottom": 1006,
+            "left": 85,
+            "width": 220,
+            "height": 226,
+            "centerX": 195,
+            "centerY": 893
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 15,
+            "bottom": 62,
+            "left": 40,
+            "width": 310,
+            "height": 47,
+            "centerX": 195,
+            "centerY": 38
+          },
+          "inquiry": {
+            "top": 585,
+            "bottom": 700,
+            "left": 40,
+            "width": 310,
+            "height": 115,
+            "centerX": 195,
+            "centerY": 642
+          },
+          "team": {
+            "top": 1018,
+            "bottom": 1065,
+            "left": 40,
+            "width": 310,
+            "height": 47,
+            "centerX": 195,
+            "centerY": 1041
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 10px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 641,
+            "angle": 90,
+            "rise": 388,
+            "run": 0,
+            "from": [
+              195,
+              -35
+            ],
+            "to": [
+              195,
+              353
+            ]
+          },
+          {
+            "length": 869,
+            "angle": 89.9,
+            "rise": 618,
+            "run": 1,
+            "from": [
+              195,
+              353
+            ],
+            "to": [
+              196,
+              971
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "An agreed inquiry destination in both packagesPut it in the right hands.",
+        "scene": {
+          "top": -1014,
+          "bottom": 624,
+          "left": 20,
+          "width": 350,
+          "height": 1638,
+          "centerX": 195,
+          "centerY": -195
+        },
+        "pictures": {
+          "customer": {
+            "top": -942,
+            "bottom": -619,
+            "left": 95,
+            "width": 200,
+            "height": 323,
+            "centerX": 195,
+            "centerY": -781
+          },
+          "inquiry": {
+            "top": -468,
+            "bottom": -45,
+            "left": 40,
+            "width": 310,
+            "height": 423,
+            "centerX": 195,
+            "centerY": -257
+          },
+          "team": {
+            "top": 170,
+            "bottom": 396,
+            "left": 85,
+            "width": 220,
+            "height": 226,
+            "centerX": 195,
+            "centerY": 283
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": -595,
+            "bottom": -548,
+            "left": 40,
+            "width": 310,
+            "height": 47,
+            "centerX": 195,
+            "centerY": -572
+          },
+          "inquiry": {
+            "top": -25,
+            "bottom": 90,
+            "left": 40,
+            "width": 310,
+            "height": 115,
+            "centerX": 195,
+            "centerY": 32
+          },
+          "team": {
+            "top": 408,
+            "bottom": 455,
+            "left": 40,
+            "width": 310,
+            "height": 47,
+            "centerX": 195,
+            "centerY": 431
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 10px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 641,
+            "angle": 90,
+            "rise": 388,
+            "run": 0,
+            "from": [
+              195,
+              -645
+            ],
+            "to": [
+              195,
+              -257
+            ]
+          },
+          {
+            "length": 869,
+            "angle": 89.9,
+            "rise": 618,
+            "run": 1,
+            "from": [
+              195,
+              -257
+            ],
+            "to": [
+              196,
+              361
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "size": "android",
+    "width": 360,
+    "height": 640,
+    "pinned": false,
+    "scrollLength": 1439,
+    "steps": {
+      "step1": {
+        "stage": "1",
+        "caption": "Inquiry capture in both packagesCapture the request.",
+        "scene": {
+          "top": 56,
+          "bottom": 1694,
+          "left": 20,
+          "width": 320,
+          "height": 1638,
+          "centerX": 180,
+          "centerY": 875
+        },
+        "pictures": {
+          "customer": {
+            "top": 128,
+            "bottom": 451,
+            "left": 80,
+            "width": 200,
+            "height": 323,
+            "centerX": 180,
+            "centerY": 289
+          },
+          "inquiry": {
+            "top": 759,
+            "bottom": 827,
+            "left": 158,
+            "width": 45,
+            "height": 68,
+            "centerX": 180,
+            "centerY": 793
+          },
+          "team": {
+            "top": 1240,
+            "bottom": 1466,
+            "left": 70,
+            "width": 220,
+            "height": 226,
+            "centerX": 180,
+            "centerY": 1353
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 475,
+            "bottom": 522,
+            "left": 40,
+            "width": 280,
+            "height": 47,
+            "centerX": 180,
+            "centerY": 498
+          },
+          "inquiry": {
+            "top": 1053,
+            "bottom": 1168,
+            "left": 40,
+            "width": 280,
+            "height": 115,
+            "centerX": 180,
+            "centerY": 1110
+          },
+          "team": {
+            "top": 1478,
+            "bottom": 1525,
+            "left": 40,
+            "width": 280,
+            "height": 47,
+            "centerX": 180,
+            "centerY": 1501
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 10px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 614,
+            "angle": 90,
+            "rise": 388,
+            "run": 0,
+            "from": [
+              180,
+              425
+            ],
+            "to": [
+              180,
+              813
+            ]
+          },
+          {
+            "length": 842,
+            "angle": 89.9,
+            "rise": 618,
+            "run": 1,
+            "from": [
+              180,
+              813
+            ],
+            "to": [
+              181,
+              1431
+            ]
+          }
+        ]
+      },
+      "step2": {
+        "stage": "2",
+        "caption": "One automatic workflow in the $1,500 packageGive the inquiry a next step.",
+        "scene": {
+          "top": -419,
+          "bottom": 1219,
+          "left": 20,
+          "width": 320,
+          "height": 1638,
+          "centerX": 180,
+          "centerY": 400
+        },
+        "pictures": {
+          "customer": {
+            "top": -347,
+            "bottom": -24,
+            "left": 80,
+            "width": 200,
+            "height": 323,
+            "centerX": 180,
+            "centerY": -186
+          },
+          "inquiry": {
+            "top": 127,
+            "bottom": 550,
+            "left": 40,
+            "width": 280,
+            "height": 423,
+            "centerX": 180,
+            "centerY": 338
+          },
+          "team": {
+            "top": 765,
+            "bottom": 991,
+            "left": 70,
+            "width": 220,
+            "height": 226,
+            "centerX": 180,
+            "centerY": 878
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": 0,
+            "bottom": 47,
+            "left": 40,
+            "width": 280,
+            "height": 47,
+            "centerX": 180,
+            "centerY": 23
+          },
+          "inquiry": {
+            "top": 570,
+            "bottom": 685,
+            "left": 40,
+            "width": 280,
+            "height": 115,
+            "centerX": 180,
+            "centerY": 627
+          },
+          "team": {
+            "top": 1003,
+            "bottom": 1050,
+            "left": 40,
+            "width": 280,
+            "height": 47,
+            "centerX": 180,
+            "centerY": 1026
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 10px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 614,
+            "angle": 90,
+            "rise": 388,
+            "run": 0,
+            "from": [
+              180,
+              -50
+            ],
+            "to": [
+              180,
+              338
+            ]
+          },
+          {
+            "length": 842,
+            "angle": 89.9,
+            "rise": 618,
+            "run": 1,
+            "from": [
+              180,
+              338
+            ],
+            "to": [
+              181,
+              956
+            ]
+          }
+        ]
+      },
+      "delivered": {
+        "stage": "3",
+        "caption": "An agreed inquiry destination in both packagesPut it in the right hands.",
+        "scene": {
+          "top": -1027,
+          "bottom": 611,
+          "left": 20,
+          "width": 320,
+          "height": 1638,
+          "centerX": 180,
+          "centerY": -208
+        },
+        "pictures": {
+          "customer": {
+            "top": -955,
+            "bottom": -632,
+            "left": 80,
+            "width": 200,
+            "height": 323,
+            "centerX": 180,
+            "centerY": -794
+          },
+          "inquiry": {
+            "top": -481,
+            "bottom": -58,
+            "left": 40,
+            "width": 280,
+            "height": 423,
+            "centerX": 180,
+            "centerY": -270
+          },
+          "team": {
+            "top": 157,
+            "bottom": 383,
+            "left": 70,
+            "width": 220,
+            "height": 226,
+            "centerX": 180,
+            "centerY": 270
+          }
+        },
+        "labels": {
+          "customer": {
+            "top": -608,
+            "bottom": -561,
+            "left": 40,
+            "width": 280,
+            "height": 47,
+            "centerX": 180,
+            "centerY": -585
+          },
+          "inquiry": {
+            "top": -38,
+            "bottom": 77,
+            "left": 40,
+            "width": 280,
+            "height": 115,
+            "centerX": 180,
+            "centerY": 19
+          },
+          "team": {
+            "top": 395,
+            "bottom": 442,
+            "left": 40,
+            "width": 280,
+            "height": 47,
+            "centerX": 180,
+            "centerY": 418
+          }
+        },
+        "labelType": [
+          "ij-station-label: 15px 600 none",
+          ": 10px 600 none",
+          "ij-station-label: 15px 600 none"
+        ],
+        "connectors": [
+          {
+            "length": 614,
+            "angle": 90,
+            "rise": 388,
+            "run": 0,
+            "from": [
+              180,
+              -658
+            ],
+            "to": [
+              180,
+              -270
+            ]
+          },
+          {
+            "length": 842,
+            "angle": 89.9,
+            "rise": 618,
+            "run": 1,
+            "from": [
+              180,
+              -270
+            ],
+            "to": [
+              181,
+              348
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

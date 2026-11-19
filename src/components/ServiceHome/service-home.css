@@ -4,7 +4,7 @@
 .service-home :is(section[id], article[id], div[id]) { scroll-margin-top: calc(var(--site-header-height) + 24px); }
 .service-home .p-package[id] { scroll-margin-top: var(--package-scroll-offset, calc(var(--site-header-height) + 112px)); }
 .service-home .p-starting-point.is-docked {
-  top: calc(var(--site-header-height) + 8px);
-  left: calc((100% - var(--modal-scrollbar-width, 0px)) / 2);
-  width: min(860px, calc(100% - 40px - var(--modal-scrollbar-width, 0px)));
+  top: var(--site-header-height);
+  left: 0;
+  width: calc(100% - var(--modal-scrollbar-width, 0px));
 }
