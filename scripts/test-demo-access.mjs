@@ -239,6 +239,14 @@ test('the Sue’s Tailor Shop alias and original tailor namespace stay public wi
   for (const path of ['/demos/best-tailor-2/', '/demos/best-tailorx/index.html', '/src/demos/best-tailorx/main.tsx', '/demos/sues-tailor/', '/src/demos/sues-tailor/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
+test('the American Mechanical KC concept is a public demo: pages, favicon and source need no access', async () => {
+  for (const path of ['/demo/american-mechanical', '/demo/american-mechanical/', '/demo/american-mechanical/blog/why-is-there-no-hot-water', '/demos/american-mechanical', '/demos/american-mechanical/', '/demos/american-mechanical/index.html', '/src/demos/american-mechanical/main.tsx', '/demos/american-mechanical/favicon.svg', '/public/demos/american-mechanical/favicon.svg']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('american-mechanical'), 'roofers', 'Public demos have no access-request key')
+  for (const path of ['/demos/american-mechanical-2/', '/demos/american-mechanicalx/index.html', '/src/demos/american-mechanicalx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('the Deer Creek Plumbing concept is a public demo: pages, media and source need no access', async () => {
   for (const path of ['/demo/deercreek', '/demo/deercreek/', '/demo/deercreek/services/water-heaters', '/demo/deercreek/schedule', '/demos/deercreek/', '/demos/deercreek/index.html', '/src/demos/deercreek/main.tsx', '/demos/deercreek/photos/truck-1600.webp', '/public/demos/deercreek/logo-white.png']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
