@@ -43,6 +43,10 @@ export const adminDemos: AdminDemo[] = [
     name: 'American Mechanical KC', detail: 'HVAC and water heater website concept',
   },
   {
+    id: 'lp-construction', slug: 'lp-construction', href: '/demo/lp-construction',
+    name: 'LP Construction', detail: 'Trim carpentry website concept',
+  },
+  {
     id: 'deercreek', slug: 'deercreek', href: '/demo/deercreek',
     name: 'Deer Creek Plumbing: Site A', detail: 'Plumbing website concept',
   },

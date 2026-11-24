@@ -68,6 +68,9 @@ test('legacy rewrites and local mounts share one deployed lawn function', async 
   for (const action of ['render', 'request']) {
     assert.equal(vercel.rewrites.find(rule => rule.source === `/api/paint-${action}`)?.destination, `/api/lawn?action=paint-${action}`)
     assert.ok(vite.includes(`'/api/paint-${action}': '/api/lawn.ts'`))
+    // LP Construction's room concepts and estimate requests share it too.
+    assert.equal(vercel.rewrites.find(rule => rule.source === `/api/trim-${action}`)?.destination, `/api/lawn?action=trim-${action}`)
+    assert.ok(vite.includes(`'/api/trim-${action}': '/api/lawn.ts'`))
   }
   assert.equal(config.maxDuration, 180)
 })
@@ -211,4 +214,59 @@ test('Complete Painting endpoints dispatch through the shared function', async (
   assert.equal(sent[0].reply_to, 'visitor@example.test')
   assert.match(sent[0].text, /Project: Exterior painting, Rotten wood replacement/)
   assert.match(sent[0].text, /Colors from the studio: Harbor navy siding/)
+})
+
+test('LP Construction endpoints dispatch through the shared function', async () => {
+  for (const key of Object.keys(process.env)) if (/^(TRIM_|LP_|RESEND_API_KEY$|CONTACT_FROM_EMAIL$|OPENAI_API_KEY$)/.test(key)) delete process.env[key]
+  globalThis.fetch = async () => { throw new Error('Unexpected outbound request in lawn API test') }
+  const trimUrls = action => [`/api/trim-${action}`, `/api/lawn?action=trim-${action}`]
+
+  // Room concepts are off outside local dev until enabled, and refuse before any paid call.
+  for (const url of trimUrls('render')) {
+    const status = await call(url)
+    assert.equal(status.body.enabled, false)
+    assert.match(status.body.message, /switched off|waiting/)
+    const render = await call(url, { method: 'POST', body: { photo: 'data:image/jpeg;base64,AAAA', style: 'frames', finish: 'match', crown: true, consent: true } })
+    assert.equal(render.status, 503)
+    assert.equal(render.body.error, 'disabled')
+  }
+  process.env.TRIM_RENDER_ENABLED = 'true'
+  process.env.TRIM_RENDER_ORIGIN = 'https://wallaceshift.com'
+  process.env.OPENAI_API_KEY = 'fixture-only'
+  const sameOrigin = { 'content-type': 'application/json', host: 'wallaceshift.com', origin: 'https://wallaceshift.com' }
+  const unlimited = await call('/api/trim-render', { method: 'POST', headers: sameOrigin, body: {} })
+  assert.equal(unlimited.status, 503)
+  assert.match(unlimited.body.message, /usage limits/)
+  assert.equal((await call('/api/trim-render', { method: 'POST', headers: { ...sameOrigin, origin: 'https://example.test' }, body: {} })).status, 403)
+
+  const estimate = { lang: 'es', customer: 'homeowner', zip: '66212', jobs: ['staircases', 'wall-paneling'], timing: 'quarter', contact: 'text', name: 'Test Visitor', phone: '913 555 0100', email: '', size: '14 stairs', details: 'Carpet to wood.', photos: [], idea: null }
+  for (const url of trimUrls('request')) {
+    assert.deepEqual((await call(url, { method: 'POST', body: { company: 'test bot trap' } })).body, { ok: true })
+    assert.equal((await call(url, { method: 'POST', body: { ...estimate, jobs: [] } })).status, 400)
+    assert.equal((await call(url, { method: 'POST', body: { ...estimate, zip: '662' } })).status, 400)
+    assert.equal((await call(url, { method: 'POST', body: { ...estimate, contact: 'email' } })).status, 400, 'Email is required when chosen')
+    assert.equal((await call(url, { method: 'POST', body: { ...estimate, photos: ['data:text/html;base64,AAAA'] } })).status, 400)
+    assert.deepEqual((await call(url, { method: 'POST', body: estimate })).body, { ok: false, error: 'not_configured' }, 'Nothing may be reported as sent without an inbox')
+  }
+
+  process.env.RESEND_API_KEY = 'fixture-only'
+  process.env.LP_REQUEST_TO_EMAIL = 'owner@example.test'
+  process.env.CONTACT_FROM_EMAIL = 'site@example.test'
+  const sent = []
+  globalThis.fetch = async (url, options) => {
+    assert.equal(url, 'https://api.resend.com/emails')
+    sent.push(JSON.parse(options.body))
+    return Response.json({ id: 'fixture' })
+  }
+  const photo = 'data:image/jpeg;base64,' + Buffer.from('fixture photo bytes!').toString('base64')
+  assert.deepEqual((await call('/api/trim-request', { method: 'POST', body: { ...estimate, photos: [photo] } })).body, { ok: true })
+  assert.equal(sent.length, 1)
+  assert.deepEqual(sent[0].to, ['owner@example.test'])
+  assert.equal(sent[0].reply_to, undefined, 'No reply-to without an email')
+  assert.match(sent[0].subject, /^\[Español\] Estimate request: Test Visitor, 66212/)
+  assert.match(sent[0].text, /Reply in Spanish/)
+  assert.match(sent[0].text, /ZIP: 66212 \(inside the 45-minute area\)/)
+  assert.match(sent[0].text, /Work: Staircases & railings, Accent walls & paneling/)
+  assert.equal(sent[0].attachments.length, 1)
+  assert.equal(sent[0].attachments[0].filename, 'photo-1.jpg')
 })
