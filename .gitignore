@@ -98,3 +98,8 @@ dist-ssr
 
 # Python bytecode from the Blender model scripts.
 scripts/water/__pycache__/
+
+# LP Construction owner material: originals can carry client locations and prices.
+/lp-source/*
+!/lp-source/README.md
+!/lp-source/owner-intake.md

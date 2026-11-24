@@ -247,6 +247,14 @@ test('the American Mechanical KC concept is a public demo: pages, favicon and so
   for (const path of ['/demos/american-mechanical-2/', '/demos/american-mechanicalx/index.html', '/src/demos/american-mechanicalx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
+test('the LP Construction concept is a public demo: pages, media and source need no access', async () => {
+  for (const path of ['/demo/lp-construction', '/demo/lp-construction/', '/demo/lp-construction/services/staircases', '/demo/lp-construction/sitemap.xml', '/demos/lp-construction', '/demos/lp-construction/index.html', '/src/demos/lp-construction/main.tsx', '/demos/lp-construction/favicon.svg', '/demos/lp-construction/hero/before-800.webp']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('lp-construction'), 'roofers', 'Public demos have no access-request key')
+  for (const path of ['/demos/lp-construction-2/', '/demos/lp-constructionx/index.html', '/src/demos/lp-constructionx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
 test('the Deer Creek Plumbing concept is a public demo: pages, media and source need no access', async () => {
   for (const path of ['/demo/deercreek', '/demo/deercreek/', '/demo/deercreek/services/water-heaters', '/demo/deercreek/schedule', '/demos/deercreek/', '/demos/deercreek/index.html', '/src/demos/deercreek/main.tsx', '/demos/deercreek/photos/truck-1600.webp', '/public/demos/deercreek/logo-white.png']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)

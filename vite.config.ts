@@ -16,6 +16,7 @@ import { bucyrusPlugin } from './bucyrus/vite-plugin.ts'
 import { deerCreekPlugin } from './deercreek/vite-plugin.ts'
 import { deerCreekPlumbingPlugin } from './deercreekplumbing/vite-plugin.ts'
 import { americanMechanicalPlugin } from './american-mechanical/vite-plugin.ts'
+import { lpConstructionPlugin } from './lp-construction/vite-plugin.ts'
 
 /**
  * Emits one real HTML file per route, plus `sitemap.xml` and `robots.txt`.
@@ -185,6 +186,8 @@ const DEV_API_ROUTES: Record<string, string> = {
   '/api/lawn-request': '/api/lawn.ts',
   '/api/paint-render': '/api/lawn.ts',
   '/api/paint-request': '/api/lawn.ts',
+  '/api/trim-render': '/api/lawn.ts',
+  '/api/trim-request': '/api/lawn.ts',
 }
 
 function devApiRoutes(): Plugin {
@@ -248,7 +251,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|lareau|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demo\/deercreekplumbing|demo\/solara|demo\/dopps|demo\/best-tailor|demo\/sues-tailor|demo\/american-mechanical|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek|demos\/deercreekplumbing|demos\/solara|demos\/dopps|demos\/best-tailor|demos\/american-mechanical)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|lareau|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demo\/deercreekplumbing|demo\/solara|demo\/dopps|demo\/best-tailor|demo\/sues-tailor|demo\/american-mechanical|demo\/lp-construction|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek|demos\/deercreekplumbing|demos\/solara|demos\/dopps|demos\/best-tailor|demos\/american-mechanical|demos\/lp-construction)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -285,7 +288,7 @@ function publicDemoBoundary(): Plugin {
     name: 'wallace-shift-public-demo-boundary',
     apply: 'build',
     transform(_code, id) {
-      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/|deercreekplumbing\/|solara\/|dopps\/|best-tailor\/|american-mechanical\/))/.test(id)) {
+      if (/\/src\/(?:roofing-dashboard\/|demos\/(?!roofers-offer\/|contractors\/|bucyrus-auto\/|lawn\/|painting\/|water\/|otv\/|deercreek\/|deercreekplumbing\/|solara\/|dopps\/|best-tailor\/|american-mechanical\/|lp-construction\/))/.test(id)) {
         this.error(`Private demo module imported by the public build: ${id}`)
       }
     },
@@ -351,7 +354,10 @@ function roofingDemoRoutes(): Plugin {
 }
 
 export default defineConfig(({ mode }): UserConfig => ({
-  plugins: [react(), ...(mode === 'demos' ? [] : [prerenderRoutes(), publicDemoBoundary(), blogPlugin(), bucyrusPlugin(), deerCreekPlugin(), deerCreekPlumbingPlugin(), americanMechanicalPlugin()]), demoAccessRoutes(), devApiRoutes(), roofingDemoRoutes()],
+  // Prerender's middleware servers use Vite's default cache in production.
+  // Keep the browser dev cache separate so a build cannot replace jsxDEV.
+  cacheDir: 'node_modules/.vite/browser',
+  plugins: [react(), ...(mode === 'demos' ? [] : [prerenderRoutes(), publicDemoBoundary(), blogPlugin(), bucyrusPlugin(), deerCreekPlugin(), deerCreekPlumbingPlugin(), americanMechanicalPlugin(), lpConstructionPlugin()]), demoAccessRoutes(), devApiRoutes(), roofingDemoRoutes()],
   // The public pass copies static media once. The second pass adds only the
   // demo documents and their fully isolated JS/CSS dependency graph.
   build: {
@@ -377,6 +383,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         doppsChiropractic: 'demos/dopps/index.html',
         bestTailor: 'demos/best-tailor/index.html',
         americanMechanical: 'demos/american-mechanical/index.html',
+        lpConstruction: 'demos/lp-construction/index.html',
         requestDemo: 'request-demo/index.html',
         demoAgreement: 'demo-agreement/index.html',
         demoAdmin: 'demo-admin/index.html',
