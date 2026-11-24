@@ -39,6 +39,10 @@ export const adminDemos: AdminDemo[] = [
     name: 'Sue’s Tailor Shop', detail: 'Tailoring and alterations website concept',
   },
   {
+    id: 'american-mechanical', slug: 'american-mechanical', href: '/demo/american-mechanical',
+    name: 'American Mechanical KC', detail: 'HVAC and water heater website concept',
+  },
+  {
     id: 'deercreek', slug: 'deercreek', href: '/demo/deercreek',
     name: 'Deer Creek Plumbing: Site A', detail: 'Plumbing website concept',
   },

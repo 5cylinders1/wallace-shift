@@ -106,8 +106,13 @@
   let lastPage = null
   let scrollReported = false
   let banner
-  let preferences
   let firstConsentAction
+  // Where focus goes back to once a choice is made: the footer link that
+  // reopened the panel, or whatever had focus before someone tabbed into it.
+  let returnFocus = null
+  // Every public footer carries this link. It points at the privacy policy,
+  // so it still works when this script is blocked or inactive.
+  const choicesSelector = '[data-ws-analytics-choices]'
   const denied = { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' }
 
   function canTrack() {
@@ -194,17 +199,71 @@
     if (contractorOffer) send('contractor_offer_viewed', { offer_id: contractorOffer[0] })
   }
 
-  function showPreferences() {
-    if (!publicUrl(window.location.href) || optedOut()) return
-    banner.hidden = false
-    preferences.hidden = true
+  function eligible() {
+    return publicUrl(window.location.href) !== null && !optedOut()
+  }
+
+  function setBannerOpen(open) {
+    banner.hidden = !open
+    if (!open) {
+      returnFocus = null
+      delete banner.dataset.dodge
+    }
+    syncBannerSpace()
+  }
+
+  // The panel's distance from the bottom edge in its usual place.
+  let homeOffset = 16
+
+  // Scroll padding cannot lift sticky or fixed content, such as the stage of a
+  // scroll story. If keyboard focus lands where the panel usually sits, the
+  // panel moves to the top until focus moves somewhere it no longer covers.
+  function dodgeFocus(target) {
+    try {
+      const focused = target.getBoundingClientRect()
+      const panel = banner.getBoundingClientRect()
+      const bottom = window.innerHeight - homeOffset
+      const covered = focused.bottom > bottom - banner.offsetHeight && focused.top < bottom &&
+        focused.right > panel.left && focused.left < panel.right
+      if (covered) banner.dataset.dodge = ''
+      else delete banner.dataset.dodge
+    } catch { /* Placement is a refinement, never a requirement. */ }
+  }
+
+  // While the panel is open, reserve its height at the end of the page and in
+  // focus scrolling, so nothing is stuck underneath it and keyboard focus is
+  // never hidden behind it (WCAG 2.4.11).
+  function syncBannerSpace() {
+    const root = document.documentElement
+    try {
+      if (banner.hidden) {
+        delete root.dataset.wsConsentOpen
+        root.style.removeProperty('--ws-consent-space')
+        return
+      }
+      root.dataset.wsConsentOpen = ''
+      // Moved to the top, its bottom offset no longer describes its home.
+      if ('dodge' in banner.dataset) return
+      // Height plus its resolved bottom offset; unlike a client rect, this
+      // ignores the entrance transform.
+      homeOffset = parseFloat(window.getComputedStyle(banner).bottom) || 0
+      root.style.setProperty('--ws-consent-space', `${Math.ceil(banner.offsetHeight + homeOffset + 12)}px`)
+    } catch { /* Layout reservation is a refinement, never a requirement. */ }
+  }
+
+  function showPreferences(opener) {
+    if (!eligible()) return false
+    setBannerOpen(true)
+    returnFocus = opener ?? null
     firstConsentAction.focus()
+    return true
   }
 
   function choose(value) {
     consent = value
     try { window.localStorage.setItem(consentKey, value) } catch { /* In-memory choice remains effective. */ }
-    banner.hidden = true
+    const target = returnFocus
+    setBannerOpen(false)
     if (value === 'denied') {
       window[disableKey] = true
       if (started) command('consent', 'update', denied)
@@ -214,21 +273,32 @@
       if (started && canTrack()) command('consent', 'update', { ...denied, analytics_storage: 'granted' })
       pageView()
     }
-    preferences.hidden = optedOut() || !publicUrl(window.location.href)
-    if (!preferences.hidden) preferences.focus()
+    // A link removed by a route change has nowhere useful to return to.
+    if (target && target.isConnected !== false) {
+      try { target.focus({ preventScroll: true }) } catch { /* Focus is best effort. */ }
+    }
   }
 
   function createPreferences() {
     banner = document.createElement('section')
     banner.className = 'ws-analytics-consent'
     banner.setAttribute('aria-labelledby', 'ws-analytics-consent-title')
-    banner.hidden = consent !== null || optedOut()
+    banner.hidden = true
+    banner.addEventListener('focusin', event => {
+      const from = event.relatedTarget
+      if (returnFocus === null && from && !banner.contains(from)) returnFocus = from
+    })
     const heading = document.createElement('h2')
     heading.id = 'ws-analytics-consent-title'
     heading.textContent = 'Allow analytics?'
     banner.appendChild(heading)
     const text = document.createElement('p')
-    text.textContent = 'We use Google Analytics to understand visits and improve the site. Your choice does not affect forms or access.'
+    text.textContent = 'We use Google Analytics to understand visits and improve the site. Your choice does not affect forms or access. '
+    // Inline in the sentence, so the panel needs no extra row for it.
+    const privacy = document.createElement('a')
+    privacy.href = '/privacy#analytics'
+    privacy.textContent = 'Privacy policy'
+    text.appendChild(privacy)
     banner.appendChild(text)
     const actions = document.createElement('div')
     actions.className = 'ws-analytics-actions'
@@ -242,37 +312,33 @@
       if (!firstConsentAction) firstConsentAction = button
       actions.appendChild(button)
     }
-    const privacy = document.createElement('a')
-    privacy.href = '/privacy'
-    privacy.textContent = 'Privacy policy'
-    actions.appendChild(privacy)
     banner.appendChild(actions)
     document.body.appendChild(banner)
-    preferences = document.createElement('button')
-    preferences.type = 'button'
-    preferences.className = 'ws-analytics-preferences'
-    preferences.textContent = 'Analytics preferences'
-    preferences.hidden = optedOut() || !banner.hidden
-    preferences.addEventListener('click', showPreferences)
-    document.body.appendChild(preferences)
+    if (typeof window.ResizeObserver === 'function') new window.ResizeObserver(syncBannerSpace).observe(banner)
+    else window.addEventListener('resize', syncBannerSpace, { passive: true })
+    setBannerOpen(consent === null && !optedOut())
   }
 
   function routeChanged() {
-    const eligible = publicUrl(window.location.href) !== null && !optedOut()
-    if (!eligible) banner.hidden = true
-    else if (consent === null) banner.hidden = false
-    preferences.hidden = !eligible || !banner.hidden
+    if (!eligible()) setBannerOpen(false)
+    else if (consent === null && banner.hidden) setBannerOpen(true)
     pageView()
   }
 
   createPreferences()
+  document.addEventListener('focusin', event => {
+    if (banner.hidden || banner.contains(event.target)) return
+    // Measure after the browser has scrolled the newly focused element.
+    if (typeof window.setTimeout === 'function') window.setTimeout(() => dodgeFocus(event.target), 0)
+    else dodgeFocus(event.target)
+  })
   if (optedOut()) clearAnalyticsCookies()
   pageView()
   window.addEventListener('ws:routechange', routeChanged)
   window.addEventListener('popstate', routeChanged)
   function syncConsent(value) {
     consent = value === 'granted' || value === 'denied' ? value : null
-    banner.hidden = consent !== null
+    setBannerOpen(consent === null)
     if (consent !== 'granted') {
       window[disableKey] = true
       if (started) command('consent', 'update', denied)
@@ -348,6 +414,15 @@
   })
 
   document.addEventListener('click', event => {
+    // The footer's "Analytics choices" link reopens the panel in place. A
+    // modified click, or a page where analytics is off, follows the link to
+    // the privacy policy instead. Capture runs before the SPA's link handler.
+    const choices = event.target?.closest?.(choicesSelector)
+    if (choices) {
+      if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      if (showPreferences(choices)) event.preventDefault()
+      return
+    }
     const link = event.target?.closest?.('a[href]')
     if (!link) return
     try {

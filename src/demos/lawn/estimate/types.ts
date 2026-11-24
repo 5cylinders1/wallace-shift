@@ -1,6 +1,6 @@
 /**
- * The contract between the lawn serverless functions (api/lawn-*.ts) and
- * the estimator on the page. Type-only apart from the shared choice lists,
+ * The contract between the lawn serverless function (api/lawn.ts) and
+ * the yard planner on the page. Type-only apart from the shared choice lists,
  * so the functions can import it without bundling any of the front end.
  */
 
@@ -13,36 +13,16 @@ export type LawnErrorCode =
   | 'not_configured'
   | 'invalid'
   | 'address_not_found'
-  | 'out_of_range'
   | 'rate_limited'
   | 'busy'
   | 'upstream'
   | 'send_failed'
 
-/** The rates the estimate is built from; set per deployment (api/_lib/lawn/config.ts). */
-export interface LawnPricing {
-  /** Per visit, before the lawn's size is added. */
-  base: number
-  /** Added per 1,000 sq ft of mowable lawn. */
-  per1000SqFt: number
-  /** No visit is quoted below this. */
-  minimum: number
-  /** Per-visit multipliers against a weekly visit. */
-  factors: Record<Frequency, number>
-  /** ± share of the price shown as the range, e.g. 0.1. */
-  spread: number
-  /** True while the defaults are in use: the page labels the figures as sample rates. */
-  sample: boolean
-}
+/** What the homeowner is planning; Lareau's own service list. */
+export const PROJECTS = ['patio', 'walls', 'kitchen', 'fire', 'planting', 'lighting', 'drainage', 'sprinklers'] as const
+export type Project = (typeof PROJECTS)[number]
 
-export const FREQUENCIES = ['weekly', 'biweekly', 'once'] as const
-export type Frequency = (typeof FREQUENCIES)[number]
-
-/** Extras that are quoted after a look at the yard; the instant price is for mowing. */
-export const EXTRAS = ['shrubs', 'leaves', 'limbs', 'seeding', 'fertilizing', 'weeds', 'cleanup'] as const
-export type Extra = (typeof EXTRAS)[number]
-
-export const TIMINGS = ['asap', 'week', 'flexible'] as const
+export const TIMINGS = ['season', 'months', 'planning'] as const
 export type Timing = (typeof TIMINGS)[number]
 
 export const CONTACT_METHODS = ['text', 'call', 'email'] as const
@@ -68,13 +48,6 @@ export interface LawnBuilding {
   distanceM: number
 }
 
-export interface ServiceRange {
-  /** Straight-line miles from the business to the address. */
-  miles: number
-  radiusMiles: number
-  inRange: boolean
-}
-
 export interface LawnLookup {
   ok: true
   address: LawnAddress
@@ -87,9 +60,6 @@ export interface LawnLookup {
   frame: LawnFrame
   /** Public-domain aerials for the frame: natural color to show, near-infrared to measure. */
   imagery: { photo: string; infrared: string; credits: Credit[] }
-  /** Null while the business location isn't configured: every address is accepted. */
-  range: ServiceRange | null
-  pricing: LawnPricing
   credits: Credit[]
 }
 
@@ -103,15 +73,13 @@ export interface ServiceRequestBody {
   phone: string
   email: string
   contact: ContactMethod
-  frequency: Frequency
-  lawnSqFt: number
-  extras: Extra[]
+  /** Measured or adjusted on the page; null when the lawn couldn't be measured. */
+  lawnSqFt: number | null
+  projects: Project[]
   timing: Timing
   notes: string
   /** Honeypot: never filled by a person. */
   company?: string
 }
 
-export type ServiceRequestResponse =
-  | { ok: true; price: { low: number; high: number } }
-  | { ok: false; error: LawnErrorCode; range?: ServiceRange }
+export type ServiceRequestResponse = { ok: true } | { ok: false; error: LawnErrorCode }

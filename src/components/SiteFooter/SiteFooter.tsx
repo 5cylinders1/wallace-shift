@@ -1,5 +1,6 @@
 import { business, footer, serviceDirectory, siteMeta } from '../../content/siteConfig'
 import { navRoutes } from '../../content/routeMeta'
+import { AnalyticsChoicesLink } from '../AnalyticsChoicesLink/AnalyticsChoicesLink'
 import { PageLink } from '../PageLink/PageLink'
 import { PhoneLink } from '../PhoneLink'
 import './SiteFooter.css'
@@ -90,9 +91,12 @@ export function SiteFooter() {
             <span>{footer.preferredSource.text}</span>
             <span className="site-footer__preferred-arrow" aria-hidden="true">↗</span>
           </a>
-          <PageLink href="/privacy" className="site-footer__privacy">
-            Privacy
-          </PageLink>
+          <span className="site-footer__policy">
+            <PageLink href="/privacy" className="site-footer__privacy">
+              Privacy
+            </PageLink>
+            <AnalyticsChoicesLink className="site-footer__privacy" />
+          </span>
         </div>
       </div>
     </footer>

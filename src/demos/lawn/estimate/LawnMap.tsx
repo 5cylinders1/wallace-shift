@@ -14,7 +14,7 @@ interface Props {
   /** Bumped by "Reset" to restore the automatic answer. */
   resetKey: number
   onHome: (home: HomeChoice) => void
-  /** null: the aerial couldn't be read, so the lawn must be sized by hand. */
+  /** null: the aerial couldn't be read, so the lawn isn't measured. */
   onArea: (sqft: number | null, edited: boolean) => void
 }
 
@@ -207,10 +207,10 @@ export default function LawnMap({ data, home, tool, resetKey, onHome, onArea }: 
 
   const brushPx = BRUSH_M / (data.frame.viewM / size)
   return (
-    <figure className={`tw-map is-${status} tool-${tool}`}>
-      <div className="tw-map-frame">
+    <figure className={`ll-map is-${status} tool-${tool}`}>
+      <div className="ll-map-frame">
         {photoFailed ? (
-          <div className="tw-map-fallback" aria-hidden="true" />
+          <div className="ll-map-fallback" aria-hidden="true" />
         ) : (
           <img src={data.imagery.photo} alt={`Aerial photo of ${data.address.formatted}`} width={size} height={size} onError={() => setPhotoFailed(true)} />
         )}
@@ -218,7 +218,7 @@ export default function LawnMap({ data, home, tool, resetKey, onHome, onArea }: 
           ref={overlay}
           width={size}
           height={size}
-          className="tw-map-overlay"
+          className="ll-map-overlay"
           aria-hidden="true"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -228,18 +228,18 @@ export default function LawnMap({ data, home, tool, resetKey, onHome, onArea }: 
         />
         {cursor && tool !== 'look' && status === 'ready' && (
           <span
-            className={`tw-map-brush is-${tool}`}
+            className={`ll-map-brush is-${tool}`}
             aria-hidden="true"
             style={{ left: `${(cursor[0] / size) * 100}%`, top: `${(cursor[1] / size) * 100}%`, width: `${((brushPx * 2) / size) * 100}%` }}
           />
         )}
         {status === 'loading' && (
-          <div className="tw-map-scan" role="status">
-            <span>Finding your lawn…</span>
+          <div className="ll-map-scan" role="status">
+            <span>Reading your yard…</span>
           </div>
         )}
       </div>
-      <figcaption className="tw-map-credits">
+      <figcaption className="ll-map-credits">
         {[...data.imagery.credits, ...data.credits].map((credit) =>
           credit.href ? <a key={credit.text} href={credit.href} target="_blank" rel="noreferrer">{credit.text}</a> : <span key={credit.text}>{credit.text}</span>,
         )}

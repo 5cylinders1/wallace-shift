@@ -98,7 +98,7 @@ function footer(): string {
         <img src="${safeUrl(siteFooter.preferredSource.icon)}" alt="" width="18" height="18" loading="lazy" decoding="async" />
         <span>${escape(siteFooter.preferredSource.text)}</span><span class="blog-footer__preferred-arrow" aria-hidden="true">↗</span>
       </a>
-      <a class="blog-footer__privacy" href="/privacy">Privacy</a>
+      <span class="blog-footer__policy"><a class="blog-footer__privacy" href="/privacy">Privacy</a><a class="blog-footer__privacy" href="${safeUrl(siteFooter.analyticsChoices.href)}" data-ws-analytics-choices="">${escape(siteFooter.analyticsChoices.label)}</a></span>
     </div>
   </div></footer>`
 }

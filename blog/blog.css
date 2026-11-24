@@ -110,11 +110,13 @@ a:hover { color: var(--accent); }
 .blog-footer__preferred-source img { flex-shrink: 0; }
 .blog-footer__preferred-source:hover { color: var(--pearl); }
 .blog-footer__preferred-arrow { color: var(--muted); font-size: 1rem; }
-.blog-footer__privacy { padding-left: 24px; border-left: 1px solid var(--line-dark); }
+.blog-footer__policy { display: flex; flex-wrap: wrap; align-items: center; gap: 0 20px; padding-left: 24px; border-left: 1px solid var(--line-dark); }
+.blog-footer__privacy { display: inline-flex; align-items: center; min-height: 44px; }
 .blog-footer nav ul { display: flex; flex-wrap: wrap; gap: 20px 28px; padding: 0; list-style: none; }
 .blog-footer nav a { color: var(--muted); font-size: .72rem; }
 .blog-footer nav a:hover { color: var(--pearl); }
-.blog-footer__bottom { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px 24px; padding-block: 20px 24px; border-top: 1px solid var(--line-dark); font-size: .66rem; color: var(--muted); }
+/* 104px below clears the Reply365 chat launcher (236x84, 12px from the bottom right), which catches taps. */
+.blog-footer__bottom { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px 24px; padding-block: 20px 104px; border-top: 1px solid var(--line-dark); font-size: .66rem; color: var(--muted); }
 .blog-article-hero { padding-block: 26px 52px; }
 .blog-breadcrumbs ol { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; padding: 0; list-style: none; font-size: .68rem; line-height: 1.7; color: var(--muted); margin-bottom: 44px; }
 .blog-breadcrumbs li + li::before { content: '/'; color: #63849c; margin-right: 8px; }
@@ -224,7 +226,7 @@ a:hover { color: var(--accent); }
   .blog-footer nav ul { gap: 16px 22px; }
   .blog-footer__bottom { grid-template-columns: 1fr auto; font-size: .62rem; }
   .blog-footer__preferred-source { grid-column: 1 / -1; grid-row: 1; justify-self: start; min-height: 44px; margin-bottom: 4px; }
-  .blog-footer__privacy { padding-left: 0; border-left: 0; }
+  .blog-footer__policy { padding-left: 0; border-left: 0; }
   .blog-article-hero { padding-bottom: 36px; }
   .blog-breadcrumbs ol { margin-bottom: 31px; }
   .blog-breadcrumbs li:last-child { display: none; }

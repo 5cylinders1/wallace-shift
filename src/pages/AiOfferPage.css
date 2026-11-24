@@ -14,7 +14,8 @@
 .qf-introduction { padding-bottom: 28px; margin-bottom: 28px; border-bottom: 1px solid #c4cfd5; }
 .qf-introduction h1 { font-size: clamp(1.35rem,2.7vw,1.65rem); font-weight: 500; letter-spacing: -.025em; line-height: 1.2; }
 .qf-introduction p { color: var(--color-muted-on-bone); font-size: .9rem; line-height: 1.6; margin-top: 10px; max-width: 65ch; }
-.qf-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-top: 1px solid #c4cfd5; width: min(100% - 60px,760px); margin-inline: auto; padding: 18px 0; color: var(--color-muted-on-bone); font-size: .78rem; }
+/* Bottom padding clears the Reply365 chat launcher (236x84, 12px from the bottom right), which catches taps. */
+.qf-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-top: 1px solid #c4cfd5; width: min(100% - 60px,760px); margin-inline: auto; padding: 18px 0 104px; color: var(--color-muted-on-bone); font-size: .78rem; }
 .qf-footer div { display: flex; gap: 24px; }
 .qf-footer a { min-height: 44px; display: inline-flex; align-items: center; text-decoration: underline; }
 .ao-form { min-width: 0; }

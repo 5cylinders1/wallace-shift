@@ -22,10 +22,10 @@ const names = {
   northvane: 'Northvane Roofing', 'alder-stone': 'Alder & Stone', contour: 'Contour Roofing',
   halcyon: 'Halcyon Roofworks', velar: 'Velar Roof Atelier', stratum: 'Stratum Roofing Co.',
   datum: 'Datum', tambour: 'Tambour', mitre: 'Mitre & Rift', stillwater: 'Stillwater Pool Co.',
-  'roofing-crm': 'Roofing CRM workspace', trawsome: 'Trawsome Lawn Care', 'complete-painting': 'Complete Painting', riffle: 'Riffle Water Co.',
+  'roofing-crm': 'Roofing CRM workspace', lareau: 'Lareau Landscape & Design', 'complete-painting': 'Complete Painting', riffle: 'Riffle Water Co.',
 }
 const openDemoPaths = {
-  trawsome: { local: '/demos/lawn/', production: '/trawsome' },
+  lareau: { local: '/demos/lawn/', production: '/lareau' },
   'complete-painting': { local: '/demos/painting/', production: '/complete-painting' },
   riffle: { local: '/demos/water/', production: '/riffle' },
 }

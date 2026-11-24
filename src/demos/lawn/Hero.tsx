@@ -146,7 +146,7 @@ export default function Hero() {
     const element = canvas.current
     const section = root.current
     if (!element || !section) return
-    gsap.from('.tw-hero-copy > *', { autoAlpha: 0, y: 20, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: 0.1 })
+    gsap.from('.ll-hero-copy > *', { autoAlpha: 0, y: 20, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: 0.1 })
     if (reduced) return
 
     let cancelled = false
@@ -200,57 +200,59 @@ export default function Hero() {
 
   const still = reduced ? stages[stage].id : null
   return (
-    <section ref={root} className={`tw-hero${reduced ? ' is-still' : ''}`} aria-labelledby="tw-hero-title">
-      <div className="tw-hero-stage" aria-hidden="true">
+    <section ref={root} className={`ll-hero${reduced ? ' is-still' : ''}`} aria-labelledby="ll-hero-title">
+      <div className="ll-hero-stage" aria-hidden="true">
         {reduced ? (
-          <img src={`/demos/lawn/hero-${still === 'before' ? 'overgrown' : still}.webp`} alt="" className="tw-hero-still" />
+          <img src={`/demos/lawn/hero-${still === 'before' ? 'overgrown' : still}.webp`} alt="" className="ll-hero-still" />
         ) : (
           <>
-            <img src="/demos/lawn/hero-overgrown.webp" alt="" className={`tw-hero-still${ready ? ' is-hidden' : ''}`} fetchPriority="high" />
-            <canvas ref={canvas} className="tw-hero-canvas" />
+            <img src="/demos/lawn/hero-overgrown.webp" alt="" className={`ll-hero-still${ready ? ' is-hidden' : ''}`} fetchPriority="high" />
+            <canvas ref={canvas} className="ll-hero-canvas" />
           </>
         )}
-        <div className="tw-hero-scrim" />
+        <div className="ll-hero-scrim" />
       </div>
 
-      <div className="tw-hero-inner">
-        <div className="tw-hero-copy">
-          <p className="tw-eyebrow">Lawn care · {business.home}</p>
-          <h1 id="tw-hero-title">Lawns that look <em>Trawsome.</em></h1>
-          <p className="tw-hero-lede">Mowing, trimming and seasonal cleanups by {business.owner}, backed by his personal satisfaction guarantee.</p>
-          <div className="tw-hero-actions">
-            <a className="tw-button tw-button-lime" href="#estimate">Get my instant price</a>
-            <a className="tw-button tw-button-ghost" href={business.phoneHref}>Call<span className="tw-wide-only">&nbsp;{business.phone}</span><span className="tw-narrow-only">&nbsp;Ben</span></a>
+      <div className="ll-hero-inner">
+        <div className="ll-hero-copy">
+          <p className="ll-eyebrow">Landscape &amp; design · Kansas City</p>
+          <h1 id="ll-hero-title">Outdoor living, <em>built to last.</em></h1>
+          <p className="ll-hero-lede">Patios, retaining walls, outdoor kitchens and plantings, designed and installed by the Lareau family across {business.area}.</p>
+          <div className="ll-hero-actions">
+            <a className="ll-button ll-button-green" href="#plan">Plan my project</a>
+            <a className="ll-button ll-button-ghost" href={business.phoneHref}>Call<span className="ll-wide-only">&nbsp;{business.phone}</span><span className="ll-narrow-only">&nbsp;us</span></a>
           </div>
-          <p className="tw-fave">
-            <FaveMark />
-            <span>Nextdoor Neighborhood Favorite<br /><strong>{business.faveYears[0]}–{business.faveYears[business.faveYears.length - 1]}</strong></span>
-          </p>
+          <a className="ll-rating" href={business.google} target="_blank" rel="noreferrer">
+            <Stars />
+            <span><strong>{business.rating.toFixed(1)} on Google</strong>{business.reviewCount} reviews</span>
+          </a>
         </div>
 
-        <div className="tw-hero-stages">
+        <div className="ll-hero-stages">
           <ol aria-label="Yard transformation">
             {stages.map((item, index) => (
               <li key={item.id}>
                 <button type="button" aria-current={stage === index ? 'step' : undefined} onClick={() => goTo(index)}>
-                  <span className="tw-stage-index">0{index + 1}</span>
-                  <span className="tw-stage-label">{item.label}</span>
+                  <span className="ll-stage-index">0{index + 1}</span>
+                  <span className="ll-stage-label">{item.label}</span>
                 </button>
               </li>
             ))}
           </ol>
-          <p className="tw-hero-note">{reduced ? 'Choose a stage to compare.' : 'Scroll to transform'} · Illustrated yard</p>
+          <p className="ll-hero-note">{reduced ? 'Choose a stage to compare.' : 'Scroll to transform'} · Illustrated yard</p>
         </div>
       </div>
     </section>
   )
 }
 
-export function FaveMark() {
+/** Five filled stars, for a 5.0 rating. Decorative: the text beside it says the rating. */
+export function Stars() {
   return (
-    <svg className="tw-fave-mark" viewBox="0 0 40 40" aria-hidden="true">
-      <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <path d="M20 29s-8.5-5.2-8.5-11a4.6 4.6 0 0 1 8.5-2.4 4.6 4.6 0 0 1 8.5 2.4c0 5.8-8.5 11-8.5 11Z" fill="currentColor" />
+    <svg className="ll-stars" viewBox="0 0 100 20" aria-hidden="true">
+      {[0, 1, 2, 3, 4].map((index) => (
+        <path key={index} transform={`translate(${index * 20} 0)`} d="m10 1.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L10 14.9l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8L10 1.5Z" fill="currentColor" />
+      ))}
     </svg>
   )
 }

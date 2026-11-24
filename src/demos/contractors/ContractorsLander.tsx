@@ -4,6 +4,7 @@ import DemoPreview from './DemoPreview'
 import { useCollectionHostname } from '../../hooks/useCollectionHostname'
 import { useDemoAccess } from '../../hooks/useDemoAccess'
 import { PhoneLink } from '../../components/PhoneLink'
+import { AnalyticsChoicesLink } from '../../components/AnalyticsChoicesLink/AnalyticsChoicesLink'
 
 const STUDIO = 'https://wallaceshift.com'
 
@@ -214,6 +215,7 @@ export default function ContractorsLander() {
           <a href={`${STUDIO}/services`}>Services</a>
           <a href={`${STUDIO}/contact`}>Contact</a>
           <PhoneLink />
+          <AnalyticsChoicesLink origin={STUDIO} />
         </nav>
         <p className="ct-copyright">© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Wallace Shift. Demo brands are fictional unless a card says otherwise.</p>
       </div>

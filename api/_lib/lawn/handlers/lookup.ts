@@ -1,5 +1,5 @@
 /**
- * Everything the lawn estimator needs for one address.
+ * Everything the yard planner needs for one address.
  *
  *   GET /api/lawn-lookup?id=<suggestion id>
  *   GET /api/lawn-lookup?address=7400%20W%20162nd%20Ter%2C%20Overland%20Park%20KS
@@ -17,7 +17,7 @@ import { lawnLookup, type LookupTarget } from '../lookup.js'
 /** A homeowner looks up one or two homes; this stops someone mapping a town. */
 const RATE_LIMIT = 40
 const RATE_WINDOW_S = 3600
-/** Short, because the rates and service radius ride along and may be changed. */
+/** Ten minutes: a homeowner may reload while planning; partial answers retry sooner. */
 const CACHE_S = 600
 const PARTIAL_CACHE_S = 60
 

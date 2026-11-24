@@ -82,10 +82,10 @@ export default function AddressSearch({ busy, onSubmit, initial = '', autoFocus 
   }
 
   return (
-    <form className="tw-search" onSubmit={submit} role="search">
-      <label htmlFor={`${id}-input`} className="tw-search-label">Your address</label>
-      <div className="tw-search-row">
-        <svg className="tw-search-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" fill="none" stroke="currentColor" strokeWidth="1.6" /><circle cx="12" cy="9.5" r="2.4" fill="currentColor" /></svg>
+    <form className="ll-search" onSubmit={submit} role="search">
+      <label htmlFor={`${id}-input`} className="ll-search-label">Your address</label>
+      <div className="ll-search-row">
+        <svg className="ll-search-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" fill="none" stroke="currentColor" strokeWidth="1.6" /><circle cx="12" cy="9.5" r="2.4" fill="currentColor" /></svg>
         <input
           ref={input}
           id={`${id}-input`}
@@ -108,11 +108,11 @@ export default function AddressSearch({ busy, onSubmit, initial = '', autoFocus 
           onBlur={() => window.setTimeout(() => setOpen(false), 120)}
           onKeyDown={onKeyDown}
         />
-        <button type="submit" className="tw-button tw-button-ink" disabled={busy || query.trim().length < 5}>
-          {busy ? 'Measuring…' : 'Measure my lawn'}
+        <button type="submit" className="ll-button ll-button-ink" disabled={busy || query.trim().length < 5}>
+          {busy ? 'Finding it…' : 'See my yard'}
         </button>
       </div>
-      <ul id={`${id}-list`} role="listbox" className="tw-search-list" hidden={!visible.length} aria-label="Matching addresses">
+      <ul id={`${id}-list`} role="listbox" className="ll-search-list" hidden={!visible.length} aria-label="Matching addresses">
         {visible.map((option, index) => (
           <li
             key={option.id}
@@ -128,7 +128,7 @@ export default function AddressSearch({ busy, onSubmit, initial = '', autoFocus 
         ))}
       </ul>
       {hint && query.trim().length >= 3 && (
-        <p className="tw-search-hint" role="status">
+        <p className="ll-search-hint" role="status">
           {hint === 'offline' ? 'Address suggestions aren’t connected here.' : 'Suggestions are slow right now.'} Type your full address and press Enter.
         </p>
       )}

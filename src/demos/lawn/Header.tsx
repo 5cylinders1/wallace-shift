@@ -2,22 +2,15 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { business } from './content'
 
 const NAV = [
-  { href: '#estimate', label: 'Instant price' },
   { href: '#services', label: 'Services' },
-  { href: '#about', label: 'About Ben' },
-  { href: '#faq', label: 'FAQ' },
+  { href: '#work', label: 'Our work' },
+  { href: '#about', label: 'About' },
+  { href: '#reviews', label: 'Reviews' },
 ]
 
-export function Wordmark() {
-  return (
-    <span className="tw-wordmark">
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <rect width="64" height="64" rx="14" fill="currentColor" className="tw-wordmark-tile" />
-        <path d="M-8 64 30 0h12L4 64Zm24 0L54 0h12L28 64Z" className="tw-wordmark-stripe" />
-      </svg>
-      <span className="tw-wordmark-text">Trawsome<small>Lawn Care</small></span>
-    </span>
-  )
+/** The business's own logo (white version, from its website); decorative where a link already names it. */
+export function Wordmark({ decorative = false }: { decorative?: boolean }) {
+  return <img className="ll-wordmark" src="/demos/lawn/logo-white.png" alt={decorative ? '' : business.name} width={525} height={129} />
 }
 
 const subscribeScroll = (onChange: () => void) => {
@@ -52,30 +45,30 @@ export default function Header() {
       }
     }
     document.addEventListener('keydown', onKey)
-    document.body.classList.add('tw-menu-open')
+    document.body.classList.add('ll-menu-open')
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.classList.remove('tw-menu-open')
+      document.body.classList.remove('ll-menu-open')
     }
   }, [open])
 
   return (
-    <header className={`tw-header${scrolled || open ? ' is-solid' : ''}`}>
-      <a className="tw-skip" href="#main">Skip to content</a>
-      <div className="tw-header-inner">
-        <a href="#top" className="tw-header-brand" aria-label={`${business.name}, back to top`}><Wordmark /></a>
-        <nav className="tw-nav" aria-label="Primary">
+    <header className={`ll-header${scrolled || open ? ' is-solid' : ''}`}>
+      <a className="ll-skip" href="#main">Skip to content</a>
+      <div className="ll-header-inner">
+        <a href="#top" className="ll-header-brand" aria-label={`${business.name}, back to top`}><Wordmark decorative /></a>
+        <nav className="ll-nav" aria-label="Primary">
           {NAV.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
         </nav>
-        <div className="tw-header-actions">
-          <a className="tw-header-phone" href={business.phoneHref}>{business.phone}</a>
-          <a className="tw-button tw-button-lime tw-button-small" href="#estimate">Get my price</a>
+        <div className="ll-header-actions">
+          <a className="ll-header-phone" href={business.phoneHref}>{business.phone}</a>
+          <a className="ll-button ll-button-green ll-button-small" href="#plan">Free consultation</a>
           <button
             ref={toggle}
             type="button"
-            className="tw-menu-toggle"
+            className="ll-menu-toggle"
             aria-expanded={open}
-            aria-controls="tw-menu"
+            aria-controls="ll-menu"
             aria-label={open ? 'Close menu' : 'Open menu'}
             onClick={() => setOpen((value) => !value)}
           >
@@ -83,13 +76,13 @@ export default function Header() {
           </button>
         </div>
       </div>
-      <div id="tw-menu" ref={menu} className="tw-menu" hidden={!open}>
+      <div id="ll-menu" ref={menu} className="ll-menu" hidden={!open}>
         <nav aria-label="Mobile">
           {NAV.map((item) => <a key={item.href} href={item.href} onClick={() => setOpen(false)}>{item.label}</a>)}
         </nav>
-        <div className="tw-menu-contact">
-          <a className="tw-button tw-button-lime" href="#estimate" onClick={() => setOpen(false)}>Get my instant price</a>
-          <a className="tw-button tw-button-ghost" href={business.phoneHref}>Call {business.phone}</a>
+        <div className="ll-menu-contact">
+          <a className="ll-button ll-button-green" href="#plan" onClick={() => setOpen(false)}>Plan my project</a>
+          <a className="ll-button ll-button-ghost" href={business.phoneHref}>Call {business.phone}</a>
         </div>
       </div>
     </header>

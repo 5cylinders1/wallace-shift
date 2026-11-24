@@ -1,7 +1,7 @@
 /**
- * Address → everything the estimator needs to measure a lawn in the browser:
- * the house and its neighbours (open footprint data), a public-domain aerial
- * pair framed on the lot, the distance from the business, and the rates.
+ * Address → everything the yard planner needs to measure a lawn in the browser:
+ * the house and its neighbours (open footprint data) and a public-domain
+ * aerial pair framed on the lot.
  *
  * The measuring itself happens on the page (src/demos/lawn/estimate/measure.ts):
  * the lot is split between neighbouring houses, and the grass in the
@@ -17,7 +17,7 @@ import { geocoderFromEnv } from '../roof/geocoder.js'
 import { RoofError, deadlineIn, fetchJson, type Deadline } from '../roof/http.js'
 import { measureBuildings } from '../roof/measure.js'
 import { localMeters } from '../roof/polygon.js'
-import { pricingFromEnv, rangeOf, searchBias } from './config.js'
+import { searchBias } from './config.js'
 import { LawnError } from './http.js'
 
 export type LookupTarget = { kind: 'suggestion'; id: string } | { kind: 'address'; address: string }
@@ -62,6 +62,11 @@ function naipUrl(frame: LawnFrame, pixels: number, bands: string | null): string
   })
   // Near-infrared, red, green as the image's R, G, B: grass and trees glow in R.
   if (bands) params.set('bandIds', bands)
+  // The photo people look at is enlarged 4–11x from the source pixels (0.3 m in
+  // Kansas, 0.6 m in Missouri), and the service's default nearest-neighbour
+  // resampling turns that into visible blocks. Bilinear keeps it smooth. The
+  // infrared image is only measured, so it keeps the default.
+  else params.set('interpolation', 'RSP_BilinearInterpolation')
   return `${NAIP}?${params}`
 }
 
@@ -164,14 +169,12 @@ export async function lawnLookup(target: LookupTarget): Promise<{ lookup: LawnLo
         infrared: naipUrl(frame, FRAME_SIZE, '3,0,1'),
         credits: NAIP_CREDITS,
       },
-      range: rangeOf(place.location),
-      pricing: pricingFromEnv(),
       credits: [...place.credits, ...(credit ? [credit] : [])],
     },
   }
 }
 
-/** The point a request is for, re-resolved on the server so its range can't be forged. */
+/** The address a request is for, re-resolved on the server so the email carries the geocoder's address, not the page's. */
 export async function locate(target: LookupTarget): Promise<{ location: LatLng; formatted: string }> {
   const geocoder = geocoderFromEnv()
   if (!geocoder) throw new LawnError('not_configured')

@@ -105,7 +105,7 @@ h1, h2, h3, p { margin: 0; }
 .demo-access__email a { display: inline-flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; }
 .demo-access__email a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .demo-access__email > span { font-size: 10px; color: #52616b; overflow-wrap: anywhere; grid-column: 1 / -1; }
-.demo-access__footer { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid rgb(195 208 216 / 16%); padding: 25px 0 28px; color: #93a3ae; font-size: 10px; line-height: 1.8; }
+.demo-access__footer { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid rgb(195 208 216 / 16%); padding: 25px 0 104px; color: #93a3ae; font-size: 10px; line-height: 1.8; }
 
 .demo-access__honeypot,
 .demo-access__visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

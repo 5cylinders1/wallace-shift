@@ -1,25 +1,25 @@
 /**
- * Service requests from the lawn estimator.
+ * Consultation requests from the yard planner.
  *
  *   POST /api/lawn-request   ServiceRequestBody (src/demos/lawn/estimate/types.ts)
- *   → { ok: true, price } or { ok: false, error, range? }
+ *   → { ok: true } or { ok: false, error }
  *
- * The address is resolved again here and its distance from the business
- * re-checked, so a request outside the service radius is refused whatever
- * the page said. The per-visit price is recomputed from this deployment's
- * rates. Until Resend and the destination inbox are configured
- * (api/_lib/lawn/config.ts) the answer is `not_configured` and the page
- * says so: nothing is ever reported as sent that wasn't.
+ * The address is resolved again here, so the email carries the geocoder's
+ * address rather than whatever the page sent. The measured lawn size rides
+ * along as context only; nothing is priced. Until Resend and the destination
+ * inbox are configured (api/_lib/lawn/config.ts) the answer is
+ * `not_configured` and the page says so: nothing is ever reported as sent
+ * that wasn't.
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import {
-  CONTACT_METHODS, EXTRAS, FREQUENCIES, TIMINGS,
-  type ContactMethod, type Extra, type Frequency, type Timing,
+  CONTACT_METHODS, PROJECTS, TIMINGS,
+  type ContactMethod, type Project, type Timing,
 } from '../../../../src/demos/lawn/estimate/types.js'
-import { MAX_LAWN_SQFT, MIN_LAWN_SQFT, visitPrice } from '../../../../src/demos/lawn/estimate/pricing.js'
+import { MAX_LAWN_SQFT, MIN_LAWN_SQFT } from '../../../../src/demos/lawn/estimate/area.js'
 import { header, isRateLimited, sendJson } from '../../roof/http.js'
-import { mailFromEnv, pricingFromEnv, rangeOf } from '../config.js'
+import { mailFromEnv } from '../config.js'
 import { LawnError, handleLawn, sendLawnError } from '../http.js'
 import { locate } from '../lookup.js'
 
@@ -30,13 +30,12 @@ const RATE_LIMIT = 6
 const RATE_WINDOW_S = 3600
 
 const LABELS = {
-  frequency: { weekly: 'Weekly', biweekly: 'Every two weeks', once: 'One-time mow' } satisfies Record<Frequency, string>,
-  timing: { asap: 'As soon as possible', week: 'Within a week or two', flexible: 'Flexible' } satisfies Record<Timing, string>,
+  timing: { season: 'This season', months: 'In the next few months', planning: 'Just planning ahead' } satisfies Record<Timing, string>,
   contact: { text: 'Text', call: 'Call', email: 'Email' } satisfies Record<ContactMethod, string>,
-  extras: {
-    shrubs: 'Shrub trimming', leaves: 'Leaf removal', limbs: 'Tree limb removal', seeding: 'Seeding',
-    fertilizing: 'Fertilizing', weeds: 'Weed pulling', cleanup: 'Porch & driveway blow-off',
-  } satisfies Record<Extra, string>,
+  projects: {
+    patio: 'Patio', walls: 'Retaining wall or steps', kitchen: 'Outdoor kitchen', fire: 'Fire pit or fireplace',
+    planting: 'Trees, shrubs & perennials', lighting: 'Landscape lighting', drainage: 'Drainage', sprinklers: 'Sprinkler system',
+  } satisfies Record<Project, string>,
 }
 
 async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> {
@@ -85,29 +84,28 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const body = await readBody(req)
 
     // Honeypot: answer like a success so a bot has nothing to retry against.
-    if (typeof body.company === 'string' && body.company.trim()) return sendJson(res, { ok: true, price: { low: 0, high: 0 } })
+    if (typeof body.company === 'string' && body.company.trim()) return sendJson(res, { ok: true })
 
     const name = line(body.name, 120)
     const phone = line(body.phone, 40)
     const email = line(body.email, 200)
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || phone.replace(/\D/g, '').length < 10) throw new LawnError('invalid')
     const contact = choice(body.contact, CONTACT_METHODS)
-    const frequency = choice(body.frequency, FREQUENCIES)
     const timing = choice(body.timing, TIMINGS)
-    const extras = Array.isArray(body.extras) ? [...new Set(body.extras.map((extra) => choice(extra, EXTRAS)))] : []
+    const projects = Array.isArray(body.projects) ? [...new Set(body.projects.map((project) => choice(project, PROJECTS)))] : []
     const notes = typeof body.notes === 'string' ? body.notes.trim().slice(0, 2000) : ''
-    const lawnSqFt = Math.round(Number(body.lawnSqFt))
-    if (!Number.isFinite(lawnSqFt) || lawnSqFt < MIN_LAWN_SQFT || lawnSqFt > MAX_LAWN_SQFT) throw new LawnError('invalid')
+    if (!projects.length && !notes) throw new LawnError('invalid')
+    let lawnSqFt: number | null = null
+    if (body.lawnSqFt !== null && body.lawnSqFt !== undefined) {
+      lawnSqFt = Math.round(Number(body.lawnSqFt))
+      if (!Number.isFinite(lawnSqFt) || lawnSqFt < MIN_LAWN_SQFT || lawnSqFt > MAX_LAWN_SQFT) throw new LawnError('invalid')
+    }
 
     const id = typeof body.id === 'string' && body.id.length <= 1200 ? body.id : null
     const address = id ? null : line(body.address, 200)
     if (await isRateLimited(req, 'lawn-request', RATE_LIMIT, RATE_WINDOW_S)) return sendLawnError(res, 'rate_limited')
 
     const place = await locate(id ? { kind: 'suggestion', id } : { kind: 'address', address: address as string })
-    const range = rangeOf(place.location)
-    if (range && !range.inRange) return sendLawnError(res, 'out_of_range', range)
-
-    const { low, high } = visitPrice(lawnSqFt, frequency, pricingFromEnv())
     const mail = mailFromEnv()
     if (!mail) return sendLawnError(res, 'not_configured')
 
@@ -118,11 +116,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       `Prefers: ${LABELS.contact[contact]}`,
       '',
       `Address: ${place.formatted}`,
-      ...(range ? [`Distance: ${range.miles} miles (service radius ${range.radiusMiles})`] : []),
-      `Lawn: about ${lawnSqFt.toLocaleString('en-US')} sq ft (measured from aerial imagery; confirm on site)`,
-      `Mowing: ${LABELS.frequency[frequency]}, estimated $${low}–$${high} per visit`,
-      `Also interested in: ${extras.length ? extras.map((extra) => LABELS.extras[extra]).join(', ') : 'Nothing else'}`,
-      `Start: ${LABELS.timing[timing]}`,
+      `Planning: ${projects.length ? projects.map((project) => LABELS.projects[project]).join(', ') : 'See notes'}`,
+      `Timing: ${LABELS.timing[timing]}`,
+      ...(lawnSqFt ? [`Lawn: about ${lawnSqFt.toLocaleString('en-US')} sq ft (measured from aerial imagery; confirm on site)`] : []),
       ...(notes ? ['', 'Notes:', notes] : []),
       '',
     ].join('\n')
@@ -136,7 +132,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
           from: mail.from,
           to: [mail.to],
           reply_to: email,
-          subject: `Lawn request: ${name}, ${place.formatted.split(',')[0]}`,
+          subject: `Consultation request: ${name}, ${place.formatted.split(',')[0]}`,
           text,
         }),
         signal: AbortSignal.timeout(8000),
@@ -145,6 +141,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return sendLawnError(res, 'send_failed')
     }
     if (!response.ok) return sendLawnError(res, 'send_failed')
-    sendJson(res, { ok: true, price: { low, high } })
+    sendJson(res, { ok: true })
   })
 }

@@ -9,6 +9,11 @@
       "has": [{ "type": "host", "value": "contractors.wallaceshift.com" }],
       "destination": "https://wallaceshift.com/bucyrus-auto",
       "permanent": true
+    },
+    {
+      "source": "/demo/american-mechanical/water-heater-installation-merriam-ks",
+      "destination": "/demo/american-mechanical/locations/merriam-ks",
+      "permanent": true
     }
   ],
   "headers": [
@@ -25,7 +30,7 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
-      "source": "/trawsome/:path*",
+      "source": "/lareau/:path*",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
@@ -114,6 +119,18 @@
     },
     {
       "source": "/demos/deercreekplumbing/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demo/american-mechanical",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demo/american-mechanical/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/demos/american-mechanical/:path*",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
@@ -270,7 +287,7 @@
       "destination": "/demos/cabinetry-2"
     },
     {
-      "source": "/trawsome",
+      "source": "/lareau",
       "destination": "/demos/lawn"
     },
     {

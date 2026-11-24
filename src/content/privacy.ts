@@ -18,6 +18,8 @@ export const privacyMeta = {
 }
 
 export interface PrivacySection {
+  /** Anchor for links into the policy, e.g. the footer's /privacy#analytics. */
+  id?: string
   heading: string
   paragraphs: string[]
   bullets?: string[]
@@ -39,13 +41,14 @@ export const privacySections: PrivacySection[] = [
     ],
   },
   {
+    id: 'analytics',
     heading: 'Site visitor analytics',
     paragraphs: [
       'With your permission, we use Google Analytics on our public studio pages, blog, contractor gallery, offer pages, and demo request page to understand which pages people visit and where traffic comes from. Reports include page views, visits, referring websites and campaign labels, approximate location, and browser and device information.',
       'Google Analytics uses cookies to distinguish browsers and understand visits over time. We load its tracking script only after you allow analytics. We keep your analytics choice in your browser so you do not have to answer on each visit. We do not enable advertising personalization or Google signals.',
       'We also measure actions such as an accepted enquiry or demo request, application starts and steps, the broad recommendation type shown, saved applications, a submission failure, quiz completion, preview playback, and clicks on email, phone, and resource links. These events use fixed labels rather than the details you enter. Quiz answers, including revenue, purchasing authority, business problems, and AI experience, are not sent to analytics. Viewing a recommendation does not mean you submitted a request; an accepted enquiry means our service acknowledged the request, not that a sale occurred.',
       'Our analytics code excludes the client portal, admin pages, agreement pages, private demos, and development previews. It removes URL fragments and query parameters other than filtered campaign labels. We do not send form entries, email addresses, messages, access codes, or payment details to analytics.',
-      'You can allow or reject analytics, or change your choice using Analytics preferences on public pages. Our analytics code does not load when your browser sends Do Not Track or Global Privacy Control, even if you previously allowed it. Rejecting analytics or blocking it with browser privacy tools does not affect forms or private access.',
+      'You can allow or reject analytics when you first visit, and change your choice at any time with the Analytics choices link at the bottom of every public page. Our analytics code does not load when your browser sends Do Not Track or Global Privacy Control, even if you previously allowed it. Rejecting analytics or blocking it with browser privacy tools does not affect forms or private access.',
     ],
   },
   {
@@ -101,4 +104,4 @@ export const privacySections: PrivacySection[] = [
  * string rather than a build timestamp so it reflects a real review of
  * the policy rather than the date of an unrelated deploy.
  */
-export const privacyLastUpdated = '17 November 2026'
+export const privacyLastUpdated = '19 November 2026'

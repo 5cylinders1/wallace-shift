@@ -42,10 +42,9 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 }
 
 export const ERROR_TEXT: Record<LawnErrorCode, string> = {
-  not_configured: 'The estimator isn’t connected yet.',
+  not_configured: 'The yard planner isn’t connected yet.',
   invalid: 'Something in that request didn’t look right. Please check it and try again.',
   address_not_found: 'We couldn’t find that address. Try picking one from the list.',
-  out_of_range: 'That address is outside the service area.',
   rate_limited: 'Too many tries in a short time. Please wait a few minutes.',
   busy: 'The map service is busy. Please try again in a moment.',
   upstream: 'The map service didn’t answer. Please try again.',

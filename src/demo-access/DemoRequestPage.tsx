@@ -2,6 +2,7 @@ import { useRef, useState, type FormEvent } from 'react'
 import { business } from '../content/siteConfig'
 import { submitDemoRequest } from './request'
 import { trackSiteEvent } from '../lib/analytics'
+import { AnalyticsChoicesLink } from '../components/AnalyticsChoicesLink/AnalyticsChoicesLink'
 import './demo-access.css'
 
 const demos = {
@@ -196,6 +197,7 @@ export function DemoRequestPage() {
       <footer className="demo-access__footer">
         <p>© {new Date().getFullYear()} Wallace Shift</p>
         <a href={`/demo-admin/${demoKey ? `?demo=${encodeURIComponent(demoKey)}` : ''}`}>Admin sign in</a>
+        <AnalyticsChoicesLink />
         <p>Illustrative demos. Real workflows to discuss.</p>
       </footer>
     </div>

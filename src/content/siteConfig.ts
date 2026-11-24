@@ -205,4 +205,10 @@ export const footer = {
     text: 'Add as a preferred source',
     label: 'Add as a preferred source on Google: Wallace Shift (opens in a new tab)',
   },
+  // Every public footer carries this link. public/site-analytics.js turns a
+  // click into the consent panel; without that script it opens the policy.
+  analyticsChoices: {
+    label: 'Analytics choices',
+    href: '/privacy#analytics',
+  },
 }

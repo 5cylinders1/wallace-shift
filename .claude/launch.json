@@ -42,7 +42,7 @@
       "port": 5181
     },
     {
-      "name": "trawsome-demo-preview",
+      "name": "lareau-demo-preview",
       "runtimeExecutable": "sh",
       "runtimeArgs": [
         "-c",
@@ -132,6 +132,19 @@
         "--strictPort"
       ],
       "port": 5188
+    },
+    {
+      "name": "american-mechanical-demo-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5191",
+        "--strictPort"
+      ],
+      "port": 5191
     }
   ]
 }

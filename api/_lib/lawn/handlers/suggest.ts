@@ -1,11 +1,11 @@
 /**
- * Address suggestions for the lawn estimator's search box.
+ * Address suggestions for the yard planner's search box.
  *
  *   GET /api/lawn-suggest?q=7400%20w%20162
  *   → { ok: true, suggestions: [{ id, primary, secondary }], credits }
  *
  * The same Geoapify geocoder as the roof estimator (api/_lib/roof/geocoder.ts),
- * ranked around the business (LAWN_SERVICE_ORIGIN) instead.
+ * ranked around the business's town (api/_lib/lawn/config.ts) instead.
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'

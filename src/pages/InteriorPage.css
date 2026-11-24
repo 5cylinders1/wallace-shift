@@ -276,6 +276,11 @@
   border-top: 1px solid rgba(6, 7, 8, 0.14);
 }
 
+/* Linked sections (/privacy#analytics) clear the fixed header. */
+.qa__item[id] {
+  scroll-margin-top: calc(var(--site-header-height) + 24px);
+}
+
 .qa__item:first-child {
   border-top: none;
   padding-top: 0;

@@ -189,8 +189,8 @@ test('Riffle is a public demo: page, media and source need no access, without op
   for (const path of ['/demos/water-2/', '/demos/waterx/index.html', '/src/demos/waterx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
-test('Trawsome is a public demo: page, media, source and rate-limited estimator need no access', async () => {
-  for (const path of ['/trawsome', '/trawsome/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%74rawsome', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-finished.webp', '/public/demos/lawn/edge.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request', '/api/lawn?action=suggest', '/api/lawn?action=lookup', '/api/lawn?action=request']) {
+test('Lareau is a public demo: page, media, source and rate-limited planner need no access', async () => {
+  for (const path of ['/lareau', '/lareau/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%6Careau', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-overgrown.webp', '/demos/lawn/film.mp4', '/public/demos/lawn/patios.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request', '/api/lawn?action=suggest', '/api/lawn?action=lookup', '/api/lawn?action=request']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
   }
   assert.equal(access.demoKey('lawn'), 'roofers', 'Public demos have no access-request key')
@@ -237,6 +237,14 @@ test('the Sue’s Tailor Shop alias and original tailor namespace stay public wi
   assert.equal(access.demoKey('best-tailor'), 'roofers', 'Public demos have no access-request key')
   assert.equal(access.demoKey('sues-tailor'), 'roofers', 'Public aliases have no access-request key')
   for (const path of ['/demos/best-tailor-2/', '/demos/best-tailorx/index.html', '/src/demos/best-tailorx/main.tsx', '/demos/sues-tailor/', '/src/demos/sues-tailor/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
+})
+
+test('the American Mechanical KC concept is a public demo: pages, favicon and source need no access', async () => {
+  for (const path of ['/demo/american-mechanical', '/demo/american-mechanical/', '/demo/american-mechanical/blog/why-is-there-no-hot-water', '/demos/american-mechanical', '/demos/american-mechanical/', '/demos/american-mechanical/index.html', '/src/demos/american-mechanical/main.tsx', '/demos/american-mechanical/favicon.svg', '/public/demos/american-mechanical/favicon.svg']) {
+    assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
+  }
+  assert.equal(access.demoKey('american-mechanical'), 'roofers', 'Public demos have no access-request key')
+  for (const path of ['/demos/american-mechanical-2/', '/demos/american-mechanicalx/index.html', '/src/demos/american-mechanicalx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
 test('the Deer Creek Plumbing concept is a public demo: pages, media and source need no access', async () => {

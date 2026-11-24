@@ -1,7 +1,7 @@
 # Painting demo 01: Complete Painting LLC
 
 A website concept for a **real** painting company, Complete Painting LLC of
-Bonner Springs, Kansas, (913) 742-1506. As with Trawsome, the business facts
+Bonner Springs, Kansas, (913) 742-1506. As with Lareau, the business facts
 are real and sourced; nothing else about the business is invented.
 
 - Local entry: `/complete-painting` or `/demos/painting/` on the dev server
