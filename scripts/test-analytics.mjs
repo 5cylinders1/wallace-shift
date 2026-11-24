@@ -12,6 +12,7 @@ function browser({ href = 'https://wallaceshift.com/', navigator = {}, windowDnt
   const listeners = new Map()
   const documentListeners = new Map()
   const elements = []
+  const bodyChildren = []
   const scripts = []
   const writes = []
   const cookieWrites = []
@@ -19,12 +20,15 @@ function browser({ href = 'https://wallaceshift.com/', navigator = {}, windowDnt
   function element(tag) {
     const handlers = new Map()
     const node = {
-      tagName: tag, children: [], dataset: {}, hidden: false,
+      tagName: tag, children: [], dataset: {}, hidden: false, isConnected: true, offsetHeight: 180,
       appendChild(child) { this.children.push(child); return child },
       setAttribute(name, value) { this[name] = value },
       addEventListener(name, callback) { handlers.set(name, callback) },
+      contains(other) { return other === this || this.children.some(child => child.contains?.(other)) },
+      fire(name, event = {}) { handlers.get(name)?.(event) },
       click() { handlers.get('click')?.({ target: this }) },
-      focus() { this.focused = true },
+      focus(options) { this.focused = true; this.focusOptions = options },
+      getBoundingClientRect() { return this.rect ?? { left: 16, right: 396, top: 604, bottom: 784 } },
     }
     elements.push(node)
     return node
@@ -36,13 +40,18 @@ function browser({ href = 'https://wallaceshift.com/', navigator = {}, windowDnt
       setItem(key, value) { if (storageBlocked) throw Error('Blocked'); storedConsent = value; writes.push([key, value]) },
     },
     addEventListener: (name, callback) => listeners.set(name, callback),
+    getComputedStyle: () => ({ bottom: '16px' }),
+  }
+  const root = {
+    scrollHeight: 3000, dataset: {},
+    style: { props: {}, setProperty(name, value) { this.props[name] = value }, removeProperty(name) { delete this.props[name] } },
   }
   const document = {
     referrer,
     createElement: element,
     head: { appendChild: node => { assert.equal(node.tagName, 'script'); scripts.push(node) } },
-    body: { scrollHeight: 3000, appendChild: node => elements.push(node) },
-    documentElement: { scrollHeight: 3000 },
+    body: { scrollHeight: 3000, appendChild: node => { bodyChildren.push(node); return node } },
+    documentElement: root,
     addEventListener: (name, callback) => documentListeners.set(name, callback),
     get cookie() { return cookies },
     set cookie(value) { cookieWrites.push(value) },
@@ -52,19 +61,28 @@ function browser({ href = 'https://wallaceshift.com/', navigator = {}, windowDnt
   vm.runInContext(executable, context)
   const commands = () => plain((window.dataLayer ?? []).map(args => [...args]))
   return {
-    window, navigator, document, scripts, writes, cookieWrites,
+    window, navigator, document, scripts, writes, cookieWrites, bodyChildren, root,
     commands,
     setStoredConsent: value => { storedConsent = value },
     rerun: () => vm.runInContext(executable, context),
     events: name => commands().filter(args => args[0] === 'event' && (!name || args[1] === name)),
     choose: choice => elements.find(node => node.dataset.choice === choice)?.click(),
-    preferences: () => elements.find(node => node.className === 'ws-analytics-preferences'),
     banner: () => elements.find(node => node.className === 'ws-analytics-consent'),
     consentAction: choice => elements.find(node => node.dataset.choice === choice),
     dispatch: detail => listeners.get('ws:analytics')?.({ detail }),
     fire: (name, event = {}) => listeners.get(name)?.(event),
     navigate(href, event = 'ws:routechange') { window.location = new URL(href, window.location.href); listeners.get(event)?.() },
-    click: href => documentListeners.get('click')?.({ target: { closest: () => ({ href }) } }),
+    click: href => documentListeners.get('click')?.({ target: { closest: selector => selector === 'a[href]' ? { href } : null } }),
+    /** Move keyboard focus to an element outside the panel at a viewport rect. */
+    focusOn: rect => documentListeners.get('focusin')?.({ target: { getBoundingClientRect: () => rect } }),
+    /** Click a footer "Analytics choices" link, as rendered by AnalyticsChoicesLink. */
+    openChoices(modifiers = {}) {
+      const link = { href: 'https://wallaceshift.com/privacy#analytics', isConnected: true, focus(options) { this.focused = true; this.focusOptions = options } }
+      const target = { closest: selector => selector === '[data-ws-analytics-choices]' || selector === 'a[href]' ? link : null }
+      const event = { target, button: 0, ...modifiers, defaultPrevented: false, preventDefault() { this.defaultPrevented = true } }
+      documentListeners.get('click')?.(event)
+      return { link, event }
+    },
   }
 }
 
@@ -102,7 +120,7 @@ test('never loads for private, admin, agreement, demo, experimental, or unknown 
 test('basic consent sends nothing before opt-in and persists a rejected choice', () => {
   const app = browser()
   assert.equal(app.banner().hidden, false)
-  assert.equal(app.preferences().hidden, true)
+  assert.equal(app.root.dataset.wsConsentOpen, '')
   assert.equal(app.consentAction('granted').focused, undefined, 'initial prompt does not steal focus')
   assert.equal(app.banner()['aria-labelledby'], 'ws-analytics-consent-title')
   app.dispatch({ name: 'enquiry_submitted', value: 'home_hero' })
@@ -111,42 +129,101 @@ test('basic consent sends nothing before opt-in and persists a rejected choice',
   assert.deepEqual(app.commands(), [])
   app.choose('denied')
   assert.equal(app.banner().hidden, true)
-  assert.equal(app.preferences().hidden, false)
-  assert.equal(app.preferences().focused, true)
+  assert.deepEqual(app.bodyChildren, [app.banner()], 'nothing stays pinned over the page after a choice')
+  assert.equal('wsConsentOpen' in app.root.dataset, false)
   assert.deepEqual(app.writes, [[consentKey, 'denied']])
   assert.equal(app.scripts.length, 0)
   assert.deepEqual(app.commands(), [])
   const denied = browser({ savedConsent: 'denied' })
   assert.equal(denied.banner().hidden, true)
   assert.equal(denied.scripts.length, 0)
-  app.preferences().click()
+  const { link, event } = app.openChoices()
+  assert.equal(event.defaultPrevented, true, 'the footer link opens the panel instead of navigating')
   assert.equal(app.banner().hidden, false)
-  assert.equal(app.preferences().hidden, true)
   assert.equal(app.consentAction('granted').focused, true)
+  app.choose('denied')
+  assert.equal(link.focused, true, 'focus returns to the footer link that reopened the panel')
+  assert.deepEqual(plain(link.focusOptions), { preventScroll: true })
 })
 
-test('preferences never overlap the consent panel across reopening, routes, and storage updates', () => {
+test('the footer link reopens the panel across routes and storage updates, and only on public routes', () => {
   const app = browser({ savedConsent: 'denied' })
-  assert.equal(app.preferences().hidden, false)
-  app.preferences().click()
+  assert.equal(app.banner().hidden, true)
+  app.openChoices()
   app.navigate('/pricing')
-  assert.equal(app.banner().hidden, false)
-  assert.equal(app.preferences().hidden, true)
+  assert.equal(app.banner().hidden, false, 'a reopened panel stays open on the next public route')
   app.fire('storage', { key: consentKey, newValue: 'granted' })
   assert.equal(app.banner().hidden, true)
-  assert.equal(app.preferences().hidden, false)
   app.fire('storage', { key: null, newValue: null })
   assert.equal(app.banner().hidden, false)
-  assert.equal(app.preferences().hidden, true)
   app.navigate('/client-portal')
   assert.equal(app.banner().hidden, true)
-  assert.equal(app.preferences().hidden, true)
+  assert.equal('wsConsentOpen' in app.root.dataset, false)
+  const { event } = app.openChoices()
+  assert.equal(event.defaultPrevented, false, 'off the public routes the link simply opens the policy')
+  assert.equal(app.banner().hidden, true)
   app.navigate('/contact')
   assert.equal(app.banner().hidden, false)
-  assert.equal(app.preferences().hidden, true)
   app.choose('denied')
   assert.equal(app.banner().hidden, true)
-  assert.equal(app.preferences().hidden, false)
+  assert.deepEqual(app.bodyChildren, [app.banner()])
+})
+
+test('modified clicks on the footer link keep their browser meaning', () => {
+  const app = browser({ savedConsent: 'denied' })
+  for (const modifier of [{ metaKey: true }, { ctrlKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }]) {
+    const { event } = app.openChoices(modifier)
+    assert.equal(event.defaultPrevented, false, JSON.stringify(modifier))
+    assert.equal(app.banner().hidden, true)
+  }
+})
+
+test('the open panel reserves its height for scrolling and focus, and releases it after a choice', () => {
+  const app = browser()
+  assert.equal(app.root.dataset.wsConsentOpen, '')
+  assert.equal(app.root.style.props['--ws-consent-space'], '208px', '180px panel + 16px offset + 12px gap')
+  app.choose('granted')
+  assert.equal('wsConsentOpen' in app.root.dataset, false)
+  assert.equal(app.root.style.props['--ws-consent-space'], undefined)
+  app.openChoices()
+  assert.equal(app.root.style.props['--ws-consent-space'], '208px')
+})
+
+test('the panel waits at the top while keyboard focus sits where it usually is, such as a sticky stage', () => {
+  const app = browser() // 800px viewport: the panel's usual place is x 16-396, y 604-784
+  const covered = { left: 64, right: 219, top: 742, bottom: 790 }
+  app.focusOn(covered)
+  assert.equal('dodge' in app.banner().dataset, true)
+  assert.equal(app.root.style.props['--ws-consent-space'], '208px', 'the reservation keeps its usual-place measurement')
+  app.focusOn({ left: 600, right: 700, top: 742, bottom: 790 })
+  assert.equal('dodge' in app.banner().dataset, false, 'content beside the panel needs no move')
+  app.focusOn(covered)
+  app.focusOn({ left: 64, right: 219, top: 100, bottom: 140 })
+  assert.equal('dodge' in app.banner().dataset, false, 'it returns once focus moves clear of its usual place')
+  app.focusOn(covered)
+  app.choose('granted')
+  assert.equal('dodge' in app.banner().dataset, false, 'a closed panel reopens in its usual place')
+  app.focusOn(covered)
+  assert.equal('dodge' in app.banner().dataset, false, 'a closed panel ignores focus')
+  app.openChoices()
+  assert.equal('dodge' in app.banner().dataset, false)
+})
+
+test('keyboard focus returns to where it entered the first-visit panel, unless that element is gone', () => {
+  const app = browser()
+  const lastFooterLink = { isConnected: true, focus(options) { this.focused = true; this.focusOptions = options } }
+  app.banner().fire('focusin', { relatedTarget: lastFooterLink })
+  app.banner().fire('focusin', { relatedTarget: app.consentAction('granted') })
+  app.choose('granted')
+  assert.equal(lastFooterLink.focused, true)
+  assert.deepEqual(plain(lastFooterLink.focusOptions), { preventScroll: true })
+  const replaced = browser()
+  const removed = { isConnected: false, focus() { this.focused = true } }
+  replaced.banner().fire('focusin', { relatedTarget: removed })
+  replaced.choose('denied')
+  assert.equal(removed.focused, undefined)
+  const pointer = browser()
+  assert.doesNotThrow(() => pointer.choose('denied'), 'a mouse choice with nothing to return to moves no focus')
 })
 
 test('affirmative consent initializes once with advertising and automatic views disabled', () => {
@@ -171,7 +248,9 @@ test('privacy preferences override saved consent and no Google code loads', () =
     const app = browser({ savedConsent: 'granted', ...preference })
     assert.equal(app.scripts.length, 0)
     assert.deepEqual(app.commands(), [])
-    assert.equal(app.preferences().hidden, true)
+    assert.equal(app.banner().hidden, true)
+    assert.equal(app.openChoices().event.defaultPrevented, false, 'the footer link opens the policy, which explains the browser signal')
+    assert.equal(app.banner().hidden, true)
     assert.equal(app.window[`ga-disable-${testId}`], true)
   }
 })
@@ -218,7 +297,7 @@ test('private SPA transitions disable Google and all event handlers until a publ
   const app = browser({ savedConsent: 'granted' })
   app.navigate('/client-portal?engagement=private#access=secret')
   assert.equal(app.window[`ga-disable-${testId}`], true)
-  assert.equal(app.preferences().hidden, true)
+  assert.equal(app.openChoices().event.defaultPrevented, false)
   app.dispatch({ name: 'enquiry_submitted', value: 'contact_form' })
   app.click('mailto:someone@example.com')
   assert.equal(app.events().length, 1)
@@ -310,7 +389,7 @@ test('booking confirmation never overrides analytics consent or browser privacy 
 
 test('withdrawal disables pending collection, clears only GA cookies, and stops events', () => {
   const app = browser({ savedConsent: 'granted', cookies: '_ga=visitor; _ga_TEST12345=session; essential_session=keep' })
-  app.preferences().click()
+  app.openChoices()
   app.choose('denied')
   assert.equal(app.window[`ga-disable-${testId}`], true)
   assert.equal(app.commands().at(-1)[2].analytics_storage, 'denied')
@@ -641,4 +720,21 @@ test('all public document entrypoints include exactly one shared bootstrap', asy
     assert.equal((html.match(/src="\/site-analytics\.js"/g) ?? []).length, 1, relative)
   }
   assert.doesNotMatch(source, /_vercel|window\.va\b/)
+})
+
+test('every public footer carries the Analytics choices link, and the policy describes it', async () => {
+  const read = relative => readFile(new URL(`../${relative}`, import.meta.url), 'utf8')
+  // One footer per document entrypoint above, plus the SPA pages that render their own.
+  for (const relative of ['src/components/SiteFooter/SiteFooter.tsx', 'src/pages/ContractorOfferPage.tsx', 'src/pages/AiOfferPage.tsx', 'src/demos/contractors/ContractorsLander.tsx', 'src/demos/roofers-offer/RoofersOffer.tsx', 'src/demo-access/DemoRequestPage.tsx']) {
+    assert.match(await read(relative), /<AnalyticsChoicesLink\b[^>]*\/>/, relative)
+  }
+  assert.match(await read('blog/render.ts'), /data-ws-analytics-choices[^>]*>\$\{escape\(siteFooter\.analyticsChoices\.label\)\}/)
+  assert.match(await read('src/components/AnalyticsChoicesLink/AnalyticsChoicesLink.tsx'), /data-ws-analytics-choices/)
+  const config = await read('src/content/siteConfig.ts')
+  assert.match(config, /label: 'Analytics choices'/)
+  assert.match(config, /href: '\/privacy#analytics'/)
+  const policy = await read('src/content/privacy.ts')
+  assert.match(policy, /id: 'analytics'/)
+  assert.match(policy, /Analytics choices link at the bottom of every public page/)
+  assert.doesNotMatch(source + await read('public/analytics-consent.css'), /ws-analytics-preferences|Analytics preferences/)
 })

@@ -248,7 +248,7 @@ function demoAccessRoutes(): Plugin {
           res.end(Buffer.from(await blocked.arrayBuffer()))
           return
         }
-        if (/^\/(?:bucyrus-auto|trawsome|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demo\/deercreekplumbing|demo\/solara|demo\/dopps|demo\/best-tailor|demo\/sues-tailor|demo\/american-mechanical|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek|demos\/deercreekplumbing|demos\/solara|demos\/dopps|demos\/best-tailor|demos\/american-mechanical)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+        if (/^\/(?:bucyrus-auto|lareau|complete-painting|riffle|demo\/anthony|demo\/otv|demo\/deercreek|demo\/deercreekplumbing|demo\/solara|demo\/dopps|demo\/best-tailor|demo\/sues-tailor|demo\/american-mechanical|demos\/bucyrus-auto|demos\/lawn|demos\/painting|demos\/water|demos\/otv|demos\/deercreek|demos\/deercreekplumbing|demos\/solara|demos\/dopps|demos\/best-tailor|demos\/american-mechanical)(?:\/|$)/.test(url.pathname)) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
         if (isProtectedDemoPath(url.pathname)) {
           res.setHeader('Cache-Control', 'private, no-store')
         }
@@ -311,7 +311,7 @@ function roofingDemoRoutes(): Plugin {
         '/velar': '/demos/roofers-5/index.html',
         '/stratum': '/demos/roofers-6/index.html',
         '/stillwater': '/demos/pools/index.html',
-        '/trawsome': '/demos/lawn/index.html',
+        '/lareau': '/demos/lawn/index.html',
         '/complete-painting': '/demos/painting/index.html',
         '/riffle': '/demos/water/index.html',
         '/demo/otv': '/demos/otv/index.html',
@@ -367,7 +367,7 @@ export default defineConfig(({ mode }): UserConfig => ({
         roofersOffer: 'demos/roofers-offer/index.html',
         contractors: 'demos/contractors/index.html',
         bucyrusAuto: 'demos/bucyrus-auto/index.html',
-        lawnTrawsome: 'demos/lawn/index.html',
+        lawnLareau: 'demos/lawn/index.html',
         paintingComplete: 'demos/painting/index.html',
         waterRiffle: 'demos/water/index.html',
         otvOpenTelevision: 'demos/otv/index.html',

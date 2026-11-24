@@ -1,47 +1,144 @@
-.ws-analytics-consent,
-.ws-analytics-preferences {
+/* Analytics consent panel (public/site-analytics.js), shared by the SPA, the
+ * blog and the standalone entries. It is dark on every page, so it reads as
+ * one object over ink and pearl sections alike. The values mirror the tokens
+ * in src/index.css because this file also loads where that one does not.
+ * After a choice the panel is gone; the footer's "Analytics choices" link
+ * reopens it. Nothing stays pinned over the page.
+ */
+.ws-analytics-consent {
+  --wsc-graphite: #121a21;
+  --wsc-pearl: #edf1f2;
+  --wsc-muted: #adbac3;
+  --wsc-line: #35424d;
+  --wsc-accent: #4fa8ff;
   box-sizing: border-box;
   position: fixed;
-  z-index: 10000;
+  /* Above the Reply365 chat launcher (2147483000), which otherwise covers
+   * Reject but not Accept on phones. The choice comes first; the panel is
+   * only on screen until it is answered. */
+  z-index: 2147483647;
   left: max(16px, env(safe-area-inset-left));
   bottom: max(16px, env(safe-area-inset-bottom));
-  color: #17202a;
-  background: #fafbf9;
-  border: 1px solid #c9cfce;
-  font-family: Manrope, system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.ws-analytics-consent {
-  width: min(420px, calc(100vw - 32px));
+  width: min(380px, calc(100vw - max(16px, env(safe-area-inset-left)) - max(16px, env(safe-area-inset-right))));
   max-height: calc(100dvh - 32px);
   overflow-y: auto;
-  padding: 22px;
-  border-radius: 12px;
-  box-shadow: 0 8px 36px #0002;
+  padding: 20px;
+  border: 1px solid var(--wsc-line);
+  border-radius: 14px;
+  background: var(--wsc-graphite);
+  color: var(--wsc-pearl);
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.42), 0 2px 8px rgb(0 0 0 / 0.28);
+  font-family: Manrope, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: dark;
+  animation: ws-consent-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.ws-analytics-consent[hidden],
-.ws-analytics-preferences[hidden] { display: none; }
-.ws-analytics-consent h2 { margin: 0 0 8px; font-size: 18px; line-height: 1.3; font-weight: 700; color: inherit; }
-.ws-analytics-consent p { margin: 0 0 14px; color: #414d57; font-size: 14px; line-height: 1.6; }
-.ws-analytics-consent a { color: #174f70; text-decoration: underline; text-underline-offset: 3px; }
-.ws-analytics-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.ws-analytics-button,
-.ws-analytics-preferences {
+
+.ws-analytics-consent[hidden] { display: none; }
+
+/* Keyboard focus landed on sticky content where the panel usually sits
+ * (site-analytics.js), so it waits at the top until focus moves on. */
+.ws-analytics-consent[data-dodge] {
+  top: max(16px, env(safe-area-inset-top));
+  bottom: auto;
+}
+
+@keyframes ws-consent-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+
+.ws-analytics-consent h2 {
+  margin: 0 0 6px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: inherit;
+}
+
+.ws-analytics-consent p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--wsc-muted);
+}
+
+.ws-analytics-consent a {
+  color: var(--wsc-pearl);
+  text-decoration: underline;
+  text-decoration-color: rgb(237 241 242 / 0.45);
+  text-underline-offset: 3px;
+  transition: color 0.2s ease-out, text-decoration-color 0.2s ease-out;
+}
+
+.ws-analytics-consent a:hover {
+  color: var(--wsc-accent);
+  text-decoration-color: currentColor;
+}
+
+/* Accept and reject are deliberately identical: equal prominence. */
+.ws-analytics-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ws-analytics-button {
+  box-sizing: border-box;
   min-height: 44px;
+  margin: 0;
   padding: 10px 14px;
-  border: 1px solid #9ba7ab;
-  border-radius: 6px;
-  background: #fafbf9;
-  color: #17202a;
+  border: 1px solid rgb(237 241 242 / 0.45);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--wsc-pearl);
   font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out;
 }
-.ws-analytics-button { flex: 1; white-space: nowrap; }
-.ws-analytics-preferences { font-family: Manrope, system-ui, sans-serif; font-size: 12px; line-height: 1.4; }
-.ws-analytics-button:hover,
-.ws-analytics-preferences:hover { background: #edf1ef; }
+
+.ws-analytics-button:hover {
+  border-color: var(--wsc-pearl);
+  background: var(--wsc-pearl);
+  color: var(--wsc-graphite);
+}
+
 .ws-analytics-button:focus-visible,
-.ws-analytics-preferences:focus-visible,
-.ws-analytics-consent a:focus-visible { outline: 3px solid #176f97; outline-offset: 3px; }
+.ws-analytics-consent a:focus-visible {
+  outline: 2px solid var(--wsc-accent);
+  outline-offset: 3px;
+}
+
+/* While the panel is open, the page gains its height at the end and focus
+ * scrolling stops above it, so nothing is trapped underneath and a focused
+ * control is never hidden behind it (site-analytics.js sets the height). */
+html[data-ws-consent-open] { scroll-padding-bottom: var(--ws-consent-space, 0px); }
+
+html[data-ws-consent-open] body::after {
+  content: '';
+  display: block;
+  height: var(--ws-consent-space, 0px);
+}
+
+@media (max-width: 359px) {
+  .ws-analytics-consent { padding: 18px 16px; }
+  .ws-analytics-button { padding-inline: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-analytics-consent { animation: none; }
+  .ws-analytics-consent a,
+  .ws-analytics-button { transition: none; }
+}

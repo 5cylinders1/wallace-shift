@@ -189,8 +189,8 @@ test('Riffle is a public demo: page, media and source need no access, without op
   for (const path of ['/demos/water-2/', '/demos/waterx/index.html', '/src/demos/waterx/main.tsx']) assert.ok(await access.gateDemoRequest(new Request(origin + path)), path)
 })
 
-test('Trawsome is a public demo: page, media, source and rate-limited estimator need no access', async () => {
-  for (const path of ['/trawsome', '/trawsome/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%74rawsome', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-finished.webp', '/public/demos/lawn/edge.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request', '/api/lawn?action=suggest', '/api/lawn?action=lookup', '/api/lawn?action=request']) {
+test('Lareau is a public demo: page, media, source and rate-limited planner need no access', async () => {
+  for (const path of ['/lareau', '/lareau/', '/demos/lawn', '/demos/lawn/', '/demos/lawn/index.html', '/%6Careau', '/src/demos/lawn/main.tsx', '/demos/lawn/hero-overgrown.webp', '/demos/lawn/film.mp4', '/public/demos/lawn/patios.webp', '/api/lawn-suggest?q=test', '/api/lawn-lookup', '/api/lawn-request', '/api/lawn?action=suggest', '/api/lawn?action=lookup', '/api/lawn?action=request']) {
     assert.equal(await access.gateDemoRequest(new Request(origin + path)), null, path)
   }
   assert.equal(access.demoKey('lawn'), 'roofers', 'Public demos have no access-request key')

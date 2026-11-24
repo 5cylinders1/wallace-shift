@@ -237,7 +237,8 @@ img { display: block; width: 100%; }
 .ro-success>p:not(.ro-eyebrow) { font-size: 14px; color: var(--ro-muted); line-height: 1.9; }
 .ro-text-button { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 15px 0; background: none; border: 0; border-bottom: 1px solid var(--ro-line); color: var(--ro-accent-deep); font-size: 13px; text-align: left; }
 .ro-text-button>span { font-size: 22px; }
-.ro-footer { min-height: 150px; display: flex; align-items: center; justify-content: space-between; gap: 25px; color: var(--ro-paper); }
+/* The bottom padding clears the Reply365 chat launcher (236x84, 12px from the bottom right), which catches taps. */
+.ro-footer { min-height: 150px; display: flex; align-items: center; justify-content: space-between; gap: 25px; padding-bottom: 104px; color: var(--ro-paper); }
 .ro-footer>.ro-wordmark { font-size: 12px; gap: 8px; }
 .ro-footer>.ro-wordmark img { width: 24px; }
 .ro-footer>p { font-family: 'Instrument Serif', Georgia, serif; color: var(--ro-silver); font-size: 23px; margin: 0; }
@@ -382,7 +383,7 @@ img { display: block; width: 100%; }
   .ro-form-panel .ro-acknowledgement { font-size: 12px; }
   .ro-form-terms { font-size: 11px; }
   .ro-success { min-height: 360px; }
-  .ro-footer { min-height: 0; padding-block: 35px; align-items: start; flex-wrap: wrap; gap: 27px 20px; }
+  .ro-footer { min-height: 0; padding-block: 35px 104px; align-items: start; flex-wrap: wrap; gap: 27px 20px; }
   .ro-footer>p { font-size: 21px; order: 3; flex-basis: 100%; }
   .ro-footer>div { gap: 13px; }
 }

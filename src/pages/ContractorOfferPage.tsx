@@ -5,6 +5,7 @@ import { ContractorOfferInquiry } from '../components/ContractorOfferInquiry'
 import { contractorOffers, type ContractorOfferId } from '../content/contractorOffers'
 import { business } from '../content/siteConfig'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
+import { AnalyticsChoicesLink } from '../components/AnalyticsChoicesLink/AnalyticsChoicesLink'
 import './ContractorOfferPage.css'
 
 export function ContractorOfferPage({ offerId }: { offerId: ContractorOfferId }) {
@@ -55,6 +56,6 @@ export function ContractorOfferPage({ offerId }: { offerId: ContractorOfferId })
         <aside className="co-alternative co-wrap"><div><h2>{isWebsite ? 'Already have a website you like?' : 'Need a complete business website?'}</h2><p>{isWebsite ? 'Give a specific service its own lead page and automatic follow up.' : 'Get a website with hosting, maintenance and basic SEO included.'}</p></div><PageLink href={alternative.path}>{alternative.name}<span>{alternative.priceLabel} <Arrow /></span></PageLink></aside>
       </div>
     </main>
-    <footer className="co-footer co-wrap"><div><PageLink href="/" className="co-brand">WALLACE SHIFT</PageLink><p>Websites and connected workflows.<br />Greater Kansas City and remotely.</p></div><div className="co-footer-links"><PageLink href="/about">Meet Wallace Shift</PageLink><PageLink href="/contact">Contact</PageLink><PageLink href="/privacy">Privacy</PageLink>{business.email && <a href={`mailto:${business.email}`}>Email Matthew</a>}<PhoneLink /></div></footer>
+    <footer className="co-footer co-wrap"><div><PageLink href="/" className="co-brand">WALLACE SHIFT</PageLink><p>Websites and connected workflows.<br />Greater Kansas City and remotely.</p></div><div className="co-footer-links"><PageLink href="/about">Meet Wallace Shift</PageLink><PageLink href="/contact">Contact</PageLink><PageLink href="/privacy">Privacy</PageLink><AnalyticsChoicesLink />{business.email && <a href={`mailto:${business.email}`}>Email Matthew</a>}<PhoneLink /></div></footer>
   </div>
 }

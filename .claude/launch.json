@@ -42,7 +42,7 @@
       "port": 5181
     },
     {
-      "name": "trawsome-demo-preview",
+      "name": "lareau-demo-preview",
       "runtimeExecutable": "sh",
       "runtimeArgs": [
         "-c",

@@ -32,7 +32,7 @@ const { default: handler, config } = await import(pathToFileURL(await compile('a
 
 beforeEach(() => {
   for (const key of Object.keys(process.env)) {
-    if (/^(GEOAPIFY_|LAWN_|RESEND_|CONTACT_|RATE_LIMIT_|KV_REST_API_|UPSTASH_REDIS_REST_)/.test(key)) delete process.env[key]
+    if (/^(GEOAPIFY_|LAWN_|LAREAU_|RESEND_|CONTACT_|RATE_LIMIT_|KV_REST_API_|UPSTASH_REDIS_REST_)/.test(key)) delete process.env[key]
   }
   globalThis.fetch = async () => { throw new Error('Unexpected outbound request in lawn API test') }
 })
@@ -113,8 +113,13 @@ test('request bodies and method validation survive dispatch without sending anyt
     assert.equal((await call(url, { method: 'POST', body: {} })).status, 400)
     // Existing honeypot response proves the POST/body reached the request handler.
     const honeypot = await call(url, { method: 'POST', body: { company: 'test bot trap' } })
-    assert.deepEqual(honeypot.body, { ok: true, price: { low: 0, high: 0 } })
+    assert.deepEqual(honeypot.body, { ok: true })
     assert.equal(honeypot.headers['cache-control'], 'no-store')
+    // A consultation request needs a project or a note, and only Lareau's own services.
+    const person = { name: 'Test', phone: '9135550123', email: 'test@example.test', contact: 'text', timing: 'season', lawnSqFt: null, address: '7400 Main Street' }
+    assert.equal((await call(url, { method: 'POST', body: { ...person, projects: [], notes: '' } })).status, 400)
+    assert.equal((await call(url, { method: 'POST', body: { ...person, projects: ['mowing'] } })).status, 400)
+    assert.equal((await call(url, { method: 'POST', body: { ...person, projects: ['patio'], lawnSqFt: 5 } })).status, 400)
   }
   for (const action of ['lookup', 'suggest']) {
     for (const url of urls(action)) assert.equal((await call(url, { method: 'POST' })).status, 400)
@@ -141,7 +146,7 @@ test('aliases retain the same per-action rate limit scopes', async () => {
     keys.push(JSON.parse(options.body)[0][1])
     return Response.json([{ result: 1000 }, { result: 1 }])
   }
-  const request = { method: 'POST', body: { name: 'Test', phone: '9135550123', email: 'test@example.test', contact: 'text', frequency: 'weekly', timing: 'week', lawnSqFt: 2000, address: '7400 Main Street' } }
+  const request = { method: 'POST', body: { name: 'Test', phone: '9135550123', email: 'test@example.test', contact: 'text', timing: 'season', projects: ['patio', 'lighting'], lawnSqFt: 2000, notes: '', address: '7400 Main Street' } }
   for (const action of ['lookup', 'suggest', 'request']) {
     const query = action === 'lookup' ? 'address=7400%20Main%20Street' : action === 'suggest' ? 'q=7400' : ''
     for (const url of urls(action)) {

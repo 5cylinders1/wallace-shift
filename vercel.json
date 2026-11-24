@@ -30,7 +30,7 @@
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
-      "source": "/trawsome/:path*",
+      "source": "/lareau/:path*",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
     },
     {
@@ -287,7 +287,7 @@
       "destination": "/demos/cabinetry-2"
     },
     {
-      "source": "/trawsome",
+      "source": "/lareau",
       "destination": "/demos/lawn"
     },
     {

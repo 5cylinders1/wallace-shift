@@ -3,6 +3,7 @@ import { AiOpportunityForm } from '../components/AiOpportunityForm'
 import { PageLink } from '../components/PageLink/PageLink'
 import { AI_OFFER_CONFIRMATION_PATH } from '../content/routeMeta'
 import { useRouteMeta } from '../hooks/useDocumentMeta'
+import { AnalyticsChoicesLink } from '../components/AnalyticsChoicesLink/AnalyticsChoicesLink'
 import { useRoutePath } from '../lib/router'
 import './AiOfferPage.css'
 
@@ -39,7 +40,7 @@ export function AiOfferPage() {
       </main>
       <footer className="qf-footer">
         <span>Wallace Shift</span>
-        <div><PageLink href="/about">About us</PageLink><PageLink href="/privacy">Privacy</PageLink></div>
+        <div><PageLink href="/about">About us</PageLink><PageLink href="/privacy">Privacy</PageLink><AnalyticsChoicesLink /></div>
       </footer>
     </div>
   )

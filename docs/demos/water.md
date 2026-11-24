@@ -9,7 +9,7 @@ intervals and the process are samples, and the footer says so.
   `riffle-demo-preview`, port 5184).
 - Production route: `https://contractors.wallaceshift.com/riffle`, **public** and
   unindexed (`noindex` meta plus `X-Robots-Tag` on `/riffle` and `/demos/water`).
-  `water` is in `PUBLIC_DEMO_DIRS` and built in the public Vite pass, like Trawsome.
+  `water` is in `PUBLIC_DEMO_DIRS` and built in the public Vite pass, like Lareau.
 - Document `demos/water/index.html`, code `src/demos/water/`, media `public/demos/water/`,
   model pipeline `scripts/water/`.
 - Lander: an open tile in a "Water treatment" row (`kind: 'open'` in

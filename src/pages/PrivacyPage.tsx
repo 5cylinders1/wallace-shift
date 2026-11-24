@@ -25,7 +25,7 @@ export function PrivacyPage() {
         <div className="container">
           <div className="qa">
             {privacySections.map((section) => (
-              <div className="qa__item" key={section.heading}>
+              <div className="qa__item" id={section.id} key={section.heading}>
                 <h2 className="qa__q">{section.heading}</h2>
                 <div>
                   {section.paragraphs.map((paragraph) => (

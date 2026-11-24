@@ -35,7 +35,7 @@ export type AdminPendingGrant = GrantBase & { kind: 'admin-pending' }
 export type AdminSessionGrant = GrantBase & { kind: 'admin-session' }
 export type DemoGrant = InviteGrant | SessionGrant | ProofGrant | AdminPendingGrant | AdminSessionGrant
 const PUBLIC_PREVIEWS = new Set(['/demos/roofers-3/preview.jpg', '/demos/roofers-4/preview.jpg', '/demos/roofers-5/hero-poster.jpg', '/demos/roofers-6/preview.jpg', '/demos/foundation/preview.jpg', '/demos/cabinetry/preview.jpg', '/demos/cabinetry-2/preview.jpg', '/demos/pools/preview.jpg'])
-/** Collection landers, the real-business concepts (Bucyrus, Trawsome, Complete Painting, OTV, Deer Creek, SoLara, Dopps, Sue’s Tailor Shop, American Mechanical KC) and Riffle are public; other demos are gated. */
+/** Collection landers, the real-business concepts (Bucyrus, Lareau, Complete Painting, OTV, Deer Creek, SoLara, Dopps, Sue’s Tailor Shop, American Mechanical KC) and Riffle are public; other demos are gated. */
 const PUBLIC_DEMO_DIRS = new Set(['roofers-offer', 'contractors', 'bucyrus-auto', 'lawn', 'painting', 'water', 'otv', 'deercreek', 'deercreekplumbing', 'solara', 'dopps', 'best-tailor', 'american-mechanical'])
 const COUNTER_ENV = ['RATE_LIMIT_REDIS_URL', 'RATE_LIMIT_REDIS_TOKEN', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
 const counters = new Map<string, { count: number; until: number }>()

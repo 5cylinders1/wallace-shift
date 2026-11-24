@@ -1,4 +1,4 @@
-"""Generate the Trawsome Lawn Care concept imagery with gpt-image-2.
+"""Generate the illustrated yard frames for the lawn demo's scroll timelapse hero with gpt-image-2.
 
 One finished front yard is generated first. The overgrown stage is an edit of
 it (same camera), and the half-done stage is an edit given both: the overgrown
