@@ -11,6 +11,7 @@ export const organizationNode = {
   '@type': 'Organization',
   '@id': ORGANIZATION_ID,
   name: siteMeta.name,
+  legalName: business.legalName,
   url: `${SITE_ORIGIN}/`,
   logo: `${SITE_ORIGIN}/brand/wallace-shift-logo-black.svg`,
   description: siteMeta.description,
