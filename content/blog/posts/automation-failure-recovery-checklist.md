@@ -3,9 +3,9 @@ status: published
 publishedAt: "2026-10-26T13:02:49Z"
 slug: "automation-failure-recovery-checklist"
 title: "What to Do When an Automation Fails: A Recovery Checklist"
-description: "Find the last confirmed business result, choose a safe recovery action, and reconcile outstanding work using an automation incident checklist."
+description: "Check what already completed, finish the missing work safely, and account for every affected request before restarting."
 question: "How do I recover a failed automation without repeating completed actions?"
-answer: "When an automation fails, first establish which work is affected and which actions already completed. Then choose how to finish the missing work without repeating completed records, messages, or other changes. Confirm the result in the receiving system before treating the incident as resolved."
+answer: "Pause the failing step, then check what actually happened in each system. Retry only work that didn’t finish, and verify the result before reopening the flow. Don’t resend a message or recreate a record just because the automation showed an error."
 category: "Workflow automation"
 author:
   type: "Organization"
@@ -13,153 +13,79 @@ author:
   url: "/about"
 ---
 
-The most useful first question is not “Which button restarts it?” It is “What happened to this customer's request?” A failed run can contain completed actions, while a successful-looking run may still leave business work unfinished.
+Before clicking “retry,” find out what happened to the customer's request. A failed run can contain successful writes. Restarting it may create another record or send a message twice.
 
-This guide is for the person accountable for that work. Your platform's documentation or maintainer should provide the exact recovery controls for your setup.
+Recovery starts with the business result: what arrived, what completed, and what still needs attention. The platform's run status is one piece of that investigation.
 
-## Start with the affected work
+## 1. Contain the problem without losing new work
 
-Write down the workflow, the approximate time the problem began, and one affected request identifier. Find the people waiting on the result: a customer expecting a reply, a coordinator expecting a task, or a field lead expecting an assignment.
+Record the workflow, when the problem began, and an affected request identifier. Identify who's waiting on the result.
 
-If repeated attempts are creating more records or messages, have the responsible maintainer pause the affected processing. Establish where new requests will be retained while it is paused. Stopping an integration without preserving incoming work can create a second problem.
+If retries are creating duplicates, have the maintainer pause the affected processing. First establish where incoming requests will be retained. Pausing a connection without a receiving queue can create another gap.
 
-Choose one person to coordinate recovery. Others can investigate, but they should record what they change so two people do not independently complete the same request. If a customer needs attention now, that owner can arrange a manual response and record it for the technical recovery.
+Name one recovery coordinator. Other people can investigate, but everyone should record changes and manual responses so two people don't complete the same request independently.
 
-For wider decisions about operating responsibilities, our [automation tools guide](/blog/small-business-automation-tools) explains what to establish before relying on a workflow.
+## 2. Inspect the destination
 
-## Find the last confirmed result
+Follow one request through the workflow history and the receiving application:
 
-Compare the workflow history with the receiving application. A log may say it tried to create a record. The CRM can show whether that record exists and what it contains.
-
-Follow the particular request through each step. Note whether the evidence confirms completion, confirms failure, or leaves the result uncertain. Keep uncertainty visible until it is resolved.
-
-| Intended step | Evidence to inspect |
+| Step | Check |
 | --- | --- |
-| Receive the request | Original saved submission or source record |
-| Find or create the customer | Matching customer record and its identifier |
-| Record the inquiry | Inquiry linked to the correct customer and location |
-| Assign the next action | Task, named owner, and understandable instruction |
-| Send a message | The relevant message record and delivery information available from the sending service |
-| Update a status | Current status and the history explaining its change |
+| Receipt | Original saved submission or source record. |
+| Customer match | The correct customer identifier. |
+| Inquiry | A record containing the right request and location. |
+| Assignment | A named owner and understandable next task. |
+| Message | Message history and available delivery information. |
+| Status change | Current state and the history behind it. |
 
-A timeout deserves particular care. The sending system may not have received confirmation even though the destination changed. Zapier specifically identifies replay after timeout as a possible cause of duplicate data. [Zapier duplicate-data guidance](https://help.zapier.com/hc/en-us/articles/8496218141453-Zap-is-creating-duplicate-data)
+Mark each outcome confirmed complete, confirmed failed, or uncertain. A log showing an attempted write doesn't establish whether the CRM saved it.
 
-Finding an existing record is not enough by itself. Check its identity and contents. A record for the same customer could concern a different site or request.
+Pay particular attention to timeouts. The destination may have changed even though confirmation never reached the sender. [Zapier's duplicate-data guidance](https://help.zapier.com/hc/en-us/articles/8496218141453-Zap-is-creating-duplicate-data) identifies replay after timeout as one possible cause of duplicates.
 
-The [form-to-CRM handoff guide](/blog/connect-website-form-to-crm) explains why customer identity, inquiry identity, and assignment need separate checks during this investigation.
+Check record contents as well as existence. Another inquiry for the same customer may concern a different property. The [form-to-CRM guide](/blog/connect-website-form-to-crm) explains those distinctions.
 
-## Decide what needs to change before retrying
+## 3. Fix the condition that stopped the work
 
-Some failures clear without changing the request. Others will repeat until someone corrects the underlying issue.
+A missing location needs clarification, not an invented address. Revoked connection access needs the authorized account owner. An unavailable service needs a status check and a review of retry behavior.
 
-| What you found | Useful next decision |
-| --- | --- |
-| A required field is missing | Obtain or correct the information, or route the request for clarification |
-| Connection access was removed | Have the authorized account owner restore the appropriate connection |
-| A receiving service was unavailable | Check its current state and the platform's retry behavior |
-| A record may already have been created | Confirm the destination before attempting another write |
-| A completed step was followed by a failed step | Preserve the completed result and finish the missing action |
-| The request has changed since the failure | Reassess what should happen now, using its current business status |
+Also check whether the request has changed. Yesterday's failed reminder may be unnecessary after this morning's reply. Recover the work that's still appropriate now.
 
-A made-up value is rarely a useful fix for missing business information. If the site is unknown, record that it needs clarification instead of assigning the customer's previous location. Getting the software past an error is different from making the request usable.
+## 4. Know exactly what the retry repeats
 
-Age matters as well. A reminder that failed yesterday may be inappropriate after the customer replied this morning. Recovery should respect the current situation, not merely reproduce an earlier plan.
+Check the current documentation for the recovery action in your setup. [Zapier distinguishes errored-step replay from whole-run replay](https://help.zapier.com/hc/en-us/articles/19220226086797-What-is-replay); a whole-run replay starts again at the beginning. [Make documents incomplete executions](https://help.make.com/incomplete-executions), including storage configuration and supported recovery routes. Confirm what your account actually retained.
 
-## Understand what the recovery command will repeat
+The maintainer should be able to explain how recovery avoids repeating completed actions. That may involve a submission identifier, an existing destination record, a supported resume point, or one recorded manual action. If the earlier result is uncertain, investigate before writing again.
 
-Read the current documentation for the specific action you intend to use. A retry of an errored step and a restart of the entire workflow can have different effects.
+## A timeout example
 
-Zapier distinguishes replaying errored steps from replaying an entire run. Its whole-run option starts again from the beginning. Check which action you are using and what earlier steps would execute again. [Zapier replay documentation](https://help.zapier.com/hc/en-us/articles/19220226086797-What-is-replay)
+Here's a fictional scenario, not a client incident or test result.
 
-Make documents that storing incomplete executions is disabled by default and that stored runs can be resolved or retried through supported routes. Do not assume a failed run has been retained in the form you need. [Make incomplete executions](https://help.make.com/incomplete-executions)
+Cedar Lane Maintenance receives Morgan's request F-102 for an assessment at Alder Studio's workshop, L-02. The workflow finds customer C-014 and creates inquiry I-102. The CRM saves it, but the confirmation times out before Avery's follow-up task is created.
 
-An operator should explain how the planned recovery avoids duplicate work. Depending on the setup, that might mean checking an event identifier, finding the existing destination record, resuming a supported step, or completing one action manually and recording it.
+The recovery check finds:
 
-If the result of an earlier action remains uncertain, investigate that uncertainty first. Repeating the entire process is not a substitute for finding out what already happened.
+- F-102 is retained with the original message and correct location.
+- C-014 and I-102 already exist and should stay intact.
+- Avery's task is missing.
+- No automated or manual reply has been sent.
+- A retry is still pending.
 
-## A fictional timeout after an inquiry was saved
+Avery and the maintainer coordinate the pending retry, then create the missing task through a supported recovery route. If they complete it manually, they record the task identifier and prevent the pending automation from duplicating it.
 
-Cedar Lane Maintenance is a fictional business. Avery coordinates requests; Jordan leads field visits. Alder Studio, customer C-014, has L-01 Main studio and L-02 Workshop. Morgan Hale is its billing contact.
+Avery still needs to confirm scope and timing before assigning a field visit. Recovery is finished when the inquiry has its correct next action, Avery can find it, and another retry won't recreate the work.
 
-In this scenario, Morgan's form event F-102 requests an assessment at L-02. The workflow finds C-014 and creates inquiry I-102. The CRM saves it, but the confirmation does not reach the automation before its timeout. The workflow stops before creating Avery's task.
+## 5. Reconcile the whole affected period
 
-The following facts are invented to illustrate a recovery decision. They are not logs from a real integration or a demonstration we ran.
+One repaired example doesn't clear the backlog. List all requests received during the interruption, including work handled manually. For each, record the last confirmed result, remaining action, recovery owner, and destination evidence.
 
-| Check | Fictional evidence | Decision |
-| --- | --- | --- |
-| Original request | F-102 is retained with Morgan's message and L-02 | Preserve it as the reference |
-| Customer match | C-014 is the existing Alder Studio record | Do not create another customer |
-| Inquiry write | I-102 exists and contains F-102 and the correct location | Keep the successful write |
-| Next task | No task was created; the workflow did not reach that step | Complete the missing assignment |
-| Customer contact | No automated reply was sent in this workflow; Avery confirms no manual reply yet | Agree who will respond now |
-| Scheduled processing | A retry is still pending | Maintainer resolves that pending attempt before manual completion |
+Separate repeated deliveries from distinct requests. Resume using the maintainer's procedure, then follow a fresh request all the way through. Keep unresolved exceptions assigned.
 
-Avery and the maintainer agree to keep I-102 and create the missing task through the supported recovery route. If manual completion is necessary, Avery records the task identifier and how the pending automated action was handled.
+A successful run can still leave business work unfinished. For example, [Make's error-handling documentation](https://help.make.com/Overview-of-error-handling) describes a Skip handler that can remove an affected item from a route. Check the outcome rather than relying on a green status.
 
-Jordan is not assigned merely because the request exists. Avery still needs to establish the work and timing before a field visit is arranged.
+## Keep a short incident record
 
-Recovery is complete only when I-102 has the correct next action, Avery can find it in the work queue, and the pending retry will not recreate completed work. A note links the recovery to F-102 so a later reviewer can understand the sequence.
+Use the **10 Workflow recovery** sheet in the [business systems workbook](/resources/blog/wallace-shift-business-systems-worksheets.xlsx). Record configuration, affected times and identifiers, completed or uncertain actions, manual work, cause, recovery decision, owner, and completion evidence.
 
-This example contains one successful write and one missing action. Restarting everything would ignore that difference.
+End with a specific improvement: retain event identifiers, clarify alerts, or compare received requests with assigned tasks. Repeated failures may justify an [automation audit](/blog/automation-audit-scope-deliverables-cost).
 
-## Check the rest of the affected period
-
-Fixing the first example establishes a method. It does not establish that every affected request has the same problem.
-
-List the requests received during the relevant period and compare them with the work recorded at the destination. Some may be complete, some partially complete, and some waiting before the first step. Separate repeated deliveries of one event from genuinely different requests.
-
-| Request/event | Last confirmed result | Work remaining | Recovery owner | Evidence of completion |
-| --- | --- | --- | --- | --- |
-| | | | | |
-| | | | | |
-| | | | | |
-
-Include any work completed manually while the automation was paused. Otherwise, restarting the backlog may contact a customer twice or create an assignment that someone already finished.
-
-Return the workflow to ordinary operation using the maintainer's agreed procedure, then inspect a fresh request through to its destination. Keep unresolved exceptions assigned rather than declaring the entire incident closed because new runs appear healthy.
-
-## Record the incident so the next one is easier
-
-Use the **10 Workflow recovery** sheet in the [business systems worksheets (XLSX)](/resources/blog/wallace-shift-business-systems-worksheets.xlsx) for a working copy. The workbook contains fictional examples and space for your own inputs.
-
-You do not need an elaborate report for every interruption. Keep enough information to explain the effect, the recovery, and the next improvement.
-
-| Incident field | Your entry |
-| --- | --- |
-| Workflow and version/configuration | |
-| First affected time and detection time | |
-| Affected request identifiers | |
-| Completed actions and uncertain outcomes | |
-| Customer or staff work completed manually | |
-| Cause established, or question still open | |
-| Recovery decision and person responsible | |
-| Destination evidence checked | |
-| Change to prevent or detect recurrence | |
-
-Prefer a concrete improvement to “monitor more closely.” It could be a retained submission identifier, a clearer owner alert, a better clarification route, or a check comparing incoming requests with assigned tasks.
-
-The check should describe the business result. Make's Skip handler, for example, can mark a run successful while removing the affected item from that route. That may be intentional, but the status alone does not prove the customer's work was completed. [Make error-handling documentation](https://help.make.com/Overview-of-error-handling)
-
-If the same handoff fails repeatedly, the [automation audit guide](/blog/automation-audit-scope-deliverables-cost) helps define a broader investigation and the evidence its recommendations should include.
-
-## Frequently asked questions
-
-### Should I retry a failed automation immediately?
-
-Only after understanding what the retry repeats and whether earlier actions completed. A temporary failure may be suitable for a supported retry; an uncertain write or changed customer request needs investigation first.
-
-### Can I complete the work manually?
-
-Yes, when the responsible person understands the remaining task and records the result. Coordinate any pending automated attempts so they do not repeat your manual work afterward.
-
-### Does a successful run mean the incident is over?
-
-It shows the platform reached its defined success state. Check the actual records, assignments, and affected backlog. Some requests may still need attention even after new runs succeed.
-
-### Who should own failure recovery?
-
-Name both the technical contact who understands the workflow and the business owner who knows the required result. One person may fill both roles, but the responsibilities should be explicit.
-
-## Give existing workflows an operating owner
-
-Wallace Shift's [managed automation service](/pricing#automation) covers monitoring, maintenance, failure recovery, and minor adjustments within the agreed scope. New workflows and substantial changes are scoped separately. Bring the affected process and its operating responsibilities to a [conversation about support](/contact).
+Wallace Shift's [managed automation service](/pricing#automation) covers recovery and maintenance within an agreed scope. [Discuss support](/contact) with the affected process and its operating owner in view.
