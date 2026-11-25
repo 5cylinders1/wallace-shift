@@ -3,9 +3,9 @@ status: published
 publishedAt: "2026-10-26T13:02:49Z"
 slug: "client-portal-vs-crm-service-business"
 title: "Client Portal vs. CRM: Which Tasks Belong Where?"
-description: "Map customer access and internal CRM responsibilities, assess existing portal features, and define permissions with a practical service-business example."
+description: "Separate customer access from internal coordination, then test whether your existing software can handle both."
 question: "Does my service business need a client portal, a CRM, or both?"
-answer: "A CRM helps your team coordinate customer information and work. A client portal gives customers access to selected information and actions. You may need one, both, or the portal already included in your existing software. Start with the task that is failing, then decide where it belongs."
+answer: "A CRM helps your team manage relationships and open work. A portal gives customers a place to do things like share files or check a status. Start with whichever side of the handoff is causing the problem."
 category: "Business systems"
 author:
   type: "Organization"
@@ -13,145 +13,80 @@ author:
   url: "/about"
 ---
 
-If staff cannot find the current job owner, a customer login will not resolve that internal problem. If the team has reliable records but customers repeatedly need to request documents or check appointments, customer access may be the missing piece.
+If your staff can't find a job's owner, adding a customer login won't fix that. If staff have reliable records but customers keep asking for invoices and appointment details, a portal might help.
 
-The useful question is not which category is better. It is what the customer should be able to do, what staff must do behind that action, and which existing system can support the whole journey.
+A CRM organizes customer information and internal work. A client portal exposes selected information and actions to customers. They can be parts of the same product, and a business doesn't automatically need both.
 
-## Separate customer access from internal coordination
+## Describe the task you're trying to improve
 
-Write down a recent task that was difficult for the customer or the team. Describe the actor, information, action, and expected result.
+“Improve communication” is hard to evaluate. “Let the billing contact retrieve the current invoice for an authorized location without asking the coordinator to resend it” is specific enough to test.
 
-“Improve communication” is too broad to evaluate. “Let the billing contact retrieve the current invoice for an authorized location without asking Avery to resend it” gives you something concrete to test.
+Separate the customer's action from the staff work behind it:
 
-| Task | Responsibility to investigate |
+| Task | Where to investigate |
 | --- | --- |
-| Find every open request with no owner | Internal CRM or work-management process |
-| Request a change to a quote | Customer action plus an internal review workflow |
-| See an agreed appointment | Customer access to the appropriate schedule information |
-| Reassign a job when a coordinator is absent | Internal ownership and permissions |
-| Retrieve a customer-visible document | Controlled customer access and a reliable document source |
-| Decide what happens after a cancellation | Shared workflow rules, including staff action |
+| Find open requests without owners | Internal CRM or work queue. |
+| Request a quote change | Customer interface plus staff review. |
+| View an agreed appointment | Controlled access to current schedule details. |
+| Reassign a job during an absence | Internal permissions and ownership. |
+| Download an invoice | Customer access and the authoritative document source. |
+| Handle a cancellation | Customer request, staff decision, and updated status. |
 
-Several tasks cross the boundary. A portal button can begin a process without completing it. The design needs to show what happens next and who is responsible.
+A portal button may start a process rather than finish it. Decide who receives the work afterward.
 
-## Check the portal you may already have
+## Test what you already pay for
 
-Review the current product before commissioning another application. Ask the provider to demonstrate your actual customer task, including an exception, using the plan and permissions you would use.
+Before commissioning an application, ask your current provider to demonstrate the task on the plan and permissions you'll use. Include an exception, not just the easiest path.
 
-For example, Jobber describes a client hub supporting work requests, quote actions, appointment information, and payments. That demonstrates that customer access can be part of a broader service-business product. It does not establish that every permission or workflow you need is included. [Jobber's client-hub overview](https://www.getjobber.com/features/client-hub/).
+[Jobber's client hub](https://www.getjobber.com/features/client-hub/) is an example of customer access included within broader service-business software. Its listed features don't prove that every permission or workflow your business needs is supported.
 
-Keep a record of what is available now, what needs configuration, what depends on a different plan, and what the demonstration did not establish. “Has a portal” is a category label, not an acceptance result.
+Record what works now, what needs configuration, what requires a different plan, and what remains unproven.
 
-If the existing tool completes the task adequately, use that evidence. Custom development should address a specific unresolved requirement, not follow automatically from wanting a more distinctive login page.
+## Decide where the records live
 
-## Map the information before designing screens
+Map the customer organization, individual contacts, locations, jobs, quotes, appointments, and invoices. Those relationships determine what someone should see.
 
-Identify the records the customer needs and how they relate. A service business may distinguish the customer organization, individual contacts, service locations, jobs, quotes, appointments, and invoices.
+A site contact might need one location's appointment details. A billing contact might need invoices for several sites without authority to approve every quote. Don't reduce both roles to a single “customer” permission.
 
-Those distinctions matter when access differs. A billing contact may need invoices for two locations without having authority to approve every quote. A site contact may need appointment details for one location without seeing the organization's whole account.
+Choose the authoritative system for each record. When a customer requests a change, decide where it goes and how staff see it. When staff update a job, decide what appears in the portal and when.
 
-Choose where each record is maintained. If a customer changes information in the portal, decide which system receives the update and how the team knows it happened. If staff change it internally, decide what the customer sees and when.
+Capture the relationships in a [CRM requirements brief](/blog/crm-requirements-template-service-business); the [website versus web-app guide](/blog/web-app-vs-website) explains the wider operational scope.
 
-Avoid creating a second independently maintained copy unless there is a clear operating reason and a reconciliation plan. A polished interface displaying outdated work can create a new coordination burden.
+## Define access by action and record
 
-Our [website versus web-app guide](/blog/web-app-vs-website) helps define when the requirement extends beyond public information into records, access, and operational behavior.
+Write down who may view, download, request, change, or approve each type of information. Include actions that must be denied.
 
-Capture the records, relationships, and operating responsibilities in a [CRM requirements brief](/blog/crm-requirements-template-service-business) before choosing how to expose customer access.
+[OWASP's authorization guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) recommends least privilege and permission checks on every request. Hiding an approval button in the browser isn't sufficient protection for the underlying action.
 
-## Define permissions as actions on particular records
+A permission worksheet defines what you want. Technical testing must establish that the application enforces it.
 
-“Customer access” is too imprecise for a useful brief. Describe who can view, request, change, approve, or download which information, under what conditions.
+## Use a two-location example
 
-OWASP recommends least privilege and permission checks on every request. It also warns against relying on browser-side controls as the decisive access check. Hiding a button is not enough to establish that a protected action is unavailable. [OWASP's authorization guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html).
+In this fictional exercise, Cedar Lane Maintenance serves Alder Studio at L-01 Main studio and L-02 Workshop. Avery coordinates work, Jordan leads field visits, and Morgan is Alder Studio's billing contact. These are planning examples, not tested customer results.
 
-For planning, turn each permission into an expected result. Include both something the user should be able to do and something they should not. Ask the implementation team to demonstrate those results in the actual system.
+The agreed requirements are:
 
-A permission worksheet is a requirements tool, not evidence that an untested application is secure. Keep technical verification as part of the implementation scope.
+- Morgan can retrieve permitted invoices for both locations and identify which site each concerns.
+- Morgan can see the agreed main-studio appointment.
+- Morgan can't approve the workshop quote unless explicitly granted that authority.
+- Morgan's change request creates a review task for Avery rather than rewriting agreed work.
+- Jordan sees information needed for the assigned field job under staff permissions.
+- An unrelated customer cannot access Alder Studio's job, even through its direct link.
 
-## A fictional example: Alder Studio has two service locations
+Those tests give a provider something more useful than “we need a portal.” They may reveal that configuration is enough, or identify a precise gap for a custom build.
 
-Cedar Lane Maintenance is a fictional service business. Avery coordinates work, and Jordan is the field lead. Their fictional client Alder Studio, `C-014`, has a main studio, `L-01`, and a workshop, `L-02`. Morgan Hale, `P-021`, is the billing contact.
+## Test what happens after the first login
 
-Job `J-101` is scheduled at the main studio. Job `J-102` at the workshop is awaiting a customer decision. Cedar Lane wants Morgan to retrieve invoices and see agreed appointment information for both locations.
+Demonstrate a revised quote and an old quote link. Cancel an appointment and inspect both the customer status and staff task. Reassign a job and check the new owner.
 
-For this exercise, Morgan's billing role does **not** automatically include quote approval. Cedar Lane must identify the authorized decision maker before enabling that action. This is an example business rule, not a universal rule for billing contacts.
+Then test access removal when a contact leaves the customer organization. Check existing links and transferred billing responsibilities. Finally, test a customer action that fails before updating the internal system. The customer needs an accurate result and staff need something they can investigate.
 
-| Actor and task | Expected result in this fictional plan |
-| --- | --- |
-| Morgan views Alder Studio invoices | The permitted invoices are available, with their location identifiable |
-| Morgan opens the main-studio appointment | The agreed customer-facing details for `J-101` are visible |
-| Morgan attempts to approve the workshop quote | Approval is unavailable until the business grants that authority |
-| Morgan requests a change | Avery receives an owned review task; the request does not silently rewrite the agreed work |
-| Jordan opens the assigned main-studio job | The information needed for the field task is available under the agreed staff permissions |
-| An unrelated customer opens Alder Studio's job link | Access is denied, including when the link is opened directly |
+## Choose the smallest workable approach
 
-These are expected outcomes for a planning exercise. They have not been demonstrated in a particular portal, and they are not a Wallace Shift customer case study.
+Configure the existing product when it meets the task. Connect a separate portal when the CRM remains useful but customer access has a demonstrated gap. Build a focused system when neither approach satisfies an important requirement and you can support the ongoing operation.
 
-The exercise is useful because it turns “we need a portal” into visible requirements. A built-in portal might satisfy them, need a simpler operating arrangement, or reveal a specific gap worth discussing.
+Include permissions, synchronization, failures, hosting, testing, and maintenance in that comparison. A small manual step may cost less than another connection.
 
-## Test changes in the work, not only the first login
+The **11 Client portal** sheet in the [business systems workbook](/resources/blog/wallace-shift-business-systems-worksheets.xlsx) captures tasks, records, allowed and denied actions, changed-work tests, access removal, unresolved gaps, costs, and owners. Compare underlying options with the [CRM buying guide](/blog/custom-crm-vs-off-the-shelf).
 
-A first-login demonstration usually shows clean data in an ordinary state. Also test what happens when the work changes.
-
-For a revised quote, show which version the customer can act on and what happens to an older link. For a canceled appointment, show the customer-facing status and the staff task. For a reassigned job, confirm the new owner receives the next action.
-
-Test a contact leaving the customer organization. Decide who removes access, what happens to previously issued links, and how shared billing responsibility is transferred. Do not assume every product handles these situations the same way.
-
-Ask how the team handles an action that reaches the portal but fails before updating the internal system. The customer needs an accurate result, while staff need a visible item to investigate. Repeatedly clicking should not be the operating procedure for uncertain work.
-
-## Compare three practical routes
-
-**Configure the existing product.** This is worth testing first when the product already holds the relevant records and its customer features meet the requirement. Confirm permissions, plan dependencies, document handling, and the staff workflow rather than assuming they fit.
-
-**Connect a separate portal.** This can help when the existing CRM remains useful but its customer interface cannot complete a necessary task. Define record ownership, connection access, synchronization, failure handling, and responsibility for ongoing support.
-
-**Build a focused portal or system.** Consider this when a specific workflow or access requirement remains unresolved after the other routes are assessed. Include implementation, testing, hosting, support, and future changes in the scope. Building the screens is only part of the responsibility.
-
-The best route for the current task may still leave a manual step. Make that step explicit and decide whether its effort is acceptable. Removing a small manual action is not automatically worth adding a new application and connection.
-
-Use the [custom versus off-the-shelf CRM comparison](/blog/custom-crm-vs-off-the-shelf) to test the underlying system options against the same tasks and ongoing responsibilities.
-
-## Copy this portal decision worksheet
-
-Use the **11 Client portal** sheet in the [business systems worksheets (XLSX)](/resources/blog/wallace-shift-business-systems-worksheets.xlsx) for a working copy. The workbook contains fictional examples and space for your own inputs.
-
-| Question | Your answer and evidence |
-| --- | --- |
-| Customer task and current difficulty | |
-| Internal work required after the action | |
-| Existing product and exact plan evaluated | |
-| Authoritative record and system | |
-| Customer, contact, location, and job relationships | |
-| Allowed view/change/approval actions | |
-| Explicitly denied actions | |
-| Changed quote, cancellation, and reassignment behavior | |
-| Access removal and ownership | |
-| Failed connection or uncertain outcome procedure | |
-| Demonstration result and unresolved gap | |
-| Operating cost, support owner, and chosen route | |
-
-Use the worksheet with your provider, developer, and the staff who handle the work. Include a customer task in the evaluation, while avoiding real customer data when synthetic records will do.
-
-If the task is collecting information after a customer agrees to proceed, our [client-onboarding automation guide](/blog/automate-client-onboarding) helps define the process behind the portal.
-
-## Frequently asked questions
-
-### Does a CRM replace a client portal?
-
-It may include one. Compare the actual customer actions and access rules rather than treating the names as mutually exclusive categories. An internal CRM can also be useful without providing customer access.
-
-### Should every client have a login?
-
-Only when ongoing access helps complete a real task. A customer who needs one document may be adequately served by a simpler supported process. Consider the effort of access, support, and keeping information current.
-
-### Can we give customers access to our internal dashboard?
-
-Do not assume staff access rules are suitable for customers. Define a limited customer view and test the underlying permissions. Customers should receive only the information and actions the business has deliberately authorized for them.
-
-### When does a custom portal make sense?
-
-When a specific, important requirement remains unresolved by configuration or an appropriate existing product, and the business accepts the operating responsibility. Establish that gap through a demonstration before treating a custom build as the answer.
-
-## Define the customer task before choosing the software
-
-A useful portal connects a permitted customer action with reliable internal work. If you need help deciding where those responsibilities belong, [explore Wallace Shift's system-definition services](/services#web-apps).
+Wallace Shift's [system-definition services](/services#web-apps) help turn the customer task into a clear implementation scope.
