@@ -78,7 +78,7 @@ export function SiteFooter() {
 
         <div className="site-footer__legal">
           <p className="site-footer__copyright">
-            &copy; <span suppressHydrationWarning>{year}</span> {siteMeta.name}
+            &copy; <span suppressHydrationWarning>{year}</span> {business.legalName}
           </p>
           <a
             className="site-footer__preferred-source"

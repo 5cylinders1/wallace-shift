@@ -20,6 +20,13 @@ export const siteMeta = {
  */
 export const business = {
   /**
+   * The registered legal name, as on the IRS EIN letter. Shown in the
+   * footer copyright and the Organization schema so carrier and Twilio
+   * checks can tie wallaceshift.com to the LLC.
+   */
+  legalName: 'Wallace Shift LLC',
+
+  /**
    * The published address, and where every lead from the site is pointed.
    * Live and receiving as of 2026-09-02. Since 2026-11-09 Matthew handles
    * new enquiries himself, so no page sends prospects anywhere else.
