@@ -84,3 +84,18 @@ specific files from the draft directory when they do not exist in `public`.
 It does not expose other files or private demos. On approval, copy the chosen
 assets into their intended `public/media/blog/` and `public/resources/` locations
 as part of publishing the article; draft assets never enter the normal build.
+
+## Article introductions and editorial metadata
+
+The article title is followed by its byline and one concise short answer. The
+`question` field remains part of the source, but the renderer does not repeat it
+as a heading. `description` supplies index and related-card excerpts, search and
+social metadata, and the feed; it is not repeated as a separate article deck.
+The body should move into an example or explanation instead of restating the answer.
+
+Keep at most one useful invitation in the article body. Article pages do not add
+the generic service-link panel or conversation promotion; normal navigation and
+footer contact links remain. The index retains its conversation section.
+
+For an editorial revision, keep `publishedAt` and set `updatedAt` to the actual
+edit time. Byline and structured author data come from the same frontmatter.

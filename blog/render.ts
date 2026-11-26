@@ -134,7 +134,6 @@ export function renderIndex(posts: BlogPost[]): string {
 }
 
 export function renderPost(post: BlogPost, posts: BlogPost[]): string {
-  const topic = topicForPost(post)
   const related = posts.filter((candidate) => candidate.slug !== post.slug)
     .sort((left, right) => Number(right.category === post.category) - Number(left.category === post.category)).slice(0, 3)
   return `${header()}
@@ -143,22 +142,20 @@ export function renderPost(post: BlogPost, posts: BlogPost[]): string {
     <header class="blog-article-hero"><div class="blog-container">
       <nav class="blog-breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog">Blog</a></li><li aria-current="page">${escape(post.title)}</li></ol></nav>
       <p class="blog-label"><span class="blog-dot" aria-hidden="true"></span>${escape(post.category)}</p>
-      <h1>${escape(post.title)}</h1><p class="blog-article-hero__description">${escape(post.description)}</p>
+      <h1>${escape(post.title)}</h1>
       <div class="blog-byline"><a href="${safeUrl(post.author.url)}">By ${escape(post.author.name)}</a><span>Published <time datetime="${escape(post.publishedAt)}">${dateLabel(post.publishedAt)}</time></span>${post.updatedAt && post.updatedAt !== post.publishedAt ? `<span>Updated <time datetime="${escape(post.updatedAt)}">${dateLabel(post.updatedAt)}</time></span>` : ''}<span>${post.readingMinutes} min read</span></div>
     </div></header>
     <div class="blog-reading"><div class="blog-container blog-reading__grid">
       <aside class="blog-reading__aside">${post.toc.length ? `<nav class="blog-toc" aria-label="In this article"><p class="blog-label">In this article</p><ol><li><a href="#short-answer">The short answer</a></li>${post.toc.map((heading) => `<li><a href="#${escape(heading.id)}">${escape(heading.text)}</a></li>`).join('')}</ol></nav>` : ''}<a class="blog-back" href="/blog"><span aria-hidden="true">←</span> All articles</a></aside>
       <div class="blog-reading__main">
-        <section class="blog-answer" id="short-answer" aria-labelledby="answer-heading"><p class="blog-label">The short answer</p><h2 id="answer-heading">${escape(post.question)}</h2><p>${escape(post.answer)}</p></section>
+        <section class="blog-answer" id="short-answer" aria-labelledby="answer-heading"><h2 id="answer-heading">The short answer</h2><p>${escape(post.answer)}</p></section>
         ${post.image ? `<figure class="blog-article-image"><img src="${safeUrl(post.image.src)}" alt="${escape(post.image.alt)}" decoding="async" /></figure>` : ''}
         <div class="blog-prose">${post.html}</div>
-        <aside class="blog-service-links" aria-labelledby="service-heading"><h2 id="service-heading">Help putting this into practice</h2><p>Explore how Wallace Shift scopes and builds this work for small businesses.</p><ul>${(topic?.services ?? [['/services', 'Explore our services']]).map(([href, label]) => `<li><a href="${href}">${escape(label)} <span aria-hidden="true">↗</span></a></li>`).join('')}</ul></aside>
-        <div class="blog-author"><span class="blog-author__mark" aria-hidden="true">WS</span><div><p class="blog-label">Written by</p><a href="${safeUrl(post.author.url)}">${escape(post.author.name)}</a><p>Wallace Shift · Custom CRMs, AI integrations, and connected workflows.</p></div></div>
+        <div class="blog-author"><span class="blog-author__mark" aria-hidden="true">WS</span><div><p class="blog-label">Written by</p><a href="${safeUrl(post.author.url)}">${escape(post.author.name)}</a><p>Wallace Shift · Websites, web apps, CRMs, AI integrations, and workflow automation.</p></div></div>
       </div>
     </div></div>
   </article>
   ${related.length ? `<section class="blog-library blog-library--related" aria-labelledby="related-heading"><div class="blog-container"><div class="blog-section-heading"><h2 id="related-heading">Keep exploring</h2><a class="blog-text-link" href="/blog">All articles <span aria-hidden="true">↗</span></a></div><div class="blog-post-list">${related.map((article, index) => card(article, index + 1)).join('')}</div></div></section>` : ''}
-  ${conversation()}
 </main>${footer()}`
 }
 

@@ -137,7 +137,7 @@ a:hover { color: var(--accent); }
 .blog-reading__main { min-width: 0; }
 .blog-answer { background: #dce6ed; border-top: 2px solid var(--deep); padding: clamp(23px, 3vw, 36px); margin-bottom: 40px; scroll-margin-top: 30px; }
 .blog-answer > .blog-label { color: var(--deep); }
-.blog-answer h2 { font-size: 1.3rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.45; margin-top: 12px; }
+.blog-answer h2 { font-size: 1.3rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.45; margin-top: 0; }
 .blog-answer > p:last-child { font-size: 1rem; line-height: 1.85; margin-top: 16px; }
 .blog-article-image { margin-block: 35px; }
 .blog-article-image img { width: 100%; height: auto; }

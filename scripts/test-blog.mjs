@@ -90,7 +90,13 @@ test('published article contains complete crawlable text and unique canonical me
   assert.equal(post.mainEntityOfPage['@id'], page['@id'])
   assert.equal(page.mainEntity['@id'], post['@id'])
   assert.equal(page.breadcrumb['@id'], schema['@graph'].find(item => item['@type'] === 'BreadcrumbList')['@id'])
-  assert.match(html, /href="\/services\/custom-crm-development"/)
+  const visibleArticle = html.match(/<article>([\s\S]*?)<\/article>/)[1]
+  assert.doesNotMatch(visibleArticle, /blog-article-hero__description|blog-service-links/)
+  assert.doesNotMatch(html, /class="blog-conversation"/)
+  assert.equal((visibleArticle.match(/id="short-answer"/g) ?? []).length, 1)
+  assert.match(visibleArticle, /<h2 id="answer-heading">The short answer<\/h2>/)
+  assert.ok(!visibleArticle.match(/<section class="blog-answer"[\s\S]*?<\/section>/)[0].includes(posts[0].question), 'the title question is not repeated in the answer panel')
+  assert.equal(post.abstract, posts[0].answer, 'the concise answer remains synchronized with structured data')
 })
 
 test('the hub groups every article under crawlable topic anchors with a complete heading hierarchy', async () => {

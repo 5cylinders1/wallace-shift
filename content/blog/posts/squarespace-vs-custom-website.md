@@ -1,147 +1,83 @@
 ---
 status: published
 publishedAt: "2026-10-25T19:14:48Z"
+updatedAt: "2026-11-25T20:57:11-06:00"
 slug: squarespace-vs-custom-website
 title: "Squarespace vs. a Custom Website: Should Your Business Move?"
-description: "Decide whether to improve your Squarespace site, extend it, or commission custom development using real requirements, costs, and a practical trial."
+description: "Keep what works. Compare improving Squarespace, extending one workflow, and rebuilding only when a specific requirement justifies the move."
 question: "Should a growing business keep Squarespace or build a custom website?"
-answer: "Keep or improve Squarespace when it still supports the customer journey and your team can maintain it comfortably. Consider custom development when a specific, verified requirement needs an approach the current setup cannot support well, and the benefits justify the build, migration, and ongoing responsibility."
+answer: "Keep Squarespace if your team can update it and your customers can do what they came to do. Consider a custom build if a specific workflow is consistently hard to support and worth the cost of moving."
 category: "Business websites"
 author:
-  type: "Organization"
-  name: "Wallace Shift"
+  type: "Person"
+  name: "Matthew Wallace"
   url: "/about"
 ---
 
-## Growth is a reason to review the requirements
+I wouldn't recommend leaving Squarespace just because the business has grown. If customers can understand the services, send usable inquiries, and your team can keep the pages current, keep it.
 
-A business can grow while its website's job remains fairly straightforward. It may still need to describe services, show relevant examples, explain the service area, and help people get in touch.
+The useful question is what you can't do today. A specific approval process may need another tool or custom software. Old photographs and a notification sent to the wrong inbox usually call for a smaller repair.
 
-Another business may develop requirements for eligibility checks, customer records, estimates, approvals, or an account area. Those changes can create a different type of software problem.
+## Turn “we've outgrown it” into something testable
 
-The useful question in a Squarespace versus custom website decision is what your current setup prevents you from doing. More revenue, a larger team, or a desire for a fresh design does not establish that by itself.
+“Our website feels limiting” could mean several things:
 
-Wallace Shift builds custom websites and business software. We would still want evidence of a problem before recommending that you replace a site your team can use. A smaller improvement can be the right decision when it resolves the issue without creating unnecessary migration work.
+- Customers can't tell which service they need.
+- Notifications go to an old email address.
+- Staff copy each inquiry into two systems.
+- Customers need an account-specific approval process the current setup doesn't support.
 
-## Identify what is actually failing
+Those aren't the same project. The first may need better writing. The second needs troubleshooting. The third needs a workflow review. The fourth may justify application development.
 
-Write the problem as an event someone can observe. “The website feels limiting” is hard to act on. “Our office manager copies inquiry details into two systems and cannot see which requests have been assigned” describes a process worth investigating.
+A new frontend won't fix an inbox nobody checks. Review the [service website inquiry basics](/blog/what-your-service-website-must-have-to-get-more-inquiries) before treating a rebuild as the cure.
 
-Sort the issue into one of four groups:
+## Compare three paths
 
-| Problem type | Evidence to gather | First investigation |
-| --- | --- | --- |
-| Content | Customers ask questions the site leaves unanswered | Improve service information and the next step |
-| Configuration | A form, notification, or page behaves incorrectly | Check the current settings and destination |
-| Workflow | Staff repeat work or lose track after an inquiry | Map the systems, handoffs, and ownership |
-| Capability | A required behavior cannot be demonstrated | Check documented options, extensions, and an alternative implementation |
+### 1. Improve the site you have
 
-A new frontend will not resolve an unassigned inbox by itself. Likewise, rewriting page copy will not create a missing customer workflow. The diagnosis determines which kind of change is worth exploring.
+This is worth testing when the problems are dated photographs, vague service pages, confusing navigation, or a poorly configured contact flow.
 
-Our guide to [service websites that support inquiries](/blog/what-your-service-website-must-have-to-get-more-inquiries) helps with the customer-facing basics. Use it to check what is already possible before treating a rebuild as the default remedy.
+Imagine a decorating company with old project images and notifications going to a former employee. That's a hypothetical example, but nothing about it establishes a platform limitation. Fix the content and destination, then submit an inquiry from a phone. Verify the office receives enough information to respond.
 
-## Understand what custom development would mean
+Keep the editing process your team already understands if it still serves the work.
 
-“Custom website” can refer to several very different projects. Ask which one is being proposed.
+### 2. Extend one part of the experience
 
-A custom marketing site might offer a tailored layout and publishing system while still using separate tools for bookings or customer records. A custom application might manage eligibility, job information, or account-specific actions. A combined project might connect both.
+A useful marketing site can sit alongside a separate booking tool, portal, or business application. You don't necessarily need to replace the public pages to improve what happens after an inquiry.
 
-An existing Squarespace website can also sit alongside another application. Keeping the marketing site and building a focused business tool is an option to investigate when only one part of the journey needs different functionality. Check how navigation, identity, data, and support would work across the two systems.
+Define the boundary carefully. Where does the customer go? Which system holds the current record? Who handles a disconnected integration? Is the experience understandable without staff explaining it?
 
-Do not let the proposal blur a visual redesign with a business-system build. List the pages, actions, integrations, and administrative controls the finished work must include. If independent editing matters, specify exactly which changes the business owner needs to make without contacting a developer.
+Check the proposed method against [Squarespace's custom-code guidance](https://support.squarespace.com/hc/en-us/articles/205815928-Add-custom-code-to-your-site). Squarespace doesn't support running your own server-side code within the platform, and third-party custom code is outside its troubleshooting scope. An embedded service and a server application are different implementations with different support responsibilities.
 
-Our [custom-versus-template requirements guide](/blog/custom-website-vs-template) helps distinguish design choices from platform and functionality constraints.
+Have the developer show the exact requirement in a safe test. “We can add code” isn't a sufficient plan.
 
-## Check Squarespace's actual boundaries
+### 3. Build something custom
 
-Squarespace supports code blocks, code injection, custom CSS, and embedded content, with availability depending on the feature and plan. It does not support running your own server-side code inside the platform. The same documentation says custom-code modifications fall outside Squarespace's support scope. [Squarespace's custom-code guidance](https://support.squarespace.com/hc/en-us/articles/205815928-Add-custom-code-to-your-site)
+Now imagine a maintenance company that needs equipment records, customer-specific eligibility rules, and approvals across staff roles. The team has tested suitable existing options and documented important gaps.
 
-That gives you a useful distinction to investigate. A styling adjustment, an embedded external experience, and a server application are different jobs. A developer should explain which approach they are proposing and who supports it.
+That's a reason to investigate custom software. It still isn't a reason to move every marketing page. A focused application might solve the problem while the current website stays put.
 
-Ask for a demonstration of the required result on a safe test setup. If an extension is proposed, find out which service processes the data, which account owns the connection, and what happens when that connection stops working.
+Also clarify what “custom” means in the proposal. A tailored marketing layout is different from a system that manages records and permissions. Use the [custom-versus-template guide](/blog/custom-website-vs-template) to separate those decisions.
 
-Avoid relying on a list of possible features. Verify the particular feature, plan, and workflow you need. A technically possible workaround can still be a poor fit if it is fragile, difficult to edit, or dependent on a person who will not maintain it.
+## Include the cost of changing systems
 
-## Compare staying, extending, and rebuilding
+Compare equivalent requirements over the same period. Include design, content, development, integrations, migration, hosting, support, and expected changes. Add your team's review and training time separately from supplier fees.
 
-Use these as decision paths rather than a ranking of business maturity.
+List the pages, images, downloads, forms, URLs, and connections that must survive the move. Test any export before relying on it. [Squarespace's content export](https://support.squarespace.com/hc/en-us/articles/206566687-Export-your-site-content) leaves out some content types, style settings, and custom CSS. List what you'll need to copy or rebuild separately.
 
-### Improve the current Squarespace site
+Ask who owns the accounts, what source access is included, and how another developer could take over. A custom build can create dependency too. Independent editing must be demonstrated, not promised with “there'll be a CMS.” The [website cost worksheet](/blog/is-a-custom-website-worth-the-cost) helps keep these assumptions visible.
 
-This path deserves serious consideration when the issues are unclear content, weak examples, awkward navigation, or a poorly configured inquiry process. The site owner may already understand the editor and have a practical publishing routine.
+## Make the decision one requirement at a time
 
-Define the improvement and test it. For example, ask whether a visitor can identify the relevant service and submit a complete request on a phone. Document where the inquiry arrives. A useful improvement should change the observed problem, not merely make the page look newer.
+For each problem, record:
 
-### Extend a specific part of the experience
+1. What fails, where, and for whom.
+2. The business consequence.
+3. Repairs already considered or tested.
+4. The behavior a solution must demonstrate.
+5. Whether to improve, extend, or replace.
+6. Who maintains it and what needs to move.
 
-Investigate an extension when the current site works but a clearly bounded feature is missing. The proposal might connect a form to an existing system or add a separate experience with a defined purpose.
+It's reasonable for that sheet to recommend keeping most of the site and changing one process. Ask providers to separate a confirmed limitation from a preference for the platform they usually build on.
 
-Treat the connection as part of the product. Budget for account access, configuration, testing, error handling, and handover. Record which business tool remains the source of truth so changes do not create conflicting versions of the same information.
-
-### Commission custom development
-
-Custom development becomes a candidate when a verified requirement needs an implementation you cannot support well with the available approach. The case should include what will improve, how you will test it, and who will own it after launch.
-
-A custom project can also create dependency on its developer. Ask for business-owned accounts, documented deployment and recovery, source access where agreed, and a clear route for future changes. These are requirements to negotiate, not benefits that automatically come with the word “custom.”
-
-## Two hypothetical businesses, two different decisions
-
-Consider a hypothetical decorating company whose website has outdated project photographs, vague service descriptions, and a contact form that sends notifications to an old address. There is no evidence yet that a different platform is required. Correcting those problems and retesting the inquiry path would be a reasonable first project.
-
-Now imagine a separate maintenance company that needs customers to submit equipment details, apply account-specific eligibility rules, and track approvals across staff roles. The team has documented those requirements and cannot demonstrate them adequately in its current setup.
-
-That second business has a reason to investigate custom software. It still needs to decide whether the marketing website should move or whether a connected application would solve the actual problem.
-
-These are decision examples, not customer stories or claims about a tested integration. Their purpose is to show why business requirements matter more than the size or age of the company.
-
-## Compare the full change, including the move
-
-Request estimates against the same requirements and time period. Account for discovery, design, development, content work, integrations, migration, hosting or subscriptions, maintenance, and ongoing changes.
-
-Include the work your own team will do. Someone must supply accurate content, review the result, make decisions, and learn the new process. A cheaper proposal can simply leave more of that work outside its scope.
-
-Use the [website cost comparison worksheet](/blog/is-a-custom-website-worth-the-cost) to record those assumptions and compare equivalent scopes over the same period.
-
-Ask what support covers. Is it failure recovery, routine updates, minor adjustments, or new functionality? Who pays for connected services? What happens if the original developer becomes unavailable? Answers should be written into the engagement.
-
-Migration also needs an inventory. Squarespace exports some content to a WordPress-format XML file, but excludes items such as style settings, custom CSS, and several page types. A content export is not a complete copy of the working site. [Squarespace's export documentation](https://support.squarespace.com/hc/en-us/articles/206566687-Export-your-site-content)
-
-List useful pages, images, downloads, forms, integrations, and account access. Plan what will stay at its current URL and what needs a relevant replacement. Our [redesign prioritization guide](/blog/website-redesign-strategy-what-to-prioritize-first) covers the broader review and launch sequence.
-
-## Copy this stay, extend, or rebuild decision sheet
-
-Complete one row for each important problem. A useful sheet may recommend different actions for different parts of the site.
-
-| Decision field | What to write |
-| --- | --- |
-| Observed problem | Exact page or process, who encounters it, and what fails |
-| Evidence | Test notes, examples, or recurring questions; separate facts from impressions |
-| Business consequence | Work repeated, customers blocked, or information unavailable |
-| Current remedy | Settings, content, or workflow changes already considered |
-| Essential requirement | The behavior the finished solution must demonstrate |
-| Candidate path | Improve, extend, replace, or keep while building a separate tool |
-| Experiment | Smallest safe example that would establish whether the approach works |
-| Acceptance condition | Specific result that means the requirement has been met |
-| Operating owner | Who edits, monitors, supports, and pays for the finished setup |
-| Migration scope | Content, URLs, accounts, and integrations affected |
-| Decision and review | Evidence behind the choice and what remains unresolved |
-
-Share the same sheet with anyone proposing work. Ask them to distinguish a confirmed constraint from a preference for their usual platform. That makes competing recommendations easier to compare without pretending every requirement needs a numeric score.
-
-## Common questions
-
-### Will a custom website automatically rank higher?
-
-No ranking result should be promised simply because the implementation is custom. Google describes SEO as helping search engines understand content and people find it, and explicitly rejects automatic first-place guarantees. [Google's SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)
-
-### Can I keep Squarespace and add a custom business tool?
-
-It is an option to assess. Define the boundary, navigation, data exchange, and maintenance responsibilities. A separate tool should solve a specific job without leaving customers or staff confused about where the current information lives.
-
-### Will I be able to edit a custom website myself?
-
-Only if that editing experience is included and implemented for your needs. Ask to perform the required changes during review. Do not accept “there will be a CMS” as a substitute for demonstrating the tasks your team actually owns.
-
-## Review the requirement before commissioning the rebuild
-
-Explore Wallace Shift's [website services](/services#websites), or [bring us the decision sheet](/contact) to discuss the customer journey and business connections you need. The useful starting point is the problem you can show, the outcome you need, and the responsibilities you want clearly defined.
+[Bring Wallace Shift the problem you can show](/contact). We'll have a more useful conversation about the required result than about whether your business is “big enough” for custom development.
